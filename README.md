@@ -32,9 +32,14 @@ Dry-runs use fixture data (no network), emit `.local.json` / `.local.html` artif
 ### Flags worth knowing
 
 - `scripts/research.py --dry-run | --limit N | --sectors a,b,c`
-- `scripts/write.py --dry-run | --skip-send | --plan-only | --max-tokens 8192`
+- `scripts/write.py --dry-run | --skip-send | --plan-only | --use-fixture | --max-tokens 8192`
   - `--skip-send`: real Groq call, writes `briefing-<date>.html` to `sessions/`, no SMTP.
   - `--plan-only`: just prints a sector summary — no model call.
+  - `--use-fixture`: skip loading a real session JSON and use the canned mock from `jeeves.testing.mocks` — useful for smoke-testing Groq output without running research first. Combine with `--skip-send` for a full real-Groq smoke test.
+
+## Smoke-testing the write pipeline
+
+From the GitHub UI: **Actions → "Jeeves — Write Phase" → Run workflow → set `use_fixture = true` and `skip_send = true`**. The job renders a real Groq briefing from the canned fixture session, skips SMTP, and uploads `sessions/briefing-*.html` as an artifact so you can download and inspect it. No research quota spent, no email sent.
 
 ## Real run
 

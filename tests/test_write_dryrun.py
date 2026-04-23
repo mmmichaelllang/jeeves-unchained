@@ -77,3 +77,26 @@ def test_write_missing_session_fails_cleanly(isolated_repo: Path):
     result = _run(isolated_repo, "--dry-run", "--date", "2099-01-01")
     assert result.returncode == 3
     assert "No session file found" in result.stderr
+
+
+def test_write_use_fixture_bypasses_session_load(isolated_repo: Path):
+    # 2099-01-01 has no session file, but --use-fixture skips that load.
+    result = _run(isolated_repo, "--use-fixture", "--dry-run", "--date", "2099-01-01")
+    assert result.returncode == 0, f"stderr: {result.stderr}"
+    briefing = isolated_repo / "sessions" / "briefing-2099-01-01.local.html"
+    assert briefing.exists(), f"stderr: {result.stderr}"
+    assert "canned mock session" in result.stderr
+
+
+def test_write_skip_send_requires_groq_key(isolated_repo: Path):
+    # --skip-send without --dry-run calls Groq; GROQ_API_KEY must be set.
+    env = os.environ.copy()
+    env["GITHUB_REPOSITORY"] = "test/fixture"
+    env["JEEVES_REPO_ROOT"] = str(isolated_repo)
+    env.pop("GROQ_API_KEY", None)
+    result = subprocess.run(
+        [sys.executable, "scripts/write.py", "--skip-send", "--use-fixture", "--date", "2026-04-23"],
+        cwd=isolated_repo, env=env, capture_output=True, text=True, timeout=60,
+    )
+    assert result.returncode == 2
+    assert "GROQ_API_KEY" in result.stderr

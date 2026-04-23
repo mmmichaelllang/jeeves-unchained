@@ -9,6 +9,7 @@ Usage:
   python scripts/write.py --dry-run                  # fixture HTML, no SMTP
   python scripts/write.py --skip-send                # real Groq, no SMTP
   python scripts/write.py --plan-only                # summary only, no model call
+  python scripts/write.py --use-fixture --skip-send  # smoke test (real Groq, canned session)
 """
 
 from __future__ import annotations
@@ -44,6 +45,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--dry-run", action="store_true", help="Fixture HTML only; no model call or SMTP.")
     p.add_argument("--skip-send", action="store_true", help="Generate HTML but do not send email.")
     p.add_argument("--plan-only", action="store_true", help="Print session sector summary and exit.")
+    p.add_argument(
+        "--use-fixture",
+        action="store_true",
+        help="Skip loading a real session; use the canned mock payload from jeeves.testing.mocks. "
+             "Useful for smoke-testing the Groq + SMTP path without running research first.",
+    )
     p.add_argument(
         "--max-tokens",
         type=int,
@@ -112,10 +119,14 @@ def main(argv: list[str] | None = None) -> int:
         format="%(asctime)s %(name)s %(levelname)s %(message)s",
     )
 
+    # `dry_run` loosens env validation — treat --skip-send, --plan-only, and
+    # --use-fixture the same way. Real Groq is still called for --skip-send and
+    # --use-fixture, so GROQ_API_KEY must be present for those (enforced below).
+    loosen_env = args.dry_run or args.skip_send or args.plan_only or args.use_fixture
     try:
         cfg = Config.from_env(
             phase="write",
-            dry_run=args.dry_run or args.skip_send or args.plan_only,
+            dry_run=loosen_env,
             run_date=args.date,
             verbose=args.verbose,
         )
@@ -123,11 +134,23 @@ def main(argv: list[str] | None = None) -> int:
         log.error(str(e))
         return 2
 
-    try:
-        session = load_session_by_date(cfg, cfg.run_date)
-    except FileNotFoundError:
-        log.error("No session file found for %s", cfg.run_date.isoformat())
-        return 3
+    # --skip-send and --use-fixture both invoke Groq; ensure GROQ_API_KEY is set.
+    if (args.skip_send or args.use_fixture) and not args.dry_run and not cfg.groq_api_key:
+        log.error("GROQ_API_KEY is required unless --dry-run is set.")
+        return 2
+
+    if args.use_fixture:
+        from jeeves.schema import SessionModel
+        from jeeves.testing.mocks import canned_session
+
+        log.info("--use-fixture: loading canned mock session (no real session JSON needed).")
+        session = SessionModel.model_validate(canned_session(cfg.run_date))
+    else:
+        try:
+            session = load_session_by_date(cfg, cfg.run_date)
+        except FileNotFoundError:
+            log.error("No session file found for %s", cfg.run_date.isoformat())
+            return 3
 
     if args.plan_only:
         _plan_only(session)
