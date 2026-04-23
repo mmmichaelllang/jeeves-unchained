@@ -15,6 +15,10 @@ on:
         description: "Generate HTML but do not send email"
         required: false
         default: "false"
+      use_fixture:
+        description: "Use canned mock session JSON instead of loading sessions/session-<date>.json. For smoke-testing the Groq + HTML path without running research first."
+        required: false
+        default: "false"
 
 permissions:
   contents: write
@@ -46,4 +50,14 @@ jobs:
         run: |
           uv run python scripts/write.py \
             ${{ github.event.inputs.date && format('--date {0}', github.event.inputs.date) || '' }} \
-            ${{ github.event.inputs.skip_send == 'true' && '--skip-send' || '' }}
+            ${{ github.event.inputs.skip_send == 'true' && '--skip-send' || '' }} \
+            ${{ github.event.inputs.use_fixture == 'true' && '--use-fixture' || '' }}
+
+      - name: Upload briefing HTML as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: briefing-html
+          path: sessions/briefing-*.html
+          if-no-files-found: ignore
+          retention-days: 14
