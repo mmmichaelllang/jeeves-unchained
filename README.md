@@ -36,7 +36,7 @@ Dry-runs use fixture data (no network), emit `.local.json` / `.local.html` artif
   - `--skip-send`: real Groq call, writes `briefing-<date>.html` to `sessions/`, no SMTP.
   - `--plan-only`: just prints a sector summary — no model call.
   - `--use-fixture`: skip loading a real session JSON and use the canned mock from `jeeves.testing.mocks` — useful for smoke-testing Groq output without running research first. Combine with `--skip-send` for a full real-Groq smoke test.
-- `scripts/correspondence.py --dry-run | --skip-send | --use-fixture | --days 60 | --max-messages 150`
+- `scripts/correspondence.py --dry-run | --skip-send | --use-fixture | --days 60 | --max-messages 50`
   - `--dry-run`: pure fixture mode — no Gmail, no model calls, no SMTP.
   - `--use-fixture`: skip Gmail, classify + render against the canned inbox (still calls Kimi + Groq unless `--dry-run`).
   - `--skip-send`: real Gmail + Kimi + Groq; no SMTP.
