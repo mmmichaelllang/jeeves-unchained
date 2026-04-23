@@ -58,9 +58,15 @@ def all_search_tools(
             fn=make_exa_search(cfg, ledger),
             name="exa_search",
             description=(
-                "Exa neural semantic search. Best for: intellectual journals, long-form "
-                "essays, 'find similar to X' queries, academic-adjacent content. "
-                "Args: query (str), num_results (int=10), category (str|None)."
+                "Exa neural semantic search with full-text content. Best for: "
+                "intellectual journals, long-form essays, 'find similar to X' "
+                "queries, academic-adjacent content. Returns both snippet and "
+                "capped full text, so you often do NOT need to follow up with "
+                "tavily_extract on Exa hits. Args: query (str), "
+                "num_results (int=10), category (str|None, e.g. 'news', "
+                "'research paper', 'company'), search_type (str='auto' — also "
+                "'fast', 'instant', 'deep-lite', 'deep', 'deep-reasoning'), "
+                "text_max_chars (int=20000)."
             ),
         ),
         FunctionTool.from_defaults(
