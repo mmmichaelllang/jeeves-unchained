@@ -10,14 +10,15 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Current focus
 
-**Phase 4 (correspondence) Gmail OAuth bootstrap verification.** Token has been minted locally via `scripts/gmail_auth.py` and pasted into the GitHub secret `GMAIL_OAUTH_TOKEN_JSON`. We're smoke-testing the pipeline via the fixture path before letting it run against real Gmail on the daily cron.
+**Phase 4 (correspondence) end-to-end smoke against real Gmail.** Gmail OAuth works, Kimi classification is batched (PR #7), and the sweep is now **unread-only** so Groq doesn't eat a 413 on busy inboxes. Next run should land a real briefing artifact end-to-end.
 
 ## Where we left off (2026-04-23)
 
-- `GMAIL_OAUTH_TOKEN_JSON` is present in `mmmichaelllang/jeeves-unchained` repo secrets.
-- First `workflow_dispatch` run of `correspondence.yml` came back with the dry-run mock HTML (the `render_mock_correspondence()` template — title literally contains `(DRY RUN)`, ~100 words, static slips). Root cause: `dry_run=true` was ticked in the dispatch dialog alongside `use_fixture=true`; dry-run wins in `scripts/correspondence.py:63-71`.
-- Next action: re-trigger `correspondence.yml` with **only** `use_fixture=true` and `skip_send=true` (leave `dry_run=false`). Expected artifact: `correspondence-html` with ≥1500 words, ≥5 profane asides, no banned words/transitions (real Kimi + Groq path).
-- After the fixture path looks right, next milestone is letting the 12:00 UTC cron run unattended against the real Gmail inbox and verifying the handoff JSON lands in `sessions/correspondence-YYYY-MM-DD.json`.
+- `GMAIL_OAUTH_TOKEN_JSON` lives in GH Secrets. Runtime refresh works — `jeeves.gmail INFO gmail sweep` fires cleanly on every dispatch.
+- **Kimi batching landed** (#7). Classify now runs `N/30` batches at ~80s each instead of one 60s-timeout request. Log signature: `classify batch 1/5 (30 msgs)` etc.
+- **Sweep is unread-only** (this session). `sweep_recent` collapsed to a single `is:unread newer_than:<days>d -label:spam -label:promotions` query — the read-everything + unread-bonus pair was producing 150-msg payloads that 413'd Groq's 12k TPM limit on `llama-3.3-70b-versatile` free tier. Expected inbox sizes post-change: single digits to low tens on a normal day.
+- Known-latent risk: if a single day accumulates >40ish unread, the Groq render payload can still exceed 12k TPM. The defensive fix (trim `no_action` entries + drop `indent=2` whitespace in `render_with_groq`) is **not** yet landed — defer until we see it recur.
+- Next action: re-run `correspondence.yml` on `main` (no dispatch flags, or with `skip_send=true` for a dry artifact grab). Expect a `correspondence-YYYY-MM-DD.html` artifact ≥1500 words + ≥5 profane asides + the handoff JSON committed back for the 12:30 UTC research cron to pick up.
 
 ## Dev branch
 

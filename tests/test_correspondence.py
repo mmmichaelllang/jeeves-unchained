@@ -141,6 +141,22 @@ def test_classify_with_kimi_batches_previews(monkeypatch):
     assert {c.id for c in out} == {f"m{i}" for i in range(75)}
 
 
+def test_sweep_recent_queries_unread_only(monkeypatch):
+    from jeeves import gmail as gmail_mod
+
+    captured: list[str] = []
+
+    def fake_list_ids(service, query, max_results=150):
+        captured.append(query)
+        return []
+
+    monkeypatch.setattr(gmail_mod, "list_message_ids", fake_list_ids)
+
+    gmail_mod.sweep_recent(service=object(), days=45, max_results=50)
+
+    assert captured == ["is:unread newer_than:45d -label:spam -label:promotions"]
+
+
 def test_classify_with_kimi_empty_previews_short_circuits(monkeypatch):
     from jeeves import llm as llm_mod
 
