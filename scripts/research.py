@@ -15,10 +15,8 @@ from __future__ import annotations
 
 import argparse
 import asyncio
-import json
 import logging
 import sys
-from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -29,8 +27,15 @@ if str(REPO_ROOT) not in sys.path:
 
 from jeeves.config import Config, MissingSecret  # noqa: E402
 from jeeves.dedup import covered_urls  # noqa: E402
+from jeeves.research_sectors import (  # noqa: E402
+    SECTOR_SPECS,
+    collect_headlines_from_sector,
+    collect_urls_from_sector,
+    extract_correspondence_references,
+    run_sector,
+)
 from jeeves.session_io import load_previous_session, save_session  # noqa: E402
-from jeeves.tools.emit_session import ResearchContext, make_emit_session  # noqa: E402
+from jeeves.tools.emit_session import ResearchContext  # noqa: E402
 from jeeves.tools.quota import QuotaLedger  # noqa: E402
 
 log = logging.getLogger("jeeves.research")
@@ -55,80 +60,62 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return p.parse_args(argv)
 
 
-def _load_prompt(cfg: Config) -> str:
-    path = cfg.repo_root / "jeeves" / "prompts" / "research_system.md"
-    return path.read_text(encoding="utf-8")
-
-
-def _format_prompt(template: str, run_date: date, prior_url_sample: list[str]) -> str:
-    from jeeves.schema import SessionModel
-
-    schema_json = json.dumps(SessionModel.model_json_schema(), indent=2)
-    prior_block = "\n".join(prior_url_sample) if prior_url_sample else "(none)"
-    return (
-        template
-        .replace("{date}", run_date.isoformat())
-        .replace("{schema}", schema_json)
-        .replace("{prior_urls_sample}", prior_block)
-    )
-
-
-async def _run_real_agent(
+async def _run_sector_loop(
     cfg: Config,
     ctx: ResearchContext,
     prior_urls: set[str],
     ledger: QuotaLedger,
-    system_prompt: str,
     *,
     sector_whitelist: list[str],
     limit: int,
 ) -> None:
-    """Drive the Kimi FunctionAgent until it calls emit_session or we time out."""
+    """Iterate SECTOR_SPECS sequentially, each with its own fresh Kimi agent.
 
-    from llama_index.core.agent.workflow import FunctionAgent
-    from llama_index.core.tools import FunctionTool
+    Per-sector runs avoid the single-context overflow that killed the earlier
+    design. Accumulated URLs feed the final enriched_articles sector and the
+    session dedup set.
+    """
 
-    from jeeves.llm import build_kimi_llm
-    from jeeves.tools import all_search_tools
+    prior_sample = sorted(prior_urls)[:50]
+    session: dict[str, Any] = {
+        "date": cfg.run_date.isoformat(),
+        "status": "complete",
+        "dedup": {"covered_urls": [], "covered_headlines": []},
+    }
+    discovered_urls: list[str] = []
+    discovered_headlines: list[str] = []
 
-    tools: list[FunctionTool] = all_search_tools(cfg, ledger, prior_urls)
-    tools.append(
-        FunctionTool.from_defaults(
-            fn=make_emit_session(ctx),
-            name="emit_session",
-            description=(
-                "Submit the final SessionModel-shaped payload. Call exactly once "
-                "when all sectors are covered. Args: session_json (dict)."
-            ),
-        )
-    )
+    specs = _filter_specs(SECTOR_SPECS, sector_whitelist, limit)
 
-    user_kickoff = _build_user_kickoff(sector_whitelist, limit)
+    for spec in specs:
+        extra = ""
+        if spec.name == "enriched_articles":
+            # Seed the extraction agent with the URLs the prior sectors found.
+            seed = "\n".join(discovered_urls[:25]) or "(no candidate URLs from prior sectors)"
+            extra = f"CANDIDATE URLS FROM TODAY'S COVERAGE:\n{seed}"
 
-    agent = FunctionAgent(
-        tools=tools,
-        llm=build_kimi_llm(cfg),
-        system_prompt=system_prompt,
-        verbose=cfg.verbose,
-    )
+        value = await run_sector(cfg, spec, prior_sample, ledger, extra_user=extra)
+        session[spec.name] = value
+        discovered_urls.extend(collect_urls_from_sector(value))
+        discovered_headlines.extend(collect_headlines_from_sector(value))
 
-    response = await agent.run(user_kickoff)
-    log.info("agent finished. final response (truncated): %s", str(response)[:400])
+    # Fill any sectors we skipped via --sectors / --limit with their defaults.
+    for spec in SECTOR_SPECS:
+        session.setdefault(spec.name, spec.default)
+
+    session["dedup"]["covered_urls"] = sorted(set(discovered_urls))
+    session["dedup"]["covered_headlines"] = sorted(set(discovered_headlines))
+    ctx.session = session
 
 
-def _build_user_kickoff(sector_whitelist: list[str], limit: int) -> str:
-    if sector_whitelist:
-        return (
-            "Focus this run on the following sectors only: "
-            + ", ".join(sector_whitelist)
-            + ". Leave other sectors as empty defaults. Call emit_session when done."
-        )
-    if limit:
-        return (
-            f"Smoke-test run: cover only the first {limit} sectors from your system "
-            "prompt. Leave the rest empty. Call emit_session when done."
-        )
-    return "Begin the full research run now. Call emit_session when done."
+def _filter_specs(specs, whitelist: list[str], limit: int):
+    out = list(specs)
+    if whitelist:
+        wl = set(whitelist)
+        out = [s for s in out if s.name in wl]
+    if limit > 0:
+        out = out[:limit]
+    return out
 
 
 def _run_dry_agent(cfg: Config, ctx: ResearchContext) -> None:
@@ -164,6 +151,12 @@ def _merge_correspondence_handoff(cfg: Config, ctx: ResearchContext) -> None:
         corr["found"] = bool(data.get("found"))
         corr["fallback_used"] = bool(data.get("fallback_used"))
         corr["text"] = data.get("text", "")
+        # Fold email thread references into dedup.covered_headlines so the
+        # write phase can skim/skip repeats across days.
+        dedup = ctx.session.setdefault("dedup", {"covered_urls": [], "covered_headlines": []})
+        existing = set(dedup.get("covered_headlines") or [])
+        existing.update(extract_correspondence_references(corr["text"]))
+        dedup["covered_headlines"] = sorted(existing)
         log.info("merged correspondence handoff from %s (found=%s)", path, corr["found"])
         return
 
@@ -196,12 +189,10 @@ def main(argv: list[str] | None = None) -> int:
 
     prior = load_previous_session(cfg)
     prior_urls = covered_urls(prior)
-    prior_sample = sorted(prior_urls)[:50]
     log.info("prior session loaded: %s URLs in dedup set.", len(prior_urls))
 
     ledger = QuotaLedger(cfg.quota_state_path)
     ctx = ResearchContext()
-    system_prompt = _format_prompt(_load_prompt(cfg), cfg.run_date, prior_sample)
 
     sector_whitelist = [s.strip() for s in args.sectors.split(",") if s.strip()]
 
@@ -210,12 +201,11 @@ def main(argv: list[str] | None = None) -> int:
         _run_dry_agent(cfg, ctx)
     else:
         asyncio.run(
-            _run_real_agent(
+            _run_sector_loop(
                 cfg,
                 ctx,
                 prior_urls,
                 ledger,
-                system_prompt,
                 sector_whitelist=sector_whitelist,
                 limit=args.limit,
             )

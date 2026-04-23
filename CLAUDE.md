@@ -17,7 +17,23 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - `GMAIL_OAUTH_TOKEN_JSON` lives in GH Secrets. Runtime refresh works — `jeeves.gmail INFO gmail sweep` fires cleanly on every dispatch.
 - **Phase 4 pipeline is fully live** (PRs #7, #8, #9, #10). `sessions/correspondence-2026-04-23.json` + `.html` are on `main`. Log signature: `classify batch N/M (≤30 msgs)` followed by a Groq render under the 12k TPM ceiling.
 - **Phase 2 tool-call bug patched** (this session, not yet shipped). `llama-index-llms-nvidia`'s `get_tool_calls_from_response` does `json.loads(tool_call.function.arguments)` without guarding against `None`. Kimi occasionally emits null args on first-turn tool calls, which raises `TypeError` and kills the FunctionAgent workflow before any search runs. Fix: `jeeves/llm.py::_build_kimi_class` subclasses NVIDIA with a None/empty/invalid-JSON-tolerant override that logs a warning and coerces to `{}`. 5 new unit tests in `tests/test_llm_factories.py`.
-- Next action: ship the `jeeves/llm.py` patch, then re-run `research.yml` on `main`. Then `write.yml` to close the chain.
+- **Phase 2 tool-result caps** (earlier this session, PR #12). After the Kimi tool-call fix shipped, the agent survived turn 1 but filled Kimi's 131k context by turn 5 via unbounded tool results (`tavily_extract` raw_content, `exa_search` 20k-char default). Capped:
+  - `tavily_extract`: max 10 URLs/call (was 20), `text` capped at 2500 chars/result.
+  - `exa_search`: `text_max_chars` default 20000 → 3000.
+  - `enrichment.fetch_article_text`: `text` capped at 3000 chars.
+  - `jeeves/llm.py` KimiNVIDIA override: partial-JSON warning downgraded to DEBUG since FunctionAgent's streaming path calls the parser on every mid-stream chunk.
+- **Phase 2 per-sector rewrite** (this session, not yet shipped). Caps alone weren't enough — even with per-call caps, 5+ tool-heavy turns × the accumulating conversation history still blew 131k. Architecture shift:
+  - New module `jeeves/research_sectors.py` — one `SectorSpec` per researched field (weather / local_news / career / family / global_news / intellectual_journals / wearable_ai / triadic_ontology / ai_systems / uap / newyorker / enriched_articles). Each gets a fresh FunctionAgent with its own 131k budget.
+  - No more `emit_session` terminator in the real-agent path. Each sector returns JSON as its final text; the driver aggregates. Dry-run path still uses the old mock + emit_session (untouched).
+  - `scripts/research.py::_run_sector_loop` replaces `_run_real_agent`. Iterates specs sequentially. `enriched_articles` runs LAST, seeded with URLs surfaced by prior sectors so the extraction pass targets today's coverage.
+  - `research.yml` already has `timeout-minutes: 65`; 12 sectors × ~3 min each ≈ 40 min expected.
+  - `vault_insight` is intentionally not a researched sector — it's an offline hook filled by a separate sync and left at its default here.
+- **Dedup expansion** (this session, not yet shipped). The write phase's `dedup.covered_urls` + `dedup.covered_headlines` now cover three tiers:
+  - **Articles**: URLs harvested from every sector via `collect_urls_from_sector`.
+  - **Events**: headlines harvested from `title` / `headline` / `subject` / `role` / `district` / `event` fields via `collect_headlines_from_sector`.
+  - **Correspondence**: `email | <sender>` entries parsed from today's correspondence handoff text and folded into `covered_headlines` during the handoff merge.
+- **Write prompt dedup tiers** (this session). `jeeves/prompts/write_system.md` replaced its one-line dedup rule with a three-tier directive: exact match → skip entirely; substantive overlap → one-sentence skim opening *"As previously noted, Sir, …"*; genuinely new → full depth.
+- Next action: ship this rewrite, re-run `research.yml`, then `write.yml` to close the chain.
 
 ## Dev branch
 
