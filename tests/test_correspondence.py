@@ -12,6 +12,7 @@ import pytest
 
 from jeeves.correspondence import (
     _parse_json_array,
+    _trim_for_render,
     build_handoff_json,
     build_handoff_text,
     classify_with_kimi,
@@ -139,6 +140,19 @@ def test_classify_with_kimi_batches_previews(monkeypatch):
     assert calls == [30, 30, 15]
     assert len(out) == 75
     assert {c.id for c in out} == {f"m{i}" for i in range(75)}
+
+
+def test_trim_for_render_drops_no_action_detail():
+    classified = fixture_classified()
+    trimmed = _trim_for_render(classified)
+    no_action = [r for r in trimmed if r["classification"] == "no_action"]
+    actionable = [r for r in trimmed if r["classification"] != "no_action"]
+    assert no_action, "fixture must contain at least one no_action row"
+    for row in no_action:
+        assert set(row.keys()) == {"classification", "sender", "subject"}
+    for row in actionable:
+        assert "summary" in row
+        assert "date" in row
 
 
 def test_sweep_recent_queries_unread_only(monkeypatch):
