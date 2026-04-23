@@ -1,0 +1,37 @@
+name: Jeeves — Correspondence Phase (stub)
+
+# Runs first so the research phase can import the correspondence draft.
+# 5:00 AM PDT (UTC-7) / 6:00 AM PST (UTC-8)
+on:
+  schedule:
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  correspondence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.8.17"
+
+      - name: Sync dependencies
+        run: uv sync --no-dev
+
+      - name: Run Jeeves correspondence phase (stub)
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GMAIL_OAUTH_CLIENT_JSON: ${{ secrets.GMAIL_OAUTH_CLIENT_JSON }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          uv run python scripts/correspondence.py --plan-only
