@@ -51,7 +51,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--skip-send", action="store_true", help="Real Gmail + models; no SMTP.")
     p.add_argument("--use-fixture", action="store_true", help="Skip Gmail and use the canned fixture inbox.")
     p.add_argument("--days", type=int, default=60, help="Gmail sweep window in days (default 60).")
-    p.add_argument("--max-messages", type=int, default=150, help="Max messages to fetch (default 150).")
+    p.add_argument("--max-messages", type=int, default=50, help="Max unread messages to fetch (default 50, newest first).")
     p.add_argument("--verbose", action="store_true")
     return p.parse_args(argv)
 

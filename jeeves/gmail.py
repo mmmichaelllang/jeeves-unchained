@@ -154,7 +154,7 @@ def sweep_recent(
     service,
     *,
     days: int = 60,
-    max_results: int = 150,
+    max_results: int = 50,
 ) -> list[MessagePreview]:
     """Sweep unread messages from the last `days` days, excluding spam/promotions.
 

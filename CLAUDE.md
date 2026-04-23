@@ -16,8 +16,8 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 - `GMAIL_OAUTH_TOKEN_JSON` lives in GH Secrets. Runtime refresh works — `jeeves.gmail INFO gmail sweep` fires cleanly on every dispatch.
 - **Kimi batching landed** (#7). Classify now runs `N/30` batches at ~80s each instead of one 60s-timeout request. Log signature: `classify batch 1/5 (30 msgs)` etc.
-- **Sweep is unread-only** (this session). `sweep_recent` collapsed to a single `is:unread newer_than:<days>d -label:spam -label:promotions` query — the read-everything + unread-bonus pair was producing 150-msg payloads that 413'd Groq's 12k TPM limit on `llama-3.3-70b-versatile` free tier. Expected inbox sizes post-change: single digits to low tens on a normal day.
-- Known-latent risk: if a single day accumulates >40ish unread, the Groq render payload can still exceed 12k TPM. The defensive fix (trim `no_action` entries + drop `indent=2` whitespace in `render_with_groq`) is **not** yet landed — defer until we see it recur.
+- **Sweep is unread-only + capped at 50** (this session). `sweep_recent` uses a single `is:unread newer_than:<days>d -label:spam -label:promotions` query with `max_results=50` (and `scripts/correspondence.py --max-messages` default 50). Gmail's `messages.list` returns newest-first, so the brief always covers the 50 most recent unread. Earlier unread gets silently dropped — that's intentional per user direction.
+- Known-latent risk: if 50 unread messages ever still exceeds Groq's 12k TPM on `llama-3.3-70b-versatile` free tier, the defensive fix (trim `no_action` entries + drop `indent=2` whitespace in `render_with_groq`) is the next lever. Not landed.
 - Next action: re-run `correspondence.yml` on `main` (no dispatch flags, or with `skip_send=true` for a dry artifact grab). Expect a `correspondence-YYYY-MM-DD.html` artifact ≥1500 words + ≥5 profane asides + the handoff JSON committed back for the 12:30 UTC research cron to pick up.
 
 ## Dev branch
