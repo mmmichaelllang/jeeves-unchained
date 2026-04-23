@@ -5,7 +5,13 @@ from __future__ import annotations
 from .config import Config
 
 
-def build_kimi_llm(cfg: Config, *, temperature: float = 0.3, max_tokens: int = 8192):
+def build_kimi_llm(
+    cfg: Config,
+    *,
+    temperature: float = 0.3,
+    max_tokens: int = 8192,
+    timeout: float = 180.0,
+):
     """Return a LlamaIndex LLM bound to Kimi K2.5 on NVIDIA NIM.
 
     The NIM endpoint is OpenAI-compatible. `llama-index-llms-nvidia` handles
@@ -21,6 +27,7 @@ def build_kimi_llm(cfg: Config, *, temperature: float = 0.3, max_tokens: int = 8
         base_url=cfg.kimi_base_url,
         temperature=temperature,
         max_tokens=max_tokens,
+        timeout=timeout,
     )
 
 

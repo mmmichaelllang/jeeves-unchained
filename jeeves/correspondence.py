@@ -66,56 +66,71 @@ def load_priority_contacts() -> dict[str, Any]:
     return json.loads(CONTACTS_PATH.read_text(encoding="utf-8"))
 
 
+CLASSIFY_BATCH_SIZE = 30
+
+
 def classify_with_kimi(
     cfg: Config,
     previews: list[MessagePreview],
     contacts: dict[str, Any],
+    *,
+    batch_size: int = CLASSIFY_BATCH_SIZE,
 ) -> list[ClassifiedMessage]:
-    """Single Kimi call that returns a JSON array of classifications."""
+    """Classify previews in batches so each Kimi call stays under the NIM read timeout."""
 
     from llama_index.core.base.llms.types import ChatMessage, MessageRole
 
     from .gmail import previews_to_classifier_input
     from .llm import build_kimi_llm
 
+    if not previews:
+        return []
+
     system = (PROMPTS_DIR / "correspondence_classify.md").read_text(encoding="utf-8")
-    user_json = {
-        "messages": previews_to_classifier_input(previews),
-        "contacts": contacts,
-    }
-    user = json.dumps(user_json, ensure_ascii=False)
-
     llm = build_kimi_llm(cfg, temperature=0.1, max_tokens=4096)
-    resp = llm.chat(
-        [
-            ChatMessage(role=MessageRole.SYSTEM, content=system),
-            ChatMessage(role=MessageRole.USER, content=user),
-        ]
-    )
-    raw = str(resp.message.content or "").strip()
-    rows = _parse_json_array(raw)
-
     by_id = {p.message_id: p for p in previews}
     out: list[ClassifiedMessage] = []
-    for row in rows:
-        mid = row.get("id", "")
-        preview = by_id.get(mid)
-        cls = row.get("classification", "no_action")
-        if cls not in CLASSIFICATIONS:
-            cls = "no_action"
-        out.append(
-            ClassifiedMessage(
-                id=mid,
-                classification=cls,
-                priority_contact=bool(row.get("priority_contact")),
-                priority_contact_label=row.get("priority_contact_label"),
-                summary=str(row.get("summary", "")),
-                suggested_action=str(row.get("suggested_action", "")),
-                sender=preview.sender if preview else "",
-                subject=preview.subject if preview else "",
-                date=preview.date if preview else "",
-            )
+
+    n_batches = (len(previews) + batch_size - 1) // batch_size
+    for i in range(0, len(previews), batch_size):
+        batch = previews[i : i + batch_size]
+        user_json = {
+            "messages": previews_to_classifier_input(batch),
+            "contacts": contacts,
+        }
+        user = json.dumps(user_json, ensure_ascii=False)
+        log.info(
+            "classify batch %d/%d (%d msgs)",
+            i // batch_size + 1, n_batches, len(batch),
         )
+        resp = llm.chat(
+            [
+                ChatMessage(role=MessageRole.SYSTEM, content=system),
+                ChatMessage(role=MessageRole.USER, content=user),
+            ]
+        )
+        raw = str(resp.message.content or "").strip()
+        rows = _parse_json_array(raw)
+
+        for row in rows:
+            mid = row.get("id", "")
+            preview = by_id.get(mid)
+            cls = row.get("classification", "no_action")
+            if cls not in CLASSIFICATIONS:
+                cls = "no_action"
+            out.append(
+                ClassifiedMessage(
+                    id=mid,
+                    classification=cls,
+                    priority_contact=bool(row.get("priority_contact")),
+                    priority_contact_label=row.get("priority_contact_label"),
+                    summary=str(row.get("summary", "")),
+                    suggested_action=str(row.get("suggested_action", "")),
+                    sender=preview.sender if preview else "",
+                    subject=preview.subject if preview else "",
+                    date=preview.date if preview else "",
+                )
+            )
     return out
 
 

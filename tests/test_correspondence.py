@@ -14,6 +14,7 @@ from jeeves.correspondence import (
     _parse_json_array,
     build_handoff_json,
     build_handoff_text,
+    classify_with_kimi,
     fixture_classified,
     fixture_previews,
     load_priority_contacts,
@@ -97,6 +98,57 @@ def test_mock_correspondence_passes_postprocess():
     assert profane >= 5
     assert not bw
     assert not bt
+
+
+def test_classify_with_kimi_batches_previews(monkeypatch):
+    from llama_index.core.base.llms.types import ChatMessage
+
+    from jeeves import llm as llm_mod
+
+    previews = [
+        MessagePreview(
+            thread_id=f"t{i}", message_id=f"m{i}",
+            sender=f"sender{i} <s{i}@example.com>", to="me", subject=f"subj {i}",
+            date="Wed, 22 Apr 2026 13:42:00 -0700",
+            snippet="snip", body_text="bt", unread=False,
+        )
+        for i in range(75)
+    ]
+    calls: list[int] = []
+
+    class FakeResp:
+        def __init__(self, content: str):
+            self.message = type("M", (), {"content": content})()
+
+    class FakeLLM:
+        def chat(self, messages: list[ChatMessage]):
+            payload = json.loads(messages[-1].content)
+            ids = [m["id"] for m in payload["messages"]]
+            calls.append(len(ids))
+            rows = [
+                {"id": mid, "classification": "no_action",
+                 "priority_contact": False, "summary": "ok", "suggested_action": ""}
+                for mid in ids
+            ]
+            return FakeResp(json.dumps(rows))
+
+    monkeypatch.setattr(llm_mod, "build_kimi_llm", lambda *a, **kw: FakeLLM())
+
+    out = classify_with_kimi(cfg=None, previews=previews, contacts={"household": []})
+
+    assert calls == [30, 30, 15]
+    assert len(out) == 75
+    assert {c.id for c in out} == {f"m{i}" for i in range(75)}
+
+
+def test_classify_with_kimi_empty_previews_short_circuits(monkeypatch):
+    from jeeves import llm as llm_mod
+
+    def boom(*a, **kw):
+        raise AssertionError("build_kimi_llm should not be called on empty input")
+
+    monkeypatch.setattr(llm_mod, "build_kimi_llm", boom)
+    assert classify_with_kimi(cfg=None, previews=[], contacts={}) == []
 
 
 def test_gmail_decode_roundtrips():
