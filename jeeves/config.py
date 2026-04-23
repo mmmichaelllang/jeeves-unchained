@@ -32,8 +32,10 @@ PHASE_REQUIREMENTS: dict[Phase, list[str]] = {
         "GMAIL_APP_PASSWORD",
     ],
     "correspondence": [
-        "GOOGLE_API_KEY",
-        "GMAIL_OAUTH_CLIENT_JSON",
+        "NVIDIA_API_KEY",
+        "GROQ_API_KEY",
+        "GMAIL_OAUTH_TOKEN_JSON",
+        "GMAIL_APP_PASSWORD",
     ],
 }
 
@@ -59,6 +61,8 @@ class Config:
     # Write-phase secrets
     groq_api_key: str
     gmail_app_password: str
+    # Correspondence-phase secrets
+    gmail_oauth_token_json: str
     # Shared
     github_token: str
     github_repository: str
@@ -93,6 +97,16 @@ class Config:
         suffix = ".local.html" if self.dry_run else ".html"
         return self.repo_root / "sessions" / f"briefing-{target.isoformat()}{suffix}"
 
+    def correspondence_json_path(self, d: date | None = None) -> Path:
+        target = d or self.run_date
+        suffix = ".local.json" if self.dry_run else ".json"
+        return self.repo_root / "sessions" / f"correspondence-{target.isoformat()}{suffix}"
+
+    def correspondence_html_path(self, d: date | None = None) -> Path:
+        target = d or self.run_date
+        suffix = ".local.html" if self.dry_run else ".html"
+        return self.repo_root / "sessions" / f"correspondence-{target.isoformat()}{suffix}"
+
     @classmethod
     def from_env(
         cls,
@@ -122,6 +136,7 @@ class Config:
             google_api_key=os.environ.get("GOOGLE_API_KEY", ""),
             groq_api_key=os.environ.get("GROQ_API_KEY", ""),
             gmail_app_password=os.environ.get("GMAIL_APP_PASSWORD", ""),
+            gmail_oauth_token_json=os.environ.get("GMAIL_OAUTH_TOKEN_JSON", ""),
             github_token=os.environ.get("GITHUB_TOKEN", ""),
             github_repository=os.environ.get(
                 "GITHUB_REPOSITORY", "mmmichaelllang/jeeves-unchained"

@@ -1,0 +1,12 @@
+{
+  "household": [
+    {"name": "Mrs. Sarah Lang", "role": "wife", "label": "Mrs. Lang", "priority": "highest", "domain_hints": []},
+    {"name": "Lady Cathy Lang", "role": "mother", "label": "Lady Cathy", "priority": "high", "domain_hints": []},
+    {"name": "Sir Richard Lang", "role": "father", "label": "Sir Richard", "priority": "high", "domain_hints": []},
+    {"name": "Andy Lang", "role": "brother", "label": "Andy", "priority": "high", "domain_hints": []},
+    {"name": "Piper Lang", "role": "daughter", "label": "Piper", "priority": "medium", "domain_hints": []}
+  ],
+  "priority_contacts": [],
+  "senders_to_ignore": ["noreply@", "no-reply@", "donotreply@", "bounce@", "mailer-daemon@"],
+  "domains_to_ignore": []
+}

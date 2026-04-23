@@ -137,6 +137,37 @@ def _run_dry_agent(cfg: Config, ctx: ResearchContext) -> None:
     run_mock_agent(ctx, cfg.run_date)
 
 
+def _merge_correspondence_handoff(cfg: Config, ctx: ResearchContext) -> None:
+    """Read `sessions/correspondence-<date>.json` (if present) and inject its
+    `{found, fallback_used, text}` into the session being built. Also falls
+    back to the .local.json twin when running a dry-run.
+    """
+
+    import json as _json
+
+    candidates = [cfg.correspondence_json_path()]
+    local = candidates[0].with_name(candidates[0].stem + ".local.json")
+    if local != candidates[0]:
+        candidates.append(local)
+
+    for path in candidates:
+        if not path.exists():
+            continue
+        try:
+            data = _json.loads(path.read_text(encoding="utf-8"))
+        except Exception as e:
+            log.warning("correspondence handoff at %s failed to parse: %s", path, e)
+            continue
+        if ctx.session is None:
+            continue
+        corr = ctx.session.setdefault("correspondence", {})
+        corr["found"] = bool(data.get("found"))
+        corr["fallback_used"] = bool(data.get("fallback_used"))
+        corr["text"] = data.get("text", "")
+        log.info("merged correspondence handoff from %s (found=%s)", path, corr["found"])
+        return
+
+
 def _force_fallback_session(cfg: Config, reason: str) -> dict[str, Any]:
     """Emergency payload when the agent fails to emit anything usable."""
 
@@ -189,6 +220,10 @@ def main(argv: list[str] | None = None) -> int:
                 limit=args.limit,
             )
         )
+
+    # Phase 4 handoff — if the correspondence phase has written today's
+    # sessions/correspondence-<date>.json, merge it into the agent's result.
+    _merge_correspondence_handoff(cfg, ctx)
 
     if not ctx.has_session:
         log.error("agent halted without calling emit_session — writing degraded payload.")
