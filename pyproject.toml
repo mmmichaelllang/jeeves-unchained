@@ -1,0 +1,49 @@
+[project]
+name = "jeeves-unchained"
+version = "0.1.0"
+description = "Python + LlamaIndex newsletter pipeline. Kimi K2.5 orchestrates research, Groq Llama 3.3 70B writes in Jeeves voice."
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "llama-index-core>=0.14.0",
+    "llama-index-llms-nvidia>=0.5.0",
+    "llama-index-llms-groq>=0.5.0",
+    "pydantic>=2.7",
+    "python-dotenv>=1.0",
+    "httpx>=0.27",
+    "tenacity>=9.0",
+    "tavily-python>=0.7",
+    "exa-py>=1.8",
+    "google-generativeai>=0.8",
+    "trafilatura>=1.12",
+    "PyGithub>=2.4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "ruff>=0.7",
+]
+
+[tool.uv]
+package = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["jeeves"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+ignore = ["E501"]
