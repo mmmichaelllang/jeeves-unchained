@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Correspondence Phase\" failed in repo jeeves-unchained.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Correspondence Phase\" failed in repo jeeves-unchained.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Correspondence Phase\" failed in repo jeeves-unchained.\n- [escalation] Google: Google security alert about a new app password created for account lang.mc@gmail.com.\n- [escalation] Google: Google security alert about a new app password created for account lang.mc@gmail.com.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Correspondence Phase\" failed in repo jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Correspondence Phase\" failed in repo jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Correspondence Phase\" failed in repo jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Correspondence Phase\" failed in repo jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Correspondence Phase\" failed in repo jeeves-memory.\n- [escalation] GitHub: GitHub notification that personal access token \"eeves-memory-pipeline\" was added to account.",
+  "counts": {
+    "reply_needed": 1,
+    "decision_required": 0,
+    "scheduling": 1,
+    "follow_up": 0,
+    "escalation": 13,
+    "no_action": 35
+  }
+}
