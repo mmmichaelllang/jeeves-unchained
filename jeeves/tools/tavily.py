@@ -63,29 +63,36 @@ def make_tavily_search(cfg: Config, ledger: QuotaLedger):
 
 def make_tavily_extract(cfg: Config, ledger: QuotaLedger):
     def tavily_extract(urls: list[str]) -> dict[str, Any]:
-        """Extract clean article text for up to 20 URLs via Tavily."""
+        """Extract clean article text for up to 10 URLs via Tavily.
+
+        Each result's `text` is capped at 2500 chars so the FunctionAgent's
+        context window doesn't fill from a single extraction turn.
+        """
         if not urls:
             return {"provider": "tavily", "error": "urls empty", "results": []}
+        urls = urls[:10]
         try:
             from tavily import TavilyClient  # type: ignore
 
             client = TavilyClient(api_key=cfg.tavily_api_key)
-            resp = client.extract(urls=urls[:20])
+            resp = client.extract(urls=urls)
         except Exception as e:
             log.warning("tavily extract error: %s", e)
             return {"provider": "tavily", "error": str(e), "results": []}
 
-        ledger.record("tavily", len(urls[:20]))
-        results = [
-            {
-                "url": r.get("url", ""),
-                "title": r.get("title", "") or "",
-                "text": r.get("raw_content", "") or r.get("content", "") or "",
-                "fetch_failed": not bool(r.get("raw_content") or r.get("content")),
-                "source": _host(r.get("url", "")),
-            }
-            for r in (resp.get("results") or [])
-        ]
+        ledger.record("tavily", len(urls))
+        results = []
+        for r in (resp.get("results") or []):
+            raw = r.get("raw_content", "") or r.get("content", "") or ""
+            results.append(
+                {
+                    "url": r.get("url", ""),
+                    "title": r.get("title", "") or "",
+                    "text": raw[:2500],
+                    "fetch_failed": not bool(raw),
+                    "source": _host(r.get("url", "")),
+                }
+            )
         return {"provider": "tavily", "results": results}
 
     return tavily_extract

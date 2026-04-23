@@ -17,7 +17,12 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - `GMAIL_OAUTH_TOKEN_JSON` lives in GH Secrets. Runtime refresh works — `jeeves.gmail INFO gmail sweep` fires cleanly on every dispatch.
 - **Phase 4 pipeline is fully live** (PRs #7, #8, #9, #10). `sessions/correspondence-2026-04-23.json` + `.html` are on `main`. Log signature: `classify batch N/M (≤30 msgs)` followed by a Groq render under the 12k TPM ceiling.
 - **Phase 2 tool-call bug patched** (this session, not yet shipped). `llama-index-llms-nvidia`'s `get_tool_calls_from_response` does `json.loads(tool_call.function.arguments)` without guarding against `None`. Kimi occasionally emits null args on first-turn tool calls, which raises `TypeError` and kills the FunctionAgent workflow before any search runs. Fix: `jeeves/llm.py::_build_kimi_class` subclasses NVIDIA with a None/empty/invalid-JSON-tolerant override that logs a warning and coerces to `{}`. 5 new unit tests in `tests/test_llm_factories.py`.
-- Next action: ship the `jeeves/llm.py` patch, then re-run `research.yml` on `main`. Then `write.yml` to close the chain.
+- **Phase 2 tool-result caps** (this session). After the Kimi tool-call fix shipped, the agent survived turn 1 but filled Kimi's 131k context by turn 5 via unbounded tool results (`tavily_extract` raw_content, `exa_search` 20k-char default). Capped:
+  - `tavily_extract`: max 10 URLs/call (was 20), `text` capped at 2500 chars/result.
+  - `exa_search`: `text_max_chars` default 20000 → 3000.
+  - `enrichment.fetch_article_text`: `text` capped at 3000 chars.
+  - `jeeves/llm.py` KimiNVIDIA override: partial-JSON warning downgraded to DEBUG since FunctionAgent's streaming path calls the parser on every mid-stream chunk.
+- Next action: ship this patch, re-run `research.yml`, then `write.yml` to close the chain.
 
 ## Dev branch
 

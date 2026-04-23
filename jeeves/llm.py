@@ -49,7 +49,11 @@ def _build_kimi_class():
                     try:
                         args = json.loads(raw)
                     except (TypeError, json.JSONDecodeError):
-                        log.warning(
+                        # FunctionAgent calls this parser on every streamed chunk,
+                        # so partial args like '{"query": "Edm' flood the log mid-
+                        # stream. DEBUG keeps it reachable without drowning the
+                        # signal at WARNING.
+                        log.debug(
                             "kimi tool call %s arguments not valid JSON (%r); coercing to {}",
                             tool_call.function.name, raw,
                         )

@@ -56,7 +56,7 @@ def fetch_article_text(url: str) -> dict[str, Any]:
         return base
 
     title = _extract_title(html)
-    base.update({"title": title, "text": text, "fetch_failed": False})
+    base.update({"title": title, "text": text[:3000], "fetch_failed": False})
     return base
 
 
