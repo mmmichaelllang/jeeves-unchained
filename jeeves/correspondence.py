@@ -161,6 +161,32 @@ def _trim_for_render(classified: list[ClassifiedMessage]) -> list[dict[str, Any]
     return out
 
 
+def _load_prior_briefing_text(cfg: Config) -> str:
+    """Return yesterday's rendered correspondence briefing as plain text, or
+    "" if none. Used to seed narrative continuity in the Groq render call.
+    Strips HTML tags and caps at 3000 chars to stay under the 12k TPM ceiling.
+    """
+
+    from datetime import timedelta
+
+    prior_date = cfg.run_date - timedelta(days=1)
+    canonical = cfg.correspondence_html_path(prior_date)
+    candidates = [canonical, canonical.with_name(canonical.stem + ".local.html")]
+    for path in candidates:
+        if not path.exists():
+            continue
+        try:
+            raw = path.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        # Strip HTML tags for a plain-text view; preserve paragraph breaks.
+        text = re.sub(r"</p\s*>", "\n\n", raw, flags=re.IGNORECASE)
+        text = re.sub(r"<[^>]+>", "", text)
+        text = re.sub(r"\n{3,}", "\n\n", text).strip()
+        return text[:3000]
+    return ""
+
+
 def render_with_groq(
     cfg: Config,
     classified: list[ClassifiedMessage],
@@ -176,14 +202,19 @@ def render_with_groq(
     from .llm import build_groq_llm
 
     system = (PROMPTS_DIR / "correspondence_write.md").read_text(encoding="utf-8")
+    prior_brief = _load_prior_briefing_text(cfg)
     user_payload = {
         "date": run_date_iso,
         "contacts": contacts,
         "classified": _trim_for_render(classified),
     }
+    if prior_brief:
+        user_payload["prior_briefing_text"] = prior_brief
+
     user = (
-        "Here is today's classified inbox plus the priority-contacts block. "
-        "Render the correspondence briefing now in Jeeves voice following every "
+        "Here is today's classified inbox plus the priority-contacts block"
+        + (", and yesterday's briefing text for narrative continuity" if prior_brief else "")
+        + ". Render the correspondence briefing now in Jeeves voice following every "
         "rule in the system prompt. Output HTML only, starting with <!DOCTYPE html>.\n\n"
         "```json\n"
         + json.dumps(user_payload, ensure_ascii=False, separators=(",", ":"))

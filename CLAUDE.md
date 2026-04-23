@@ -33,6 +33,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
   - **Events**: headlines harvested from `title` / `headline` / `subject` / `role` / `district` / `event` fields via `collect_headlines_from_sector`.
   - **Correspondence**: `email | <sender>` entries parsed from today's correspondence handoff text and folded into `covered_headlines` during the handoff merge.
 - **Write prompt dedup tiers** (this session). `jeeves/prompts/write_system.md` replaced its one-line dedup rule with a three-tier directive: exact match → skip entirely; substantive overlap → one-sentence skim opening *"As previously noted, Sir, …"*; genuinely new → full depth.
+- **Correspondence brief is now one integrated narrative** (this session, not yet shipped). `jeeves/prompts/correspondence_write.md` no longer mandates rigid `<h2>` subsections (Action Summary / Priority Correspondence / Family Members / Electronic Mail / Platform Note) — it asks for one flowing letter from Jeeves. Family roll-call boilerplate is banned outright: if a family member didn't write, they don't get mentioned. `render_with_groq` now also reads yesterday's `correspondence-<prev>.html`, strips tags, caps at 3000 chars, and passes it as `prior_briefing_text` so the prompt can maintain day-over-day continuity ("As previously noted, Sir, …"). New helper `_load_prior_briefing_text(cfg)` at `jeeves/correspondence.py`.
 - Next action: ship this rewrite, re-run `research.yml`, then `write.yml` to close the chain.
 
 ## Dev branch
