@@ -2,7 +2,68 @@
 
 from __future__ import annotations
 
+import json
+import logging
+
 from .config import Config
+
+log = logging.getLogger(__name__)
+
+
+def _build_kimi_class():
+    """Build a NVIDIA subclass with a None-tolerant tool-arg parser.
+
+    Kimi K2.5 hosted on NIM occasionally emits tool calls where
+    `function.arguments` is `None` instead of `"{}"`. The upstream class
+    does `json.loads(None)` and raises `TypeError`, which kills the
+    entire FunctionAgent workflow. This override treats None / empty
+    strings / unparseable JSON as `{}` and logs a warning so we can
+    spot the upstream bug in CI logs.
+    """
+
+    from llama_index.core.llms.llm import ToolSelection
+    from llama_index.llms.nvidia import NVIDIA
+
+    class KimiNVIDIA(NVIDIA):
+        def get_tool_calls_from_response(
+            self, response, error_on_no_tool_call: bool = True
+        ):
+            tool_calls = response.message.additional_kwargs.get("tool_calls", [])
+            if len(tool_calls) < 1:
+                if error_on_no_tool_call:
+                    raise ValueError(
+                        f"Expected at least one tool call, but got {len(tool_calls)} tool calls."
+                    )
+                return []
+
+            out = []
+            for tool_call in tool_calls:
+                raw = tool_call.function.arguments
+                if raw is None or raw == "":
+                    log.warning(
+                        "kimi tool call %s returned None/empty arguments; coercing to {}",
+                        tool_call.function.name,
+                    )
+                    args = {}
+                else:
+                    try:
+                        args = json.loads(raw)
+                    except (TypeError, json.JSONDecodeError):
+                        log.warning(
+                            "kimi tool call %s arguments not valid JSON (%r); coercing to {}",
+                            tool_call.function.name, raw,
+                        )
+                        args = {}
+                out.append(
+                    ToolSelection(
+                        tool_id=tool_call.id,
+                        tool_name=tool_call.function.name,
+                        tool_kwargs=args,
+                    )
+                )
+            return out
+
+    return KimiNVIDIA
 
 
 def build_kimi_llm(
@@ -19,9 +80,8 @@ def build_kimi_llm(
     calls without a ReAct shim.
     """
 
-    from llama_index.llms.nvidia import NVIDIA
-
-    return NVIDIA(
+    cls = _build_kimi_class()
+    return cls(
         model=cfg.kimi_model_id,
         api_key=cfg.nvidia_api_key,
         base_url=cfg.kimi_base_url,

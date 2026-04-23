@@ -10,15 +10,14 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Current focus
 
-**Phase 4 (correspondence) end-to-end smoke against real Gmail.** Gmail OAuth works, Kimi classification is batched (PR #7), and the sweep is now **unread-only** so Groq doesn't eat a 413 on busy inboxes. Next run should land a real briefing artifact end-to-end.
+**Phase 2 (research) first real run — working through hosted-Kimi tool-call bugs.** Phase 4 (correspondence) is fully live end-to-end: sweep → classify → render → handoff JSON + HTML committed to `main` as `sessions/correspondence-2026-04-23.*`. Phase 2 got a `TypeError: json.loads(None)` from a Kimi tool call with null arguments on its very first turn — patched in `jeeves/llm.py` via a `KimiNVIDIA` subclass that coerces None/empty/invalid arg strings to `{}`.
 
 ## Where we left off (2026-04-23)
 
 - `GMAIL_OAUTH_TOKEN_JSON` lives in GH Secrets. Runtime refresh works — `jeeves.gmail INFO gmail sweep` fires cleanly on every dispatch.
-- **Kimi batching landed** (#7). Classify now runs `N/30` batches at ~80s each instead of one 60s-timeout request. Log signature: `classify batch 1/5 (30 msgs)` etc.
-- **Sweep is unread-only + capped at 50** (this session). `sweep_recent` uses a single `is:unread newer_than:<days>d -label:spam -label:promotions` query with `max_results=50` (and `scripts/correspondence.py --max-messages` default 50). Gmail's `messages.list` returns newest-first, so the brief always covers the 50 most recent unread. Earlier unread gets silently dropped — that's intentional per user direction.
-- **Render payload trimmed** (this session). `render_with_groq` now strips no_action items to `{classification, sender, subject}` only (system prompt only requires a one-line reference for those) and serializes the user payload compact (`separators=(",",":")`) instead of `indent=2`. This was the lever after 50 messages still landed at 12,993 tokens against Groq's 12k TPM ceiling — trimming no_action + compact JSON brings it comfortably under.
-- Next action: re-run `correspondence.yml` on `main` (no dispatch flags, or with `skip_send=true` for a dry artifact grab). Expect a `correspondence-YYYY-MM-DD.html` artifact ≥1500 words + ≥5 profane asides + the handoff JSON committed back for the 12:30 UTC research cron to pick up.
+- **Phase 4 pipeline is fully live** (PRs #7, #8, #9, #10). `sessions/correspondence-2026-04-23.json` + `.html` are on `main`. Log signature: `classify batch N/M (≤30 msgs)` followed by a Groq render under the 12k TPM ceiling.
+- **Phase 2 tool-call bug patched** (this session, not yet shipped). `llama-index-llms-nvidia`'s `get_tool_calls_from_response` does `json.loads(tool_call.function.arguments)` without guarding against `None`. Kimi occasionally emits null args on first-turn tool calls, which raises `TypeError` and kills the FunctionAgent workflow before any search runs. Fix: `jeeves/llm.py::_build_kimi_class` subclasses NVIDIA with a None/empty/invalid-JSON-tolerant override that logs a warning and coerces to `{}`. 5 new unit tests in `tests/test_llm_factories.py`.
+- Next action: ship the `jeeves/llm.py` patch, then re-run `research.yml` on `main`. Then `write.yml` to close the chain.
 
 ## Dev branch
 
