@@ -154,21 +154,17 @@ def sweep_recent(
     service,
     *,
     days: int = 60,
-    unread_extra: bool = True,
     max_results: int = 150,
 ) -> list[MessagePreview]:
-    """Run the two canonical queries, dedupe by message_id, and return previews.
+    """Sweep unread messages from the last `days` days, excluding spam/promotions.
 
-    Query A: newer_than:<days>d minus spam/promotions.
-    Query B (if unread_extra): is:unread newer_than:<days>d minus spam/promotions.
+    The briefing is a daily triage of what's new — already-read mail has been
+    handled. Using `is:unread` also keeps the Kimi classify payload and the
+    Groq render payload bounded on busy accounts.
     """
 
-    q_main = f"newer_than:{days}d -label:spam -label:promotions"
-    ids = list_message_ids(service, q_main, max_results=max_results)
-
-    if unread_extra:
-        q_unread = f"is:unread newer_than:{days}d -label:spam -label:promotions"
-        ids += list_message_ids(service, q_unread, max_results=30)
+    query = f"is:unread newer_than:{days}d -label:spam -label:promotions"
+    ids = list_message_ids(service, query, max_results=max_results)
 
     seen: set[str] = set()
     previews: list[MessagePreview] = []
@@ -181,7 +177,7 @@ def sweep_recent(
             previews.append(fetch_message(service, mid))
         except Exception as e:
             log.warning("failed to fetch message %s: %s", mid, e)
-    log.info("gmail sweep: %d unique messages", len(previews))
+    log.info("gmail sweep (unread-only): %d messages", len(previews))
     return previews
 
 

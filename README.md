@@ -15,7 +15,7 @@ Python + LlamaIndex rewrite of the [jeeves-memory](https://github.com/mmmichaell
 - **Phase 1 scaffold**: done — `jeeves/` package, `scripts/` entrypoints, three live workflows, CI with pytest + dry-run smoke.
 - **Phase 2 research**: live. LlamaIndex `FunctionAgent` + Kimi K2.5 on NVIDIA NIM + four search providers (Serper, Tavily, Exa, Gemini grounded) with a quota-aware monthly ledger. Consumes `sessions/correspondence-<date>.json` into `session.correspondence` when the Phase 4 handoff file is present.
 - **Phase 3 write**: live. Groq Llama 3.3 70B renders HTML in Jeeves voice, post-processes for `COVERAGE_LOG` + QA metrics, delivers via Gmail SMTP.
-- **Phase 4 correspondence**: live. Gmail OAuth sweep (google-api-python-client, not MCP) → Kimi K2.5 classifies each message into one of six buckets → Groq Llama 3.3 70B renders the brief in Jeeves voice → SMTP send. Also writes a compact `sessions/correspondence-<date>.json` handoff that the next research run consumes.
+- **Phase 4 correspondence**: live. Gmail OAuth **unread-only** sweep (google-api-python-client, not MCP) → Kimi K2.5 classifies each message into one of six buckets (batched 30 per call to stay under NIM's read timeout) → Groq Llama 3.3 70B renders the brief in Jeeves voice → SMTP send. Also writes a compact `sessions/correspondence-<date>.json` handoff that the next research run consumes.
 
 ## Quickstart — local dry run
 
