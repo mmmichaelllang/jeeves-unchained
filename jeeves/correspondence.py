@@ -134,6 +134,33 @@ def classify_with_kimi(
     return out
 
 
+def _trim_for_render(classified: list[ClassifiedMessage]) -> list[dict[str, Any]]:
+    """Compact representation for the Groq render call.
+
+    The system prompt only asks for a one-line reference on `no_action` items,
+    so we strip their summary/suggested_action/date fields. Everything else
+    keeps full fidelity so Jeeves can narrate the action.
+    """
+
+    out: list[dict[str, Any]] = []
+    for c in classified:
+        row: dict[str, Any] = {
+            "classification": c.classification,
+            "sender": c.sender,
+            "subject": c.subject,
+        }
+        if c.classification != "no_action":
+            row["date"] = c.date
+            row["priority_contact"] = c.priority_contact
+            if c.priority_contact_label:
+                row["priority_contact_label"] = c.priority_contact_label
+            row["summary"] = c.summary
+            if c.suggested_action:
+                row["suggested_action"] = c.suggested_action
+        out.append(row)
+    return out
+
+
 def render_with_groq(
     cfg: Config,
     classified: list[ClassifiedMessage],
@@ -152,14 +179,14 @@ def render_with_groq(
     user_payload = {
         "date": run_date_iso,
         "contacts": contacts,
-        "classified": [c.__dict__ for c in classified],
+        "classified": _trim_for_render(classified),
     }
     user = (
         "Here is today's classified inbox plus the priority-contacts block. "
         "Render the correspondence briefing now in Jeeves voice following every "
         "rule in the system prompt. Output HTML only, starting with <!DOCTYPE html>.\n\n"
         "```json\n"
-        + json.dumps(user_payload, ensure_ascii=False, indent=2)
+        + json.dumps(user_payload, ensure_ascii=False, separators=(",", ":"))
         + "\n```"
     )
 
