@@ -9,8 +9,9 @@ __pycache__/
 build/
 dist/
 
-# local-only session dumps (--dry-run output, etc.)
+# local-only session + briefing dumps (--dry-run output)
 sessions/*.local.json
+sessions/*.local.html
 
 # trace output from verbose runs
 /tmp/jeeves-*.log
