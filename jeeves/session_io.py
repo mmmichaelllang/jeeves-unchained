@@ -109,5 +109,16 @@ def _current_branch(cfg: Config) -> str:
 
 
 def load_session_by_date(cfg: Config, d: date) -> SessionModel:
+    """Load a session file. Falls back to `.local.json` (dry-run output) if the
+    canonical `session-<date>.json` is absent — lets write-phase dry-runs
+    chain directly off research-phase dry-runs during local iteration.
+    """
+
     path = cfg.session_path(d)
+    if not path.exists():
+        fallback = path.with_name(path.stem + ".local.json")
+        if fallback.exists():
+            path = fallback
+        else:
+            raise FileNotFoundError(path)
     return SessionModel.model_validate(json.loads(path.read_text(encoding="utf-8")))

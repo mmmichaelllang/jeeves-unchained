@@ -1,4 +1,4 @@
-name: Jeeves — Write Phase (stub)
+name: Jeeves — Write Phase
 
 # 70 minutes after research begins. Briefing reaches Gmail around 7:30 AM PDT.
 # 6:40 AM PDT (UTC-7) / 7:40 AM PST (UTC-8)
@@ -6,14 +6,23 @@ on:
   schedule:
     - cron: '40 13 * * *'
   workflow_dispatch:
+    inputs:
+      date:
+        description: "Session date YYYY-MM-DD (blank = today UTC)"
+        required: false
+        default: ""
+      skip_send:
+        description: "Generate HTML but do not send email"
+        required: false
+        default: "false"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   write:
     runs-on: ubuntu-latest
-    timeout-minutes: 65
+    timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v4
@@ -26,10 +35,15 @@ jobs:
       - name: Sync dependencies
         run: uv sync --no-dev
 
-      - name: Run Jeeves write phase (stub)
+      - name: Run Jeeves write phase
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          JEEVES_RECIPIENT_EMAIL: ${{ vars.JEEVES_RECIPIENT_EMAIL || 'lang.mc@gmail.com' }}
         run: |
-          uv run python scripts/write.py --plan-only
+          uv run python scripts/write.py \
+            ${{ github.event.inputs.date && format('--date {0}', github.event.inputs.date) || '' }} \
+            ${{ github.event.inputs.skip_send == 'true' && '--skip-send' || '' }}

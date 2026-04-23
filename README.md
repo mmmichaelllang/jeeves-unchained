@@ -12,9 +12,9 @@ Python + LlamaIndex rewrite of the [jeeves-memory](https://github.com/mmmichaell
 
 ## Current status
 
-- **Phase 1 scaffold**: done — `jeeves/` package, `scripts/` entrypoints, three workflows (research live, write/correspondence stubbed), CI with pytest + dry-run smoke.
+- **Phase 1 scaffold**: done — `jeeves/` package, `scripts/` entrypoints, three workflows (research + write live, correspondence stubbed), CI with pytest + dry-run smoke.
 - **Phase 2 research**: end-to-end Python implementation using LlamaIndex `FunctionAgent`, Kimi K2.5 on NVIDIA NIM, and four search providers (Serper, Tavily, Exa, Gemini grounded) with a quota-aware monthly ledger.
-- **Phase 3 write**: stub only. `scripts/write.py --plan-only` loads the session JSON and prints a sector summary to prove contract stability.
+- **Phase 3 write**: live. Groq Llama 3.3 70B reads the session JSON, renders HTML in Jeeves voice using the ported scaffold + profane-aside list, post-processes for `COVERAGE_LOG` + QA metrics, and delivers via Gmail SMTP.
 - **Phase 4 correspondence**: stub only.
 
 ## Quickstart — local dry run
@@ -23,11 +23,18 @@ Python + LlamaIndex rewrite of the [jeeves-memory](https://github.com/mmmichaell
 uv sync --all-extras
 cp .env.example .env            # optional for dry-run
 uv run python scripts/research.py --dry-run --date 2026-04-23
-uv run python scripts/write.py --date 2026-04-23 --plan-only
+uv run python scripts/write.py    --dry-run --date 2026-04-23
 uv run pytest -q
 ```
 
-The dry-run uses fixture data (no network), writes to `sessions/session-2026-04-23.local.json`, and validates the result against `SessionModel`.
+Dry-runs use fixture data (no network), emit `.local.json` / `.local.html` artifacts (gitignored), and validate against `SessionModel` / the post-processing contract. Chain them: the write script falls back to `session-*.local.json` when the canonical file is absent.
+
+### Flags worth knowing
+
+- `scripts/research.py --dry-run | --limit N | --sectors a,b,c`
+- `scripts/write.py --dry-run | --skip-send | --plan-only | --max-tokens 8192`
+  - `--skip-send`: real Groq call, writes `briefing-<date>.html` to `sessions/`, no SMTP.
+  - `--plan-only`: just prints a sector summary — no model call.
 
 ## Real run
 
@@ -104,6 +111,19 @@ Top-level fields: `date, status, dedup, correspondence, weather, local_news, car
 
 Per-field truncation caps live in `jeeves/schema.py::FIELD_CAPS` and are applied automatically inside `emit_session`.
 
+## Phase 3 architecture (write)
+
+1. `Config.from_env(phase="write")` requires `GROQ_API_KEY` and `GMAIL_APP_PASSWORD` (skipped under `--dry-run` / `--skip-send` / `--plan-only`).
+2. `load_session_by_date(cfg, date)` reads `sessions/session-<date>.json` (or `.local.json` in dry-run).
+3. `generate_briefing(cfg, session)` builds a two-message chat (system = `jeeves/prompts/write_system.md`, user = the serialized session JSON) and calls Groq Llama 3.3 70B via `llama-index-llms-groq`.
+4. `postprocess_html(raw, session)` strips markdown fences, restores `<!DOCTYPE html>` if the model dropped it, ensures a valid `<!-- COVERAGE_LOG: [...] -->` comment exists (synthesizing one from anchor tags if the model forgot), and computes QA counts:
+   - word count (target ≥5000)
+   - profane-aside count (target ≥5, from the pre-approved list)
+   - banned-word hits (`in a vacuum`, `tapestry`)
+   - banned-transition hits (`Moving on,`, `Next,`, `Turning to,`, `In other news,`)
+5. `send_html(...)` delivers over `smtplib.SMTP_SSL("smtp.gmail.com", 465)` using `GMAIL_APP_PASSWORD` (app password, not OAuth).
+6. `_commit_coverage` archives the rendered HTML back to the repo so daily briefings are preserved.
+
 ## Phase 2 architecture (research)
 
 1. `Config.from_env()` collects every secret; fails fast listing all missing names at once.
@@ -118,4 +138,5 @@ Per-field truncation caps live in `jeeves/schema.py::FIELD_CAPS` and are applied
 
 ## Exit criteria
 
-- Phase 2 done when: `scripts/research.py` produces a `sessions/session-YYYY-MM-DD.json` on `main` that validates against `SessionModel`, `scripts/write.py --plan-only` reads it cleanly, and `research.yml` runs green two consecutive days with distinct URL sets.
+- **Phase 2 done when**: `scripts/research.py` produces a `sessions/session-YYYY-MM-DD.json` on `main` that validates against `SessionModel`, `scripts/write.py --plan-only` reads it cleanly, and `research.yml` runs green two consecutive days with distinct URL sets.
+- **Phase 3 done when**: `scripts/write.py` emits a ≥5000-word briefing with ≥5 profane asides, no banned words or transitions, and a valid `COVERAGE_LOG`; the email lands in the recipient inbox on schedule; the rendered HTML is archived to `sessions/briefing-YYYY-MM-DD.html` on `main`.
