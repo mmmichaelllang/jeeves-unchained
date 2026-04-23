@@ -12,10 +12,10 @@ Python + LlamaIndex rewrite of the [jeeves-memory](https://github.com/mmmichaell
 
 ## Current status
 
-- **Phase 1 scaffold**: done — `jeeves/` package, `scripts/` entrypoints, three workflows (research + write live, correspondence stubbed), CI with pytest + dry-run smoke.
-- **Phase 2 research**: end-to-end Python implementation using LlamaIndex `FunctionAgent`, Kimi K2.5 on NVIDIA NIM, and four search providers (Serper, Tavily, Exa, Gemini grounded) with a quota-aware monthly ledger.
-- **Phase 3 write**: live. Groq Llama 3.3 70B reads the session JSON, renders HTML in Jeeves voice using the ported scaffold + profane-aside list, post-processes for `COVERAGE_LOG` + QA metrics, and delivers via Gmail SMTP.
-- **Phase 4 correspondence**: stub only.
+- **Phase 1 scaffold**: done — `jeeves/` package, `scripts/` entrypoints, three live workflows, CI with pytest + dry-run smoke.
+- **Phase 2 research**: live. LlamaIndex `FunctionAgent` + Kimi K2.5 on NVIDIA NIM + four search providers (Serper, Tavily, Exa, Gemini grounded) with a quota-aware monthly ledger. Consumes `sessions/correspondence-<date>.json` into `session.correspondence` when the Phase 4 handoff file is present.
+- **Phase 3 write**: live. Groq Llama 3.3 70B renders HTML in Jeeves voice, post-processes for `COVERAGE_LOG` + QA metrics, delivers via Gmail SMTP.
+- **Phase 4 correspondence**: live. Gmail OAuth sweep (google-api-python-client, not MCP) → Kimi K2.5 classifies each message into one of six buckets → Groq Llama 3.3 70B renders the brief in Jeeves voice → SMTP send. Also writes a compact `sessions/correspondence-<date>.json` handoff that the next research run consumes.
 
 ## Quickstart — local dry run
 
@@ -36,10 +36,34 @@ Dry-runs use fixture data (no network), emit `.local.json` / `.local.html` artif
   - `--skip-send`: real Groq call, writes `briefing-<date>.html` to `sessions/`, no SMTP.
   - `--plan-only`: just prints a sector summary — no model call.
   - `--use-fixture`: skip loading a real session JSON and use the canned mock from `jeeves.testing.mocks` — useful for smoke-testing Groq output without running research first. Combine with `--skip-send` for a full real-Groq smoke test.
+- `scripts/correspondence.py --dry-run | --skip-send | --use-fixture | --days 60 | --max-messages 150`
+  - `--dry-run`: pure fixture mode — no Gmail, no model calls, no SMTP.
+  - `--use-fixture`: skip Gmail, classify + render against the canned inbox (still calls Kimi + Groq unless `--dry-run`).
+  - `--skip-send`: real Gmail + Kimi + Groq; no SMTP.
 
 ## Smoke-testing the write pipeline
 
 From the GitHub UI: **Actions → "Jeeves — Write Phase" → Run workflow → set `use_fixture = true` and `skip_send = true`**. The job renders a real Groq briefing from the canned fixture session, skips SMTP, and uploads `sessions/briefing-*.html` as an artifact so you can download and inspect it. No research quota spent, no email sent.
+
+Same pattern for Phase 4: **Actions → "Jeeves — Correspondence Phase" → Run workflow → `use_fixture = true`, `skip_send = true`**. Renders a real Kimi + Groq correspondence brief from the canned inbox, uploads the HTML as an artifact, skips SMTP.
+
+## Gmail OAuth provisioning (Phase 4)
+
+The correspondence phase reads Gmail via OAuth (not MCP). You mint a user token **once, locally**, then paste it into a GitHub secret — the workflow uses the embedded refresh token to auto-mint fresh access tokens at runtime.
+
+One-time setup:
+
+1. In [Google Cloud Console → APIs & Services](https://console.cloud.google.com/apis/credentials), enable the **Gmail API** for a project.
+2. Create an **OAuth 2.0 Client ID** of type **Desktop app**, download the JSON to your laptop (e.g. `~/Downloads/credentials.json`).
+3. Under **OAuth consent screen**, add your own Gmail address as a **Test user** so the unverified app will let you through consent.
+4. Run locally:
+   ```bash
+   uv run python scripts/gmail_auth.py --credentials ~/Downloads/credentials.json
+   ```
+   A browser window opens; consent with the Gmail account you want Jeeves to sweep. The script prints the resulting token JSON to stdout.
+5. Copy the printed JSON (single paste — it contains `refresh_token`, `client_id`, `client_secret`, `token_uri`, `scopes`) into the GitHub secret **`GMAIL_OAUTH_TOKEN_JSON`**.
+
+After that the workflow needs zero human interaction — access tokens auto-refresh from the stored refresh token.
 
 ## Real run
 
@@ -64,7 +88,7 @@ All secrets live in GitHub Secrets and are passed to workflows via `env:` blocks
 | `GOOGLE_API_KEY` | Research — Gemini grounded; also Gmail API in P4 | |
 | `GROQ_API_KEY` | Write (Groq Llama 3.3 70B) | P3 |
 | `GMAIL_APP_PASSWORD` | Write (SMTP send) | P3 |
-| `GMAIL_OAUTH_CLIENT_JSON` | Correspondence (Gmail sweep) | P4 |
+| `GMAIL_OAUTH_TOKEN_JSON` | Correspondence (Gmail sweep) | P4 — see "Gmail OAuth provisioning" above |
 | `GITHUB_TOKEN` | Committing session JSON + quota state | Auto-provided in Actions |
 | `GITHUB_REPOSITORY` | Repo coordinates for session writes | Auto in Actions; set locally |
 
@@ -145,3 +169,4 @@ Per-field truncation caps live in `jeeves/schema.py::FIELD_CAPS` and are applied
 
 - **Phase 2 done when**: `scripts/research.py` produces a `sessions/session-YYYY-MM-DD.json` on `main` that validates against `SessionModel`, `scripts/write.py --plan-only` reads it cleanly, and `research.yml` runs green two consecutive days with distinct URL sets.
 - **Phase 3 done when**: `scripts/write.py` emits a ≥5000-word briefing with ≥5 profane asides, no banned words or transitions, and a valid `COVERAGE_LOG`; the email lands in the recipient inbox on schedule; the rendered HTML is archived to `sessions/briefing-YYYY-MM-DD.html` on `main`.
+- **Phase 4 done when**: `scripts/correspondence.py` emits a ≥1500-word correspondence brief with ≥5 profane asides, the Gmail OAuth token refreshes on schedule, and the handoff JSON is picked up by the subsequent research run (observable as `session.correspondence.found=true` in the next day's session JSON).

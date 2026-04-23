@@ -1,14 +1,32 @@
-name: Jeeves — Correspondence Phase (stub)
+name: Jeeves — Correspondence Phase
 
-# Runs first so the research phase can import the correspondence draft.
+# Runs first in the daily chain so the research phase can pick up today's
+# sessions/correspondence-<date>.json before it assembles the session.
 # 5:00 AM PDT (UTC-7) / 6:00 AM PST (UTC-8)
 on:
   schedule:
     - cron: '0 12 * * *'
   workflow_dispatch:
+    inputs:
+      date:
+        description: "Run date YYYY-MM-DD (blank = today UTC)"
+        required: false
+        default: ""
+      skip_send:
+        description: "Real Gmail + Kimi + Groq, but do not send email"
+        required: false
+        default: "false"
+      use_fixture:
+        description: "Skip Gmail entirely and use the canned mock inbox (still calls Kimi + Groq unless --dry-run)"
+        required: false
+        default: "false"
+      dry_run:
+        description: "Pure fixture mode — no Gmail, no model calls, no SMTP"
+        required: false
+        default: "false"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   correspondence:
@@ -26,12 +44,43 @@ jobs:
       - name: Sync dependencies
         run: uv sync --no-dev
 
-      - name: Run Jeeves correspondence phase (stub)
+      - name: Run Jeeves correspondence phase
         env:
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-          GMAIL_OAUTH_CLIENT_JSON: ${{ secrets.GMAIL_OAUTH_CLIENT_JSON }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GMAIL_OAUTH_TOKEN_JSON: ${{ secrets.GMAIL_OAUTH_TOKEN_JSON }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          JEEVES_RECIPIENT_EMAIL: ${{ vars.JEEVES_RECIPIENT_EMAIL || 'lang.mc@gmail.com' }}
         run: |
-          uv run python scripts/correspondence.py --plan-only
+          uv run python scripts/correspondence.py \
+            ${{ github.event.inputs.date && format('--date {0}', github.event.inputs.date) || '' }} \
+            ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }} \
+            ${{ github.event.inputs.skip_send == 'true' && '--skip-send' || '' }} \
+            ${{ github.event.inputs.use_fixture == 'true' && '--use-fixture' || '' }}
+
+      - name: Commit correspondence handoff JSON + HTML
+        if: github.event.inputs.dry_run != 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if ls sessions/correspondence-*.json >/dev/null 2>&1 || ls sessions/correspondence-*.html >/dev/null 2>&1; then
+            git config user.name "jeeves-bot"
+            git config user.email "jeeves-bot@users.noreply.github.com"
+            git add sessions/correspondence-*.json sessions/correspondence-*.html 2>/dev/null || true
+            if ! git diff --cached --quiet; then
+              git commit -m "correspondence $(date -u +%Y-%m-%d)"
+              git push
+            fi
+          fi
+
+      - name: Upload correspondence HTML as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: correspondence-html
+          path: sessions/correspondence-*.html
+          if-no-files-found: ignore
+          retention-days: 14
