@@ -55,7 +55,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "'municipal' (council, schools, transit, local policy) and 'public_safety'. "
             "Public safety GEOFENCE: 3 miles from (47.810652, -122.377355). Only homicides, "
             "major assaults, armed incidents, missing persons. Reject petty crime. Use "
-            "serper_search with tbs='qdr:d' for the last-24h filter. "
+            "serper_search with tbs='qdr:d' for the last-24h filter. For each story you "
+            "plan to include, call tavily_extract on the article URL to read the actual "
+            "content — do not write findings from a headline alone. "
             "Return a JSON array of objects: [{category, source, findings, urls}, ...]."
         ),
         default=[],
@@ -92,8 +94,10 @@ SECTOR_SPECS: list[SectorSpec] = [
         instruction=(
             "Global news, today. Sources: BBC, CNN, Al Jazeera, The Guardian, NPR, "
             "Memeorandum, NYT. Use serper_search with tbs='qdr:d' plus tavily_search. "
-            "Return a JSON array of {category, source, findings, urls} — aim for 4-8 "
-            "distinct stories across the sources."
+            "After ranking your top 4-8 stories by significance, call tavily_extract "
+            "on those article URLs (batch them) to read actual content before writing "
+            "findings. Do not write a findings summary from a headline alone. "
+            "Return a JSON array of {category, source, findings, urls}."
         ),
         default=[],
     ),
@@ -104,7 +108,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Long-form intellectual journals: NYRB, New Yorker (NOT Talk of the Town), "
             "Aeon, Marginalian, Kottke, ProPublica, The Intercept, Scientific American, "
             "LRB, Arts & Letters Daily, Big Think, Jacobin, OpenSecrets. Prefer exa_search "
-            "with search_type='auto' or 'deep-lite'. "
+            "with search_type='auto' or 'deep-lite' — it returns full article text. "
+            "Read the actual article body before writing findings; exa text_max_chars=20000 "
+            "gives you up to ~3000 words. Do not summarise from the title or dek alone. "
             "Return a JSON array of {source, findings, urls}."
         ),
         default=[],
@@ -117,7 +123,10 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Pi-style pendants, AI Pin-like devices). 'teacher_ai_tools': EdTech AI for "
             "high-school English and History teachers (MagicSchool, Diffit, Brisk, etc.). "
             "'wearable_devices': lifelogging pendants, pins, smart glasses. "
-            "Return a JSON array of {category, findings, urls}, one entry per subsection."
+            "Use exa_search (returns full text) or tavily_extract after serper for each "
+            "device/tool you include — read the actual product page or article, not just "
+            "the headline. Return a JSON array of {category, findings, urls}, one entry "
+            "per subsection."
         ),
         default=[],
     ),
@@ -196,6 +205,16 @@ Prior coverage URLs (already briefed, do not revisit):
 
 Dedup guidance: if you encounter any URL in the prior list above, skip it.
 Do not fabricate sources; every URL you include must come from a tool response.
+
+**CRITICAL — read before you write:**
+Do not write findings based on headlines or snippets alone. For every article
+you plan to include in your output:
+- If found via exa_search: the result already contains full text — use it.
+- If found via serper_search or tavily_search: call tavily_extract on the
+  URL (batch up to 5 URLs per call) to read the actual content before writing
+  your findings for it. A summary based on a headline is not a summary.
+- fetch_article_text is a fallback for URLs tavily_extract cannot reach.
+Write findings only from content you have actually read, not guessed.
 
 Tool budget for this sector: 10-15 tool calls is plenty. Dispatch in parallel
 when possible, then stop calling tools and output the JSON result.
