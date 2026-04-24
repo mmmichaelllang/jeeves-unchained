@@ -16,20 +16,22 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - **NIM editor stage (meta/llama-3.3-70b-instruct, 9 calls in background threads)**. Each Groq draft immediately spawns `_invoke_nim_refine` during the next sleep. Fixes: banned words, banned transitions, bare URLs, apologetic follow-ups. Adds ~30s wall-clock.
 - **Auto-fallback**: if Groq TPD is exhausted, `_invoke_write_llm` retries on NIM. Returns `(text, used_groq: bool)`. `generate_briefing` only sleeps 65s if the *previous* call used Groq — NIM-fallback path skips all sleeps. `write.yml` timeout is 60 min.
 - **Verbatim New Yorker injection** (`_inject_newyorker_verbatim`): after stitching, replaces `<!-- NEWYORKER_CONTENT_PLACEHOLDER -->` with actual `session.newyorker.text` in `<p>` tags, wrapped in `<!-- NEWYORKER_START --> / <!-- NEWYORKER_END -->` sentinels. Deterministic — model never copies the text.
-- **OpenRouter Gemma 4 final narrative editor** (`_invoke_openrouter_narrative_edit`): runs ONCE on the full stitched+injected document. Targets: filler phrases ("a bit of a challenge", "a concerning argument", "valuable insights"), repetitive passages, non-statements, abrupt transitions. Skips NEWYORKER sentinels. Falls back silently if key absent, API fails, or response truncated. Requires `OPENROUTER_API_KEY` in GitHub Secrets; model override via `OPENROUTER_MODEL_ID` (default `google/gemma-4-27b-it:free`).
+- **OpenRouter Gemma 4 final narrative editor** (`_invoke_openrouter_narrative_edit`): runs ONCE on the full stitched+injected document. 14 editorial rules (A1–A14) cover filler, transitions, narrative cohesion, paragraph rhythm, weak openers, British wit amplification, vague attribution, and end-of-section summaries. Profanity placement (B1) handled here: exactly five asides, thematic match, no stacking. Skips NEWYORKER sentinels. Falls back silently. Requires `OPENROUTER_API_KEY`; model override via `OPENROUTER_MODEL_ID` (default `google/gemma-4-27b-it:free`). `max_tokens=16384`, timeout=360s.
 - **max_tokens=4096 default**: aligns with NIM's native output cap. Daily Groq budget: ~73k tokens (9 × ~8k) + correspondence ~9k = ~82k, under the 100k free-tier ceiling. Raising above ~5000 blows the daily budget.
 - **Full asides pool** in `jeeves/prompts/write_system.md` (~55 phrases). Two layers of anti-repetition:
   - *Day-over-day*: `_recently_used_asides(cfg, days=4)` scans `sessions/briefing-*.html` from the last 4 days.
   - *Within-run*: `generate_briefing` tracks phrases each part used via `_parse_all_asides()`, passes accumulated list to subsequent parts' system prompt via `run_used_asides=`.
-- **Part-specific dedup directives** (three-tier: exact → skip; overlap → one-sentence skim with "As previously noted, Sir"; new → full depth): PART4 for choral+toddler, PART6 for research series (e.g. Karl-Alber Studies on Triadic Ontology).
+- **Profanity moved to OpenRouter pass.** Drafts (PART1–PART8) write ZERO profane asides. The OpenRouter editor inserts exactly five, thematically placed. `recently_used_asides` is passed so it picks fresh phrases.
+- **Per-section dedup advancement protocols** (PART4 toddler, PART6 triadic+ai_systems, PART7 wearable_ai): identify specific title/model/product → check covered_headlines → one backward-reference clause if already covered → pivot to next uncovered item → if all repeat, one sentence and move on. PART4 toddler: lead with new; repeats get embedded clause only; if all repeat, brief seasonal suggestion flagged as Jeeves's own.
+- **Research sectors — mandatory article reading.** CONTEXT_HEADER has a CRITICAL block: exa results carry full text; for serper/tavily hits, call `tavily_extract` before writing findings. Reinforced in local_news, global_news, intellectual_journals, wearable_ai sector instructions.
 - `_system_prompt_for_parts` strips both `## HTML scaffold` and `## Briefing structure` blocks (`re.MULTILINE` + `^## ` lookahead).
 - **89 tests** in `tests/test_write_postprocess.py` cover the full write pipeline including refine/fallback behavior, NIM-skips-sleep path, New Yorker injection, and narrative editor fallback.
 
-## Where we left off (2026-04-24, late)
+## Where we left off (2026-04-24, very late)
 
-- **PRs #16–#24 all merged to `main`.** The 9-call render (#16, #17, #18), six quality fixes (#18), TPD budget fix + NIM auto-fallback + concurrent NIM quality-editor pass (#20), CLAUDE.md updates (#19, #21), 180s NIM timeout (#21), CI cancellation fix (#22 — conditional TPM sleep + 60 min timeout), and three-model pipeline with OpenRouter Gemma 4 narrative editor + verbatim New Yorker code fix (#23), and humanised narrative editor prompt (#24 — persona anchor, transition ban, show-don't-tell, sourcing, number rounding).
+- **PRs #16–#25 all merged to `main`.** Latest: PR #25 — Talk of Town verbatim injection fix, profanity moved to OpenRouter pass, enhanced narrative cohesion (14 editorial rules), smarter dedup for triadic studies + toddler activities, ai_systems + wearable_ai advancement protocols, British wit amplification rule (A12), mandatory article reading in research sectors.
 - **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run, otherwise the narrative editor step is silently skipped.
-- **Next step: re-run `write.yml` with `skip_send=true`** and verify: (a) `OpenRouter narrative edit [google/gemma-4-27b-it:free]` appears in logs; (b) `<!-- NEWYORKER_START -->` present in the HTML artifact (verbatim injection worked); (c) no filler phrases in the artifact ("a bit of a challenge", "a concerning argument", etc.); (d) ≥5 thematic profane asides, no apologies, no repeats; (e) no banned words/transitions; (f) weather once in Part 1 only.
+- **Next step: re-run `write.yml` with `skip_send=true`** and verify: (a) `OpenRouter narrative edit [google/gemma-4-27b-it:free]` appears in logs; (b) `<!-- NEWYORKER_START -->` present in the HTML artifact; (c) exactly ~5 profane asides (not 9–14); (d) no filler phrases; (e) triadic/ai/wearable sections advance to a new item day-over-day; (f) toddler section leads with new activity; (g) no banned words/transitions.
 - **All phases are live on `main`** (Phases 2, 3, 4 fully wired). Phase 4 handoff JSON feeds Phase 2 at cron `30 12 * * *`. Write runs at `40 13 * * *`.
 - **Phase 2 per-sector loop** (`jeeves/research_sectors.py`, `scripts/research.py::_run_sector_loop`) — 12 sectors × own FunctionAgent, ~40 min wall-clock. Merged in PR #12.
 - **Phase 4 integrated narrative** — no rigid `<h2>` subsections, no family roll-call boilerplate, day-over-day continuity via `_load_prior_briefing_text`. Merged in PR #13.
@@ -38,8 +40,8 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Dev branch
 
-- **Current**: `claude/debug-ci-pipeline-TR6xz` (merged as PRs #22 + #23)
-- Prior major work merged from: `claude/gmail-auth-bootstrap-9eYme` (#16–#21), `claude/jeeves-unchained-rewrite-auKzK` (#5)
+- **Current**: `claude/improve-dedup-triadic-studies-rEgcE` (in sync with main — all work merged via PRs #25)
+- Prior major work merged from: `claude/caveman-style-responses-G1q1c` (#25), `claude/debug-ci-pipeline-TR6xz` (#22–#23), `claude/gmail-auth-bootstrap-9eYme` (#16–#21), `claude/jeeves-unchained-rewrite-auKzK` (#5)
 
 ## Gotchas the README doesn't flag
 
