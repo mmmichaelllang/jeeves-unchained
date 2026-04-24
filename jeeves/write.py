@@ -798,7 +798,7 @@ def generate_briefing(
     cfg: Config,
     session: SessionModel,
     *,
-    max_tokens: int = 3000,
+    max_tokens: int = 4096,
 ) -> str:
     """Render the briefing in NINE Groq calls and stitch the HTML.
 

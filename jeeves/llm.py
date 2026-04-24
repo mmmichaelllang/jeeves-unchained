@@ -109,7 +109,7 @@ def build_groq_llm(cfg: Config, *, temperature: float = 0.65, max_tokens: int = 
     )
 
 
-def build_nim_write_llm(cfg: Config, *, temperature: float = 0.65, max_tokens: int = 3000):
+def build_nim_write_llm(cfg: Config, *, temperature: float = 0.65, max_tokens: int = 4096):
     """Return a LlamaIndex LLM bound to a write-capable model on NVIDIA NIM.
 
     Used as an automatic fallback when Groq's free-tier daily TPD quota is
