@@ -680,8 +680,13 @@ def _invoke_nim_write(cfg: Config, system: str, user: str, *, max_tokens: int, l
     return str(resp.message.content or "")
 
 
-def _invoke_write_llm(cfg: Config, system: str, user: str, *, max_tokens: int, label: str) -> str:
+def _invoke_write_llm(
+    cfg: Config, system: str, user: str, *, max_tokens: int, label: str
+) -> tuple[str, bool]:
     """Call Groq for the write phase; auto-fall back to NIM on daily-quota exhaustion.
+
+    Returns (text, used_groq). used_groq=False means Groq TPD was exhausted and
+    NIM handled the draft — the caller can skip the Groq TPM cooldown sleep.
 
     Groq's free-tier TPD (tokens-per-day) limit charges input_tokens +
     max_tokens_requested per call. At 100k tokens/day the 9-part pipeline
@@ -690,7 +695,7 @@ def _invoke_write_llm(cfg: Config, system: str, user: str, *, max_tokens: int, l
     retry on NVIDIA NIM (meta/llama-3.3-70b-instruct — same model family).
     """
     try:
-        return _invoke_groq(cfg, system, user, max_tokens=max_tokens, label=label)
+        return _invoke_groq(cfg, system, user, max_tokens=max_tokens, label=label), True
     except Exception as e:
         if "tokens per day" in str(e).lower():
             log.warning(
@@ -698,7 +703,7 @@ def _invoke_write_llm(cfg: Config, system: str, user: str, *, max_tokens: int, l
                 "Groq free-tier resets at midnight UTC.",
                 label, cfg.nim_write_model_id,
             )
-            return _invoke_nim_write(cfg, system, user, max_tokens=max_tokens, label=label)
+            return _invoke_nim_write(cfg, system, user, max_tokens=max_tokens, label=label), False
         raise
 
 
@@ -885,6 +890,7 @@ def generate_briefing(
     raw_drafts: dict[str, str] = {}
     refined: dict[str, str] = {}
     refine_threads: list[tuple[str, threading.Thread]] = []
+    last_used_groq = True  # assume Groq until proven otherwise
 
     def _refine_bg(label: str, draft: str) -> None:
         try:
@@ -897,15 +903,21 @@ def generate_briefing(
 
     for i, (label, sectors) in enumerate(PART_PLAN):
         if i > 0:
-            log.info("sleeping 65s before %s (TPM window cooldown)", label)
-            time.sleep(65)
+            if last_used_groq:
+                # Groq free-tier 12k TPM window — must clear before next call.
+                log.info("sleeping 65s before %s (Groq TPM window cooldown)", label)
+                time.sleep(65)
+            else:
+                # NIM handled the last draft (Groq TPD exhausted). NIM has no
+                # 12k TPM limit, so the cooldown sleep is unnecessary.
+                log.info("NIM fallback active — skipping TPM sleep before %s", label)
         part_payload = _session_subset(payload, sectors)
         base_system = _system_prompt_for_parts(
             cfg, part_label=label, run_used_asides=used_this_run
         )
         part_system = base_system + PART_INSTRUCTIONS_BY_NAME[label]
         part_user = build_user_prompt_from_payload(part_payload)
-        raw_part = _invoke_write_llm(
+        raw_part, last_used_groq = _invoke_write_llm(
             cfg, part_system, part_user, max_tokens=max_tokens, label=label
         )
         raw_drafts[label] = raw_part

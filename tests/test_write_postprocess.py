@@ -167,7 +167,7 @@ def test_nim_refine_is_called_for_each_part(monkeypatch):
     refined_labels: list[str] = []
 
     def fake_write_llm(c, sys, user, *, max_tokens, label):
-        return f"<p>draft-{label}</p><!-- PART_SENTINEL -->"
+        return f"<p>draft-{label}</p><!-- PART_SENTINEL -->", True
 
     def fake_nim_refine(c, draft, *, label):
         refined_labels.append(label)
@@ -197,7 +197,7 @@ def test_nim_refine_failure_falls_back_to_raw_draft(monkeypatch):
     session = _session()
 
     def fake_write_llm(c, sys, user, *, max_tokens, label):
-        return f"<p>raw-{label}</p>"
+        return f"<p>raw-{label}</p>", True
 
     def fake_nim_refine(c, draft, *, label):
         raise RuntimeError("NIM is down")
@@ -236,8 +236,9 @@ def test_nim_write_fallback_triggers_on_tpd_error(monkeypatch):
     monkeypatch.setattr(wmod, "_invoke_groq", fake_groq)
     monkeypatch.setattr(wmod, "_invoke_nim_write", fake_nim)
 
-    result = _invoke_write_llm(cfg, "sys", "user", max_tokens=3000, label="part2")
-    assert result == "<p>NIM output</p>"
+    text, used_groq = _invoke_write_llm(cfg, "sys", "user", max_tokens=3000, label="part2")
+    assert text == "<p>NIM output</p>"
+    assert not used_groq
     assert nim_calls == ["part2"]
 
 
@@ -258,6 +259,58 @@ def test_nim_write_fallback_does_not_trigger_on_tpm_error(monkeypatch):
     import pytest
     with pytest.raises(RuntimeError, match="tokens per minute"):
         _invoke_write_llm(cfg, "sys", "user", max_tokens=3000, label="part1")
+
+
+def test_nim_fallback_skips_groq_tpm_sleep(monkeypatch):
+    """When NIM handles a draft (Groq TPD exhausted), the 65s sleep is skipped."""
+    from jeeves.config import Config
+    from jeeves.write import generate_briefing
+
+    monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
+    cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
+    object.__setattr__(cfg, "nvidia_api_key", "test-nim-key")
+
+    session = _session()
+    sleep_calls: list[float] = []
+
+    def fake_write_llm(c, sys, user, *, max_tokens, label):
+        # Simulate: part1 uses Groq, all subsequent parts fall back to NIM.
+        used_groq = label == "part1"
+        return f"<p>{label}</p>", used_groq
+
+    def fake_nim_refine(c, draft, *, label):
+        return draft
+
+    import jeeves.write as wmod
+    import time
+    monkeypatch.setattr(wmod, "_invoke_write_llm", fake_write_llm)
+    monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
+    monkeypatch.setattr(time, "sleep", lambda s: sleep_calls.append(s))
+
+    generate_briefing(cfg, session)
+
+    # Only one sleep should have fired: the one between part1 (Groq) and part2 (NIM).
+    # Parts 3–9 see last_used_groq=False and skip the sleep.
+    assert sleep_calls == [65], f"expected exactly one 65s sleep, got {sleep_calls}"
+
+
+def test_invoke_write_llm_returns_true_when_groq_succeeds(monkeypatch):
+    """_invoke_write_llm returns used_groq=True when Groq succeeds."""
+    from jeeves.config import Config
+    from jeeves.write import _invoke_write_llm
+
+    monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
+    cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
+
+    def fake_groq(c, s, u, *, max_tokens, label):
+        return "<p>Groq output</p>"
+
+    import jeeves.write as wmod
+    monkeypatch.setattr(wmod, "_invoke_groq", fake_groq)
+
+    text, used_groq = _invoke_write_llm(cfg, "sys", "user", max_tokens=3000, label="part1")
+    assert text == "<p>Groq output</p>"
+    assert used_groq
 
 
 def test_sector_groups_partition_writable_fields_without_overlap():
