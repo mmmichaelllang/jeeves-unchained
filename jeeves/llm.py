@@ -109,7 +109,13 @@ def build_groq_llm(cfg: Config, *, temperature: float = 0.65, max_tokens: int = 
     )
 
 
-def build_nim_write_llm(cfg: Config, *, temperature: float = 0.65, max_tokens: int = 4096):
+def build_nim_write_llm(
+    cfg: Config,
+    *,
+    temperature: float = 0.65,
+    max_tokens: int = 4096,
+    timeout: float = 180.0,
+):
     """Return a LlamaIndex LLM bound to a write-capable model on NVIDIA NIM.
 
     Used as an automatic fallback when Groq's free-tier daily TPD quota is
@@ -118,6 +124,11 @@ def build_nim_write_llm(cfg: Config, *, temperature: float = 0.65, max_tokens: i
 
     Uses the same NIM endpoint and NVIDIA_API_KEY as the research phase, so
     no extra secrets are required. Override the model with NIM_WRITE_MODEL_ID.
+
+    timeout=180s per request (up from openai's 60s default) — a ~4000-char
+    briefing part on a busy NIM endpoint can take 60-120s, and the SDK's
+    auto-retry behavior means a short timeout causes spurious APITimeoutError
+    failures (observed in the wild on 2026-04-24 part 5).
     """
 
     from llama_index.llms.nvidia import NVIDIA
@@ -128,6 +139,7 @@ def build_nim_write_llm(cfg: Config, *, temperature: float = 0.65, max_tokens: i
         base_url=cfg.kimi_base_url,
         temperature=temperature,
         max_tokens=max_tokens,
+        timeout=timeout,
     )
 
 
