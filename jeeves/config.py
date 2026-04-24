@@ -76,6 +76,9 @@ class Config:
     kimi_base_url: str = "https://integrate.api.nvidia.com/v1"
     groq_model_id: str = "llama-3.3-70b-versatile"
     nim_write_model_id: str = "meta/llama-3.3-70b-instruct"
+    # OpenRouter (optional — narrative editor pass in write phase)
+    openrouter_api_key: str = ""
+    openrouter_model_id: str = "google/gemma-4-27b-it:free"
     # Recipient
     recipient_email: str = "lang.mc@gmail.com"
     # Paths
@@ -153,6 +156,10 @@ class Config:
             groq_model_id=os.environ.get("GROQ_MODEL_ID", "llama-3.3-70b-versatile"),
             nim_write_model_id=os.environ.get(
                 "NIM_WRITE_MODEL_ID", "meta/llama-3.3-70b-instruct"
+            ),
+            openrouter_api_key=os.environ.get("OPENROUTER_API_KEY", ""),
+            openrouter_model_id=os.environ.get(
+                "OPENROUTER_MODEL_ID", "google/gemma-4-27b-it:free"
             ),
             recipient_email=os.environ.get("JEEVES_RECIPIENT_EMAIL", "lang.mc@gmail.com"),
         )

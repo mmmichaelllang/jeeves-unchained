@@ -461,27 +461,19 @@ Write exactly this intro sentence, verbatim:
 > And now, Sir, I take the liberty of reading from this week's Talk of the
 > Town in The New Yorker.
 
-Then output the content of `newyorker.text` as HTML paragraphs — one
-`<p>...</p>` per paragraph break in the source text.
+Then output this EXACT comment on its own line — do NOT replace it, do NOT
+fill it in, do NOT copy `newyorker.text` yourself:
 
-**VERBATIM RULES — ZERO TOLERANCE, ZERO EXCEPTIONS:**
-- **COPY THE TEXT CHARACTER-FOR-CHARACTER.** The text in `newyorker.text`
-  is the finished article; your job is to pipe it into `<p>` tags, not
-  rewrite it.
-- Do NOT summarise. Do NOT paraphrase. Do NOT rewrite. Do NOT condense.
-  Do NOT "clean up", "improve", or modernise the prose.
-- Do NOT invent descriptive sentences about what the article is "about".
-  The article is its own text. Your job is transport, not curation.
-- Do NOT interject Jeeves commentary inside the article text. The butler's
-  voice is silent during the reading.
-- If `newyorker.text` looks like placeholder or test content (e.g., repeats
-  "Paragraph one of the mocked New Yorker article"), output it verbatim
-  anyway. The test fixtures rely on verbatim pass-through.
-- If the source has multiple paragraphs (double line breaks), preserve them
-  as separate `<p>` tags.
+```
+<!-- NEWYORKER_CONTENT_PLACEHOLDER -->
+```
 
-After the verbatim article, write ONE short closing Jeeves remark (max 25
-words, weary, no profanity, no apologies). Then add the URL link:
+The pipeline will inject the verbatim article text automatically. Your job
+is ONLY the intro sentence, the placeholder comment, the closing remark,
+and the URL link.
+
+Then write ONE short closing Jeeves remark (max 25 words, weary, no
+profanity, no apologies). Then add the URL link:
 
 ```html
 <p><a href="[newyorker.url]">[Read at The New Yorker]</a></p>
@@ -705,6 +697,147 @@ def _invoke_write_llm(
             )
             return _invoke_nim_write(cfg, system, user, max_tokens=max_tokens, label=label), False
         raise
+
+
+def _inject_newyorker_verbatim(html: str, session: SessionModel) -> str:
+    """Replace Part 9's <!-- NEWYORKER_CONTENT_PLACEHOLDER --> with actual article text.
+
+    Part 9 is instructed to output the placeholder rather than copy newyorker.text
+    itself (models copy text imperfectly). This step injects the real text
+    deterministically so it is always verbatim.
+
+    The injected content is wrapped in <!-- NEWYORKER_START --> / <!-- NEWYORKER_END -->
+    sentinel comments so the downstream narrative editor knows not to touch it.
+    """
+    if "<!-- NEWYORKER_CONTENT_PLACEHOLDER -->" not in html:
+        if session.newyorker.available:
+            log.warning(
+                "NEWYORKER_CONTENT_PLACEHOLDER missing from Part 9 output — "
+                "Talk of the Town verbatim text will not appear in the briefing."
+            )
+        return html
+
+    if not session.newyorker.available or not session.newyorker.text:
+        return html.replace("<!-- NEWYORKER_CONTENT_PLACEHOLDER -->", "")
+
+    paragraphs = [p.strip() for p in session.newyorker.text.split("\n\n") if p.strip()]
+    formatted = (
+        "<!-- NEWYORKER_START -->\n"
+        + "\n".join(f"<p>{p}</p>" for p in paragraphs)
+        + "\n<!-- NEWYORKER_END -->"
+    )
+    return html.replace("<!-- NEWYORKER_CONTENT_PLACEHOLDER -->", formatted)
+
+
+_NARRATIVE_EDIT_SYSTEM = """
+# Jeeves — Final Narrative Editor
+
+You are polishing a Jeeves butler briefing written in HTML. Improve prose quality
+while keeping all factual content and the Jeeves character voice (urbane, wry,
+precise, dry) intact.
+
+## REQUIRED: eliminate these filler phrases
+
+These phrases signal the model couldn't access the source content. Delete or
+replace every occurrence with a specific observation about the actual content.
+If a sentence contributes no information beyond the phrase itself, delete the
+sentence entirely.
+
+Banned phrases (delete or rephrase):
+- "a bit of a challenge" / "a bit of a complex"
+- "a concerning argument" / "a thought-provoking argument" / "a noteworthy argument"
+- "a complex issue" / "a complex situation"
+- "worth reading" / "certainly worth reading" / "it's worth the effort"
+- "provide(s) valuable insights" / "provide(s) fascinating insights"
+- "provide(s) a nuanced analysis"
+- "it raises important questions"
+- "It's a bit of" (hedge — cut entirely)
+- "is a bit of" (same hedge)
+
+## REQUIRED: collapse repetition
+
+If the same article, journal, book, or topic appears more than once within
+a section, keep the most specific description and delete all duplicate passages.
+Entire repeated paragraphs should be deleted, not summarised.
+
+## REQUIRED: remove non-statements
+
+Sentences whose only content is acknowledging that something exists or is
+"interesting" without stating anything concrete — delete them or replace with
+a one-clause observation about what the piece actually argues or shows.
+
+## OPTIONAL: narrative cohesion
+
+Where topic shifts feel abrupt, add a brief (one-clause) transition in the
+Jeeves voice. Do NOT add new information — only connective tissue.
+
+## HARD RULES — do not violate
+
+- Do NOT alter any HTML between <!-- NEWYORKER_START --> and <!-- NEWYORKER_END -->.
+- Do NOT change URLs, href attributes, or anchor text inside <a> tags.
+- Do NOT add new profane asides, new topics, or new factual claims.
+- Do NOT alter the sign-off block (<div class="signoff">...</div>).
+- Do NOT alter the <!-- COVERAGE_LOG: ... --> or <!-- COVERAGE_LOG_PLACEHOLDER --> comments.
+- Do NOT alter Part 1's opening greeting or weather section.
+- Output ONLY the corrected HTML. No commentary, no markdown fences.
+- If the document is malformed or does not begin with <!DOCTYPE html>,
+  output it completely unchanged.
+""".strip()
+
+
+def _invoke_openrouter_narrative_edit(cfg: Config, html: str) -> str:
+    """Run a full-document narrative quality pass via OpenRouter Gemma 4.
+
+    Targets filler phrases, repetitive passages, and non-statements that
+    the draft models produce when they can't access source content. Runs
+    on the full stitched document (after NIM per-part refine + New Yorker
+    injection) so it can catch cross-part repetition.
+
+    Falls back to the unedited document if:
+    - OPENROUTER_API_KEY is absent
+    - The API call fails for any reason
+    - The response looks truncated (doesn't contain </html>)
+    """
+    from openai import OpenAI
+
+    if not cfg.openrouter_api_key:
+        log.debug("OPENROUTER_API_KEY not set; skipping narrative edit pass")
+        return html
+
+    log.info(
+        "OpenRouter narrative edit [%s] (%d chars input)",
+        cfg.openrouter_model_id, len(html),
+    )
+    try:
+        client = OpenAI(
+            api_key=cfg.openrouter_api_key,
+            base_url="https://openrouter.ai/api/v1",
+            timeout=300.0,
+        )
+        resp = client.chat.completions.create(
+            model=cfg.openrouter_model_id,
+            messages=[
+                {"role": "system", "content": _NARRATIVE_EDIT_SYSTEM},
+                {"role": "user", "content": f"Edit the following HTML briefing:\n\n{html}"},
+            ],
+            max_tokens=8192,
+            temperature=0.3,
+        )
+        edited = (resp.choices[0].message.content or "").strip()
+        if not edited:
+            log.warning("OpenRouter narrative edit returned empty response; using original")
+            return html
+        if "</html>" not in edited.lower() and "</body>" not in edited.lower():
+            log.warning(
+                "OpenRouter narrative edit response appears truncated (%d chars); using original",
+                len(edited),
+            )
+            return html
+        log.info("OpenRouter narrative edit complete (%d chars output)", len(edited))
+        return edited
+    except Exception as exc:
+        log.warning("OpenRouter narrative edit failed (%s); using original", exc)
+        return html
 
 
 ASIDES_RECENT_WINDOW_DAYS = 4
@@ -948,6 +1081,13 @@ def generate_briefing(
         "stitched briefing: %d chars across %d parts (%s)",
         len(stitched), len(final_parts), ", ".join(str(len(p)) for p in final_parts),
     )
+
+    # Inject the verbatim New Yorker article text (Part 9 uses a placeholder).
+    stitched = _inject_newyorker_verbatim(stitched, session)
+
+    # Final narrative quality pass — removes filler, repetition, non-statements.
+    stitched = _invoke_openrouter_narrative_edit(cfg, stitched)
+
     return stitched
 
 
