@@ -54,8 +54,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument(
         "--max-tokens",
         type=int,
-        default=8192,
-        help="Groq max_completion_tokens (default 8192 — model cap).",
+        default=3000,
+        help="Groq max_completion_tokens per part (default 3000). "
+             "Each part targets 500-900 words (~700-1200 output tokens); "
+             "3000 gives a 2.5x safety margin while keeping total daily "
+             "TPD usage (~63k tokens for 9 calls) within Groq's free-tier "
+             "100k/day ceiling. max_tokens=8192 would use ~110k tokens/day "
+             "for write alone, exceeding the limit.",
     )
     p.add_argument("--verbose", action="store_true")
     return p.parse_args(argv)
