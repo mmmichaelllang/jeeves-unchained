@@ -170,6 +170,29 @@ def test_system_prompt_for_parts_strips_html_scaffold_block():
     # Persona and mandatory rules still present.
     assert "You are **Jeeves**" in trimmed
     assert "Deduplication" in trimmed
+    # The asides pool stays in by default (content-generation parts need it).
+    assert "Pre-approved profane butler asides" in trimmed
+    assert "clusterfuck of biblical proportions" in trimmed
+
+
+def test_system_prompt_for_part9_strips_asides_pool():
+    """Part 9 is a verbatim pass-through of the New Yorker article — it
+    generates no profane asides of its own. Keeping the ~3000-char asides
+    pool in its system prompt would crowd out the 4000-char article's token
+    budget. Scoping: rules that don't apply are omitted, not compressed."""
+    part9 = _system_prompt_for_parts(part_label="part9")
+    # Asides pool and Horrific Slips directive both gone.
+    assert "Pre-approved profane butler asides" not in part9
+    assert "Horrific Slips" not in part9
+    # But core rules like zero-fabrication, banned-words, etc. remain.
+    assert "Zero fabrication" in part9
+    assert "Banned words" in part9
+    assert "You are **Jeeves**" in part9
+
+    # Content-generation parts still get the full pool.
+    part2 = _system_prompt_for_parts(part_label="part2")
+    assert "Pre-approved profane butler asides" in part2
+    assert "Horrific Slips" in part2
 
 
 def test_parse_all_asides_returns_full_original_pool():
@@ -254,12 +277,26 @@ def test_system_prompt_has_no_avoid_list_without_history(tmp_path, monkeypatch):
     assert "Recently used asides" not in _system_prompt_for_parts()
 
 
-def test_part_plan_has_eight_slots_covering_all_session_fields():
+def test_part_plan_has_nine_slots_covering_all_session_fields():
     from jeeves.schema import SessionModel
     from jeeves.write import PART_PLAN
 
-    assert len(PART_PLAN) == 8
+    assert len(PART_PLAN) == 9
     covered = {field for _, fields in PART_PLAN for field in fields}
     assert covered == set(SessionModel.model_fields.keys()) - {
         "date", "status", "dedup",
     }, f"PART_PLAN should cover every researched + correspondence field; got {covered}"
+
+
+def test_part_plan_gives_newyorker_its_own_slot():
+    """Sector 7 (Talk of the Town) must have its own call so the verbatim
+    article pass-through gets the full TPM budget. Previously it shared a
+    slot with vault_insight and the model paraphrased the article to fit."""
+    from jeeves.write import PART_PLAN
+
+    newyorker_slots = [name for name, fields in PART_PLAN if "newyorker" in fields]
+    assert len(newyorker_slots) == 1
+    name = newyorker_slots[0]
+    # newyorker should be alone in its slot.
+    fields = dict(PART_PLAN)[name]
+    assert fields == ["newyorker"], f"newyorker must ride alone; got {fields}"
