@@ -10,14 +10,14 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Current focus
 
-**Phase 3 (write) — three-call render to clear Groq free-tier TPM.** After two rounds of payload trimming failed to fit under Groq's 12k TPM ceiling on `llama-3.3-70b-versatile` free tier (richer per-sector research output from Phase 2 always landed ≥13k tokens), the write phase now splits into three sequential Groq calls with a 65s sleep between each. Per-call estimate: ~9.5k / 7.5k / 10k tokens. Total wall-clock ~3 min.
+**Phase 3 (write) — eight-call render with anti-repetition asides.** Per user direction: full pipeline (all seven sector descriptions + full ~55-phrase profane-aside pool) stays intact; only the user payload is split to fit Groq's free-tier 12k TPM. The write phase now makes EIGHT sequential Groq calls with 65s sleeps between each, so total Phase 3 wall-clock ≈ 9 minutes (accepted per "3AM cron, no time pressure" direction).
 
-- Part 1: Sectors 1-2 (Domestic Sphere + Calendar) → opens the HTML, emits `<!DOCTYPE html>` through the `<h1>`, closes with `<!-- PART1 END -->`.
-- Part 2: Sector 3 (Intellectual Currents) → raw paragraphs only.
-- Part 3: Sectors 4-7 (Specific Enquiries / Wearable / Library / Talk of the Town) → closes with sign-off + `<!-- COVERAGE_LOG_PLACEHOLDER -->` + `</body></html>`.
-- `_stitch_parts` cleans sentinels, strips any leaked DOCTYPE/head/body/h1 from continuation parts, and ensures exactly one opening + closing.
-- `_system_prompt_for_parts` strips the "## HTML scaffold" section from the base prompt since the part-specific instructions now carry the structure.
-- 5 new tests in `tests/test_write_postprocess.py` cover `_session_subset`, `_stitch_parts` (happy path + continuation-wrapper leak), `_system_prompt_for_parts`, and sector-group partition integrity.
+- **8-part split** (`PART_PLAN` in `jeeves/write.py`): correspondence+weather → local_news → career → family+global_news → intellectual_journals+enriched_articles → triadic+ai_systems → uap+wearable_ai → vault_insight+newyorker (+signoff+coverage placeholder). All parts estimated <11.5k tokens. `_stitch_parts` assembles the final HTML.
+- **Full asides pool restored** in `jeeves/prompts/write_system.md` (the PR #14 trim was reverted). Full list is ~55 phrases.
+- **Semantic-match directive strengthened**: the `Horrific Slips` rule now explicitly lists thematic buckets (professional dysfunction / scheduling / weather / technical / personal / geopolitical → matched phrase clusters), bans decorative or floating asides, and bans aside-as-topic-sentence. Every aside must be meaningfully connected to the specific content it's commenting on.
+- **Anti-repetition (day-over-day)**: `_recently_used_asides(cfg, days=4)` scans `sessions/briefing-*.html` from the last 4 days and flags every pre-approved phrase Jeeves has actually deployed. `_system_prompt_for_parts(cfg)` appends a "Recently used asides — DO NOT reuse" block listing those phrases. Full pool stays visible so Jeeves can still pick thematically; the avoid-list just vetoes yesterday's favorites. No randomization (random sampling breaks thematic matching).
+- `_system_prompt_for_parts` still strips the "## HTML scaffold" block (each PART_INSTRUCTIONS provides its own explicit scaffold, and leaving the generic one in would confuse the model).
+- 11 tests in `tests/test_write_postprocess.py` now cover the full anti-repetition mechanism, PART_PLAN coverage, and the stitch path.
 
 ## Where we left off (2026-04-23)
 
