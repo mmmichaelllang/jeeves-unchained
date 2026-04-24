@@ -128,7 +128,13 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Deep research: relational ontologies, triadic logic, quantum perichoresis, "
             "non-linear triadic dynamics, trinitarianism in contemporary metaphysics. "
             "Use exa_search with search_type='deep' or 'deep-reasoning' for multi-step "
-            "synthesis. Return {findings: 'long-form prose, 500-1000 chars', urls: [...]}."
+            "synthesis. IMPORTANT: the same series (e.g. Karl-Alber 'Studies on Triadic "
+            "Ontology') may appear in prior coverage. Prefer to find the NEXT uncovered "
+            "volume, paper, or author — check prior_urls and avoid repeating what is there. "
+            "Begin your findings prose with the specific TITLE and AUTHOR of each paper or "
+            "volume discussed so that covered-headline matching works correctly. "
+            "Return {findings: 'long-form prose 500-1000 chars, opening with title/author "
+            "of each item covered', urls: [...]}."
         ),
         default={"findings": "", "urls": []},
     ),

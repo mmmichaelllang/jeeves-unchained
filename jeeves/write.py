@@ -311,19 +311,38 @@ Your scope — write ONLY about these:
 - Toddler activities for Piper from `family.toddler`.
 - Global / geopolitical news from `global_news`.
 
-**Dedup check (REQUIRED for choral and toddler items):** Before writing any
-choral audition or toddler activity, check `dedup.covered_headlines`. Apply
-the three-tier rule:
-- Exact match (same ensemble name / programme / activity title) → skip
-  entirely; do NOT re-describe it.
-- Substantive overlap (same ensemble or recurring programme, new instalment)
-  → one sentence only: *"As previously noted, Sir, [ensemble/activity]…"*
-  then move on.
-- Genuinely new → cover in full.
-If every choral and toddler item in today's payload is already covered, note
-it briefly ("The choral calendar is unchanged from our previous briefing,
-Sir.") and proceed to global news. Do NOT pad with general observations about
-choral or toddler life to compensate for the lack of new material.
+**Choral dedup (REQUIRED):** Before writing any choral audition, check
+`dedup.covered_headlines`.
+- Exact match (same ensemble, same audition date) → one clause only:
+  *"The [ensemble] audition we noted last time is still open."* Move on.
+- New ensemble or new audition window → cover in full (dates, repertoire,
+  contact). If nothing new: one sentence, then proceed.
+
+**Toddler activities — always surface something new (CRITICAL):**
+
+Toddler activities repeat heavily week over week (story times, open gyms,
+swim classes, library drop-ins). The job is NOT to rehearse the calendar.
+The job is to find the one genuinely new thing and briefly acknowledge the
+recurring ones.
+
+1. **Acknowledge repeats quickly**: for each toddler item in `family.toddler`
+   that appears in `dedup.covered_headlines`, write a single embedded clause:
+   *"[Activity] is on again at [venue]"* — not a sentence by itself, just a
+   brief parenthetical woven into the new material.
+
+2. **Lead with what is new**: identify the item in `family.toddler` that does
+   NOT appear in `covered_headlines`. Cover it fully: what it is, where, when,
+   why it is a good fit for Piper at 2 years old.
+
+3. **If everything is a repeat**: write two sentences acknowledging the
+   repetition, then add ONE brief Jeeves suggestion (clearly framed as his
+   recommendation, not researched material): a seasonal outdoor activity, a
+   new museum drop-in, a creative idea suited to a two-year-old in the Pacific
+   Northwest. Keep it to 2 sentences. Do NOT invent specific event listings.
+
+4. **Never pad**: do not describe the general value of toddler socialisation,
+   the developmental importance of play, or other generic observations. If the
+   data is thin, be thin. Move to global news.
 
 Aim for ~700-900 words. No profane asides in draft — the final editor adds them.
 
@@ -361,21 +380,39 @@ Your scope — write ONLY about these:
 - Theological physics / triadic ontology, from `triadic_ontology`.
 - AI systems research, from `ai_systems`.
 
-**Dedup check (REQUIRED for research series and publications):** Before
-writing about any item from `triadic_ontology` or `ai_systems`, check
-`dedup.covered_headlines`. Research series recur in the feed — the same
-volume, paper, or series (e.g., "Karl-Alber series Studies on Triadic
-Ontology and Trinitarian Philosophy") may appear in the payload day after
-day. Apply the three-tier rule strictly:
-- Exact match (same title / volume / paper already in covered_headlines) →
-  skip entirely. Do NOT re-explain or re-summarise it.
-- Substantive overlap (new instalment / follow-up to a known series) → one
-  sentence: *"As previously noted, Sir, the [series/paper]…"*
-- Genuinely new → cover in full.
-If nothing in `triadic_ontology` is new, acknowledge this in one sentence
-and move on to `ai_systems`. Do NOT invent new developments.
+**Triadic ontology — dedup with advancement (CRITICAL):**
 
-Aim for ~600-800 words. No profane asides in draft — the final editor adds them.
+Research on triadic ontology often returns the same series (e.g., "Studies
+on Triadic Ontology and Trinitarian Philosophy," "Karl-Alber series") day
+after day. Follow this exact logic:
+
+1. **Identify specific titles**: scan `triadic_ontology.findings` for any
+   named paper, book, volume, or series title (e.g., "Vol. 3", "Chapter 4",
+   a specific author's monograph, a journal article title).
+
+2. **Check coverage**: for each identified title, look for it (or a close
+   match) in `dedup.covered_headlines`.
+
+3. **If the primary study is already covered**:
+   - Open with a single backward-reference sentence: *"The [series/title]
+     continues, Sir — we reviewed [Volume/Chapter N] last time."*
+   - Then pivot immediately to the NEXT most recent or most notable item
+     from `triadic_ontology.findings` that does NOT appear in
+     `covered_headlines`. Cover that one in full depth (250–350 words).
+   - If the findings discuss only the one already-covered study: write two
+     sentences of context ("The series advances but nothing materially new
+     has surfaced since our last review") and move on to `ai_systems`.
+
+4. **If the study is genuinely new**: cover it in full (300-400 words) —
+   the argument, the method, the stakes for Mister Lang's research interests.
+
+5. **Never re-explain a covered study from scratch.** A reader who already
+   knows the Karl-Alber series does not need the abstract again. Give them
+   the delta, not the whole thing.
+
+**AI systems dedup:** apply the same three-tier logic for `ai_systems`.
+
+Aim for ~600-800 words total for this part. No profane asides in draft.
 
 When done, emit `<!-- PART6 END -->` and STOP. Do NOT close outer tags.
 """
@@ -871,6 +908,70 @@ appear outside Sector 1, delete them. Entire repeated paragraphs: gone.
 Do NOT invent stories, embellishments, or personalisations that insert the
 reader, their family, or their pets into news stories or published articles.
 Filter the text through the cynical editorial voice; do not add invented plot.
+
+### A10. PARAGRAPH RHYTHM — vary it deliberately
+
+A briefing written by nine isolated LLM calls produces nine blocks of
+uniform, medium-length paragraphs. This is the clearest tell of machine
+authorship. Break the pattern:
+
+- After a long analytical paragraph (5+ sentences), follow with a short
+  punchy one (1-2 sentences). Let it land.
+- Use a one-sentence paragraph at the end of a section for emphasis or
+  ironic punctuation — not as a summary, but as a gut-punch or a dry aside.
+- If three consecutive paragraphs are the same approximate length, break
+  the third one in two or merge it with the second.
+- Sentence length should also vary within paragraphs: mix short declarative
+  sentences with longer periodic ones that build to a point.
+
+### A11. OPENING SENTENCES — plunge in
+
+Section-opening sentences that begin "The [institution/topic] has…" or
+"In [place], the…" are to be rewritten. So are openings that name the
+topic as a subject before doing anything interesting with it.
+
+Good opening sentences start with the most surprising, specific, or
+concrete detail. They do not announce the topic; they demonstrate it.
+
+Bad: "The Edmonds City Council has been discussing the redevelopment of the
+     waterfront area."
+Good: "Twelve million dollars, a contested permit, and three years of public
+      hearings — and the Edmonds waterfront is still a parking lot."
+
+Rewrite the weakest section-opening sentences to drop the reader into the
+material rather than introducing it from a distance.
+
+### A12. CUT WASTED QUALIFIERS
+
+Delete every instance of these weakening words without exception:
+"somewhat", "rather", "quite", "very", "fairly", "a little", "to some
+extent", "in some ways", "largely", "generally speaking", "for the most
+part", "relatively", "increasingly", "notably", "interestingly", "simply".
+
+These words do nothing. A thing is either X or it isn't. If you're not
+sure it's X, pick a word that is sure. Never hedge with an adverb.
+
+### A13. SPECIFICITY — name names, or cut the attribution
+
+When the draft writes "officials", "researchers", "experts", "analysts",
+"sources", "observers", or "critics" without naming them, fix it:
+- If a specific name appears anywhere in the surrounding paragraph or
+  section, use it.
+- If no name is available: cut the attribution entirely and state the
+  claim directly ("The budget projection is fiction" not "Experts say the
+  budget projection may be optimistic").
+- "Officials say" means nothing. Delete or replace with the fact itself.
+
+### A14. DELETE END-OF-SECTION SUMMARIES
+
+Sections that end with a sentence like "Overall, this represents a
+significant development in…" or "In summary, the situation continues to
+evolve" or "It remains to be seen whether…" — delete those closing
+sentences entirely.
+
+The last thing a section should say is the most specific, concrete, or
+interesting thing in it — not a restated generalisation. Let the last
+fact or observation be the full stop. Do not recap what was just read.
 
 ## PART B — PROFANE ASIDES (exactly five)
 
