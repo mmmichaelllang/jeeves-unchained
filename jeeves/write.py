@@ -600,6 +600,64 @@ def _invoke_groq(cfg: Config, system: str, user: str, *, max_tokens: int, label:
     return str(resp.message.content or "")
 
 
+_REFINE_SYSTEM = """
+# Jeeves Write — Quality Editor Pass
+
+You are reviewing an HTML fragment from a butler briefing written in Jeeves's
+voice. Your role is quality enforcement only. Fix the issues below where
+present, then output the corrected HTML. Do NOT add new content.
+
+## Fix these issues
+
+1. **Banned words**: Replace "in a vacuum" or "tapestry" with a natural
+   alternative that fits the surrounding prose.
+2. **Banned transitions**: Replace "Moving on,", "Next,", "Turning to,", or
+   "In other news," with natural alternatives ("Closer to home…", "Meanwhile…",
+   "I note with interest…", or begin the topic directly).
+3. **Bare URLs**: Any raw "https://..." appearing in prose text (not inside an
+   `href` attribute) must be wrapped: `<a href="URL">natural description</a>`.
+4. **Apologetic phrases**: Remove "I do beg your pardon, Sir", "pardon my
+   language", "if you'll excuse the expression", "if I may say so", or any
+   variant apologising for profanity. The aside stands alone.
+5. **Untethered asides**: If a profane aside floats without clear connection to
+   the specific content it's commenting on, tighten the surrounding prose to
+   make the connection explicit. Do not move or remove the aside.
+
+## Hard rules
+
+- Output ONLY the corrected HTML. No commentary, no markdown fences.
+- Do NOT add new content, new asides, new anchor tags, or new paragraphs.
+- Do NOT change existing anchor URLs.
+- Do NOT alter verbatim quoted text (e.g. New Yorker article body).
+- If nothing needs fixing, output the HTML unchanged.
+""".strip()
+
+
+def _invoke_nim_refine(cfg: Config, draft_html: str, *, label: str) -> str:
+    """Run a targeted quality-editor pass on a draft HTML fragment via NIM.
+
+    Uses a short focused system prompt (not the full write system) at lower
+    temperature — the task is edit/fix, not creative generation. Falls back
+    to the raw draft if NIM is unavailable or the call fails.
+    """
+    from llama_index.core.base.llms.types import ChatMessage, MessageRole
+
+    from .llm import build_nim_write_llm
+
+    if not cfg.nvidia_api_key:
+        log.debug("NVIDIA_API_KEY not set; skipping refine for [%s]", label)
+        return draft_html
+
+    llm = build_nim_write_llm(cfg, temperature=0.2, max_tokens=4096)
+    user = f"Edit the following HTML fragment:\n\n{draft_html}"
+    log.info("NIM refine [%s] (%d chars draft)", label, len(draft_html))
+    resp = llm.chat([
+        ChatMessage(role=MessageRole.SYSTEM, content=_REFINE_SYSTEM),
+        ChatMessage(role=MessageRole.USER, content=user),
+    ])
+    return str(resp.message.content or draft_html)
+
+
 def _invoke_nim_write(cfg: Config, system: str, user: str, *, max_tokens: int, label: str) -> str:
     from llama_index.core.base.llms.types import ChatMessage, MessageRole
 
@@ -800,41 +858,48 @@ def generate_briefing(
     *,
     max_tokens: int = 4096,
 ) -> str:
-    """Render the briefing in NINE Groq calls and stitch the HTML.
+    """Render the briefing in NINE Groq calls, each refined by a NIM pass.
 
-    Free-tier Groq `on_demand` is 12k TPM on llama-3.3-70b. The full system
-    prompt (persona + rules + full profane-aside pool + coverage-log + output
-    rules) plus per-part instructions runs ~10k chars on its own, leaving
-    little headroom for a rich session in one call. Splitting into 9 narrow
-    calls keeps each request's system + user payload comfortably under the
-    limit. Policy: safety and quality over wall-clock — split further rather
-    than compress applicable instructions.
+    Architecture — two-model pipeline:
+    1. Groq (llama-3.3-70b-versatile) drafts each part sequentially with 65s
+       TPM-cooldown sleeps between calls. ~10 min total.
+    2. NVIDIA NIM (meta/llama-3.3-70b-instruct) runs a targeted quality-editor
+       pass on each draft immediately after it's produced, in a background
+       thread. The refine thread runs during the next 65s Groq sleep, so it
+       adds ~0s to the wall-clock in the common case.
 
-    Part 9 (verbatim New Yorker pass-through) gets a slimmer system prompt
-    with the profane-asides pool stripped, because that part generates no
-    asides of its own and the ~3000-char pool would crowd out the article
-    text's token budget.
-
-    Sleep 65s between calls to let Groq's rolling 60s TPM window clear.
-    Total wall-clock: ~10 minutes.
+    Fallback chain per part:
+    - If Groq TPD is exhausted → NIM generates the draft instead.
+    - If NIM refine fails for any reason → raw Groq draft is used; the
+      briefing still ships, the refine failure is logged as a warning.
+    - If NVIDIA_API_KEY is absent → refine is silently skipped.
     """
 
+    import threading
     import time
 
     payload = _trim_session_for_prompt(session)
     aside_pool = _parse_all_asides()
     used_this_run: list[str] = []
 
-    parts: list[str] = []
+    raw_drafts: dict[str, str] = {}
+    refined: dict[str, str] = {}
+    refine_threads: list[tuple[str, threading.Thread]] = []
+
+    def _refine_bg(label: str, draft: str) -> None:
+        try:
+            refined[label] = _invoke_nim_refine(cfg, draft, label=label)
+        except Exception as exc:
+            log.warning(
+                "NIM refine failed for [%s] (%s); using raw draft", label, exc
+            )
+            refined[label] = draft
+
     for i, (label, sectors) in enumerate(PART_PLAN):
         if i > 0:
             log.info("sleeping 65s before %s (TPM window cooldown)", label)
             time.sleep(65)
         part_payload = _session_subset(payload, sectors)
-        # Per-part base system: pass label so pass-through parts get the
-        # slimmer variant with the inapplicable asides rules stripped.
-        # Pass used_this_run so each part avoids phrases already deployed
-        # earlier in the same briefing (within-run dedup).
         base_system = _system_prompt_for_parts(
             cfg, part_label=label, run_used_asides=used_this_run
         )
@@ -843,18 +908,33 @@ def generate_briefing(
         raw_part = _invoke_write_llm(
             cfg, part_system, part_user, max_tokens=max_tokens, label=label
         )
-        parts.append(raw_part)
-        # Track which pre-approved asides this part used so later parts avoid
-        # repeating them (within-run dedup on top of day-over-day dedup).
+        raw_drafts[label] = raw_part
+
+        # Track asides for within-run dedup before launching the refine thread.
         if label not in _NO_ASIDE_PARTS:
             for phrase in aside_pool:
                 if phrase in raw_part and phrase not in used_this_run:
                     used_this_run.append(phrase)
 
-    stitched = _stitch_parts(*parts)
+        # Fire-and-forget NIM refine; runs during the next 65s Groq sleep.
+        t = threading.Thread(target=_refine_bg, args=(label, raw_part), daemon=True)
+        t.start()
+        refine_threads.append((label, t))
+
+    # Wait for any refine threads that are still running (typically only the
+    # last part, since earlier threads finish during the inter-part sleeps).
+    log.info("waiting for NIM quality-editor passes to complete…")
+    for label, t in refine_threads:
+        t.join(timeout=120)
+        if t.is_alive():
+            log.warning("NIM refine timed out for [%s]; using raw draft", label)
+            refined.setdefault(label, raw_drafts[label])
+
+    final_parts = [refined.get(label, raw_drafts[label]) for label, _ in PART_PLAN]
+    stitched = _stitch_parts(*final_parts)
     log.info(
         "stitched briefing: %d chars across %d parts (%s)",
-        len(stitched), len(parts), ", ".join(str(len(p)) for p in parts),
+        len(stitched), len(final_parts), ", ".join(str(len(p)) for p in final_parts),
     )
     return stitched
 

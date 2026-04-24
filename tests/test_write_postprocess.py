@@ -154,6 +154,65 @@ def test_stitch_strips_continuation_wrapper_if_model_leaks_it():
     assert "<p>1</p>" in out and "<p>2</p>" in out and "<p>3</p>" in out
 
 
+def test_nim_refine_is_called_for_each_part(monkeypatch):
+    """generate_briefing fires a NIM refine pass for every PART_PLAN slot."""
+    from jeeves.config import Config
+    from jeeves.write import generate_briefing
+
+    monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
+    cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
+    object.__setattr__(cfg, "nvidia_api_key", "test-nim-key")
+
+    session = _session()
+    refined_labels: list[str] = []
+
+    def fake_write_llm(c, sys, user, *, max_tokens, label):
+        return f"<p>draft-{label}</p><!-- PART_SENTINEL -->"
+
+    def fake_nim_refine(c, draft, *, label):
+        refined_labels.append(label)
+        return draft.replace("draft", "refined")
+
+    import jeeves.write as wmod
+    monkeypatch.setattr(wmod, "_invoke_write_llm", fake_write_llm)
+    monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
+    # Suppress sleeps
+    import time
+    monkeypatch.setattr(time, "sleep", lambda s: None)
+
+    html = generate_briefing(cfg, session)
+    assert set(refined_labels) == {name for name, _ in wmod.PART_PLAN}
+    assert "refined" in html
+
+
+def test_nim_refine_failure_falls_back_to_raw_draft(monkeypatch):
+    """If NIM refine raises, generate_briefing uses the raw Groq draft."""
+    from jeeves.config import Config
+    from jeeves.write import generate_briefing
+
+    monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
+    cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
+    object.__setattr__(cfg, "nvidia_api_key", "test-nim-key")
+
+    session = _session()
+
+    def fake_write_llm(c, sys, user, *, max_tokens, label):
+        return f"<p>raw-{label}</p>"
+
+    def fake_nim_refine(c, draft, *, label):
+        raise RuntimeError("NIM is down")
+
+    import jeeves.write as wmod
+    import time
+    monkeypatch.setattr(wmod, "_invoke_write_llm", fake_write_llm)
+    monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
+    monkeypatch.setattr(time, "sleep", lambda s: None)
+
+    html = generate_briefing(cfg, session)
+    # Raw drafts must be in the output even though refine failed.
+    assert "raw-part1" in html
+
+
 def test_nim_write_fallback_triggers_on_tpd_error(monkeypatch):
     """_invoke_write_llm falls back to NIM when Groq raises a TPD error."""
     from jeeves.config import Config
