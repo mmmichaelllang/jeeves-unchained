@@ -313,6 +313,129 @@ def test_invoke_write_llm_returns_true_when_groq_succeeds(monkeypatch):
     assert used_groq
 
 
+def test_inject_newyorker_verbatim_replaces_placeholder():
+    """_inject_newyorker_verbatim swaps the placeholder for real article paragraphs."""
+    from jeeves.write import _inject_newyorker_verbatim
+
+    session = _session()
+    # Ensure the fixture has New Yorker content.
+    assert session.newyorker.available
+    assert session.newyorker.text
+
+    html = "<div><!-- NEWYORKER_CONTENT_PLACEHOLDER --></div>"
+    result = _inject_newyorker_verbatim(html, session)
+
+    assert "<!-- NEWYORKER_CONTENT_PLACEHOLDER -->" not in result
+    assert "<!-- NEWYORKER_START -->" in result
+    assert "<!-- NEWYORKER_END -->" in result
+    # At least the first paragraph of the article text appears verbatim.
+    first_para = session.newyorker.text.split("\n\n")[0].strip()
+    assert first_para in result
+
+
+def test_inject_newyorker_verbatim_noop_when_no_placeholder():
+    """_inject_newyorker_verbatim returns html unchanged when placeholder is absent."""
+    from jeeves.write import _inject_newyorker_verbatim
+
+    session = _session()
+    html = "<p>no placeholder here</p>"
+    assert _inject_newyorker_verbatim(html, session) == html
+
+
+def test_inject_newyorker_verbatim_removes_placeholder_when_unavailable():
+    """When newyorker.available=False the placeholder is removed, not filled."""
+    from jeeves.write import _inject_newyorker_verbatim
+    from jeeves.schema import NewYorker
+
+    session = _session()
+    object.__setattr__(session, "newyorker", NewYorker(available=False))
+    html = "<div><!-- NEWYORKER_CONTENT_PLACEHOLDER --></div>"
+    result = _inject_newyorker_verbatim(html, session)
+    assert "<!-- NEWYORKER_CONTENT_PLACEHOLDER -->" not in result
+    assert "<!-- NEWYORKER_START -->" not in result
+
+
+def test_narrative_edit_skipped_when_no_key(monkeypatch):
+    """_invoke_openrouter_narrative_edit returns html unchanged when key is absent."""
+    from jeeves.config import Config
+    from jeeves.write import _invoke_openrouter_narrative_edit
+
+    monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
+    cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
+    # openrouter_api_key defaults to "" — no key set.
+    assert cfg.openrouter_api_key == ""
+
+    html = "<p>some html</p>"
+    assert _invoke_openrouter_narrative_edit(cfg, html) == html
+
+
+def test_narrative_edit_called_in_generate_briefing(monkeypatch):
+    """generate_briefing invokes the OpenRouter narrative editor when key is set."""
+    from jeeves.config import Config
+    from jeeves.write import generate_briefing
+
+    monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
+    cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
+    object.__setattr__(cfg, "openrouter_api_key", "test-or-key")
+
+    session = _session()
+    edit_calls: list[str] = []
+
+    def fake_write_llm(c, sys, user, *, max_tokens, label):
+        return f"<p>{label}</p>", True
+
+    def fake_nim_refine(c, draft, *, label):
+        return draft
+
+    def fake_narrative_edit(c, html):
+        edit_calls.append(html)
+        return html.replace("<p>", "<p data-edited='true'>")
+
+    import jeeves.write as wmod
+    import time
+    monkeypatch.setattr(wmod, "_invoke_write_llm", fake_write_llm)
+    monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
+    monkeypatch.setattr(wmod, "_invoke_openrouter_narrative_edit", fake_narrative_edit)
+    monkeypatch.setattr(time, "sleep", lambda s: None)
+
+    html = generate_briefing(cfg, session)
+    assert len(edit_calls) == 1, "narrative editor should be called exactly once"
+    assert "data-edited='true'" in html
+
+
+def test_narrative_edit_fallback_on_api_failure(monkeypatch):
+    """_invoke_openrouter_narrative_edit falls back to original html on API failure."""
+    import sys
+    import types
+    from jeeves.config import Config
+    from jeeves.write import _invoke_openrouter_narrative_edit
+
+    monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
+    cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
+    object.__setattr__(cfg, "openrouter_api_key", "test-or-key")
+
+    # Inject a fake openai module whose OpenAI constructor raises.
+    class FakeClient:
+        def __init__(self, *a, **kw):
+            raise RuntimeError("simulated network error")
+
+    fake_openai = types.ModuleType("openai")
+    fake_openai.OpenAI = FakeClient
+    monkeypatch.setitem(sys.modules, "openai", fake_openai)
+
+    html = "<!DOCTYPE html><html><body><p>original</p></body></html>"
+    result = _invoke_openrouter_narrative_edit(cfg, html)
+    assert result == html
+
+
+def test_part9_instructions_use_placeholder():
+    """PART9_INSTRUCTIONS tells the model to output the placeholder, not copy text."""
+    from jeeves.write import PART9_INSTRUCTIONS
+    assert "<!-- NEWYORKER_CONTENT_PLACEHOLDER -->" in PART9_INSTRUCTIONS
+    assert "COPY THE TEXT CHARACTER-FOR-CHARACTER" not in PART9_INSTRUCTIONS
+    assert "VERBATIM RULES" not in PART9_INSTRUCTIONS
+
+
 def test_sector_groups_partition_writable_fields_without_overlap():
     all_parts = PART1_SECTORS + PART2_SECTORS + PART3_SECTORS
     assert len(all_parts) == len(set(all_parts)), "sector appears in multiple parts"
