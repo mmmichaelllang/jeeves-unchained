@@ -27,7 +27,15 @@ class BriefingResult:
     banned_transition_hits: list[str]
 
 
-BANNED_WORDS = ["in a vacuum", "tapestry"]
+BANNED_WORDS = [
+    "in a vacuum",
+    "tapestry",
+    # Apologetic recovery phrases — the profane asides stand alone.
+    "I do beg your pardon, Sir",
+    "pardon my language",
+    "if you'll excuse the expression",
+    "if I may say so",
+]
 BANNED_TRANSITIONS = ["Moving on,", "Next,", "Turning to,", "In other news,"]
 # Lower-cased fragments drawn from the pre-approved aside list. Used to count asides.
 PROFANE_FRAGMENTS = [
@@ -129,23 +137,27 @@ def build_user_prompt_from_payload(payload: dict[str, Any]) -> str:
     )
 
 
-# -- Eight-call render (free-tier 12k TPM ceiling) --
+# -- Nine-call render (free-tier 12k TPM ceiling) --
 #
 # llama-3.3-70b on Groq's free `on_demand` tier caps at 12k TPM. The full
-# system prompt (persona + rules + all seven sector descriptions + full
-# profane-aside pool + coverage-log + output rules) is ~11.7k chars
-# (~7.8k tokens) on its own — there's no headroom for a rich session JSON
-# in one call. We keep the system prompt intact and split the user payload
-# across EIGHT sequential Groq calls with a 65s sleep between each so the
-# rolling 60s TPM window clears. ~9 min total wall-clock.
+# system prompt (persona + rules + full profane-aside pool + coverage-log +
+# output rules) plus per-part instructions runs ~10k chars (~7.7k tokens)
+# on its own — there's no headroom for a rich session JSON in one call.
+# We keep the system prompt intact and split the user payload across NINE
+# sequential Groq calls with a 65s sleep between each so the rolling 60s TPM
+# window clears. ~10 min total wall-clock. Policy: safety and quality over
+# wall-clock; split further rather than compress instructions.
 #
 # Each PART handles one slice of the briefing. The first opens the document;
 # the last closes it with the sign-off and the coverage-log placeholder.
+# Parts 8 and 9 are split so the verbatim New Yorker article gets its own
+# full token budget — preventing the model from "helpfully" summarising or
+# inventing content to compensate for a crowded payload.
 
-# (name, session_field_list). The 8-slot plan balances per-part user-payload
+# (name, session_field_list). The 9-slot plan balances per-part user-payload
 # chars so no call creeps above the free-tier 12k TPM ceiling. Heaviest fields
-# (local_news, career, ai_systems) each get their own slot; smaller fields are
-# paired.
+# (local_news, career, ai_systems, newyorker) each get their own slot; smaller
+# fields are paired.
 PART_PLAN: list[tuple[str, list[str]]] = [
     ("part1", ["correspondence", "weather"]),
     ("part2", ["local_news"]),
@@ -154,7 +166,8 @@ PART_PLAN: list[tuple[str, list[str]]] = [
     ("part5", ["intellectual_journals", "enriched_articles"]),
     ("part6", ["triadic_ontology", "ai_systems"]),
     ("part7", ["uap", "wearable_ai"]),
-    ("part8", ["vault_insight", "newyorker"]),
+    ("part8", ["vault_insight"]),
+    ("part9", ["newyorker"]),
 ]
 
 # Back-compat aliases — a few tests import PART1_SECTORS et al.
@@ -167,9 +180,9 @@ PART1_INSTRUCTIONS = """
 
 ---
 
-## PART 1 of 8 — render instructions
+## PART 1 of 9 — render instructions
 
-You are writing PART 1 of an eight-part briefing. Output the full HTML opening
+You are writing PART 1 of a nine-part briefing. Output the full HTML opening
 (`<!DOCTYPE html>` through `<body>` and the `<div class="container">` wrapper),
 the `<h1>` with today's full weekday date, then:
 
@@ -183,149 +196,306 @@ has already been laid out in full, Sir, but the salient matters are these…"*
 and condense `correspondence.text` to roughly 400 words in Jeeves's voice.
 If `fallback_used=true`, summarize naturally without that opener.
 
-Aim for ~600-800 words. 1 profane aside. When Sector 1 opening is complete,
+**Hard prohibitions — do NOT violate:**
+- NEVER use the words "in a vacuum" or "tapestry".
+- NEVER use the transitions "Moving on,", "Next,", "Turning to,", or "In other news,".
+  These are banned. If you need to change topics, use "Closer to home…",
+  "I note with interest…", "The situation in…", "Sir, you may wish to know…",
+  "Meanwhile…", or simply begin the topic directly.
+- NEVER append apologetic recovery phrases to profane asides. BANNED follow-ups:
+  "— I do beg your pardon, Sir", "pardon my language", "if you'll excuse the
+  expression", "if I may say so", or any variant. The aside stands alone.
+  Jeeves does not apologise for the language; Mister Lang is no longer
+  scandalised.
+
+Aim for ~600-800 words. 1 profane aside (thematically matched to the content
+it comments on; no apologetic follow-up). When Sector 1 opening is complete,
 emit the literal comment `<!-- PART1 END -->` and STOP.
 
 Do NOT write local_news yet — Part 2 handles it. Do NOT write the sign-off.
 Do NOT close `</div>`, `</body>`, or `</html>`. Later parts continue the document.
 """
 
-PART2_INSTRUCTIONS = """
+# Shared continuation rules prepended to parts 2–9.  Parts 2–9 are strict
+# continuations of the document Part 1 opened; the model must NOT reopen
+# with a greeting, must NOT re-cover topics from other parts, must obey
+# the banned-word / banned-transition list, and must NEVER append an
+# apologetic recovery phrase after a profane aside.
+CONTINUATION_RULES = """
 
----
+**CONTINUATION RULES — CRITICAL, DO NOT VIOLATE:**
 
-## PART 2 of 8 — render instructions
-
-You are CONTINUING a briefing. Part 1 opened the HTML and covered the greeting,
-correspondence summary, and weather. You do NOT rewrite any of that.
-
-Output ONLY Sector 1's local-news material: municipal / Edmonds items from
-`local_news` whose category is municipal/civic/development, then public-safety
-items from `local_news` that satisfy the 3-mile geofence (3 miles from
-47.810652, -122.377355; serious incidents only). Raw HTML paragraphs. NO
-`<!DOCTYPE html>`, NO `<head>`, NO `<body>`, NO new `<h1>`.
-
-Aim for ~500-700 words. When done, emit `<!-- PART2 END -->` and STOP.
-Do NOT close outer tags. Later parts continue.
+1. NO greeting. You are mid-document. Do NOT write "Good morning, Mister Lang"
+   or any variant. Part 1 already greeted. Open DIRECTLY with a transition
+   into your first assigned topic.
+2. STAY IN YOUR LANE. Write ONLY about the sectors/fields listed below. Do
+   NOT reference, summarize, preview, or even mention topics from other
+   parts (e.g., weather, correspondence, local news, career, family, global
+   news, journals, triadic ontology, AI systems, UAP, wearables, library
+   stacks, New Yorker) unless that topic IS in your assigned list.
+3. No greeting, no "Good day", no date, no weather note, no summary of
+   earlier parts. No "as we continue" or "as we proceed" meta-commentary.
+4. BANNED WORDS (never use): "in a vacuum", "tapestry".
+5. BANNED TRANSITIONS (never use): "Moving on,", "Next,", "Turning to,",
+   "In other news,". Use instead: "Closer to home…", "I note with interest…",
+   "The situation in…", "Sir, you may wish to know…", "Meanwhile…", or
+   just begin the topic directly.
+6. NO APOLOGIES AFTER PROFANE ASIDES. The asides stand alone. Never append
+   "— I do beg your pardon, Sir", "pardon my language", "if you'll excuse
+   the expression", "if I may say so", or any apologetic recovery phrase.
+   The profanity is intentional; Jeeves does not disclaim it.
+7. Raw HTML paragraphs only. NO `<!DOCTYPE html>`, NO `<head>`, NO `<body>`,
+   NO new `<h1>`.
+8. NO BARE URLs IN PROSE. Every external URL must be wrapped in an `<a href>`
+   anchor with natural-language anchor text. Never show raw "https://..." in
+   body text. Write: `<a href="URL">The Guardian reports…</a>` — not
+   "See https://..." or "Source: https://...".
+9. NO WEATHER. The weather forecast is owned exclusively by Part 1. Any
+   weather mention in Part 2 through Part 9 is a violation.
 """
 
-PART3_INSTRUCTIONS = """
+
+PART2_INSTRUCTIONS = CONTINUATION_RULES + """
 
 ---
 
-## PART 3 of 8 — render instructions
+## PART 2 of 9 — local news
 
-You are CONTINUING a briefing. Parts 1-2 already covered Sector 1.
+Part 1 opened the HTML and covered the greeting, correspondence, and weather.
+You pick up from there.
 
-Output ONLY the teaching-jobs portion of Sector 2 — The Domestic Calendar,
-drawn from `career`. This is the job-board sweep for HS English / History
-openings within ~30 miles of Edmonds. Raw HTML paragraphs only. No DOCTYPE/
-head/body/h1.
+Your scope — write ONLY about these:
+- Municipal / Edmonds items from `local_news` whose category is
+  municipal/civic/development.
+- Public-safety items from `local_news` that satisfy the 3-mile geofence
+  (3 miles from 47.810652, -122.377355) AND are serious (homicide, major
+  assault, armed incident, missing person). Reject petty crime and traffic
+  stops. State clearly when nothing qualifies.
 
-Aim for ~500-700 words. 1 profane aside (match the tone of any bureaucratic
-dysfunction you encounter in the listings). When done, emit `<!-- PART3 END -->`
-and STOP. Do NOT close outer tags.
+Aim for ~500-700 words. 1 profane aside, thematically matched (e.g.,
+bureaucratic dysfunction → institutional-dysfunction asides; traffic chaos →
+scheduling-chaos asides). Missing persons or fatal incidents get NO profane
+aside — treat with sober gravity.
+
+When done, emit `<!-- PART2 END -->` and STOP. Do NOT close outer tags.
 """
 
-PART4_INSTRUCTIONS = """
+PART3_INSTRUCTIONS = CONTINUATION_RULES + """
 
 ---
 
-## PART 4 of 8 — render instructions
+## PART 3 of 9 — teaching jobs
 
-You are CONTINUING a briefing. Parts 1-3 covered Sector 1 plus the career
-portion of Sector 2.
+Parts 1-2 covered Sector 1 (greeting, correspondence, weather, local news).
+You pick up from there.
 
-Output the rest of Sector 2 (family: choral auditions from `family.choir`,
-toddler activities from `family.toddler`) followed by the global-news
-portion of Sector 3, drawn from `global_news`. Raw HTML paragraphs only.
-No DOCTYPE/head/body/h1.
+Your scope — write ONLY about these:
+- HS English / History teaching openings within ~30 miles of Edmonds,
+  drawn from `career`. This is a job-board sweep.
 
-Aim for ~700-900 words. 1-2 profane asides. When done, emit `<!-- PART4 END -->`
-and STOP. Do NOT close outer tags.
+Aim for ~500-700 words. 1 profane aside, thematically matched to any
+bureaucratic dysfunction in the listings (institutional-dysfunction bucket).
+
+When done, emit `<!-- PART3 END -->` and STOP. Do NOT close outer tags.
 """
 
-PART5_INSTRUCTIONS = """
+PART4_INSTRUCTIONS = CONTINUATION_RULES + """
 
 ---
 
-## PART 5 of 8 — render instructions
+## PART 4 of 9 — family + global news
 
-You are CONTINUING a briefing. Parts 1-4 covered Sectors 1-2 and the global-
-news portion of Sector 3.
+Parts 1-3 covered Sector 1 and the career portion of Sector 2.
+You pick up from there.
 
-Output ONLY the intellectual-journals / long-form portion of Sector 3, drawn
-from `intellectual_journals` and deepened where possible with `enriched_articles`.
-Raw HTML paragraphs only. No DOCTYPE/head/body/h1.
+Your scope — write ONLY about these:
+- Choral auditions for Mrs. Lang from `family.choir`.
+- Toddler activities for Piper from `family.toddler`.
+- Global / geopolitical news from `global_news`.
 
-Aim for ~600-800 words. When done, emit `<!-- PART5 END -->` and STOP.
-Do NOT close outer tags.
+**Dedup check (REQUIRED for choral and toddler items):** Before writing any
+choral audition or toddler activity, check `dedup.covered_headlines`. Apply
+the three-tier rule:
+- Exact match (same ensemble name / programme / activity title) → skip
+  entirely; do NOT re-describe it.
+- Substantive overlap (same ensemble or recurring programme, new instalment)
+  → one sentence only: *"As previously noted, Sir, [ensemble/activity]…"*
+  then move on.
+- Genuinely new → cover in full.
+If every choral and toddler item in today's payload is already covered, note
+it briefly ("The choral calendar is unchanged from our previous briefing,
+Sir.") and proceed to global news. Do NOT pad with general observations about
+choral or toddler life to compensate for the lack of new material.
+
+Aim for ~700-900 words. 1-2 profane asides, thematically matched
+(geopolitics → geopolitical bucket: thundercunts, dog-fuckery, festering
+wound, clusterfuck of biblical proportions).
+
+When done, emit `<!-- PART4 END -->` and STOP. Do NOT close outer tags.
 """
 
-PART6_INSTRUCTIONS = """
+PART5_INSTRUCTIONS = CONTINUATION_RULES + """
 
 ---
 
-## PART 6 of 8 — render instructions
+## PART 5 of 9 — intellectual journals
 
-You are CONTINUING a briefing. Parts 1-5 covered Sectors 1-3.
+Parts 1-4 covered Sectors 1-2 and the global-news portion of Sector 3.
+You pick up from there.
 
-Output the triadic-ontology and AI-systems portion of Sector 4 — Specific
-Enquiries. Use `triadic_ontology` and `ai_systems`. Raw HTML paragraphs only.
-No DOCTYPE/head/body/h1.
+Your scope — write ONLY about these:
+- Long-form pieces from `intellectual_journals`, deepened where possible
+  with `enriched_articles` (use enriched article text only if the URL
+  appears in `intellectual_journals`).
 
-Aim for ~600-800 words. 1 profane aside. When done, emit `<!-- PART6 END -->`
-and STOP. Do NOT close outer tags.
+Aim for ~600-800 words. Profane asides optional and thematically matched.
+
+When done, emit `<!-- PART5 END -->` and STOP. Do NOT close outer tags.
 """
 
-PART7_INSTRUCTIONS = """
+PART6_INSTRUCTIONS = CONTINUATION_RULES + """
 
 ---
 
-## PART 7 of 8 — render instructions
+## PART 6 of 9 — triadic ontology + AI systems
 
-You are CONTINUING a briefing. Parts 1-6 covered Sectors 1-3 plus the triadic
-and AI-systems portion of Sector 4.
+Parts 1-5 covered Sectors 1-3. You pick up from there.
 
-Output the UAP portion of Sector 4 (from `uap`), then Sector 5 — Wearable
-Intelligence (from `wearable_ai`, all three subcategories: AI voice hardware,
-teacher AI tools, wearable devices). Raw HTML paragraphs only. No DOCTYPE/
-head/body/h1.
+Your scope — write ONLY about these:
+- Theological physics / triadic ontology, from `triadic_ontology`.
+- AI systems research, from `ai_systems`.
 
-Aim for ~700-900 words. 1 profane aside. When done, emit `<!-- PART7 END -->`
-and STOP. Do NOT close outer tags. Part 8 delivers Library Stacks, Talk of
-the Town, and the sign-off.
+**Dedup check (REQUIRED for research series and publications):** Before
+writing about any item from `triadic_ontology` or `ai_systems`, check
+`dedup.covered_headlines`. Research series recur in the feed — the same
+volume, paper, or series (e.g., "Karl-Alber series Studies on Triadic
+Ontology and Trinitarian Philosophy") may appear in the payload day after
+day. Apply the three-tier rule strictly:
+- Exact match (same title / volume / paper already in covered_headlines) →
+  skip entirely. Do NOT re-explain or re-summarise it.
+- Substantive overlap (new instalment / follow-up to a known series) → one
+  sentence: *"As previously noted, Sir, the [series/paper]…"*
+- Genuinely new → cover in full.
+If nothing in `triadic_ontology` is new, acknowledge this in one sentence
+and move on to `ai_systems`. Do NOT invent new developments.
+
+Aim for ~600-800 words. 1 profane aside, thematically matched (technical /
+infrastructure bucket for AI failures; professional-dysfunction bucket for
+research-community follies).
+
+When done, emit `<!-- PART6 END -->` and STOP. Do NOT close outer tags.
 """
 
-PART8_INSTRUCTIONS = """
+PART7_INSTRUCTIONS = CONTINUATION_RULES + """
 
 ---
 
-## PART 8 of 8 — render instructions
+## PART 7 of 9 — UAP + wearables
 
-You are CONTINUING a briefing. Parts 1-7 covered Sectors 1-5.
+Parts 1-6 covered Sectors 1-3 plus the triadic/AI portion of Sector 4.
+You pick up from there.
 
-Output, in this exact order:
+Your scope — write ONLY about these:
+- UAP disclosure material from `uap`.
+- Wearable Intelligence from `wearable_ai` — all three subcategories
+  (AI voice hardware, teacher AI tools, wearable devices).
 
-1. Sector 6 — From the Library Stacks, ONLY if `vault_insight.available === true`.
-   Introduction: *"I have been, as is my habit, browsing the library stacks in
-   the small hours, Sir, and came across something rather arresting…"* Present
-   `vault_insight.insight` in Jeeves's voice at roughly 200 words. Reference
-   with *"Drawn from your notes on [topic]…"* — never expose `note_path`.
-   Close with one wry (non-profane) Jeeves aside.
+Aim for ~700-900 words. 1 profane aside, thematically matched (institutional
+stonewalling → dysfunction bucket; hardware failures → technical bucket).
 
-2. Sector 7 — Talk of the Town, ONLY if `newyorker.available === true` (MUST
-   be last). Introduction: *"And now, Sir, I take the liberty of reading from
-   this week's Talk of the Town in The New Yorker."* Output `newyorker.text`
-   verbatim and in full — every word, every paragraph, as HTML `<p>` tags.
-   One brief weary closing Jeeves remark. End with the URL as
-   `<a href="[newyorker.url]">[Read at The New Yorker]</a>`.
+When done, emit `<!-- PART7 END -->` and STOP. Do NOT close outer tags.
+Parts 8 and 9 deliver Library Stacks, Talk of the Town, and the sign-off.
+"""
 
-If both Sector 6 and Sector 7 are unavailable, write a single brief sentence
-acknowledging the slim morning from the library and the press.
+PART8_INSTRUCTIONS = CONTINUATION_RULES + """
 
-After the content, emit the closing signoff block AND the coverage-log
-placeholder AND the outer closing tags:
+---
+
+## PART 8 of 9 — Library Stacks (Sector 6)
+
+**PART 8 SCOPE — CRITICAL:** Your payload contains ONLY `vault_insight`.
+Write ONLY about Library Stacks. DO NOT re-cover any earlier sector — any
+mention of weather, correspondence, local news, career, family, global news,
+journals, triadic ontology, AI systems, UAP, or wearables is a hallucination.
+DO NOT write the Talk of the Town intro or article here — Part 9 handles
+that. DO NOT write the sign-off — Part 9 handles that.
+
+### If `vault_insight.available === true`:
+
+Open with: *"I have been, as is my habit, browsing the library stacks in the
+small hours, Sir, and came across something rather arresting…"*
+
+Then present `vault_insight.insight` in Jeeves's voice, at roughly 200 words.
+Reference with *"Drawn from your notes on [topic]…"* — never expose
+`note_path`. Close this section with one wry (non-profane) Jeeves aside.
+
+### If `vault_insight.available !== true`:
+
+Output a single empty `<p>` element (`<p></p>`) and STOP. Do NOT invent
+library-stacks content. Do NOT reach into other topics. Do NOT greet or
+sign off. Just emit the placeholder and the sentinel below.
+
+### Closing sentinel
+
+When done (either the Library Stacks paragraph or the empty placeholder),
+emit `<!-- PART8 END -->` and STOP. Do NOT close `</div>`, `</body>`, or
+`</html>`. Part 9 handles that.
+"""
+
+PART9_INSTRUCTIONS = CONTINUATION_RULES + """
+
+---
+
+## PART 9 of 9 — Talk of the Town (Sector 7) + sign-off + closing tags
+
+**PART 9 SCOPE — CRITICAL:** Your payload contains ONLY `newyorker`. Your
+entire output for this part is: (a) the Talk of the Town section if
+available, (b) the sign-off block, (c) the coverage-log placeholder, and
+(d) the outer closing tags. DO NOT re-cover any earlier sector or topic.
+DO NOT greet Mister Lang. DO NOT summarise the day.
+
+### 1. Talk of the Town — Sector 7 (ONLY if `newyorker.available === true`)
+
+Write exactly this intro sentence, verbatim:
+
+> And now, Sir, I take the liberty of reading from this week's Talk of the
+> Town in The New Yorker.
+
+Then output the content of `newyorker.text` as HTML paragraphs — one
+`<p>...</p>` per paragraph break in the source text.
+
+**VERBATIM RULES — ZERO TOLERANCE, ZERO EXCEPTIONS:**
+- **COPY THE TEXT CHARACTER-FOR-CHARACTER.** The text in `newyorker.text`
+  is the finished article; your job is to pipe it into `<p>` tags, not
+  rewrite it.
+- Do NOT summarise. Do NOT paraphrase. Do NOT rewrite. Do NOT condense.
+  Do NOT "clean up", "improve", or modernise the prose.
+- Do NOT invent descriptive sentences about what the article is "about".
+  The article is its own text. Your job is transport, not curation.
+- Do NOT interject Jeeves commentary inside the article text. The butler's
+  voice is silent during the reading.
+- If `newyorker.text` looks like placeholder or test content (e.g., repeats
+  "Paragraph one of the mocked New Yorker article"), output it verbatim
+  anyway. The test fixtures rely on verbatim pass-through.
+- If the source has multiple paragraphs (double line breaks), preserve them
+  as separate `<p>` tags.
+
+After the verbatim article, write ONE short closing Jeeves remark (max 25
+words, weary, no profanity, no apologies). Then add the URL link:
+
+```html
+<p><a href="[newyorker.url]">[Read at The New Yorker]</a></p>
+```
+
+### 2. If `newyorker.available !== true`:
+
+Write a single brief sentence acknowledging the slim morning from the
+press. No profanity, no invention, no greetings.
+
+### 3. Sign-off and closing tags
+
+Regardless of the New Yorker section, emit exactly this closing block after
+the content above:
 
 ```html
 <div class="signoff">
@@ -350,6 +520,7 @@ PART_INSTRUCTIONS_BY_NAME: dict[str, str] = {
     "part6": PART6_INSTRUCTIONS,
     "part7": PART7_INSTRUCTIONS,
     "part8": PART8_INSTRUCTIONS,
+    "part9": PART9_INSTRUCTIONS,
 }
 
 
@@ -491,22 +662,39 @@ def _recently_used_asides(cfg: Config, days: int = ASIDES_RECENT_WINDOW_DAYS) ->
     return used
 
 
-def _system_prompt_for_parts(cfg: Config | None = None) -> str:
+# Parts that do NOT generate profane asides in their output (pass-through
+# transport parts). For these we strip the ~3000-char asides pool + the
+# Horrific Slips directive from the base system prompt — those rules don't
+# apply here, and keeping them wastes 2300+ tokens we need for user payload.
+# Scoping, not compression: applicable instructions stay; inapplicable ones go.
+_NO_ASIDE_PARTS = frozenset({"part9"})
+
+
+def _system_prompt_for_parts(
+    cfg: Config | None = None,
+    part_label: str | None = None,
+    run_used_asides: list[str] | None = None,
+) -> str:
     """Build a per-call system prompt.
 
-    Two transforms:
+    Transforms applied to the raw ``write_system.md``:
 
     1. Strip the "## HTML scaffold" block — each PART_INSTRUCTIONS appendix
        provides its own explicit scaffold, so keeping the generic block in
        the base prompt would only confuse the model (two competing scaffolds).
-    2. If `cfg` is provided and we can find recent briefings on disk, append
-       a "recently used — DO NOT reuse" directive listing the asides Jeeves
-       has actually deployed in the last few days. The full pool stays in
-       the prompt; we just flag which phrases are stale. This is the anti-
-       repetition lever while preserving semantic/thematic matching.
+    2. Strip the "## Briefing structure" block — each PART_INSTRUCTIONS already
+       specifies which sectors to write and which fields to use.
+    3. If ``part_label`` is a pass-through part (``part9``), also strip the
+       Horrific Slips directive and the pre-approved asides pool. That part
+       produces no asides of its own — the rules don't apply and the ~3000-char
+       block would eat the token budget we need for the verbatim article.
+    4. If ``cfg`` is provided and we find recent briefings on disk, append a
+       "recently used — DO NOT reuse" directive listing the asides Jeeves has
+       actually deployed in the last few days. The full pool stays visible
+       (for parts that use it); we just flag which phrases are stale.
 
-    Everything else — persona, mandatory rules, all seven sector descriptions,
-    coverage-log rules, final output rules — stays verbatim.
+    Everything else — persona, mandatory rules, coverage-log rules, final
+    output rules — stays verbatim.
     """
     import re as _re
 
@@ -519,24 +707,43 @@ def _system_prompt_for_parts(cfg: Config | None = None) -> str:
     base = _re.sub(
         r"## HTML scaffold.*?(?=^## |\Z)", "", base, count=1, flags=_FLAGS,
     )
-    # Strip the sector-descriptions block — each PART_INSTRUCTIONS already
-    # specifies which sectors to write and which data fields to use.  The full
-    # seven-sector narrative costs ~2800 chars (~2155 tokens) on every call and
-    # is redundant given the per-part instructions.
     base = _re.sub(
         r"## Briefing structure.*?(?=^## |\Z)", "", base, count=1, flags=_FLAGS,
     )
 
-    if cfg is not None:
-        used = _recently_used_asides(cfg)
-        if used:
-            avoid_line = " | ".join(f'"{p}"' for p in used)
+    if part_label in _NO_ASIDE_PARTS:
+        # Strip the Horrific Slips bullet (within "## Mandatory style rules")
+        # and the "### Pre-approved profane butler asides" subsection below it.
+        base = _re.sub(
+            r"- \*\*Horrific Slips \(required\)\.\*\*.*?(?=^- \*\*|^## |^### |\Z)",
+            "",
+            base,
+            count=1,
+            flags=_FLAGS,
+        )
+        base = _re.sub(
+            r"### Pre-approved profane butler asides.*?(?=^## |\Z)",
+            "",
+            base,
+            count=1,
+            flags=_FLAGS,
+        )
+
+    if part_label not in _NO_ASIDE_PARTS:
+        # Combine within-run used asides with day-over-day history.
+        all_avoid: list[str] = list(run_used_asides or [])
+        if cfg is not None:
+            for p in _recently_used_asides(cfg):
+                if p not in all_avoid:
+                    all_avoid.append(p)
+        if all_avoid:
+            avoid_line = " | ".join(f'"{p}"' for p in all_avoid)
             base = base.rstrip() + (
                 "\n\n### Recently used asides — DO NOT reuse in today's briefing\n\n"
-                "The following asides already appeared in Jeeves's briefings over "
-                f"the last {ASIDES_RECENT_WINDOW_DAYS} days. Pick different phrases "
-                "from the full pool above — same thematic matching rules apply, "
-                "just a different word choice:\n\n"
+                "The following asides appeared in earlier parts of today's briefing "
+                f"or in Jeeves's briefings over the last {ASIDES_RECENT_WINDOW_DAYS} "
+                "days. Pick a fresh phrase from the full pool above — same thematic "
+                "matching rules apply, just a different word choice:\n\n"
                 f"{avoid_line}\n"
             )
 
@@ -549,29 +756,30 @@ def generate_briefing(
     *,
     max_tokens: int = 8192,
 ) -> str:
-    """Render the briefing in EIGHT Groq calls and stitch the HTML.
+    """Render the briefing in NINE Groq calls and stitch the HTML.
 
     Free-tier Groq `on_demand` is 12k TPM on llama-3.3-70b. The full system
-    prompt (persona + rules + all seven sector descriptions + full profane-
-    aside pool + coverage-log + output rules) is ~11.7k chars on its own,
-    leaving no headroom for a rich session in one call. Splitting into 8
-    narrow calls keeps each request's system + user payload comfortably
-    under the limit.
+    prompt (persona + rules + full profane-aside pool + coverage-log + output
+    rules) plus per-part instructions runs ~10k chars on its own, leaving
+    little headroom for a rich session in one call. Splitting into 9 narrow
+    calls keeps each request's system + user payload comfortably under the
+    limit. Policy: safety and quality over wall-clock — split further rather
+    than compress applicable instructions.
 
-    Each call gets a *different* random sample of the profane-aside pool so
-    Jeeves doesn't default to the same 3 phrases every day.
+    Part 9 (verbatim New Yorker pass-through) gets a slimmer system prompt
+    with the profane-asides pool stripped, because that part generates no
+    asides of its own and the ~3000-char pool would crowd out the article
+    text's token budget.
 
     Sleep 65s between calls to let Groq's rolling 60s TPM window clear.
-    Total wall-clock: ~9 minutes.
+    Total wall-clock: ~10 minutes.
     """
 
     import time
 
     payload = _trim_session_for_prompt(session)
-    # Build the per-call base system prompt once; all 8 calls see the same
-    # "recently used — DO NOT reuse" appendix so Jeeves avoids yesterday's
-    # favorites consistently across parts.
-    base_system = _system_prompt_for_parts(cfg)
+    aside_pool = _parse_all_asides()
+    used_this_run: list[str] = []
 
     parts: list[str] = []
     for i, (label, sectors) in enumerate(PART_PLAN):
@@ -579,11 +787,25 @@ def generate_briefing(
             log.info("sleeping 65s before %s (TPM window cooldown)", label)
             time.sleep(65)
         part_payload = _session_subset(payload, sectors)
+        # Per-part base system: pass label so pass-through parts get the
+        # slimmer variant with the inapplicable asides rules stripped.
+        # Pass used_this_run so each part avoids phrases already deployed
+        # earlier in the same briefing (within-run dedup).
+        base_system = _system_prompt_for_parts(
+            cfg, part_label=label, run_used_asides=used_this_run
+        )
         part_system = base_system + PART_INSTRUCTIONS_BY_NAME[label]
         part_user = build_user_prompt_from_payload(part_payload)
-        parts.append(
-            _invoke_groq(cfg, part_system, part_user, max_tokens=max_tokens, label=label)
+        raw_part = _invoke_groq(
+            cfg, part_system, part_user, max_tokens=max_tokens, label=label
         )
+        parts.append(raw_part)
+        # Track which pre-approved asides this part used so later parts avoid
+        # repeating them (within-run dedup on top of day-over-day dedup).
+        if label not in _NO_ASIDE_PARTS:
+            for phrase in aside_pool:
+                if phrase in raw_part and phrase not in used_this_run:
+                    used_this_run.append(phrase)
 
     stitched = _stitch_parts(*parts)
     log.info(

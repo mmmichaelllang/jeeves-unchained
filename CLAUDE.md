@@ -21,8 +21,9 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Where we left off (2026-04-24)
 
-- **PR #16 is open, CI green (72/72), ready to merge.** Branch: `claude/gmail-auth-bootstrap-9eYme`. Contains the full 8-call write render + thematic asides + anti-repetition work described in "Current focus" above. User will merge manually.
-- **After merging PR #16**, the next step is: trigger `write.yml` with `skip_send=true` (and optionally `use_fixture=true` to avoid needing a fresh research run). Expect 8 × `invoking Groq ... [partN]` log lines with 65s gaps, ~9 min wall-clock, then a stitched briefing HTML artifact. Check for ≥5 profane asides that are thematically matched, ≥5000 words, no banned words/transitions.
+- **PRs #16 and #17 merged to `main`.** The 8-call write render + regex bugfix for the Briefing structure strip are both live.
+- **Next step: re-run `write.yml` with `skip_send=true`** to confirm the 8-part render clears the 12k TPM ceiling end-to-end. Expected: 8 × `invoking Groq ... [partN]` log lines with 65s gaps, ~9 min wall-clock, stitched briefing artifact. Part sizes now estimated 7800–9800 tokens each (all have 2000–4600 token margins). Check for ≥5 profane asides, ≥5000 words, no banned words/transitions.
+- **Key fix in PR #17**: `_system_prompt_for_parts()` now correctly strips the `## Briefing structure` block (~2800 chars / ~2155 tokens) from every Groq call. The regex was silently failing — `(?=## )` stopped early at `### Sector 1` subheadings. Fixed with `re.MULTILINE` + `^## ` lookahead.
 - **All phases are live on `main`** (Phases 2, 3, 4 fully wired). Phase 4 handoff JSON feeds Phase 2 at cron `30 12 * * *`. Write runs at `40 13 * * *`.
 - **Phase 2 per-sector loop** (`jeeves/research_sectors.py`, `scripts/research.py::_run_sector_loop`) — 12 sectors × own FunctionAgent, ~40 min wall-clock. Merged in PR #12.
 - **Phase 4 integrated narrative** — no rigid `<h2>` subsections, no family roll-call boilerplate, day-over-day continuity via `_load_prior_briefing_text`. Merged in PR #13.
