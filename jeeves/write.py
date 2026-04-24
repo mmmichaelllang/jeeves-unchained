@@ -83,16 +83,44 @@ def load_write_system_prompt() -> str:
     return WRITE_PROMPT_PATH.read_text(encoding="utf-8")
 
 
+DEDUP_PROMPT_HEADLINES_CAP = 80
+
+
+def _trim_session_for_prompt(session: SessionModel) -> dict[str, Any]:
+    """Prep the session JSON for the Groq user message.
+
+    The on-disk session JSON is the durable artifact; this shrinks a copy to
+    stay under Groq's 12k TPM ceiling on `llama-3.3-70b-versatile` free tier.
+
+    - Drops `dedup.covered_urls` entirely from the prompt. Jeeves reasons
+      about skim/skip by *headline*, not URL; the URL list is a
+      research-phase artifact used for skipping re-fetches on the next day.
+      Empirically dedup.covered_urls was ~25% of the payload.
+    - Caps `dedup.covered_headlines` at a generous top N — still enough to
+      drive the three-tier dedup directive (exact match / skim / full).
+    - No structural changes to the researched sectors themselves — the
+      research phase's FIELD_CAPS already bound those.
+    """
+
+    payload = session.model_dump(mode="json")
+    dedup = payload.get("dedup") or {}
+    if isinstance(dedup, dict):
+        dedup.pop("covered_urls", None)
+        if isinstance(dedup.get("covered_headlines"), list):
+            dedup["covered_headlines"] = dedup["covered_headlines"][:DEDUP_PROMPT_HEADLINES_CAP]
+    return payload
+
+
 def build_user_prompt(session: SessionModel) -> str:
     """Serialize the session JSON into the LLM user message."""
 
-    payload = session.model_dump(mode="json")
+    payload = _trim_session_for_prompt(session)
     return (
         "Here is the research session JSON. Render the briefing now in Jeeves's "
         "voice, following every rule in the system prompt. Output HTML only, "
         "starting with <!DOCTYPE html>.\n\n"
         "```json\n"
-        + json.dumps(payload, ensure_ascii=False, indent=2)
+        + json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
         + "\n```"
     )
 
