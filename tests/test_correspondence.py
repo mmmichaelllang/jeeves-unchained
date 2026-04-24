@@ -142,6 +142,42 @@ def test_classify_with_kimi_batches_previews(monkeypatch):
     assert {c.id for c in out} == {f"m{i}" for i in range(75)}
 
 
+def _make_cfg(tmp_path, monkeypatch):
+    from jeeves.config import Config
+
+    monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
+    cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
+    # Point Config at the tmp tree (repo_root is mutable on the dataclass).
+    object.__setattr__(cfg, "repo_root", tmp_path)
+    return cfg
+
+
+def test_load_prior_briefing_text_returns_empty_when_absent(tmp_path, monkeypatch):
+    from jeeves.correspondence import _load_prior_briefing_text
+
+    cfg = _make_cfg(tmp_path, monkeypatch)
+    assert _load_prior_briefing_text(cfg) == ""
+
+
+def test_load_prior_briefing_text_strips_html_and_caps(tmp_path, monkeypatch):
+    from jeeves.correspondence import _load_prior_briefing_text
+
+    cfg = _make_cfg(tmp_path, monkeypatch)
+    (tmp_path / "sessions").mkdir()
+    body = (
+        "<!DOCTYPE html><html><body>"
+        "<h1>📫 Correspondence — Thursday, April 23, 2026</h1>"
+        "<p>Good morning, Sir.</p>"
+        "<p>The post was <em>thin</em> yesterday.</p>"
+        "</body></html>"
+    )
+    (tmp_path / "sessions" / "correspondence-2026-04-23.local.html").write_text(body)
+    out = _load_prior_briefing_text(cfg)
+    assert "Good morning, Sir." in out
+    assert "<" not in out and ">" not in out
+    assert len(out) <= 3000
+
+
 def test_trim_for_render_drops_no_action_detail():
     classified = fixture_classified()
     trimmed = _trim_for_render(classified)
