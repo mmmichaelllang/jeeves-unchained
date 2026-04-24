@@ -154,6 +154,53 @@ def test_stitch_strips_continuation_wrapper_if_model_leaks_it():
     assert "<p>1</p>" in out and "<p>2</p>" in out and "<p>3</p>" in out
 
 
+def test_nim_write_fallback_triggers_on_tpd_error(monkeypatch):
+    """_invoke_write_llm falls back to NIM when Groq raises a TPD error."""
+    from jeeves.config import Config
+    from jeeves.write import _invoke_write_llm
+
+    monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
+    cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
+    object.__setattr__(cfg, "nvidia_api_key", "test-nim-key")
+    object.__setattr__(cfg, "nim_write_model_id", "meta/llama-3.3-70b-instruct")
+
+    nim_calls: list[str] = []
+
+    def fake_groq(c, s, u, *, max_tokens, label):
+        raise RuntimeError("Rate limit reached ... tokens per day (TPD): Limit 100000")
+
+    def fake_nim(c, s, u, *, max_tokens, label):
+        nim_calls.append(label)
+        return "<p>NIM output</p>"
+
+    import jeeves.write as wmod
+    monkeypatch.setattr(wmod, "_invoke_groq", fake_groq)
+    monkeypatch.setattr(wmod, "_invoke_nim_write", fake_nim)
+
+    result = _invoke_write_llm(cfg, "sys", "user", max_tokens=3000, label="part2")
+    assert result == "<p>NIM output</p>"
+    assert nim_calls == ["part2"]
+
+
+def test_nim_write_fallback_does_not_trigger_on_tpm_error(monkeypatch):
+    """_invoke_write_llm re-raises non-TPD rate limit errors without falling back."""
+    from jeeves.config import Config
+    from jeeves.write import _invoke_write_llm
+
+    monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
+    cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
+
+    def fake_groq(c, s, u, *, max_tokens, label):
+        raise RuntimeError("Rate limit reached ... tokens per minute (TPM): Limit 12000")
+
+    import jeeves.write as wmod
+    monkeypatch.setattr(wmod, "_invoke_groq", fake_groq)
+
+    import pytest
+    with pytest.raises(RuntimeError, match="tokens per minute"):
+        _invoke_write_llm(cfg, "sys", "user", max_tokens=3000, label="part1")
+
+
 def test_sector_groups_partition_writable_fields_without_overlap():
     all_parts = PART1_SECTORS + PART2_SECTORS + PART3_SECTORS
     assert len(all_parts) == len(set(all_parts)), "sector appears in multiple parts"

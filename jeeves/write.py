@@ -600,6 +600,50 @@ def _invoke_groq(cfg: Config, system: str, user: str, *, max_tokens: int, label:
     return str(resp.message.content or "")
 
 
+def _invoke_nim_write(cfg: Config, system: str, user: str, *, max_tokens: int, label: str) -> str:
+    from llama_index.core.base.llms.types import ChatMessage, MessageRole
+
+    from .llm import build_nim_write_llm
+
+    if not cfg.nvidia_api_key:
+        raise RuntimeError(
+            "Groq TPD exhausted and NVIDIA_API_KEY is not set — cannot fall back to NIM. "
+            "Add NVIDIA_API_KEY to secrets or wait for Groq's daily quota to reset (midnight UTC)."
+        )
+    llm = build_nim_write_llm(cfg, temperature=0.65, max_tokens=max_tokens)
+    log.info(
+        "invoking NIM write fallback %s [%s] (max_tokens=%d, system=%d chars, user=%d chars)",
+        cfg.nim_write_model_id, label, max_tokens, len(system), len(user),
+    )
+    resp = llm.chat([
+        ChatMessage(role=MessageRole.SYSTEM, content=system),
+        ChatMessage(role=MessageRole.USER, content=user),
+    ])
+    return str(resp.message.content or "")
+
+
+def _invoke_write_llm(cfg: Config, system: str, user: str, *, max_tokens: int, label: str) -> str:
+    """Call Groq for the write phase; auto-fall back to NIM on daily-quota exhaustion.
+
+    Groq's free-tier TPD (tokens-per-day) limit charges input_tokens +
+    max_tokens_requested per call. At 100k tokens/day the 9-part pipeline
+    (~63k tokens at max_tokens=3000) fits, but test runs earlier in the day
+    can exhaust the budget. When the specific TPD error fires, we transparently
+    retry on NVIDIA NIM (meta/llama-3.3-70b-instruct — same model family).
+    """
+    try:
+        return _invoke_groq(cfg, system, user, max_tokens=max_tokens, label=label)
+    except Exception as e:
+        if "tokens per day" in str(e).lower():
+            log.warning(
+                "Groq daily TPD quota exhausted on [%s]; retrying on NIM (%s). "
+                "Groq free-tier resets at midnight UTC.",
+                label, cfg.nim_write_model_id,
+            )
+            return _invoke_nim_write(cfg, system, user, max_tokens=max_tokens, label=label)
+        raise
+
+
 ASIDES_RECENT_WINDOW_DAYS = 4
 
 
@@ -796,7 +840,7 @@ def generate_briefing(
         )
         part_system = base_system + PART_INSTRUCTIONS_BY_NAME[label]
         part_user = build_user_prompt_from_payload(part_payload)
-        raw_part = _invoke_groq(
+        raw_part = _invoke_write_llm(
             cfg, part_system, part_user, max_tokens=max_tokens, label=label
         )
         parts.append(raw_part)

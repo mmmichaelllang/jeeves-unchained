@@ -75,6 +75,7 @@ class Config:
     kimi_model_id: str = "moonshotai/kimi-k2-instruct"
     kimi_base_url: str = "https://integrate.api.nvidia.com/v1"
     groq_model_id: str = "llama-3.3-70b-versatile"
+    nim_write_model_id: str = "meta/llama-3.3-70b-instruct"
     # Recipient
     recipient_email: str = "lang.mc@gmail.com"
     # Paths
@@ -150,6 +151,9 @@ class Config:
                 "KIMI_BASE_URL", "https://integrate.api.nvidia.com/v1"
             ),
             groq_model_id=os.environ.get("GROQ_MODEL_ID", "llama-3.3-70b-versatile"),
+            nim_write_model_id=os.environ.get(
+                "NIM_WRITE_MODEL_ID", "meta/llama-3.3-70b-instruct"
+            ),
             recipient_email=os.environ.get("JEEVES_RECIPIENT_EMAIL", "lang.mc@gmail.com"),
         )
 

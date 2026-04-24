@@ -1,4 +1,4 @@
-"""LLM factories — Kimi K2.5 on NVIDIA NIM for research, Groq for write."""
+"""LLM factories — Kimi K2.5 on NVIDIA NIM for research, Groq for write (NIM fallback)."""
 
 from __future__ import annotations
 
@@ -106,6 +106,28 @@ def build_groq_llm(cfg: Config, *, temperature: float = 0.65, max_tokens: int = 
         temperature=temperature,
         max_tokens=max_tokens,
         top_p=0.9,
+    )
+
+
+def build_nim_write_llm(cfg: Config, *, temperature: float = 0.65, max_tokens: int = 3000):
+    """Return a LlamaIndex LLM bound to a write-capable model on NVIDIA NIM.
+
+    Used as an automatic fallback when Groq's free-tier daily TPD quota is
+    exhausted. Defaults to meta/llama-3.3-70b-instruct — same model family
+    as the Groq primary (llama-3.3-70b-versatile), different host.
+
+    Uses the same NIM endpoint and NVIDIA_API_KEY as the research phase, so
+    no extra secrets are required. Override the model with NIM_WRITE_MODEL_ID.
+    """
+
+    from llama_index.llms.nvidia import NVIDIA
+
+    return NVIDIA(
+        model=cfg.nim_write_model_id,
+        api_key=cfg.nvidia_api_key,
+        base_url=cfg.kimi_base_url,
+        temperature=temperature,
+        max_tokens=max_tokens,
     )
 
 
