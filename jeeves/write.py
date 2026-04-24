@@ -177,6 +177,12 @@ the `<h1>` with today's full weekday date, then:
   correspondence summary (if `correspondence.found=true`), and the weather
   forecast from `weather`.
 
+**Correspondence summary rule:** If `correspondence.found=true` and
+`correspondence.fallback_used=false`, open with: *"The morning's correspondence
+has already been laid out in full, Sir, but the salient matters are these…"*
+and condense `correspondence.text` to roughly 400 words in Jeeves's voice.
+If `fallback_used=true`, summarize naturally without that opener.
+
 Aim for ~600-800 words. 1 profane aside. When Sector 1 opening is complete,
 emit the literal comment `<!-- PART1 END -->` and STOP.
 
@@ -506,8 +512,19 @@ def _system_prompt_for_parts(cfg: Config | None = None) -> str:
 
     base = load_write_system_prompt()
 
+    # Use re.MULTILINE so the lookahead `^## ` anchors to a real line boundary.
+    # Without MULTILINE, `.*?` would stop at the first `#` of any `### Sector`
+    # subheading (two of its three `#`s look like `## ` to the lookahead).
+    _FLAGS = _re.DOTALL | _re.MULTILINE
     base = _re.sub(
-        r"## HTML scaffold.*?(?=## |\Z)", "", base, count=1, flags=_re.DOTALL,
+        r"## HTML scaffold.*?(?=^## |\Z)", "", base, count=1, flags=_FLAGS,
+    )
+    # Strip the sector-descriptions block — each PART_INSTRUCTIONS already
+    # specifies which sectors to write and which data fields to use.  The full
+    # seven-sector narrative costs ~2800 chars (~2155 tokens) on every call and
+    # is redundant given the per-part instructions.
+    base = _re.sub(
+        r"## Briefing structure.*?(?=^## |\Z)", "", base, count=1, flags=_FLAGS,
     )
 
     if cfg is not None:

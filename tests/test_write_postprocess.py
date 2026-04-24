@@ -164,6 +164,9 @@ def test_system_prompt_for_parts_strips_html_scaffold_block():
     trimmed = _system_prompt_for_parts()
     assert "## HTML scaffold" in base
     assert "## HTML scaffold" not in trimmed
+    # Sector descriptions block also stripped (covered by per-part instructions).
+    assert "## Briefing structure" in base
+    assert "## Briefing structure" not in trimmed
     # Persona and mandatory rules still present.
     assert "You are **Jeeves**" in trimmed
     assert "Deduplication" in trimmed
