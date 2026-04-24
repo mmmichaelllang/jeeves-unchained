@@ -277,6 +277,33 @@ def test_system_prompt_has_no_avoid_list_without_history(tmp_path, monkeypatch):
     assert "Recently used asides" not in _system_prompt_for_parts()
 
 
+def test_system_prompt_injects_run_used_asides_without_cfg():
+    """run_used_asides param populates the avoid list even with no cfg/history."""
+    from jeeves.write import _system_prompt_for_parts
+
+    prompt = _system_prompt_for_parts(
+        run_used_asides=[
+            "clusterfuck of biblical proportions, Sir",
+            "absolute bollocks today",
+        ]
+    )
+    assert "Recently used asides" in prompt
+    assert "clusterfuck of biblical proportions, Sir" in prompt
+    assert "absolute bollocks today" in prompt
+
+
+def test_system_prompt_run_used_asides_excluded_for_no_aside_parts():
+    """part9 never gets the avoid list regardless of run_used_asides."""
+    from jeeves.write import _system_prompt_for_parts
+
+    prompt = _system_prompt_for_parts(
+        part_label="part9",
+        run_used_asides=["clusterfuck of biblical proportions, Sir"],
+    )
+    assert "Recently used asides" not in prompt
+    assert "Pre-approved profane butler asides" not in prompt
+
+
 def test_part_plan_has_nine_slots_covering_all_session_fields():
     from jeeves.schema import SessionModel
     from jeeves.write import PART_PLAN

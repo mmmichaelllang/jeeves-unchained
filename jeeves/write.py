@@ -246,6 +246,12 @@ CONTINUATION_RULES = """
    The profanity is intentional; Jeeves does not disclaim it.
 7. Raw HTML paragraphs only. NO `<!DOCTYPE html>`, NO `<head>`, NO `<body>`,
    NO new `<h1>`.
+8. NO BARE URLs IN PROSE. Every external URL must be wrapped in an `<a href>`
+   anchor with natural-language anchor text. Never show raw "https://..." in
+   body text. Write: `<a href="URL">The Guardian reports…</a>` — not
+   "See https://..." or "Source: https://...".
+9. NO WEATHER. The weather forecast is owned exclusively by Part 1. Any
+   weather mention in Part 2 through Part 9 is a violation.
 """
 
 
@@ -307,6 +313,20 @@ Your scope — write ONLY about these:
 - Toddler activities for Piper from `family.toddler`.
 - Global / geopolitical news from `global_news`.
 
+**Dedup check (REQUIRED for choral and toddler items):** Before writing any
+choral audition or toddler activity, check `dedup.covered_headlines`. Apply
+the three-tier rule:
+- Exact match (same ensemble name / programme / activity title) → skip
+  entirely; do NOT re-describe it.
+- Substantive overlap (same ensemble or recurring programme, new instalment)
+  → one sentence only: *"As previously noted, Sir, [ensemble/activity]…"*
+  then move on.
+- Genuinely new → cover in full.
+If every choral and toddler item in today's payload is already covered, note
+it briefly ("The choral calendar is unchanged from our previous briefing,
+Sir.") and proceed to global news. Do NOT pad with general observations about
+choral or toddler life to compensate for the lack of new material.
+
 Aim for ~700-900 words. 1-2 profane asides, thematically matched
 (geopolitics → geopolitical bucket: thundercunts, dog-fuckery, festering
 wound, clusterfuck of biblical proportions).
@@ -344,6 +364,20 @@ Parts 1-5 covered Sectors 1-3. You pick up from there.
 Your scope — write ONLY about these:
 - Theological physics / triadic ontology, from `triadic_ontology`.
 - AI systems research, from `ai_systems`.
+
+**Dedup check (REQUIRED for research series and publications):** Before
+writing about any item from `triadic_ontology` or `ai_systems`, check
+`dedup.covered_headlines`. Research series recur in the feed — the same
+volume, paper, or series (e.g., "Karl-Alber series Studies on Triadic
+Ontology and Trinitarian Philosophy") may appear in the payload day after
+day. Apply the three-tier rule strictly:
+- Exact match (same title / volume / paper already in covered_headlines) →
+  skip entirely. Do NOT re-explain or re-summarise it.
+- Substantive overlap (new instalment / follow-up to a known series) → one
+  sentence: *"As previously noted, Sir, the [series/paper]…"*
+- Genuinely new → cover in full.
+If nothing in `triadic_ontology` is new, acknowledge this in one sentence
+and move on to `ai_systems`. Do NOT invent new developments.
 
 Aim for ~600-800 words. 1 profane aside, thematically matched (technical /
 infrastructure bucket for AI failures; professional-dysfunction bucket for
@@ -636,7 +670,11 @@ def _recently_used_asides(cfg: Config, days: int = ASIDES_RECENT_WINDOW_DAYS) ->
 _NO_ASIDE_PARTS = frozenset({"part9"})
 
 
-def _system_prompt_for_parts(cfg: Config | None = None, part_label: str | None = None) -> str:
+def _system_prompt_for_parts(
+    cfg: Config | None = None,
+    part_label: str | None = None,
+    run_used_asides: list[str] | None = None,
+) -> str:
     """Build a per-call system prompt.
 
     Transforms applied to the raw ``write_system.md``:
@@ -691,16 +729,21 @@ def _system_prompt_for_parts(cfg: Config | None = None, part_label: str | None =
             flags=_FLAGS,
         )
 
-    if cfg is not None and part_label not in _NO_ASIDE_PARTS:
-        used = _recently_used_asides(cfg)
-        if used:
-            avoid_line = " | ".join(f'"{p}"' for p in used)
+    if part_label not in _NO_ASIDE_PARTS:
+        # Combine within-run used asides with day-over-day history.
+        all_avoid: list[str] = list(run_used_asides or [])
+        if cfg is not None:
+            for p in _recently_used_asides(cfg):
+                if p not in all_avoid:
+                    all_avoid.append(p)
+        if all_avoid:
+            avoid_line = " | ".join(f'"{p}"' for p in all_avoid)
             base = base.rstrip() + (
                 "\n\n### Recently used asides — DO NOT reuse in today's briefing\n\n"
-                "The following asides already appeared in Jeeves's briefings over "
-                f"the last {ASIDES_RECENT_WINDOW_DAYS} days. Pick different phrases "
-                "from the full pool above — same thematic matching rules apply, "
-                "just a different word choice:\n\n"
+                "The following asides appeared in earlier parts of today's briefing "
+                f"or in Jeeves's briefings over the last {ASIDES_RECENT_WINDOW_DAYS} "
+                "days. Pick a fresh phrase from the full pool above — same thematic "
+                "matching rules apply, just a different word choice:\n\n"
                 f"{avoid_line}\n"
             )
 
@@ -735,6 +778,8 @@ def generate_briefing(
     import time
 
     payload = _trim_session_for_prompt(session)
+    aside_pool = _parse_all_asides()
+    used_this_run: list[str] = []
 
     parts: list[str] = []
     for i, (label, sectors) in enumerate(PART_PLAN):
@@ -744,12 +789,23 @@ def generate_briefing(
         part_payload = _session_subset(payload, sectors)
         # Per-part base system: pass label so pass-through parts get the
         # slimmer variant with the inapplicable asides rules stripped.
-        base_system = _system_prompt_for_parts(cfg, part_label=label)
+        # Pass used_this_run so each part avoids phrases already deployed
+        # earlier in the same briefing (within-run dedup).
+        base_system = _system_prompt_for_parts(
+            cfg, part_label=label, run_used_asides=used_this_run
+        )
         part_system = base_system + PART_INSTRUCTIONS_BY_NAME[label]
         part_user = build_user_prompt_from_payload(part_payload)
-        parts.append(
-            _invoke_groq(cfg, part_system, part_user, max_tokens=max_tokens, label=label)
+        raw_part = _invoke_groq(
+            cfg, part_system, part_user, max_tokens=max_tokens, label=label
         )
+        parts.append(raw_part)
+        # Track which pre-approved asides this part used so later parts avoid
+        # repeating them (within-run dedup on top of day-over-day dedup).
+        if label not in _NO_ASIDE_PARTS:
+            for phrase in aside_pool:
+                if phrase in raw_part and phrase not in used_this_run:
+                    used_this_run.append(phrase)
 
     stitched = _stitch_parts(*parts)
     log.info(
