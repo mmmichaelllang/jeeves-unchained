@@ -167,3 +167,96 @@ def test_system_prompt_for_parts_strips_html_scaffold_block():
     # Persona and mandatory rules still present.
     assert "You are **Jeeves**" in trimmed
     assert "Deduplication" in trimmed
+
+
+def test_parse_all_asides_returns_full_original_pool():
+    from jeeves.write import _parse_all_asides
+
+    asides = _parse_all_asides()
+    # Sanity: original 2026-04-23 list had ~55 phrases. We must not be
+    # silently trimming.
+    assert len(asides) >= 50
+    assert "clusterfuck of biblical proportions, Sir" in asides
+    assert "gold-plated shit-tornado" in asides
+    # Thematic markers across categories we promise in the prompt.
+    assert any("abysmal" in a for a in asides)       # weather
+    assert any("fuck-wits" in a for a in asides)      # institutional
+    assert any("cock-womble" in a for a in asides)    # trivial
+
+
+def test_recently_used_asides_flags_phrases_from_prior_briefings(tmp_path, monkeypatch):
+    from jeeves.config import Config
+    from jeeves.write import _recently_used_asides
+
+    monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
+    cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
+    object.__setattr__(cfg, "repo_root", tmp_path)
+    (tmp_path / "sessions").mkdir()
+
+    # Yesterday's briefing used two phrases; day before used one more.
+    (tmp_path / "sessions" / "briefing-2026-04-23.local.html").write_text(
+        '<p>It was, Sir, a clusterfuck of biblical proportions, Sir. '
+        'The weather is, to use a rather strong term, fucking abysmal.</p>'
+    )
+    (tmp_path / "sessions" / "briefing-2026-04-22.local.html").write_text(
+        '<p>A massive, throbbing cock-up, I\'m afraid.</p>'
+    )
+
+    used = _recently_used_asides(cfg, days=3)
+    assert "clusterfuck of biblical proportions, Sir" in used
+    assert "The weather is, to use a rather strong term, fucking abysmal" in used
+    assert "A massive, throbbing cock-up, I'm afraid" in used
+    # Phrases we did NOT use in the prior briefings should NOT be flagged.
+    assert "pulsating knob-rot" not in used
+
+
+def test_recently_used_asides_empty_when_no_history(tmp_path, monkeypatch):
+    from jeeves.config import Config
+    from jeeves.write import _recently_used_asides
+
+    monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
+    cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
+    object.__setattr__(cfg, "repo_root", tmp_path)
+    (tmp_path / "sessions").mkdir()
+    assert _recently_used_asides(cfg) == []
+
+
+def test_system_prompt_injects_avoid_list_when_cfg_has_history(tmp_path, monkeypatch):
+    from jeeves.config import Config
+    from jeeves.write import _system_prompt_for_parts
+
+    monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
+    cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
+    object.__setattr__(cfg, "repo_root", tmp_path)
+    (tmp_path / "sessions").mkdir()
+    (tmp_path / "sessions" / "briefing-2026-04-23.local.html").write_text(
+        '<p>A symphony of screaming shit-weasels today, Sir.</p>'
+    )
+    prompt = _system_prompt_for_parts(cfg)
+    assert "Recently used asides" in prompt
+    assert "A symphony of screaming shit-weasels" in prompt
+
+
+def test_system_prompt_has_no_avoid_list_without_history(tmp_path, monkeypatch):
+    from jeeves.config import Config
+    from jeeves.write import _system_prompt_for_parts
+
+    monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
+    cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
+    object.__setattr__(cfg, "repo_root", tmp_path)
+    (tmp_path / "sessions").mkdir()
+    prompt = _system_prompt_for_parts(cfg)
+    assert "Recently used asides" not in prompt
+    # And bare call (no cfg) should also omit it.
+    assert "Recently used asides" not in _system_prompt_for_parts()
+
+
+def test_part_plan_has_eight_slots_covering_all_session_fields():
+    from jeeves.schema import SessionModel
+    from jeeves.write import PART_PLAN
+
+    assert len(PART_PLAN) == 8
+    covered = {field for _, fields in PART_PLAN for field in fields}
+    assert covered == set(SessionModel.model_fields.keys()) - {
+        "date", "status", "dedup",
+    }, f"PART_PLAN should cover every researched + correspondence field; got {covered}"

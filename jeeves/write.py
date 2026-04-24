@@ -129,86 +129,200 @@ def build_user_prompt_from_payload(payload: dict[str, Any]) -> str:
     )
 
 
-# -- Three-call render (free-tier 12k TPM ceiling) --
+# -- Eight-call render (free-tier 12k TPM ceiling) --
 #
-# llama-3.3-70b on Groq's free `on_demand` tier caps at 12k TPM, which a full
-# session blows through in one shot. We split the render into THREE sequential
-# Groq calls grouped by the write_system.md sector layout, then stitch the
-# HTML. Each call stays comfortably under 11k tokens.
+# llama-3.3-70b on Groq's free `on_demand` tier caps at 12k TPM. The full
+# system prompt (persona + rules + all seven sector descriptions + full
+# profane-aside pool + coverage-log + output rules) is ~11.7k chars
+# (~7.8k tokens) on its own — there's no headroom for a rich session JSON
+# in one call. We keep the system prompt intact and split the user payload
+# across EIGHT sequential Groq calls with a 65s sleep between each so the
+# rolling 60s TPM window clears. ~9 min total wall-clock.
+#
+# Each PART handles one slice of the briefing. The first opens the document;
+# the last closes it with the sign-off and the coverage-log placeholder.
 
-PART1_SECTORS = [
-    "correspondence", "weather", "local_news", "career", "family",
+# (name, session_field_list). The 8-slot plan balances per-part user-payload
+# chars so no call creeps above the free-tier 12k TPM ceiling. Heaviest fields
+# (local_news, career, ai_systems) each get their own slot; smaller fields are
+# paired.
+PART_PLAN: list[tuple[str, list[str]]] = [
+    ("part1", ["correspondence", "weather"]),
+    ("part2", ["local_news"]),
+    ("part3", ["career"]),
+    ("part4", ["family", "global_news"]),
+    ("part5", ["intellectual_journals", "enriched_articles"]),
+    ("part6", ["triadic_ontology", "ai_systems"]),
+    ("part7", ["uap", "wearable_ai"]),
+    ("part8", ["vault_insight", "newyorker"]),
 ]
-PART2_SECTORS = [
-    "global_news", "intellectual_journals", "enriched_articles",
-]
-PART3_SECTORS = [
-    "triadic_ontology", "ai_systems", "uap", "wearable_ai",
-    "vault_insight", "newyorker",
-]
+
+# Back-compat aliases — a few tests import PART1_SECTORS et al.
+PART1_SECTORS = PART_PLAN[0][1]
+PART2_SECTORS = PART_PLAN[1][1]
+PART3_SECTORS = PART_PLAN[2][1]
+
 
 PART1_INSTRUCTIONS = """
 
 ---
 
-## PART 1 of 3 — render instructions
+## PART 1 of 8 — render instructions
 
-You are writing PART 1 of a three-part briefing. Output the full HTML opening
-(`<!DOCTYPE html>` through `<body>` and the `<div class="container">` wrapper), the
-`<h1>` with today's full weekday date, and then ONLY these sectors in order:
+You are writing PART 1 of an eight-part briefing. Output the full HTML opening
+(`<!DOCTYPE html>` through `<body>` and the `<div class="container">` wrapper),
+the `<h1>` with today's full weekday date, then:
 
-- Sector 1 — The Domestic Sphere (correspondence, weather, municipal local_news, public safety local_news)
-- Sector 2 — The Domestic Calendar (career, family)
+- Sector 1 opening material: the formal butler greeting to Mister Lang, the
+  correspondence summary (if `correspondence.found=true`), and the weather
+  forecast from `weather`.
 
-Aim for ~1,700 words across these two sectors, 2 profane asides (remaining parts add 3 more).
+Aim for ~600-800 words. 1 profane aside. When Sector 1 opening is complete,
+emit the literal comment `<!-- PART1 END -->` and STOP.
 
-When Sector 2 is complete, emit the literal comment `<!-- PART1 END -->` and STOP.
-Do NOT write any subsequent sectors. Do NOT write the sign-off. Do NOT write the coverage log.
-Do NOT close `</div>`, `</body>`, or `</html>`. Parts 2 and 3 will continue the document.
+Do NOT write local_news yet — Part 2 handles it. Do NOT write the sign-off.
+Do NOT close `</div>`, `</body>`, or `</html>`. Later parts continue the document.
 """
 
 PART2_INSTRUCTIONS = """
 
 ---
 
-## PART 2 of 3 — render instructions
+## PART 2 of 8 — render instructions
 
-You are CONTINUING a briefing. Part 1 rendered the opening, `<h1>`, and Sectors 1-2.
-You do NOT rewrite any of that.
+You are CONTINUING a briefing. Part 1 opened the HTML and covered the greeting,
+correspondence summary, and weather. You do NOT rewrite any of that.
 
-Output ONLY Sector 3 — The Intellectual Currents (global_news, intellectual_journals,
-enriched_articles). Raw HTML paragraphs only. NO `<!DOCTYPE html>`, NO `<head>`, NO
-`<body>`, NO new `<h1>`.
+Output ONLY Sector 1's local-news material: municipal / Edmonds items from
+`local_news` whose category is municipal/civic/development, then public-safety
+items from `local_news` that satisfy the 3-mile geofence (3 miles from
+47.810652, -122.377355; serious incidents only). Raw HTML paragraphs. NO
+`<!DOCTYPE html>`, NO `<head>`, NO `<body>`, NO new `<h1>`.
 
-Aim for ~1,700 words, 1-2 profane asides.
-
-When Sector 3 is complete, emit the literal comment `<!-- PART2 END -->` and STOP.
-Do NOT write Sectors 4-7. Do NOT write the sign-off. Do NOT close any outer tags. Part 3 will continue.
+Aim for ~500-700 words. When done, emit `<!-- PART2 END -->` and STOP.
+Do NOT close outer tags. Later parts continue.
 """
 
 PART3_INSTRUCTIONS = """
 
 ---
 
-## PART 3 of 3 — render instructions
+## PART 3 of 8 — render instructions
 
-You are CONTINUING a briefing. Parts 1 and 2 rendered Sectors 1-3. You do NOT rewrite
-any of that.
+You are CONTINUING a briefing. Parts 1-2 already covered Sector 1.
 
-Output ONLY the following, as raw HTML paragraphs (NO `<!DOCTYPE html>`, NO `<head>`,
-NO `<body>`, NO new `<h1>`):
+Output ONLY the teaching-jobs portion of Sector 2 — The Domestic Calendar,
+drawn from `career`. This is the job-board sweep for HS English / History
+openings within ~30 miles of Edmonds. Raw HTML paragraphs only. No DOCTYPE/
+head/body/h1.
 
-- Sector 4 — Specific Enquiries (triadic_ontology, ai_systems, uap)
-- Sector 5 — Wearable Intelligence (wearable_ai)
-- Sector 6 — From the Library Stacks (vault_insight, only if `vault_insight.available === true`)
-- Sector 7 — Talk of the Town (newyorker, only if `newyorker.available === true`; must be LAST)
+Aim for ~500-700 words. 1 profane aside (match the tone of any bureaucratic
+dysfunction you encounter in the listings). When done, emit `<!-- PART3 END -->`
+and STOP. Do NOT close outer tags.
+"""
 
-Aim for ~1,700 words, 1-2 profane asides.
+PART4_INSTRUCTIONS = """
 
-After Sector 7 (or Sector 5 if 6 and 7 are unavailable), emit the closing signoff block:
+---
+
+## PART 4 of 8 — render instructions
+
+You are CONTINUING a briefing. Parts 1-3 covered Sector 1 plus the career
+portion of Sector 2.
+
+Output the rest of Sector 2 (family: choral auditions from `family.choir`,
+toddler activities from `family.toddler`) followed by the global-news
+portion of Sector 3, drawn from `global_news`. Raw HTML paragraphs only.
+No DOCTYPE/head/body/h1.
+
+Aim for ~700-900 words. 1-2 profane asides. When done, emit `<!-- PART4 END -->`
+and STOP. Do NOT close outer tags.
+"""
+
+PART5_INSTRUCTIONS = """
+
+---
+
+## PART 5 of 8 — render instructions
+
+You are CONTINUING a briefing. Parts 1-4 covered Sectors 1-2 and the global-
+news portion of Sector 3.
+
+Output ONLY the intellectual-journals / long-form portion of Sector 3, drawn
+from `intellectual_journals` and deepened where possible with `enriched_articles`.
+Raw HTML paragraphs only. No DOCTYPE/head/body/h1.
+
+Aim for ~600-800 words. When done, emit `<!-- PART5 END -->` and STOP.
+Do NOT close outer tags.
+"""
+
+PART6_INSTRUCTIONS = """
+
+---
+
+## PART 6 of 8 — render instructions
+
+You are CONTINUING a briefing. Parts 1-5 covered Sectors 1-3.
+
+Output the triadic-ontology and AI-systems portion of Sector 4 — Specific
+Enquiries. Use `triadic_ontology` and `ai_systems`. Raw HTML paragraphs only.
+No DOCTYPE/head/body/h1.
+
+Aim for ~600-800 words. 1 profane aside. When done, emit `<!-- PART6 END -->`
+and STOP. Do NOT close outer tags.
+"""
+
+PART7_INSTRUCTIONS = """
+
+---
+
+## PART 7 of 8 — render instructions
+
+You are CONTINUING a briefing. Parts 1-6 covered Sectors 1-3 plus the triadic
+and AI-systems portion of Sector 4.
+
+Output the UAP portion of Sector 4 (from `uap`), then Sector 5 — Wearable
+Intelligence (from `wearable_ai`, all three subcategories: AI voice hardware,
+teacher AI tools, wearable devices). Raw HTML paragraphs only. No DOCTYPE/
+head/body/h1.
+
+Aim for ~700-900 words. 1 profane aside. When done, emit `<!-- PART7 END -->`
+and STOP. Do NOT close outer tags. Part 8 delivers Library Stacks, Talk of
+the Town, and the sign-off.
+"""
+
+PART8_INSTRUCTIONS = """
+
+---
+
+## PART 8 of 8 — render instructions
+
+You are CONTINUING a briefing. Parts 1-7 covered Sectors 1-5.
+
+Output, in this exact order:
+
+1. Sector 6 — From the Library Stacks, ONLY if `vault_insight.available === true`.
+   Introduction: *"I have been, as is my habit, browsing the library stacks in
+   the small hours, Sir, and came across something rather arresting…"* Present
+   `vault_insight.insight` in Jeeves's voice at roughly 200 words. Reference
+   with *"Drawn from your notes on [topic]…"* — never expose `note_path`.
+   Close with one wry (non-profane) Jeeves aside.
+
+2. Sector 7 — Talk of the Town, ONLY if `newyorker.available === true` (MUST
+   be last). Introduction: *"And now, Sir, I take the liberty of reading from
+   this week's Talk of the Town in The New Yorker."* Output `newyorker.text`
+   verbatim and in full — every word, every paragraph, as HTML `<p>` tags.
+   One brief weary closing Jeeves remark. End with the URL as
+   `<a href="[newyorker.url]">[Read at The New Yorker]</a>`.
+
+If both Sector 6 and Sector 7 are unavailable, write a single brief sentence
+acknowledging the slim morning from the library and the press.
+
+After the content, emit the closing signoff block AND the coverage-log
+placeholder AND the outer closing tags:
 
 ```html
-<div class="closing">
+<div class="signoff">
   <p>Your reluctantly faithful Butler,<br/>Jeeves</p>
 </div>
 <!-- COVERAGE_LOG_PLACEHOLDER -->
@@ -217,9 +331,20 @@ After Sector 7 (or Sector 5 if 6 and 7 are unavailable), emit the closing signof
 </html>
 ```
 
-The `<!-- COVERAGE_LOG_PLACEHOLDER -->` is intentional — the post-processor fills it
-by scanning anchor tags across the full stitched document.
+The `<!-- COVERAGE_LOG_PLACEHOLDER -->` is intentional — the post-processor
+fills it by scanning anchor tags across the full stitched document.
 """
+
+PART_INSTRUCTIONS_BY_NAME: dict[str, str] = {
+    "part1": PART1_INSTRUCTIONS,
+    "part2": PART2_INSTRUCTIONS,
+    "part3": PART3_INSTRUCTIONS,
+    "part4": PART4_INSTRUCTIONS,
+    "part5": PART5_INSTRUCTIONS,
+    "part6": PART6_INSTRUCTIONS,
+    "part7": PART7_INSTRUCTIONS,
+    "part8": PART8_INSTRUCTIONS,
+}
 
 
 def _session_subset(payload: dict[str, Any], fields: list[str]) -> dict[str, Any]:
@@ -298,23 +423,107 @@ def _invoke_groq(cfg: Config, system: str, user: str, *, max_tokens: int, label:
     return str(resp.message.content or "")
 
 
-def _system_prompt_for_parts() -> str:
-    """Base system prompt with the "## HTML scaffold" section stripped.
+ASIDES_RECENT_WINDOW_DAYS = 4
 
-    Each part has its own scaffold instructions (in PART1_INSTRUCTIONS /
-    PART2_INSTRUCTIONS) so the base scaffold block is dead weight in the
-    two-call path — and trimming it gives us token headroom on each call.
+
+def _parse_all_asides() -> list[str]:
+    """Return the full set of pre-approved profane asides from write_system.md.
+
+    The list lives on a single line that starts with `"clusterfuck of
+    biblical proportions` and ends before the next blank line. We locate
+    that line and extract every quoted phrase on it.
     """
     import re as _re
 
     base = load_write_system_prompt()
-    return _re.sub(
-        r"## HTML scaffold.*?(?=## |\Z)",
-        "",
+    m = _re.search(
+        r'^"clusterfuck of biblical proportions[^\n]+$',
         base,
-        count=1,
-        flags=_re.DOTALL,
-    ).rstrip() + "\n"
+        flags=_re.MULTILINE,
+    )
+    if not m:
+        return []
+    return _re.findall(r'"([^"]+)"', m.group(0))
+
+
+def _recently_used_asides(cfg: Config, days: int = ASIDES_RECENT_WINDOW_DAYS) -> list[str]:
+    """Scan the last N days of `sessions/briefing-*.html` and return the list
+    of pre-approved asides that Jeeves has actually dropped into prose.
+
+    We pass this back into the system prompt so Jeeves can dodge yesterday's
+    three favorites. Semantic / thematic matching stays the model's call —
+    the full aside pool remains in the prompt, we just flag the ones to avoid.
+    """
+    from datetime import timedelta
+
+    pool = _parse_all_asides()
+    if not pool:
+        return []
+
+    recent_html: list[str] = []
+    for delta in range(1, days + 1):
+        prior = cfg.run_date - timedelta(days=delta)
+        candidates = [
+            cfg.briefing_html_path(prior),
+            cfg.briefing_html_path(prior).with_name(
+                cfg.briefing_html_path(prior).stem + ".local.html"
+            ),
+        ]
+        for path in candidates:
+            if path.exists():
+                try:
+                    recent_html.append(path.read_text(encoding="utf-8"))
+                    break
+                except Exception:
+                    pass
+
+    if not recent_html:
+        return []
+
+    joined = "\n".join(recent_html)
+    used = [phrase for phrase in pool if phrase in joined]
+    return used
+
+
+def _system_prompt_for_parts(cfg: Config | None = None) -> str:
+    """Build a per-call system prompt.
+
+    Two transforms:
+
+    1. Strip the "## HTML scaffold" block — each PART_INSTRUCTIONS appendix
+       provides its own explicit scaffold, so keeping the generic block in
+       the base prompt would only confuse the model (two competing scaffolds).
+    2. If `cfg` is provided and we can find recent briefings on disk, append
+       a "recently used — DO NOT reuse" directive listing the asides Jeeves
+       has actually deployed in the last few days. The full pool stays in
+       the prompt; we just flag which phrases are stale. This is the anti-
+       repetition lever while preserving semantic/thematic matching.
+
+    Everything else — persona, mandatory rules, all seven sector descriptions,
+    coverage-log rules, final output rules — stays verbatim.
+    """
+    import re as _re
+
+    base = load_write_system_prompt()
+
+    base = _re.sub(
+        r"## HTML scaffold.*?(?=## |\Z)", "", base, count=1, flags=_re.DOTALL,
+    )
+
+    if cfg is not None:
+        used = _recently_used_asides(cfg)
+        if used:
+            avoid_line = " | ".join(f'"{p}"' for p in used)
+            base = base.rstrip() + (
+                "\n\n### Recently used asides — DO NOT reuse in today's briefing\n\n"
+                "The following asides already appeared in Jeeves's briefings over "
+                f"the last {ASIDES_RECENT_WINDOW_DAYS} days. Pick different phrases "
+                "from the full pool above — same thematic matching rules apply, "
+                "just a different word choice:\n\n"
+                f"{avoid_line}\n"
+            )
+
+    return base.rstrip() + "\n"
 
 
 def generate_briefing(
@@ -323,32 +532,37 @@ def generate_briefing(
     *,
     max_tokens: int = 8192,
 ) -> str:
-    """Render the briefing in three Groq calls and stitch the HTML.
+    """Render the briefing in EIGHT Groq calls and stitch the HTML.
 
-    Free-tier Groq `on_demand` is 12k TPM on llama-3.3-70b. A rich session
-    exceeds that in one call, so we split into three sequential calls grouped
-    by the write_system.md sector layout. We sleep 65 seconds between calls
-    so the rolling 60-second TPM window clears.
+    Free-tier Groq `on_demand` is 12k TPM on llama-3.3-70b. The full system
+    prompt (persona + rules + all seven sector descriptions + full profane-
+    aside pool + coverage-log + output rules) is ~11.7k chars on its own,
+    leaving no headroom for a rich session in one call. Splitting into 8
+    narrow calls keeps each request's system + user payload comfortably
+    under the limit.
+
+    Each call gets a *different* random sample of the profane-aside pool so
+    Jeeves doesn't default to the same 3 phrases every day.
+
+    Sleep 65s between calls to let Groq's rolling 60s TPM window clear.
+    Total wall-clock: ~9 minutes.
     """
 
     import time
 
-    base_system = _system_prompt_for_parts()
     payload = _trim_session_for_prompt(session)
+    # Build the per-call base system prompt once; all 8 calls see the same
+    # "recently used — DO NOT reuse" appendix so Jeeves avoids yesterday's
+    # favorites consistently across parts.
+    base_system = _system_prompt_for_parts(cfg)
 
     parts: list[str] = []
-    for i, (sectors, instructions, label) in enumerate(
-        [
-            (PART1_SECTORS, PART1_INSTRUCTIONS, "part1"),
-            (PART2_SECTORS, PART2_INSTRUCTIONS, "part2"),
-            (PART3_SECTORS, PART3_INSTRUCTIONS, "part3"),
-        ]
-    ):
+    for i, (label, sectors) in enumerate(PART_PLAN):
         if i > 0:
             log.info("sleeping 65s before %s (TPM window cooldown)", label)
             time.sleep(65)
         part_payload = _session_subset(payload, sectors)
-        part_system = base_system + instructions
+        part_system = base_system + PART_INSTRUCTIONS_BY_NAME[label]
         part_user = build_user_prompt_from_payload(part_payload)
         parts.append(
             _invoke_groq(cfg, part_system, part_user, max_tokens=max_tokens, label=label)
@@ -356,8 +570,8 @@ def generate_briefing(
 
     stitched = _stitch_parts(*parts)
     log.info(
-        "stitched briefing: %d chars (parts: %s)",
-        len(stitched), ", ".join(str(len(p)) for p in parts),
+        "stitched briefing: %d chars across %d parts (%s)",
+        len(stitched), len(parts), ", ".join(str(len(p)) for p in parts),
     )
     return stitched
 
