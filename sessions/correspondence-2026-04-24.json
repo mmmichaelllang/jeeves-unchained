@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Write Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Write Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Write Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Write Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Write Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Write Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Write Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Write Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Research Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Research Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Correspondence Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Correspondence Phase on main branch.",
+  "text": "- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves-unchained Write Phase.\n- [escalation] mmmichaelllang: Another GitHub Actions workflow failure for Jeeves-unchained Write Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves-unchained Write Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves-unchained Write Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves-unchained Write Phase.\n- [escalation] \"Anthropic, PBC\": Anthropic payment failure notice for $27.68 subscription charge.\n- [escalation] \"Anthropic, PBC\": Duplicate Anthropic payment failure notice for $27.68 subscription charge.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves-unchained Write Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves-unchained Write Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves-unchained Write Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves-unchained Research Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves-unchained Research Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves-unchained Correspondence Phase.",
   "counts": {
     "reply_needed": 0,
-    "decision_required": 3,
-    "scheduling": 0,
+    "decision_required": 0,
+    "scheduling": 1,
     "follow_up": 0,
-    "escalation": 22,
-    "no_action": 25
+    "escalation": 23,
+    "no_action": 24
   }
 }
