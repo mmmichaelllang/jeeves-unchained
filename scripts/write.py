@@ -54,8 +54,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument(
         "--max-tokens",
         type=int,
-        default=8192,
-        help="Groq max_completion_tokens (default 8192 — model cap).",
+        default=4096,
+        help="Groq max_completion_tokens per part (default 4096). "
+             "Each part targets 500-900 words (~700-1200 output tokens); "
+             "4096 gives a 3.4x safety margin. Daily TPD budget: "
+             "9 calls x (avg ~4k input + 4096 max output) ~= 73k tokens, "
+             "well within Groq's free-tier 100k/day ceiling. Also aligns "
+             "with NVIDIA NIM's native 4096 output-token cap on "
+             "meta/llama-3.3-70b-instruct (the NIM fallback model). "
+             "max_tokens=8192 would use ~110k tokens/day for write alone.",
     )
     p.add_argument("--verbose", action="store_true")
     return p.parse_args(argv)
