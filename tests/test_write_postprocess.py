@@ -451,7 +451,7 @@ def test_system_prompt_for_parts_strips_html_scaffold_block():
     assert "## Briefing structure" not in trimmed
     # Persona and mandatory rules still present.
     assert "You are **Jeeves**" in trimmed
-    assert "Deduplication" in trimmed
+    assert "Synthesis protocol" in trimmed
     # The asides pool stays in by default (content-generation parts need it).
     assert "Pre-approved profane butler asides" in trimmed
     assert "clusterfuck of biblical proportions" in trimmed

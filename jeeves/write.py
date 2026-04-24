@@ -253,6 +253,19 @@ CONTINUATION_RULES = """
    "See https://..." or "Source: https://...".
 9. NO WEATHER. The weather forecast is owned exclusively by Part 1. Any
    weather mention in Part 2 through Part 9 is a violation.
+10. SYNTHESIS INTELLIGENCE. Every topic you cover may have prior coverage in
+    `dedup.covered_headlines`. Think in four cases:
+    (a) Static repeat — no new development → one sentence, move on.
+    (b) Ongoing story with new development → SYNTHESIZE: anchor in what was
+        known, pivot immediately to what has changed. This is the highest
+        form of briefing — the reader should feel the story advancing.
+    (c) Recurring series/listings → advance to next uncovered item (see
+        per-part protocols). One backward-reference clause only.
+    (d) Genuinely new → full depth.
+    Exception: prior data may appear as supporting context for a new fact —
+    one brief reference is fine if it illuminates today's development.
+    Never skip an ongoing story just because it appeared before. Never repeat
+    one just because it reappeared in today's findings. Synthesize.
 """
 
 
@@ -273,6 +286,18 @@ Your scope — write ONLY about these:
   assault, armed incident, missing person). Reject petty crime and traffic
   stops. State clearly when nothing qualifies.
 
+**Local news synthesis (REQUIRED):** Edmonds municipal stories often run
+across multiple days (a council vote, a development proposal, an ongoing
+safety situation). Apply synthesis intelligence:
+- **Ongoing municipal story with new development** (e.g., council vote now
+  scheduled, permit now approved): anchor in prior context in one clause,
+  then report the new development in full. Do NOT re-explain the background.
+- **Ongoing story, no new development**: one sentence (*"The [matter] remains
+  unresolved, Sir"*) and move on.
+- **New story**: cover in full.
+Never restate a covered municipal story from scratch just because it
+reappeared in today's local_news feed.
+
 Aim for ~500-700 words. No profane asides in draft — the final editor adds
 them. Missing persons or fatal incidents must be treated with sober gravity.
 
@@ -291,6 +316,24 @@ You pick up from there.
 Your scope — write ONLY about these:
 - HS English / History teaching openings within ~30 miles of Edmonds,
   drawn from `career`. This is a job-board sweep.
+
+**Teaching jobs — advancement protocol (REQUIRED):**
+
+The same posting often surfaces for days. Do not re-describe a position
+Mister Lang has already been briefed on.
+
+1. For each posting in `career`, check `dedup.covered_headlines` for a
+   match (same school + same subject, or same posting title).
+2. **Already covered, no new information**: one embedded clause (*"[School]'s
+   English opening remains posted"*) — not a full sentence, woven into the
+   section naturally. Move on.
+3. **Already covered, but status has changed** (deadline approaching,
+   position now filled, interview stage added): synthesize — note the prior
+   coverage in one clause, then report the change.
+4. **Genuinely new posting**: cover in full — school, subject, location,
+   deadline, any distinctive features relevant to Mister Lang's background.
+5. If everything is a repeat: acknowledge briefly, note that the board is
+   quiet, and move on. Do NOT pad with advice about job-searching.
 
 Aim for ~500-700 words. No profane asides in draft — the final editor adds them.
 
@@ -344,6 +387,32 @@ recurring ones.
    the developmental importance of play, or other generic observations. If the
    data is thin, be thin. Move to global news.
 
+**Global news — synthesis over repetition (CRITICAL):**
+
+Geopolitics runs in threads. The same conflict, the same trade dispute, the
+same diplomatic crisis may appear in `global_news` for days. Apply synthesis
+intelligence:
+
+1. **Identify each story's thread**: what is the underlying situation
+   (conflict name, policy name, actor name)?
+2. **Check `dedup.covered_headlines`** for the thread.
+3. **Prior coverage + new development today**: this is the most valuable
+   case. Open with a single bridging phrase (*"The [situation], which stood
+   at [X] when last we spoke, has today [Y]"*), then develop the new
+   development in full. Do not re-explain the background the reader already
+   has. Treat prior coverage as the foundation, today's finding as the
+   addition.
+4. **Prior coverage, no new development**: one sentence (*"The situation in
+   [X] has not materially shifted, Sir"*) and move on.
+5. **Genuinely new story**: cover in full — the parties, the stakes,
+   the angle relevant to Mister Lang's interests.
+6. **Prior data as context**: if a covered story provides direct explanatory
+   context for a new story (e.g., prior trade tensions explain a new
+   tariff move), reference it briefly. One clause, not a paragraph.
+
+This is where Jeeves earns his keep — not by listing today's headlines but
+by threading them into a coherent picture of an evolving world.
+
 Aim for ~700-900 words. No profane asides in draft — the final editor adds them.
 
 When done, emit `<!-- PART4 END -->` and STOP. Do NOT close outer tags.
@@ -362,6 +431,27 @@ Your scope — write ONLY about these:
 - Long-form pieces from `intellectual_journals`, deepened where possible
   with `enriched_articles` (use enriched article text only if the URL
   appears in `intellectual_journals`).
+
+**Journals synthesis (REQUIRED):**
+
+Journal pieces are not headlines — they develop ideas across weeks. The
+same essay, the same debate, the same thinker's work may resurface.
+
+1. **Recurring essay or multi-part series**: identify the title/author in
+   `dedup.covered_headlines`. If covered: one bridging sentence anchoring
+   the prior piece, then pivot to what is NEW — a different essay in the
+   same journal, a responding piece, a new argument from the same thinker.
+   Do not summarise the essay you already covered.
+2. **Same journal, new piece**: cover in full. You may briefly reference a
+   thematically related piece covered previously if it genuinely deepens the
+   new one. One clause only.
+3. **Genuinely new essay from a new source**: full treatment — the thesis,
+   the method, the stakes, what it means for Mister Lang's intellectual
+   interests.
+4. **Cross-section synthesis encouraged**: if a journal piece illuminates
+   a global news story or a triadic ontology question, make the connection
+   explicit. Jeeves reads widely and connects what he reads. This is not
+   padding — it is the highest function of the briefing.
 
 Aim for ~600-800 words. No profane asides in draft — the final editor adds them.
 
