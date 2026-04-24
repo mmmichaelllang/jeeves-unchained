@@ -115,6 +115,10 @@ def build_user_prompt(session: SessionModel) -> str:
     """Serialize the session JSON into the LLM user message."""
 
     payload = _trim_session_for_prompt(session)
+    return build_user_prompt_from_payload(payload)
+
+
+def build_user_prompt_from_payload(payload: dict[str, Any]) -> str:
     return (
         "Here is the research session JSON. Render the briefing now in Jeeves's "
         "voice, following every rule in the system prompt. Output HTML only, "
@@ -125,32 +129,237 @@ def build_user_prompt(session: SessionModel) -> str:
     )
 
 
+# -- Three-call render (free-tier 12k TPM ceiling) --
+#
+# llama-3.3-70b on Groq's free `on_demand` tier caps at 12k TPM, which a full
+# session blows through in one shot. We split the render into THREE sequential
+# Groq calls grouped by the write_system.md sector layout, then stitch the
+# HTML. Each call stays comfortably under 11k tokens.
+
+PART1_SECTORS = [
+    "correspondence", "weather", "local_news", "career", "family",
+]
+PART2_SECTORS = [
+    "global_news", "intellectual_journals", "enriched_articles",
+]
+PART3_SECTORS = [
+    "triadic_ontology", "ai_systems", "uap", "wearable_ai",
+    "vault_insight", "newyorker",
+]
+
+PART1_INSTRUCTIONS = """
+
+---
+
+## PART 1 of 3 — render instructions
+
+You are writing PART 1 of a three-part briefing. Output the full HTML opening
+(`<!DOCTYPE html>` through `<body>` and the `<div class="container">` wrapper), the
+`<h1>` with today's full weekday date, and then ONLY these sectors in order:
+
+- Sector 1 — The Domestic Sphere (correspondence, weather, municipal local_news, public safety local_news)
+- Sector 2 — The Domestic Calendar (career, family)
+
+Aim for ~1,700 words across these two sectors, 2 profane asides (remaining parts add 3 more).
+
+When Sector 2 is complete, emit the literal comment `<!-- PART1 END -->` and STOP.
+Do NOT write any subsequent sectors. Do NOT write the sign-off. Do NOT write the coverage log.
+Do NOT close `</div>`, `</body>`, or `</html>`. Parts 2 and 3 will continue the document.
+"""
+
+PART2_INSTRUCTIONS = """
+
+---
+
+## PART 2 of 3 — render instructions
+
+You are CONTINUING a briefing. Part 1 rendered the opening, `<h1>`, and Sectors 1-2.
+You do NOT rewrite any of that.
+
+Output ONLY Sector 3 — The Intellectual Currents (global_news, intellectual_journals,
+enriched_articles). Raw HTML paragraphs only. NO `<!DOCTYPE html>`, NO `<head>`, NO
+`<body>`, NO new `<h1>`.
+
+Aim for ~1,700 words, 1-2 profane asides.
+
+When Sector 3 is complete, emit the literal comment `<!-- PART2 END -->` and STOP.
+Do NOT write Sectors 4-7. Do NOT write the sign-off. Do NOT close any outer tags. Part 3 will continue.
+"""
+
+PART3_INSTRUCTIONS = """
+
+---
+
+## PART 3 of 3 — render instructions
+
+You are CONTINUING a briefing. Parts 1 and 2 rendered Sectors 1-3. You do NOT rewrite
+any of that.
+
+Output ONLY the following, as raw HTML paragraphs (NO `<!DOCTYPE html>`, NO `<head>`,
+NO `<body>`, NO new `<h1>`):
+
+- Sector 4 — Specific Enquiries (triadic_ontology, ai_systems, uap)
+- Sector 5 — Wearable Intelligence (wearable_ai)
+- Sector 6 — From the Library Stacks (vault_insight, only if `vault_insight.available === true`)
+- Sector 7 — Talk of the Town (newyorker, only if `newyorker.available === true`; must be LAST)
+
+Aim for ~1,700 words, 1-2 profane asides.
+
+After Sector 7 (or Sector 5 if 6 and 7 are unavailable), emit the closing signoff block:
+
+```html
+<div class="closing">
+  <p>Your reluctantly faithful Butler,<br/>Jeeves</p>
+</div>
+<!-- COVERAGE_LOG_PLACEHOLDER -->
+</div>
+</body>
+</html>
+```
+
+The `<!-- COVERAGE_LOG_PLACEHOLDER -->` is intentional — the post-processor fills it
+by scanning anchor tags across the full stitched document.
+"""
+
+
+def _session_subset(payload: dict[str, Any], fields: list[str]) -> dict[str, Any]:
+    """Build a subset payload containing only the listed sector fields + housekeeping."""
+
+    base = {
+        "date": payload.get("date", ""),
+        "status": payload.get("status", "complete"),
+        "dedup": payload.get("dedup") or {"covered_headlines": []},
+    }
+    for f in fields:
+        if f in payload:
+            base[f] = payload[f]
+    return base
+
+
+def _strip_fences(s: str) -> str:
+    import re as _re
+    s = _re.sub(r"^```(?:html)?\s*", "", s)
+    s = _re.sub(r"\s*```\s*$", "", s)
+    return s
+
+
+def _strip_continuation_wrapper(s: str) -> str:
+    """Remove DOCTYPE/head/body/h1 that a continuation part leaked despite instructions."""
+    import re as _re
+    s = _re.sub(r"^<!DOCTYPE[^>]*>", "", s, flags=_re.IGNORECASE).strip()
+    s = _re.sub(r"<html[^>]*>", "", s, flags=_re.IGNORECASE)
+    s = _re.sub(r"<head>.*?</head>", "", s, flags=_re.IGNORECASE | _re.DOTALL)
+    s = _re.sub(r"<body[^>]*>", "", s, flags=_re.IGNORECASE)
+    s = _re.sub(r"<h1[^>]*>.*?</h1>", "", s, flags=_re.IGNORECASE | _re.DOTALL)
+    return s.strip()
+
+
+def _stitch_parts(*parts: str) -> str:
+    """Glue N briefing parts into one coherent HTML document.
+
+    Part 1 carries the DOCTYPE/head/body/h1. Parts 2+ are HTML fragments.
+    Sentinel comments (<!-- PART1 END -->, <!-- PART2 END -->, etc.) are stripped.
+    If the final part didn't close </body></html>, we append them.
+    """
+
+    cleaned: list[str] = []
+    for i, raw in enumerate(parts):
+        s = _strip_fences((raw or "").strip())
+        # Remove sentinel comments of any part number.
+        import re as _re
+        s = _re.sub(r"<!--\s*PART\d+\s*END\s*-->", "", s).rstrip()
+        if i > 0:
+            s = _strip_continuation_wrapper(s)
+        cleaned.append(s)
+
+    combined = "\n".join(p for p in cleaned if p)
+    low = combined.lower()
+    if "</body>" not in low:
+        combined += "\n</body>"
+    if "</html>" not in low:
+        combined += "\n</html>"
+    return combined
+
+
+def _invoke_groq(cfg: Config, system: str, user: str, *, max_tokens: int, label: str) -> str:
+    from llama_index.core.base.llms.types import ChatMessage, MessageRole
+
+    from .llm import build_groq_llm
+
+    llm = build_groq_llm(cfg, temperature=0.65, max_tokens=max_tokens)
+    log.info(
+        "invoking Groq %s [%s] (max_tokens=%d, system=%d chars, user=%d chars)",
+        cfg.groq_model_id, label, max_tokens, len(system), len(user),
+    )
+    resp = llm.chat([
+        ChatMessage(role=MessageRole.SYSTEM, content=system),
+        ChatMessage(role=MessageRole.USER, content=user),
+    ])
+    return str(resp.message.content or "")
+
+
+def _system_prompt_for_parts() -> str:
+    """Base system prompt with the "## HTML scaffold" section stripped.
+
+    Each part has its own scaffold instructions (in PART1_INSTRUCTIONS /
+    PART2_INSTRUCTIONS) so the base scaffold block is dead weight in the
+    two-call path — and trimming it gives us token headroom on each call.
+    """
+    import re as _re
+
+    base = load_write_system_prompt()
+    return _re.sub(
+        r"## HTML scaffold.*?(?=## |\Z)",
+        "",
+        base,
+        count=1,
+        flags=_re.DOTALL,
+    ).rstrip() + "\n"
+
+
 def generate_briefing(
     cfg: Config,
     session: SessionModel,
     *,
     max_tokens: int = 8192,
 ) -> str:
-    """Call Groq Llama 3.3 70B and return raw HTML string."""
+    """Render the briefing in three Groq calls and stitch the HTML.
 
-    from llama_index.core.base.llms.types import ChatMessage, MessageRole
+    Free-tier Groq `on_demand` is 12k TPM on llama-3.3-70b. A rich session
+    exceeds that in one call, so we split into three sequential calls grouped
+    by the write_system.md sector layout. We sleep 65 seconds between calls
+    so the rolling 60-second TPM window clears.
+    """
 
-    from .llm import build_groq_llm
+    import time
 
-    llm = build_groq_llm(cfg, temperature=0.65, max_tokens=max_tokens)
+    base_system = _system_prompt_for_parts()
+    payload = _trim_session_for_prompt(session)
 
-    system = load_write_system_prompt()
-    user = build_user_prompt(session)
+    parts: list[str] = []
+    for i, (sectors, instructions, label) in enumerate(
+        [
+            (PART1_SECTORS, PART1_INSTRUCTIONS, "part1"),
+            (PART2_SECTORS, PART2_INSTRUCTIONS, "part2"),
+            (PART3_SECTORS, PART3_INSTRUCTIONS, "part3"),
+        ]
+    ):
+        if i > 0:
+            log.info("sleeping 65s before %s (TPM window cooldown)", label)
+            time.sleep(65)
+        part_payload = _session_subset(payload, sectors)
+        part_system = base_system + instructions
+        part_user = build_user_prompt_from_payload(part_payload)
+        parts.append(
+            _invoke_groq(cfg, part_system, part_user, max_tokens=max_tokens, label=label)
+        )
 
-    log.info("invoking Groq %s (max_tokens=%d, system=%d chars, user=%d chars)",
-             cfg.groq_model_id, max_tokens, len(system), len(user))
-
-    messages = [
-        ChatMessage(role=MessageRole.SYSTEM, content=system),
-        ChatMessage(role=MessageRole.USER, content=user),
-    ]
-    resp = llm.chat(messages)
-    return str(resp.message.content or "")
+    stitched = _stitch_parts(*parts)
+    log.info(
+        "stitched briefing: %d chars (parts: %s)",
+        len(stitched), ", ".join(str(len(p)) for p in parts),
+    )
+    return stitched
 
 
 def postprocess_html(raw: str, session: SessionModel) -> BriefingResult:

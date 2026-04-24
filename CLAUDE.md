@@ -10,7 +10,14 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Current focus
 
-**Phase 3 (write) TPM pressure — trimming the Groq payload.** Phases 2 and 4 are live end-to-end. Phase 2's first real per-sector run (2026-04-24) completed in 11 minutes, producing `sessions/session-2026-04-24.json` with rich content across all sectors. Phase 3 immediately 413'd on Groq's 12k TPM ceiling (total request ≈ 20k tokens) because the richer session dumped ~35k chars into the user message. Mitigation in flight: drop `dedup.covered_urls` from the Groq prompt (Jeeves skims/skips by headline, not URL), compact JSON separators, trimmed profane-aside list in the system prompt. Known-residual risk: empirical chars/token ratio (2.27) suggests we may still be ~3k tokens over; real-world ratio could be 3.0 and fit. Ship and observe.
+**Phase 3 (write) — three-call render to clear Groq free-tier TPM.** After two rounds of payload trimming failed to fit under Groq's 12k TPM ceiling on `llama-3.3-70b-versatile` free tier (richer per-sector research output from Phase 2 always landed ≥13k tokens), the write phase now splits into three sequential Groq calls with a 65s sleep between each. Per-call estimate: ~9.5k / 7.5k / 10k tokens. Total wall-clock ~3 min.
+
+- Part 1: Sectors 1-2 (Domestic Sphere + Calendar) → opens the HTML, emits `<!DOCTYPE html>` through the `<h1>`, closes with `<!-- PART1 END -->`.
+- Part 2: Sector 3 (Intellectual Currents) → raw paragraphs only.
+- Part 3: Sectors 4-7 (Specific Enquiries / Wearable / Library / Talk of the Town) → closes with sign-off + `<!-- COVERAGE_LOG_PLACEHOLDER -->` + `</body></html>`.
+- `_stitch_parts` cleans sentinels, strips any leaked DOCTYPE/head/body/h1 from continuation parts, and ensures exactly one opening + closing.
+- `_system_prompt_for_parts` strips the "## HTML scaffold" section from the base prompt since the part-specific instructions now carry the structure.
+- 5 new tests in `tests/test_write_postprocess.py` cover `_session_subset`, `_stitch_parts` (happy path + continuation-wrapper leak), `_system_prompt_for_parts`, and sector-group partition integrity.
 
 ## Where we left off (2026-04-23)
 

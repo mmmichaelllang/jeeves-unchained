@@ -7,6 +7,12 @@ from datetime import date
 from jeeves.schema import SessionModel
 from jeeves.testing.mocks import canned_session
 from jeeves.write import (
+    PART1_SECTORS,
+    PART2_SECTORS,
+    PART3_SECTORS,
+    _session_subset,
+    _stitch_parts,
+    _system_prompt_for_parts,
     load_write_system_prompt,
     postprocess_html,
     render_mock_briefing,
@@ -98,3 +104,66 @@ def test_mock_briefing_has_enough_profane_asides():
     html = render_mock_briefing(session)
     result = postprocess_html(html, session)
     assert result.profane_aside_count >= 5
+
+
+def test_session_subset_only_keeps_requested_fields_plus_housekeeping():
+    payload = {
+        "date": "2026-04-24",
+        "status": "complete",
+        "dedup": {"covered_headlines": ["a"]},
+        "weather": "W",
+        "career": {"openings": []},
+        "family": {"choir": "..."},
+        "triadic_ontology": {"findings": "..."},
+    }
+    out = _session_subset(payload, ["weather", "career"])
+    assert set(out.keys()) == {"date", "status", "dedup", "weather", "career"}
+    # Housekeeping keys always present even if not listed.
+    assert out["dedup"] == {"covered_headlines": ["a"]}
+    # Non-listed sector dropped.
+    assert "triadic_ontology" not in out
+
+
+def test_stitch_parts_three_way_preserves_structure():
+    p1 = (
+        '<!DOCTYPE html><html><head></head><body><div class="container">'
+        '<h1>Header</h1><p>Sector 1.</p><!-- PART1 END -->'
+    )
+    p2 = '<p>Sector 3.</p><!-- PART2 END -->'
+    p3 = (
+        '<p>Sector 4.</p><div class="closing"><p>Jeeves</p></div>'
+        '<!-- COVERAGE_LOG_PLACEHOLDER --></div></body></html>'
+    )
+    out = _stitch_parts(p1, p2, p3)
+    assert out.count("<!DOCTYPE") == 1
+    assert out.lower().count("<h1>") == 1
+    assert "<!-- PART1 END" not in out
+    assert "<!-- PART2 END" not in out
+    assert "<!-- COVERAGE_LOG_PLACEHOLDER -->" in out
+    assert "</body>" in out and "</html>" in out
+
+
+def test_stitch_strips_continuation_wrapper_if_model_leaks_it():
+    p1 = '<!DOCTYPE html><html><body><div><h1>X</h1><p>1</p><!-- PART1 END -->'
+    # p2 wrongly includes DOCTYPE/h1 — must be stripped
+    p2 = '<!DOCTYPE html><html><body><h1>X</h1><p>2</p><!-- PART2 END -->'
+    p3 = '<p>3</p></div></body></html>'
+    out = _stitch_parts(p1, p2, p3)
+    assert out.count("<!DOCTYPE") == 1
+    assert out.lower().count("<h1>") == 1
+    assert "<p>1</p>" in out and "<p>2</p>" in out and "<p>3</p>" in out
+
+
+def test_sector_groups_partition_writable_fields_without_overlap():
+    all_parts = PART1_SECTORS + PART2_SECTORS + PART3_SECTORS
+    assert len(all_parts) == len(set(all_parts)), "sector appears in multiple parts"
+
+
+def test_system_prompt_for_parts_strips_html_scaffold_block():
+    base = load_write_system_prompt()
+    trimmed = _system_prompt_for_parts()
+    assert "## HTML scaffold" in base
+    assert "## HTML scaffold" not in trimmed
+    # Persona and mandatory rules still present.
+    assert "You are **Jeeves**" in trimmed
+    assert "Deduplication" in trimmed
