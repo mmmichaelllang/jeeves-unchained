@@ -387,7 +387,7 @@ def test_narrative_edit_called_in_generate_briefing(monkeypatch):
     def fake_nim_refine(c, draft, *, label):
         return draft
 
-    def fake_narrative_edit(c, html):
+    def fake_narrative_edit(c, html, *, recently_used_asides=None):
         edit_calls.append(html)
         return html.replace("<p>", "<p data-edited='true'>")
 
@@ -471,10 +471,12 @@ def test_system_prompt_for_part9_strips_asides_pool():
     assert "Banned words" in part9
     assert "You are **Jeeves**" in part9
 
-    # Content-generation parts still get the full pool.
+    # Content-generation parts still get the full pool (draft instruction says zero asides,
+    # but the pool is present so the final OpenRouter editor can reference it).
     part2 = _system_prompt_for_parts(part_label="part2")
     assert "Pre-approved profane butler asides" in part2
     assert "Horrific Slips" in part2
+    assert "draft: zero" in part2
 
 
 def test_parse_all_asides_returns_full_original_pool():
