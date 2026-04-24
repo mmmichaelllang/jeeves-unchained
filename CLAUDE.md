@@ -10,7 +10,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Current focus
 
-**Phase 2 (research) first real run — working through hosted-Kimi tool-call bugs.** Phase 4 (correspondence) is fully live end-to-end: sweep → classify → render → handoff JSON + HTML committed to `main` as `sessions/correspondence-2026-04-23.*`. Phase 2 got a `TypeError: json.loads(None)` from a Kimi tool call with null arguments on its very first turn — patched in `jeeves/llm.py` via a `KimiNVIDIA` subclass that coerces None/empty/invalid arg strings to `{}`.
+**Phase 3 (write) TPM pressure — trimming the Groq payload.** Phases 2 and 4 are live end-to-end. Phase 2's first real per-sector run (2026-04-24) completed in 11 minutes, producing `sessions/session-2026-04-24.json` with rich content across all sectors. Phase 3 immediately 413'd on Groq's 12k TPM ceiling (total request ≈ 20k tokens) because the richer session dumped ~35k chars into the user message. Mitigation in flight: drop `dedup.covered_urls` from the Groq prompt (Jeeves skims/skips by headline, not URL), compact JSON separators, trimmed profane-aside list in the system prompt. Known-residual risk: empirical chars/token ratio (2.27) suggests we may still be ~3k tokens over; real-world ratio could be 3.0 and fit. Ship and observe.
 
 ## Where we left off (2026-04-23)
 
