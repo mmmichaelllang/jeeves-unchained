@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Research Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Research Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Correspondence Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Correspondence Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Correspondence Phase on main branch.\n- [escalation] Google: Google security alert about new app password creation for Jeeves-Unchained.\n- [escalation] Google: Google security alert about new app password creation for Jeeves Github Actions.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Memory Correspondence Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Memory Correspondence Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Memory Correspondence Phase on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Memory Correspondence Phase on main branch.",
+  "counts": {
+    "reply_needed": 2,
+    "decision_required": 0,
+    "scheduling": 1,
+    "follow_up": 0,
+    "escalation": 14,
+    "no_action": 32
+  }
+}
