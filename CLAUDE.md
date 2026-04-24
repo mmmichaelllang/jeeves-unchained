@@ -29,9 +29,9 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Where we left off (2026-04-24, very late)
 
-- **PRs #16–#25 all merged to `main`.** Latest: PR #25 — Talk of Town verbatim injection fix, profanity moved to OpenRouter pass, enhanced narrative cohesion (14 editorial rules), smarter dedup for triadic studies + toddler activities, ai_systems + wearable_ai advancement protocols, British wit amplification rule (A12), mandatory article reading in research sectors.
+- **PRs #16–#26 all merged to `main`.** Latest: PR #26 — global synthesis protocol replacing three-tier dedup across all 9 parts (four-case logic: static repeat / ongoing+new-dev / recurring-series / genuinely-new; synthesis exception for prior data as live context; per-part protocols for local_news, career, global_news, journals; CONTINUATION_RULES rule 10 enforces it globally).
 - **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run, otherwise the narrative editor step is silently skipped.
-- **Next step: re-run `write.yml` with `skip_send=true`** and verify: (a) `OpenRouter narrative edit [google/gemma-4-27b-it:free]` appears in logs; (b) `<!-- NEWYORKER_START -->` present in the HTML artifact; (c) exactly ~5 profane asides (not 9–14); (d) no filler phrases; (e) triadic/ai/wearable sections advance to a new item day-over-day; (f) toddler section leads with new activity; (g) no banned words/transitions.
+- **Next step: re-run `write.yml` with `skip_send=true`** and verify: (a) `OpenRouter narrative edit [google/gemma-4-27b-it:free]` appears in logs; (b) `<!-- NEWYORKER_START -->` present in the HTML artifact; (c) exactly ~5 profane asides (not 9–14); (d) no filler phrases; (e) global news section bridges ongoing stories rather than restating or skipping; (f) triadic/ai/wearable sections advance to next uncovered item; (g) toddler section leads with new activity; (h) no banned words/transitions.
 - **All phases are live on `main`** (Phases 2, 3, 4 fully wired). Phase 4 handoff JSON feeds Phase 2 at cron `30 12 * * *`. Write runs at `40 13 * * *`.
 - **Phase 2 per-sector loop** (`jeeves/research_sectors.py`, `scripts/research.py::_run_sector_loop`) — 12 sectors × own FunctionAgent, ~40 min wall-clock. Merged in PR #12.
 - **Phase 4 integrated narrative** — no rigid `<h2>` subsections, no family roll-call boilerplate, day-over-day continuity via `_load_prior_briefing_text`. Merged in PR #13.
@@ -40,7 +40,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Dev branch
 
-- **Current**: `claude/improve-dedup-triadic-studies-rEgcE` (in sync with main — all work merged via PRs #25)
+- **Current**: `claude/improve-dedup-triadic-studies-rEgcE` (merged as PR #26)
 - Prior major work merged from: `claude/caveman-style-responses-G1q1c` (#25), `claude/debug-ci-pipeline-TR6xz` (#22–#23), `claude/gmail-auth-bootstrap-9eYme` (#16–#21), `claude/jeeves-unchained-rewrite-auKzK` (#5)
 
 ## Gotchas the README doesn't flag
