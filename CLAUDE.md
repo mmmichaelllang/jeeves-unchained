@@ -23,25 +23,28 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
   - *Within-run*: `generate_briefing` tracks phrases each part used via `_parse_all_asides()`, passes accumulated list to subsequent parts' system prompt via `run_used_asides=`.
 - **Profanity moved to OpenRouter pass.** Drafts (PART1–PART8) write ZERO profane asides. The OpenRouter editor inserts exactly five, thematically placed. `recently_used_asides` is passed so it picks fresh phrases.
 - **Per-section dedup advancement protocols** (PART4 toddler, PART6 triadic+ai_systems, PART7 wearable_ai): identify specific title/model/product → check covered_headlines → one backward-reference clause if already covered → pivot to next uncovered item → if all repeat, one sentence and move on. PART4 toddler: lead with new; repeats get embedded clause only; if all repeat, brief seasonal suggestion flagged as Jeeves's own.
+- **SYNTHESIS CLOSE (PART3, PART5, PART6)**: replaces earlier CLOSING SUMMARY BAN — closing observation is now *required* but must be specific and non-transferable (names an actual article, posting, or paper). Generic category-level wrap-ups are banned.
+- **WIT QUOTA (CONTINUATION_RULES rule 11)**: at least one sardonic/wry/dark-humorous observation per part. Non-profane is fine; must react to specific content, not be a generic quip.
+- **OpenRouter Part B**: counts existing profane asides in the draft, adds only enough to reach exactly five total. Prevents 6–7 when Groq drifts despite the zero-asides instruction.
+- **Horrific Slips rule**: `[HARD RULE]` level, no "the editor will handle it" escape hatch. Part 9 stripping regex updated to match `[HARD RULE] Horrific Slips` heading.
+- **Day-over-day dedup — now actually works**: `collect_headlines_from_sector` extracts the first sentence of any `findings` string (news `Finding` objects have no `title`/`headline` key — this was the root cause of dedup being empty). `_run_sector_loop` seeds `covered_headlines` from the prior session so the write phase synthesizes across days.
+- **Exa text depth**: `text_max_chars` raised from 3,000 → 20,000 (~600 words → ~3,000 words per result). Exa hits no longer need a follow-up `tavily_extract`.
+- **Never-empty news**: `local_news` and `global_news` sector instructions have mandatory expansion cascade — agent must widen geofence/scope before returning an empty array.
 - **Research sectors — mandatory article reading.** CONTEXT_HEADER has a CRITICAL block: exa results carry full text; for serper/tavily hits, call `tavily_extract` before writing findings. Reinforced in local_news, global_news, intellectual_journals, wearable_ai sector instructions.
 - `_system_prompt_for_parts` strips both `## HTML scaffold` and `## Briefing structure` blocks (`re.MULTILINE` + `^## ` lookahead).
 - **89 tests** in `tests/test_write_postprocess.py` cover the full write pipeline including refine/fallback behavior, NIM-skips-sleep path, New Yorker injection, and narrative editor fallback.
 
 ## Where we left off (2026-04-25)
 
-- **PRs #16–#29 all merged to `main`.** Latest: PR #29 — fixed Pydantic crash on `ai_systems.findings` (field_validator coerces list→string); migrated `gemini_grounded.py` from deprecated `google-generativeai` to `google-genai` SDK (fixes `"Unknown field for FunctionDeclaration: google_search"` error); fixed invalid Exa `tech` category in tool description; hardened deep-sector prompts to explicitly require prose string for findings.
+- **PRs #16–#30 all merged to `main`.** Latest: PR #30 (two substantive commits + one workflow commit).
+- **All phases are live on `main`** (Phases 2, 3, 4 fully wired). Phase 4 handoff JSON feeds Phase 2 at cron `30 12 * * *`. Write runs at `40 13 * * *`.
 - **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run, otherwise the narrative editor step is silently skipped.
 - **Action required (optional): add `GOOGLE_CLOUD_PROJECT` + `GOOGLE_APPLICATION_CREDENTIALS_JSON` + `GOOGLE_CLOUD_REGION` to GitHub Secrets** to enable Vertex AI grounded search with Dynamic Retrieval.
-- **Next step: re-run `research.yml`** and verify: (a) `gemini_grounded` no longer logs SDK errors; (b) all 12 sectors complete without crashing; (c) `ai_systems.findings` is a string in the saved JSON.
-- **All phases are live on `main`** (Phases 2, 3, 4 fully wired). Phase 4 handoff JSON feeds Phase 2 at cron `30 12 * * *`. Write runs at `40 13 * * *`.
-- **Phase 2 per-sector loop** (`jeeves/research_sectors.py`, `scripts/research.py::_run_sector_loop`) — 12 sectors × own FunctionAgent, ~40 min wall-clock. Merged in PR #12.
-- **Phase 4 integrated narrative** — no rigid `<h2>` subsections, no family roll-call boilerplate, day-over-day continuity via `_load_prior_briefing_text`. Merged in PR #13.
-- **Three-tier dedup** — articles + events + `email | sender` entries in `dedup.covered_headlines`. Merged in PR #15.
-- `GMAIL_OAUTH_TOKEN_JSON` in GH Secrets. Auto-refreshes at runtime.
+- **Next step: manually trigger `correspondence.yml`** (skip_send=true) and verify: (a) Research auto-starts after correspondence completes; (b) Write auto-starts after research completes; (c) `covered_headlines` in the session JSON includes first-sentence labels from news findings; (d) `ai_systems.findings` is a string (not a list) in the saved JSON.
 
 ## Dev branch
 
-- **Current**: `claude/improve-dedup-triadic-studies-rEgcE` (merged as PRs #26–#29)
+- **Current**: `claude/improve-dedup-triadic-studies-rEgcE` (merged as PRs #26–#30)
 - Prior major work merged from: `claude/caveman-style-responses-G1q1c` (#25), `claude/debug-ci-pipeline-TR6xz` (#22–#23), `claude/gmail-auth-bootstrap-9eYme` (#16–#21), `claude/jeeves-unchained-rewrite-auKzK` (#5)
 
 ## Gotchas the README doesn't flag
@@ -59,6 +62,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - **Dedup is headline-matched, not URL-matched in the write phase.** The write prompt explicitly gets `dedup.covered_headlines` but NOT `covered_urls` (see `_trim_session_for_prompt`). If you see the same Karl-Alber volume appear day after day, it means the research phase isn't adding the item's headline to `covered_headlines` — check there, not in write.
 - **The 65s TPM sleep is conditional, not unconditional.** `_invoke_write_llm` returns `(text, used_groq: bool)`. `generate_briefing` only sleeps 65s before a call if the *previous* call used Groq. Once Groq TPD is exhausted and NIM takes over, the sleep is skipped for every subsequent inter-part gap. If you refactor the loop, preserve the `last_used_groq` flag — without it the pipeline wastes ~9 minutes of sleep on NIM-fallback runs and will breach the 60-min workflow timeout under extreme NIM latency.
 - **Groq TPD (tokens-per-day) limit = input_tokens + max_tokens_requested per call.** The free tier is 100k tokens/day. With max_tokens=8192 × 9 write calls, write alone would need ~110k tokens (input ~37k + output budget ~74k), blowing the daily limit. Default is now max_tokens=4096 per call: each part targets 500–900 words (~700–1200 output tokens), 4096 gives a 3.4× margin and matches NVIDIA NIM's native output cap for meta/llama-3.3-70b-instruct. Total daily write budget: ~73k tokens; plus correspondence Groq call: ~9k; grand total ~82k — within 100k. If you raise max_tokens above ~5000, the production pipeline will fail daily at Part 2 (or fall through to NIM, which has its own throttle).
+- **Manual workflow chaining via `gh workflow run`.** `correspondence.yml` and `research.yml` each have a final "Chain to…" step that fires only on `workflow_dispatch` (not cron). Manual correspondence → research auto-starts → write auto-starts (3-hop). Manual research → write auto-starts (2-hop). `dry_run=true` on correspondence suppresses the chain. Both workflows have `actions: write` permission. The chain step is `if: success() && ...` so a failing run never triggers the next phase. The target receives a fresh `workflow_dispatch` event (defaults for all inputs) — do NOT pass `--date` or other flags unless you modify the chain steps, since the auto-triggered run targets "today UTC" by design.
 
 ## Quick nav (file:line pointers)
 
