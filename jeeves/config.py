@@ -78,7 +78,7 @@ class Config:
     nim_write_model_id: str = "meta/llama-3.3-70b-instruct"
     # OpenRouter (optional — narrative editor pass in write phase)
     openrouter_api_key: str = ""
-    openrouter_model_id: str = "google/gemma-4-27b-it:free"
+    openrouter_model_id: str = "nvidia/nemotron-3-super-120b-a12b:free"
     # Recipient
     recipient_email: str = "lang.mc@gmail.com"
     # Paths
@@ -159,7 +159,7 @@ class Config:
             ),
             openrouter_api_key=os.environ.get("OPENROUTER_API_KEY", ""),
             openrouter_model_id=os.environ.get(
-                "OPENROUTER_MODEL_ID", "google/gemma-4-27b-it:free"
+                "OPENROUTER_MODEL_ID", "nvidia/nemotron-3-super-120b-a12b:free"
             ),
             recipient_email=os.environ.get("JEEVES_RECIPIENT_EMAIL", "lang.mc@gmail.com"),
         )

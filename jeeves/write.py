@@ -1219,6 +1219,15 @@ def _build_narrative_edit_system(recently_used: list[str]) -> str:
     )
 
 
+# Fallback chain for the OpenRouter narrative editor.  The primary model is
+# cfg.openrouter_model_id (overridable via OPENROUTER_MODEL_ID env var).
+_OPENROUTER_FALLBACK_MODELS = [
+    "meta-llama/llama-3.3-70b-instruct:free",
+    "google/gemma-4-31b-it:free",
+    "openrouter/auto",
+]
+
+
 def _invoke_openrouter_narrative_edit(
     cfg: Config, html: str, *, recently_used_asides: list[str] | None = None
 ) -> str:
@@ -1229,10 +1238,10 @@ def _invoke_openrouter_narrative_edit(
     2. Profane asides — adds exactly five earned asides from the pre-approved pool,
        avoiding phrases used in recent briefings (passed via recently_used_asides).
 
-    Falls back to the unedited document if:
-    - OPENROUTER_API_KEY is absent
-    - The API call fails for any reason
-    - The response looks truncated (doesn't contain </html>)
+    Tries models in order: primary (cfg.openrouter_model_id) →
+    meta-llama/llama-3.3-70b-instruct:free → google/gemma-4-31b-it:free →
+    openrouter/auto (free router, highest reasoning).
+    Falls back to the unedited document only if all four fail or the key is absent.
     """
     from openai import OpenAI
 
@@ -1241,40 +1250,47 @@ def _invoke_openrouter_narrative_edit(
         return html
 
     system = _build_narrative_edit_system(recently_used_asides or [])
-    log.info(
-        "OpenRouter narrative edit [%s] (%d chars input)",
-        cfg.openrouter_model_id, len(html),
-    )
     try:
         client = OpenAI(
             api_key=cfg.openrouter_api_key,
             base_url="https://openrouter.ai/api/v1",
             timeout=360.0,
         )
-        resp = client.chat.completions.create(
-            model=cfg.openrouter_model_id,
-            messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": f"Edit the following HTML briefing:\n\n{html}"},
-            ],
-            max_tokens=16384,
-            temperature=0.4,
-        )
-        edited = (resp.choices[0].message.content or "").strip()
-        if not edited:
-            log.warning("OpenRouter narrative edit returned empty response; using original")
-            return html
-        if "</html>" not in edited.lower() and "</body>" not in edited.lower():
-            log.warning(
-                "OpenRouter narrative edit response appears truncated (%d chars); using original",
-                len(edited),
-            )
-            return html
-        log.info("OpenRouter narrative edit complete (%d chars output)", len(edited))
-        return edited
     except Exception as exc:
-        log.warning("OpenRouter narrative edit failed (%s); using original", exc)
+        log.warning("OpenRouter client init failed (%s); using original", exc)
         return html
+
+    models = [cfg.openrouter_model_id] + _OPENROUTER_FALLBACK_MODELS
+
+    for model in models:
+        log.info("OpenRouter narrative edit [%s] (%d chars input)", model, len(html))
+        try:
+            resp = client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": f"Edit the following HTML briefing:\n\n{html}"},
+                ],
+                max_tokens=16384,
+                temperature=0.4,
+            )
+            edited = (resp.choices[0].message.content or "").strip()
+            if not edited:
+                log.warning("OpenRouter [%s] returned empty response; trying next model", model)
+                continue
+            if "</html>" not in edited.lower() and "</body>" not in edited.lower():
+                log.warning(
+                    "OpenRouter [%s] response truncated (%d chars); trying next model",
+                    model, len(edited),
+                )
+                continue
+            log.info("OpenRouter narrative edit complete via [%s] (%d chars output)", model, len(edited))
+            return edited
+        except Exception as exc:
+            log.warning("OpenRouter [%s] failed (%s); trying next model", model, exc)
+
+    log.warning("All OpenRouter models exhausted; using unedited document")
+    return html
 
 
 ASIDES_RECENT_WINDOW_DAYS = 4
