@@ -19,6 +19,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   research:
@@ -66,3 +67,11 @@ jobs:
             git commit -m "quota: update counters $(date -u +%Y-%m-%d)"
             git push
           fi
+
+      - name: Chain to Write Phase
+        if: success() && github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run write.yml --ref "${{ github.ref_name }}"
+          echo "Write phase queued for ref ${{ github.ref_name }}"

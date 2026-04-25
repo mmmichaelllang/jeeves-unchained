@@ -27,12 +27,12 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - `_system_prompt_for_parts` strips both `## HTML scaffold` and `## Briefing structure` blocks (`re.MULTILINE` + `^## ` lookahead).
 - **89 tests** in `tests/test_write_postprocess.py` cover the full write pipeline including refine/fallback behavior, NIM-skips-sleep path, New Yorker injection, and narrative editor fallback.
 
-## Where we left off (2026-04-24, very late)
+## Where we left off (2026-04-25)
 
-- **PRs #16–#28 all merged to `main`.** Latest: PR #28 — fixed empty local/global news (5-strategy parallel search + fallback time windows); Vertex AI grounded search with Dynamic Retrieval (1,490/day hard cap); daily cap enforcement on Gemini grounded; all quality failures from 2026-04-25 briefing fixed (empty section verbosity, UAP bloat, banned transitions, filler phrases, journal closers).
+- **PRs #16–#29 all merged to `main`.** Latest: PR #29 — fixed Pydantic crash on `ai_systems.findings` (field_validator coerces list→string); migrated `gemini_grounded.py` from deprecated `google-generativeai` to `google-genai` SDK (fixes `"Unknown field for FunctionDeclaration: google_search"` error); fixed invalid Exa `tech` category in tool description; hardened deep-sector prompts to explicitly require prose string for findings.
 - **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run, otherwise the narrative editor step is silently skipped.
 - **Action required (optional): add `GOOGLE_CLOUD_PROJECT` + `GOOGLE_APPLICATION_CREDENTIALS_JSON` + `GOOGLE_CLOUD_REGION` to GitHub Secrets** to enable Vertex AI grounded search with Dynamic Retrieval.
-- **Next step: re-run `write.yml` with `skip_send=true`** and verify: (a) `OpenRouter narrative edit` appears in logs; (b) `<!-- NEWYORKER_START -->` present; (c) exactly ~5 profane asides; (d) no filler phrases; (e) no "Turning to" transitions; (f) UAP ≤ 250 words; (g) local/global news sections populated.
+- **Next step: re-run `research.yml`** and verify: (a) `gemini_grounded` no longer logs SDK errors; (b) all 12 sectors complete without crashing; (c) `ai_systems.findings` is a string in the saved JSON.
 - **All phases are live on `main`** (Phases 2, 3, 4 fully wired). Phase 4 handoff JSON feeds Phase 2 at cron `30 12 * * *`. Write runs at `40 13 * * *`.
 - **Phase 2 per-sector loop** (`jeeves/research_sectors.py`, `scripts/research.py::_run_sector_loop`) — 12 sectors × own FunctionAgent, ~40 min wall-clock. Merged in PR #12.
 - **Phase 4 integrated narrative** — no rigid `<h2>` subsections, no family roll-call boilerplate, day-over-day continuity via `_load_prior_briefing_text`. Merged in PR #13.
@@ -41,7 +41,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Dev branch
 
-- **Current**: `claude/improve-dedup-triadic-studies-rEgcE` (merged as PRs #26 + #27)
+- **Current**: `claude/improve-dedup-triadic-studies-rEgcE` (merged as PRs #26–#29)
 - Prior major work merged from: `claude/caveman-style-responses-G1q1c` (#25), `claude/debug-ci-pipeline-TR6xz` (#22–#23), `claude/gmail-auth-bootstrap-9eYme` (#16–#21), `claude/jeeves-unchained-rewrite-auKzK` (#5)
 
 ## Gotchas the README doesn't flag

@@ -476,7 +476,7 @@ def test_system_prompt_for_part9_strips_asides_pool():
     part2 = _system_prompt_for_parts(part_label="part2")
     assert "Pre-approved profane butler asides" in part2
     assert "Horrific Slips" in part2
-    assert "draft: zero" in part2
+    assert "DRAFT ZERO" in part2
 
 
 def test_parse_all_asides_returns_full_original_pool():
@@ -593,7 +593,9 @@ def test_part_plan_has_nine_slots_covering_all_session_fields():
     from jeeves.write import PART_PLAN
 
     assert len(PART_PLAN) == 9
-    covered = {field for _, fields in PART_PLAN for field in fields}
+    # newyorker_hint is a synthetic derived field (not a real SessionModel field)
+    # injected into part7 so it can avoid duplicating New Yorker content.
+    covered = {f for _, fields in PART_PLAN for f in fields if f != "newyorker_hint"}
     assert covered == set(SessionModel.model_fields.keys()) - {
         "date", "status", "dedup",
     }, f"PART_PLAN should cover every researched + correspondence field; got {covered}"
