@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Research Phase\" failed on the jeeves-unchained repo.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Write Phase\" failed again on the jeeves-unchained repo.\n- [escalation] mmmichaelllang: Another GitHub Actions failure for the \"Jeeves — Write Phase\" workflow.\n- [escalation] mmmichaelllang: GitHub Actions \"Jeeves — Write Phase\" workflow failed within two minutes.\n- [escalation] mmmichaelllang: Repeated GitHub Actions failure for \"Jeeves — Write Phase\" on commit ddd971e.\n- [escalation] mmmichaelllang: GitHub Actions \"Jeeves — Write Phase\" workflow failed in about one minute.\n- [escalation] mmmichaelllang: GitHub Actions \"Jeeves — Write Phase\" workflow failed in 15 seconds.\n- [escalation] mmmichaelllang: GitHub Actions \"Jeeves — Write Phase\" workflow failed in 14 seconds.\n- [escalation] mmmichaelllang: GitHub Actions \"Jeeves — Write Phase\" workflow failed in 17 seconds.\n- [escalation] mmmichaelllang: GitHub Actions \"Jeeves — Research Phase\" workflow failed on commit fc227dc.\n- [escalation] mmmichaelllang: GitHub Actions \"Jeeves — Research Phase\" workflow failed on commit 902ee7b.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Correspondence Phase\" failed on main branch.",
+  "counts": {
+    "reply_needed": 0,
+    "decision_required": 4,
+    "scheduling": 1,
+    "follow_up": 0,
+    "escalation": 20,
+    "no_action": 25
+  }
+}
