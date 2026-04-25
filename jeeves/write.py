@@ -1222,8 +1222,9 @@ def _build_narrative_edit_system(recently_used: list[str]) -> str:
 # Fallback chain for the OpenRouter narrative editor.  The primary model is
 # cfg.openrouter_model_id (overridable via OPENROUTER_MODEL_ID env var).
 _OPENROUTER_FALLBACK_MODELS = [
-    "meta-llama/llama-3.3-70b-instruct",
+    "meta-llama/llama-3.3-70b-instruct:free",
     "google/gemma-4-31b-it:free",
+    "openrouter/auto",
 ]
 
 
@@ -1238,8 +1239,9 @@ def _invoke_openrouter_narrative_edit(
        avoiding phrases used in recent briefings (passed via recently_used_asides).
 
     Tries models in order: primary (cfg.openrouter_model_id) →
-    meta-llama/llama-3.3-70b-instruct → google/gemma-4-31b-it:free.
-    Falls back to the unedited document only if all three fail or the key is absent.
+    meta-llama/llama-3.3-70b-instruct:free → google/gemma-4-31b-it:free →
+    openrouter/auto (free router, highest reasoning).
+    Falls back to the unedited document only if all four fail or the key is absent.
     """
     from openai import OpenAI
 
