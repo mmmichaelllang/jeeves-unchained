@@ -29,9 +29,10 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Where we left off (2026-04-24, very late)
 
-- **PRs #16–#27 all merged to `main`.** Latest: PR #27 — OpenRouter 4-model fallback chain (nemotron primary → llama:free → gemma-4-31b:free → openrouter/auto).
+- **PRs #16–#28 all merged to `main`.** Latest: PR #28 — fixed empty local/global news (5-strategy parallel search + fallback time windows); Vertex AI grounded search with Dynamic Retrieval (1,490/day hard cap); daily cap enforcement on Gemini grounded; all quality failures from 2026-04-25 briefing fixed (empty section verbosity, UAP bloat, banned transitions, filler phrases, journal closers).
 - **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run, otherwise the narrative editor step is silently skipped.
-- **Next step: re-run `write.yml` with `skip_send=true`** and verify: (a) `OpenRouter narrative edit [meta-llama/llama-3.3-70b-instruct]` appears in logs; (b) `<!-- NEWYORKER_START -->` present in the HTML artifact; (c) exactly ~5 profane asides (not 9–14); (d) no filler phrases; (e) global news section bridges ongoing stories rather than restating or skipping; (f) triadic/ai/wearable sections advance to next uncovered item; (g) toddler section leads with new activity; (h) no banned words/transitions.
+- **Action required (optional): add `GOOGLE_CLOUD_PROJECT` + `GOOGLE_APPLICATION_CREDENTIALS_JSON` + `GOOGLE_CLOUD_REGION` to GitHub Secrets** to enable Vertex AI grounded search with Dynamic Retrieval.
+- **Next step: re-run `write.yml` with `skip_send=true`** and verify: (a) `OpenRouter narrative edit` appears in logs; (b) `<!-- NEWYORKER_START -->` present; (c) exactly ~5 profane asides; (d) no filler phrases; (e) no "Turning to" transitions; (f) UAP ≤ 250 words; (g) local/global news sections populated.
 - **All phases are live on `main`** (Phases 2, 3, 4 fully wired). Phase 4 handoff JSON feeds Phase 2 at cron `30 12 * * *`. Write runs at `40 13 * * *`.
 - **Phase 2 per-sector loop** (`jeeves/research_sectors.py`, `scripts/research.py::_run_sector_loop`) — 12 sectors × own FunctionAgent, ~40 min wall-clock. Merged in PR #12.
 - **Phase 4 integrated narrative** — no rigid `<h2>` subsections, no family roll-call boilerplate, day-over-day continuity via `_load_prior_briefing_text`. Merged in PR #13.
