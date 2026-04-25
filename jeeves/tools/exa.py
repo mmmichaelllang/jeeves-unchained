@@ -17,7 +17,7 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
         num_results: int = 10,
         category: str | None = None,
         search_type: str = "auto",
-        text_max_chars: int = 3000,
+        text_max_chars: int = 20000,
     ) -> dict[str, Any]:
         """Exa neural semantic search with full-text content.
 
@@ -31,8 +31,8 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
             search_type: one of 'auto' (default, ~1s balanced), 'fast' (~450ms),
                 'instant' (~250ms), 'deep-lite' (~4s), 'deep' (~4-15s),
                 'deep-reasoning' (~12-40s, strongest synthesis).
-            text_max_chars: cap on per-result full-text (default 3000 to keep
-                the FunctionAgent context from filling on a single search turn).
+            text_max_chars: cap on per-result full-text (default 20000, ~3000 words
+                per article — enough for synthesis without requiring a follow-up extract).
 
         Returns normalized hits with `snippet` (first 600 chars) AND `text`
         (capped full content), so the agent can skip a follow-up extraction

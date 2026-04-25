@@ -26,6 +26,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from jeeves.config import Config, MissingSecret  # noqa: E402
+from jeeves.dedup import covered_headlines as get_covered_headlines  # noqa: E402
 from jeeves.dedup import covered_urls  # noqa: E402
 from jeeves.research_sectors import (  # noqa: E402
     SECTOR_SPECS,
@@ -64,6 +65,7 @@ async def _run_sector_loop(
     cfg: Config,
     ctx: ResearchContext,
     prior_urls: set[str],
+    prior_headlines: set[str],
     ledger: QuotaLedger,
     *,
     sector_whitelist: list[str],
@@ -73,17 +75,21 @@ async def _run_sector_loop(
 
     Per-sector runs avoid the single-context overflow that killed the earlier
     design. Accumulated URLs feed the final enriched_articles sector and the
-    session dedup set.
+    session dedup set. Prior-session headlines are carried forward so the write
+    phase can synthesize across days rather than treating every story as new.
     """
 
     prior_sample = sorted(prior_urls)[:50]
+    # Seed covered_headlines from the prior session so day-over-day dedup works.
     session: dict[str, Any] = {
         "date": cfg.run_date.isoformat(),
         "status": "complete",
-        "dedup": {"covered_urls": [], "covered_headlines": []},
+        "dedup": {"covered_urls": [], "covered_headlines": sorted(prior_headlines)},
     }
     discovered_urls: list[str] = []
-    discovered_headlines: list[str] = []
+    # Start with prior headlines so new ones accumulate on top; write phase
+    # sees the full rolling window in dedup.covered_headlines.
+    discovered_headlines: list[str] = sorted(prior_headlines)
 
     specs = _filter_specs(SECTOR_SPECS, sector_whitelist, limit)
 
@@ -189,7 +195,11 @@ def main(argv: list[str] | None = None) -> int:
 
     prior = load_previous_session(cfg)
     prior_urls = covered_urls(prior)
-    log.info("prior session loaded: %s URLs in dedup set.", len(prior_urls))
+    prior_hl = get_covered_headlines(prior)
+    log.info(
+        "prior session loaded: %d URLs, %d headlines in dedup set.",
+        len(prior_urls), len(prior_hl),
+    )
 
     ledger = QuotaLedger(cfg.quota_state_path)
     ctx = ResearchContext()
@@ -205,6 +215,7 @@ def main(argv: list[str] | None = None) -> int:
                 cfg,
                 ctx,
                 prior_urls,
+                prior_hl,
                 ledger,
                 sector_whitelist=sector_whitelist,
                 limit=args.limit,

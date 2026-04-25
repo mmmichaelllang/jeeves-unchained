@@ -73,7 +73,14 @@ SECTOR_SPECS: list[SectorSpec] = [
             "\nFor each story you plan to include, call tavily_extract on the article URL "
             "to read the actual content — do not write findings from a headline alone. "
             "Return a JSON array of objects: [{category, source, findings, urls}, ...]. "
-            "If genuinely nothing qualifies after all searches, return []."
+            "\nNEVER RETURN AN EMPTY ARRAY. If Edmonds-specific results are thin after "
+            "all five searches above, expand your scope in this order until you have "
+            "at least one item:\n"
+            "  a) serper_search(query='Shoreline OR Lynnwood OR Mountlake Terrace news today')\n"
+            "  b) serper_search(query='Snohomish County news site:heraldnet.com', tbs='qdr:w')\n"
+            "  c) Return the most recent minor municipal item you found — even a city "
+            "     commission meeting notice — as category='municipal'. Quiet news days "
+            "     deserve one honest line, not an empty array that breaks the briefing."
         ),
         default=[],
     ),
@@ -122,7 +129,13 @@ SECTOR_SPECS: list[SectorSpec] = [
             "After ranking your top 4-8 stories, call tavily_extract on those article URLs "
             "(batch them) to read actual content before writing findings. "
             "Do not write a findings summary from a headline alone. "
-            "Return a JSON array of {category, source, findings, urls}."
+            "Return a JSON array of {category, source, findings, urls}. "
+            "\nNEVER RETURN AN EMPTY ARRAY. If the primary search strategies return "
+            "nothing, try:\n"
+            "  a) exa_search(query='world news today', search_type='fast', num_results=5)\n"
+            "  b) serper_search(query='international news today BBC Reuters', tbs='qdr:d')\n"
+            "Return at least one story. An empty global_news array renders a broken "
+            "briefing section."
         ),
         default=[],
     ),
@@ -377,11 +390,27 @@ def collect_urls_from_sector(value: Any) -> list[str]:
 _HEADLINE_KEYS = {"title", "headline", "subject", "role", "event", "district"}
 
 
+def _first_sentence(text: str, max_chars: int = 150) -> str:
+    """Extract a short dedup-usable label from a findings string.
+
+    Slices at the first sentence-ending punctuation that lands within
+    max_chars, or truncates at max_chars if no such punctuation exists.
+    """
+    text = text.strip()
+    for end in (".", "!", "?", ";"):
+        i = text.find(end)
+        if 0 < i < max_chars:
+            return text[: i + 1].strip()
+    return text[:max_chars].strip()
+
+
 def collect_headlines_from_sector(value: Any) -> list[str]:
-    """Pull human-facing labels (titles, headlines, event names, job roles) out of
-    a sector's parsed JSON so downstream dedup can skip day-over-day repeats.
-    Complements `collect_urls_from_sector` for items that don't carry a URL
-    (events, job openings, correspondence threads)."""
+    """Pull human-facing labels out of a sector's parsed JSON for day-over-day dedup.
+
+    Extracts both explicit headline-keyed fields (title, headline, role, etc.)
+    AND the first sentence of any ``findings`` string — the latter is critical
+    for news/deep sectors whose Finding objects carry no title field.
+    """
 
     out: list[str] = []
     if value is None:
@@ -395,6 +424,10 @@ def collect_headlines_from_sector(value: Any) -> list[str]:
         for k, v in value.items():
             if k in _HEADLINE_KEYS and isinstance(v, str) and v.strip():
                 out.append(v.strip())
+            elif k == "findings" and isinstance(v, str) and v.strip():
+                sentence = _first_sentence(v)
+                if sentence:
+                    out.append(sentence)
             elif isinstance(v, (dict, list)):
                 out.extend(collect_headlines_from_sector(v))
     return out

@@ -282,6 +282,17 @@ CONTINUATION_RULES = """
     one brief reference is fine if it illuminates today's development.
     Never skip an ongoing story just because it appeared before. Never repeat
     one just because it reappeared in today's findings. Synthesize.
+11. WIT QUOTA. At least one sardonic, wry, or darkly humorous observation per
+    part. This may be a short parenthetical, a loaded short sentence after a
+    long paragraph, an ironic understatement, or a dry aside about human folly.
+    It need not be profane — a well-timed "Naturally." or "One had hoped
+    otherwise." lands harder than gratuitous language. If you complete your
+    writing and have included zero wit, insert one before the sentinel.
+    Good wit is specific: it reacts to the content just described.
+    Bad wit: "the situation is, as ever, complex." (generic)
+    Good wit: "The council voted unanimously, which given recent history
+    suggests the decision was either obviously correct or unopposed for
+    reasons no one will admit." (specific, ironic)
 """
 
 
@@ -357,17 +368,24 @@ Mister Lang has already been briefed on.
 5. If everything is a repeat: acknowledge briefly, note that the board is
    quiet, and move on. Do NOT pad with advice about job-searching.
 
-**CLOSING PARAGRAPH BAN (CRITICAL):**
-Do NOT end this section with generic advice, encouragement, or instructions to
-Mister Lang. Banned closing phrases (delete any sentence containing these):
+**SYNTHESIS CLOSE (REQUIRED):**
+End this section with a short closing observation that is ONLY possible from
+having read these specific postings — something concrete and non-transferable:
+- An observation about which district is most active this week vs. last
+- A note about the unusual specificity of a posting's requirements
+- A dry Jeeves remark about what the school's language reveals about its culture
+- The exact mismatch (or fit) between a posting and Mister Lang's known background
+
+The closing observation must be grounded in a specific posting detail. It cannot
+be paraphrased as generic career advice. One or two sentences. Stop there.
+
+BANNED closing patterns (delete any sentence containing these — they signal
+generic filler, not synthesis):
 - "Monitor the job boards" / "keep a close eye on job listings"
 - "apply to positions that align with your qualifications"
 - "Be prepared for the application process" / "have all necessary documents ready"
 - "the job market is active" / "teaching opportunities are plentiful"
 - "this is an exciting time" / "there are many opportunities"
-Jeeves reports facts. He does not dispense career counseling. End on the last
-specific posting detail — school name, role, deadline — or a dry Jeeves
-observation about the posting landscape. Nothing more.
 
 Aim for ~500-700 words. No profane asides in draft — the final editor adds them.
 
@@ -501,17 +519,28 @@ same essay, the same debate, the same thinker's work may resurface.
    explicit. Jeeves reads widely and connects what he reads. This is not
    padding — it is the highest function of the briefing.
 
-**CLOSING SUMMARY BAN (CRITICAL):**
-Do NOT end this section with a meta-observation about intellectual journals as a
-category. Delete any closing sentence or paragraph matching these patterns:
+**SYNTHESIS CLOSE (REQUIRED):**
+End this section with a short closing observation that is ONLY possible from
+having read the specific pieces covered here. It must name the essay, the
+thinker, or the argument. It cannot be transplanted unchanged to a different
+briefing about different journals.
+
+Examples of what a synthesis close looks like:
+- The resonance or contradiction between two pieces covered in this section
+- The specific claim in one essay that illuminates a news event covered earlier
+- A dry Jeeves observation about what the journal's editorial choices this week reveal
+
+One or two sentences. If you find yourself writing about "intellectual journals"
+as a category rather than about the actual essay in front of you — stop, delete,
+and write about the essay instead.
+
+BANNED closing patterns (generic filler — delete entirely):
 - "The intellectual journals offer a [adj] exploration / tool / window..."
 - "These pieces demonstrate the importance of thoughtful analysis..."
 - "The ongoing discussion continues..." / "This debate continues to evolve..."
 - "These works provide valuable / fascinating insights..."
-- Any paragraph whose first word is "The" and whose subject is "intellectual
-  journals", "these journals", or "the journals" — if it generalizes rather
-  than making a specific claim from a specific article, delete it entirely.
-End on the final specific claim from the final article discussed. One fact. Stop.
+- Any paragraph whose subject is "intellectual journals", "these journals",
+  or "the journals" in the abstract — generalising rather than citing.
 
 Aim for ~600-800 words. No profane asides in draft — the final editor adds them.
 
@@ -576,16 +605,28 @@ the same model, benchmark, or lab's paper appearing in the feed for days.
 5. If everything is repeat: two sentences, then STOP. Do NOT fill space
    with general AI commentary.
 
-**CLOSING SUMMARY BAN (CRITICAL):**
-Do NOT end this section with a general reflection combining both topics. Delete any
-closing sentence matching these patterns:
+**SYNTHESIS CLOSE (REQUIRED):**
+End each sub-section (triadic ontology and AI systems) with a short closing
+observation that is ONLY possible from having engaged with the specific paper
+or model covered. It must name a title, a method, an author, or a specific
+technical claim.
+
+Examples:
+- The methodological tension between the specific paper just discussed and a
+  prior approach Mister Lang would know
+- What this model's specific benchmark result implies for the research agenda
+- A dry Jeeves observation about the gap between the paper's ambitions and its scope
+
+One sentence per sub-section is enough. If you find yourself writing about
+"triadic ontology" or "AI systems" as categories in the abstract — stop,
+delete, and write about the specific thing you just described.
+
+BANNED closing patterns (delete entirely):
 - "Both triadic ontology and AI systems are undergoing..." / "Both fields continue..."
 - "The research on [X] and [Y] continues to advance..."
 - "Considering the implications of these findings..." (in any form)
 - "These are exciting / significant developments in..." (label, not substance)
 - "Continuing to monitor the progress being made in..." (do not do this ever)
-End on the last specific model, paper title, or technical claim in your sub-section.
-No wrap-up paragraph. No meta-commentary about either field.
 
 Aim for ~600-800 words total for this part. No profane asides in draft.
 
@@ -1300,10 +1341,13 @@ The last thing a section should say is the most specific, concrete, or
 interesting thing in it — not a restated generalisation. Let the last
 fact or observation be the full stop. Do not recap what was just read.
 
-## PART B — PROFANE ASIDES (exactly five)
+## PART B — PROFANE ASIDES (reach exactly five total)
 
-Your draft arrived clean — zero profane asides. You must add **exactly five**
-from the pre-approved list below. Not four. Not six. Five.
+Count the profane asides already present in the draft — the Groq drafting
+pass is instructed to write zero, but may have included one or two. Your job
+is to bring the total to **exactly five**. If the draft has zero asides, add
+five. If it has two, add three. If it already has five, add none. Never exceed
+five total; never go below five total.
 
 **Rules for placement:**
 1. Each aside must be *earned* — it reacts to a specific, named dysfunction,
@@ -1372,7 +1416,8 @@ from the pre-approved list below. Not four. Not six. Five.
 
 - Do NOT alter any HTML between <!-- NEWYORKER_START --> and <!-- NEWYORKER_END -->.
 - Do NOT change URLs, href attributes, or anchor text inside <a> tags.
-- Add EXACTLY five profane asides — no more, no fewer.
+- Ensure EXACTLY five profane asides total — count existing ones, add only
+  enough to reach five. Never add more if five are already present.
 - Do NOT invent new topics, facts, or named sources.
 - Do NOT alter the sign-off block (<div class="signoff">...</div>).
 - Do NOT alter <!-- COVERAGE_LOG: ... --> or <!-- COVERAGE_LOG_PLACEHOLDER --> comments.
@@ -1583,7 +1628,7 @@ def _system_prompt_for_parts(
         # Strip the Horrific Slips bullet (within "## Mandatory style rules")
         # and the "### Pre-approved profane butler asides" subsection below it.
         base = _re.sub(
-            r"- \*\*Horrific Slips \(draft: zero\)\.\*\*.*?(?=^- \*\*|^## |^### |\Z)",
+            r"- \*\*\[HARD RULE\] Horrific Slips.*?(?=^- \*\*|^## |^### |\Z)",
             "",
             base,
             count=1,
