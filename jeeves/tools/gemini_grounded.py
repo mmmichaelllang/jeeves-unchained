@@ -4,6 +4,9 @@ Daily cap: Google Search Grounding is free for the first 1,500 requests per UTC
 day. This module enforces a hard stop at 1,490 (DAILY_HARD_CAPS["gemini_grounded"]
 in quota.py) — ten below the free tier — so a burst can never trigger charges.
 The cap auto-resets at UTC midnight via QuotaLedger.check_daily_allow().
+
+Uses the google-genai SDK (import google.genai) — the replacement for the
+deprecated google-generativeai package.
 """
 
 from __future__ import annotations
@@ -41,22 +44,26 @@ def make_gemini_grounded(cfg: Config, ledger: QuotaLedger):
             }
 
         try:
-            import google.generativeai as genai  # type: ignore
+            from google import genai  # type: ignore
+            from google.genai import types  # type: ignore
 
-            genai.configure(api_key=cfg.google_api_key)
-            model = genai.GenerativeModel(
-                "gemini-2.5-flash",
-                tools=[{"google_search": {}}],
+            client = genai.Client(api_key=cfg.google_api_key)
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=question,
+                config=types.GenerateContentConfig(
+                    tools=[types.Tool(google_search=types.GoogleSearch())],
+                    temperature=0.2,
+                ),
             )
-            resp = model.generate_content(question)
         except Exception as e:
             log.warning("gemini grounded error: %s", e)
             return {"provider": "gemini", "error": str(e), "answer": "", "citations": []}
 
         ledger.record("gemini", 1)
         ledger.record_daily("gemini_grounded", 1)
-        answer = getattr(resp, "text", "") or ""
-        citations = _extract_citations(resp)
+        answer = getattr(response, "text", "") or ""
+        citations = _extract_citations(response)
         log.info(
             "gemini_grounded: answered (%d chars, %d citations) [daily=%d/1490]",
             len(answer), len(citations), ledger.daily_used("gemini_grounded"),

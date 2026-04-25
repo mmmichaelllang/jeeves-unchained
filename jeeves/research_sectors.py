@@ -158,8 +158,8 @@ SECTOR_SPECS: list[SectorSpec] = [
             "volume, paper, or author — check prior_urls and avoid repeating what is there. "
             "Begin your findings prose with the specific TITLE and AUTHOR of each paper or "
             "volume discussed so that covered-headline matching works correctly. "
-            "Return {findings: 'long-form prose 500-1000 chars, opening with title/author "
-            "of each item covered', urls: [...]}."
+            "CRITICAL: 'findings' MUST be a single prose string (500-1000 chars), NOT an "
+            "array or list. Return exactly: {\"findings\": \"<prose>\", \"urls\": [...]}."
         ),
         default={"findings": "", "urls": []},
     ),
@@ -169,7 +169,10 @@ SECTOR_SPECS: list[SectorSpec] = [
         instruction=(
             "Deep research: multi-agent research systems, reasoning models, autonomous "
             "research pipelines, prompt-engineering advances. Use exa_search with "
-            "search_type='deep'. Return {findings, urls}."
+            "search_type='deep'. "
+            "CRITICAL: 'findings' MUST be a single prose string (500-1000 chars), NOT an "
+            "array or list. Return exactly: {\"findings\": \"<prose string>\", \"urls\": [...]}. "
+            "Do not put an array in the findings field."
         ),
         default={"findings": "", "urls": []},
     ),
@@ -178,7 +181,9 @@ SECTOR_SPECS: list[SectorSpec] = [
         shape="deep",
         instruction=(
             "Deep research: UAP disclosure, congressional hearings, non-human intelligence "
-            "declassification. Recent developments only. Return {findings, urls}."
+            "declassification. Recent developments only. "
+            "CRITICAL: 'findings' MUST be a single prose string (≤250 words), NOT an array "
+            "or list. Return exactly: {\"findings\": \"<prose string>\", \"urls\": [...]}."
         ),
         default={"findings": "", "urls": []},
     ),

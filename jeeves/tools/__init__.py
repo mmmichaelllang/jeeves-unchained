@@ -64,10 +64,11 @@ def all_search_tools(
                 "queries, academic-adjacent content. Returns both snippet and "
                 "capped full text, so you often do NOT need to follow up with "
                 "tavily_extract on Exa hits. Args: query (str), "
-                "num_results (int=10), category (str|None, e.g. 'news', "
-                "'research paper', 'company'), search_type (str='auto' — also "
-                "'fast', 'instant', 'deep-lite', 'deep', 'deep-reasoning'), "
-                "text_max_chars (int=20000)."
+                "num_results (int=10), category (str|None — valid values: "
+                "'news', 'research paper', 'company', 'pdf', 'personal site', "
+                "'financial report', 'people' — use None if unsure), "
+                "search_type (str='auto' — also 'fast', 'instant', 'deep-lite', "
+                "'deep', 'deep-reasoning'), text_max_chars (int=20000)."
             ),
         ),
         FunctionTool.from_defaults(
