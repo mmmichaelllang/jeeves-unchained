@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class Dedup(BaseModel):
@@ -39,6 +39,13 @@ class DeepResearch(BaseModel):
     model_config = ConfigDict(extra="allow")
     findings: str = ""
     urls: list[str] = Field(default_factory=list)
+
+    @field_validator("findings", mode="before")
+    @classmethod
+    def coerce_findings_to_str(cls, v: object) -> str:
+        if isinstance(v, list):
+            return " ".join(str(item) for item in v if item)
+        return v  # type: ignore[return-value]
 
 
 class NewYorker(BaseModel):
