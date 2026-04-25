@@ -26,6 +26,7 @@ def all_search_tools(
     from .serper import make_serper_search
     from .talk_of_the_town import fetch_talk_of_the_town
     from .tavily import make_tavily_extract, make_tavily_search
+    from .vertex_search import make_vertex_grounded
 
     tools = [
         FunctionTool.from_defaults(
@@ -34,7 +35,7 @@ def all_search_tools(
             description=(
                 "Google SERP via Serper.dev. Best for: breaking news, local events, "
                 "time-filtered queries. Cheapest search. Args: query (str), num (int=10), "
-                "tbs (str|None, e.g. 'qdr:d' for last 24h)."
+                "tbs (str|None, e.g. 'qdr:d' for last 24h, 'qdr:w' for last 7 days)."
             ),
         ),
         FunctionTool.from_defaults(
@@ -73,10 +74,22 @@ def all_search_tools(
             fn=make_gemini_grounded(cfg, ledger),
             name="gemini_grounded_synthesize",
             description=(
-                "Gemini 2.5 Flash with Google Search grounding. Returns a synthesized "
-                "answer plus citation URLs. Use for 'current state of X' questions where "
-                "a narrative answer is more useful than raw SERP. NOT a raw result list — "
-                "call serper_search for that. Args: question (str)."
+                "Gemini 2.5 Flash with Google Search grounding (standard API). Returns a "
+                "synthesized answer plus citation URLs. Hard daily cap: 1,490/day (Google "
+                "free tier is 1,500 — stops 10 below to guarantee no charges). Use for "
+                "'current state of X' questions where a narrative answer is more useful "
+                "than a raw result list. Args: question (str)."
+            ),
+        ),
+        FunctionTool.from_defaults(
+            fn=make_vertex_grounded(cfg, ledger),
+            name="vertex_grounded_search",
+            description=(
+                "Vertex AI Gemini with Dynamic Google Search grounding. Only invokes "
+                "Search when model confidence < 0.3 (Dynamic Retrieval) — minimises "
+                "actual search calls while still grounding answers in current web content. "
+                "Hard daily cap: 1,490/day. Returns {answer, citations}. Disabled "
+                "silently if GOOGLE_CLOUD_PROJECT is not set. Args: question (str)."
             ),
         ),
         FunctionTool.from_defaults(

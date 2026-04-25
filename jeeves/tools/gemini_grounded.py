@@ -1,4 +1,10 @@
-"""Gemini grounded search — returns synthesized answer + citations, not raw SERP."""
+"""Gemini grounded search — returns synthesized answer + citations, not raw SERP.
+
+Daily cap: Google Search Grounding is free for the first 1,500 requests per UTC
+day. This module enforces a hard stop at 1,490 (DAILY_HARD_CAPS["gemini_grounded"]
+in quota.py) — ten below the free tier — so a burst can never trigger charges.
+The cap auto-resets at UTC midnight via QuotaLedger.check_daily_allow().
+"""
 
 from __future__ import annotations
 
@@ -6,7 +12,7 @@ import logging
 from typing import Any
 
 from ..config import Config
-from .quota import QuotaLedger
+from .quota import QuotaExceeded, QuotaLedger
 
 log = logging.getLogger(__name__)
 
@@ -18,7 +24,22 @@ def make_gemini_grounded(cfg: Config, ledger: QuotaLedger):
         Returns a narrative answer plus citation URLs. Use this tool when a
         synthesized description of 'current state of X' is more useful than
         a raw ranked list of links.
+
+        Hard daily cap: 1,490 grounded searches per UTC day (Google's free tier
+        is 1,500; we stop 10 below to ensure we are never charged).
         """
+        # --- daily cap check (hard stop, no charges ever) ---
+        try:
+            ledger.check_daily_allow("gemini_grounded")
+        except QuotaExceeded as exc:
+            log.warning("gemini_grounded: %s", exc)
+            return {
+                "provider": "gemini",
+                "error": "daily cap reached — no further calls today",
+                "answer": "",
+                "citations": [],
+            }
+
         try:
             import google.generativeai as genai  # type: ignore
 
@@ -33,8 +54,13 @@ def make_gemini_grounded(cfg: Config, ledger: QuotaLedger):
             return {"provider": "gemini", "error": str(e), "answer": "", "citations": []}
 
         ledger.record("gemini", 1)
+        ledger.record_daily("gemini_grounded", 1)
         answer = getattr(resp, "text", "") or ""
         citations = _extract_citations(resp)
+        log.info(
+            "gemini_grounded: answered (%d chars, %d citations) [daily=%d/1490]",
+            len(answer), len(citations), ledger.daily_used("gemini_grounded"),
+        )
         return {
             "provider": "gemini",
             "question": question,
