@@ -79,6 +79,12 @@ class Config:
     # OpenRouter (optional — narrative editor pass in write phase)
     openrouter_api_key: str = ""
     openrouter_model_id: str = "nvidia/nemotron-3-super-120b-a12b:free"
+    # Vertex AI (optional — grounded search with Dynamic Retrieval)
+    # Set GOOGLE_CLOUD_PROJECT + GOOGLE_APPLICATION_CREDENTIALS_JSON to enable.
+    # The tool is silently disabled if google_cloud_project is empty.
+    google_cloud_project: str = ""
+    google_cloud_region: str = "us-central1"
+    google_application_credentials_json: str = ""  # Full JSON content, not a path
     # Recipient
     recipient_email: str = "lang.mc@gmail.com"
     # Paths
@@ -160,6 +166,11 @@ class Config:
             openrouter_api_key=os.environ.get("OPENROUTER_API_KEY", ""),
             openrouter_model_id=os.environ.get(
                 "OPENROUTER_MODEL_ID", "nvidia/nemotron-3-super-120b-a12b:free"
+            ),
+            google_cloud_project=os.environ.get("GOOGLE_CLOUD_PROJECT", ""),
+            google_cloud_region=os.environ.get("GOOGLE_CLOUD_REGION", "us-central1"),
+            google_application_credentials_json=os.environ.get(
+                "GOOGLE_APPLICATION_CREDENTIALS_JSON", ""
             ),
             recipient_email=os.environ.get("JEEVES_RECIPIENT_EMAIL", "lang.mc@gmail.com"),
         )

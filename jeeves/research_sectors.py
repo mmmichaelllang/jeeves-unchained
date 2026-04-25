@@ -54,11 +54,17 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Local news for Edmonds, Snohomish County, and Seattle. Cover two subcategories: "
             "'municipal' (council, schools, transit, local policy) and 'public_safety'. "
             "Public safety GEOFENCE: 3 miles from (47.810652, -122.377355). Only homicides, "
-            "major assaults, armed incidents, missing persons. Reject petty crime. Use "
-            "serper_search with tbs='qdr:d' for the last-24h filter. For each story you "
-            "plan to include, call tavily_extract on the article URL to read the actual "
-            "content — do not write findings from a headline alone. "
-            "Return a JSON array of objects: [{category, source, findings, urls}, ...]."
+            "major assaults, armed incidents, missing persons. Reject petty crime. "
+            "\n\nSEARCH STRATEGY — use ALL of these in parallel, do not skip any:"
+            "\n1. serper_search(query='Edmonds WA news', tbs='qdr:d') — last 24h."
+            "\n2. serper_search(query='Edmonds Washington city council OR permit OR development', tbs='qdr:w') — last 7 days for municipal."
+            "\n3. tavily_search(query='Edmonds WA local news today', max_results=8)."
+            "\n4. gemini_grounded_synthesize(question='What is the latest local news in Edmonds, Washington today? Include any city council, public safety, development, or school district news.') — synthesises across sources."
+            "\n5. If serper 24h returns nothing new: serper_search(query='Snohomish County news site:myedmondsnews.com OR site:heraldnet.com', tbs='qdr:w')."
+            "\nFor each story you plan to include, call tavily_extract on the article URL "
+            "to read the actual content — do not write findings from a headline alone. "
+            "Return a JSON array of objects: [{category, source, findings, urls}, ...]. "
+            "If genuinely nothing qualifies after all searches, return []."
         ),
         default=[],
     ),
@@ -93,10 +99,20 @@ SECTOR_SPECS: list[SectorSpec] = [
         shape="list",
         instruction=(
             "Global news, today. Sources: BBC, CNN, Al Jazeera, The Guardian, NPR, "
-            "Memeorandum, NYT. Use serper_search with tbs='qdr:d' plus tavily_search. "
-            "After ranking your top 4-8 stories by significance, call tavily_extract "
-            "on those article URLs (batch them) to read actual content before writing "
-            "findings. Do not write a findings summary from a headline alone. "
+            "Memeorandum, NYT, Reuters, AP. "
+            "\n\nSEARCH STRATEGY — dispatch these in parallel:"
+            "\n1. serper_search(query='world news today', tbs='qdr:d', num=10)."
+            "\n2. tavily_search(query='top global news stories today', max_results=8)."
+            "\n3. gemini_grounded_synthesize(question='What are the 5 most significant global news stories right now? Include geopolitics, economics, and major international events. Cite specific sources.') — critical for comprehensive coverage."
+            "\n4. vertex_grounded_search(question='Latest breaking world news today — top stories from BBC, Guardian, Reuters, Al Jazeera.') — use if gemini_grounded returns thin results."
+            "\nIMPORTANT — ongoing stories: if prior_urls already contains URLs for a "
+            "major ongoing story (e.g. a war, a trade dispute), do NOT skip the story. "
+            "Instead, search specifically for TODAY'S NEW DEVELOPMENT: "
+            "serper_search(query='[story name] latest update today', tbs='qdr:d'). "
+            "A new URL about the same story is NOT a duplicate — cover the new development. "
+            "After ranking your top 4-8 stories, call tavily_extract on those article URLs "
+            "(batch them) to read actual content before writing findings. "
+            "Do not write a findings summary from a headline alone. "
             "Return a JSON array of {category, source, findings, urls}."
         ),
         default=[],
