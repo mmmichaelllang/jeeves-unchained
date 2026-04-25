@@ -165,7 +165,7 @@ PART_PLAN: list[tuple[str, list[str]]] = [
     ("part4", ["family", "global_news"]),
     ("part5", ["intellectual_journals", "enriched_articles"]),
     ("part6", ["triadic_ontology", "ai_systems"]),
-    ("part7", ["uap", "wearable_ai"]),
+    ("part7", ["uap", "wearable_ai", "newyorker_hint"]),
     ("part8", ["vault_insight"]),
     ("part9", ["newyorker"]),
 ]
@@ -189,6 +189,10 @@ the `<h1>` with today's full weekday date, then:
 - Sector 1 opening material: the formal butler greeting to Mister Lang, the
   correspondence summary (if `correspondence.found=true`), and the weather
   forecast from `weather`.
+
+**Empty weather rule:** If `weather` is an empty string, write exactly this
+one line and then move on — do not invent, speculate, or apologise:
+  <p>The weather forecast is unavailable this morning, Sir.</p>
 
 **Correspondence summary rule:** If `correspondence.found=true` and
 `correspondence.fallback_used=false`, open with: *"The morning's correspondence
@@ -247,6 +251,12 @@ CONTINUATION_RULES = """
    humour or understatement. Never glide mechanically between a tragedy and
    a choral audition. If you catch yourself writing any "Turning to" or
    "As we [verb] to" opener, DELETE the entire sentence and begin again.
+   ALSO BANNED — closing-paragraph openers: "Considering the implications
+   of these findings", "Both [X] and [Y] are undergoing significant",
+   "Both [X] and [Y] continue to", "Continuing to monitor the progress",
+   "These are exciting developments in", "These pieces demonstrate the
+   importance of". Any sentence opening a closing paragraph that could
+   apply to a completely different topic — delete it entirely.
 6. NO APOLOGIES AFTER PROFANE ASIDES. The asides stand alone. Never append
    "— I do beg your pardon, Sir", "pardon my language", "if you'll excuse
    the expression", "if I may say so", or any apologetic recovery phrase.
@@ -292,17 +302,15 @@ Your scope — write ONLY about these:
   assault, armed incident, missing person). Reject petty crime and traffic
   stops.
 
-**EMPTY FEED RULE (CRITICAL):** If `local_news` is an empty array, or if no
-item passes the municipal/civic/public-safety filters above, write EXACTLY
-this one sentence and STOP:
+**EMPTY FEED RULE (CRITICAL — COPY THIS EXACTLY, CHARACTER FOR CHARACTER):**
+If `local_news` is an empty array, or if no item passes the filters above,
+output this HTML verbatim — do not shorten, rephrase, or omit "Sir":
 
-  <p>The local feed is quiet this morning, Sir — nothing within the
-  geofence that rises to the level of a briefing item.</p>
+  <p>The local feed is quiet this morning, Sir — nothing within the geofence that rises to the level of a briefing item.</p>
 
-Then immediately emit `<!-- PART2 END -->`. Do NOT elaborate. Do NOT
-philosophise about the value of community engagement or civic participation.
-Do NOT explain what kinds of stories you were looking for. One sentence,
-sentinel, done.
+Then immediately emit `<!-- PART2 END -->`. Do NOT add a second sentence.
+Do NOT explain what you looked for. Do NOT say "The local feed is quiet"
+alone — the full sentence above is required. One line, sentinel, done.
 
 **Local news synthesis (REQUIRED when items DO exist):** Edmonds municipal
 stories often run across multiple days. Apply synthesis intelligence:
@@ -348,6 +356,18 @@ Mister Lang has already been briefed on.
    deadline, any distinctive features relevant to Mister Lang's background.
 5. If everything is a repeat: acknowledge briefly, note that the board is
    quiet, and move on. Do NOT pad with advice about job-searching.
+
+**CLOSING PARAGRAPH BAN (CRITICAL):**
+Do NOT end this section with generic advice, encouragement, or instructions to
+Mister Lang. Banned closing phrases (delete any sentence containing these):
+- "Monitor the job boards" / "keep a close eye on job listings"
+- "apply to positions that align with your qualifications"
+- "Be prepared for the application process" / "have all necessary documents ready"
+- "the job market is active" / "teaching opportunities are plentiful"
+- "this is an exciting time" / "there are many opportunities"
+Jeeves reports facts. He does not dispense career counseling. End on the last
+specific posting detail — school name, role, deadline — or a dry Jeeves
+observation about the posting landscape. Nothing more.
 
 Aim for ~500-700 words. No profane asides in draft — the final editor adds them.
 
@@ -481,6 +501,18 @@ same essay, the same debate, the same thinker's work may resurface.
    explicit. Jeeves reads widely and connects what he reads. This is not
    padding — it is the highest function of the briefing.
 
+**CLOSING SUMMARY BAN (CRITICAL):**
+Do NOT end this section with a meta-observation about intellectual journals as a
+category. Delete any closing sentence or paragraph matching these patterns:
+- "The intellectual journals offer a [adj] exploration / tool / window..."
+- "These pieces demonstrate the importance of thoughtful analysis..."
+- "The ongoing discussion continues..." / "This debate continues to evolve..."
+- "These works provide valuable / fascinating insights..."
+- Any paragraph whose first word is "The" and whose subject is "intellectual
+  journals", "these journals", or "the journals" — if it generalizes rather
+  than making a specific claim from a specific article, delete it entirely.
+End on the final specific claim from the final article discussed. One fact. Stop.
+
 Aim for ~600-800 words. No profane asides in draft — the final editor adds them.
 
 When done, emit `<!-- PART5 END -->` and STOP. Do NOT close outer tags.
@@ -544,6 +576,17 @@ the same model, benchmark, or lab's paper appearing in the feed for days.
 5. If everything is repeat: two sentences, then STOP. Do NOT fill space
    with general AI commentary.
 
+**CLOSING SUMMARY BAN (CRITICAL):**
+Do NOT end this section with a general reflection combining both topics. Delete any
+closing sentence matching these patterns:
+- "Both triadic ontology and AI systems are undergoing..." / "Both fields continue..."
+- "The research on [X] and [Y] continues to advance..."
+- "Considering the implications of these findings..." (in any form)
+- "These are exciting / significant developments in..." (label, not substance)
+- "Continuing to monitor the progress being made in..." (do not do this ever)
+End on the last specific model, paper title, or technical claim in your sub-section.
+No wrap-up paragraph. No meta-commentary about either field.
+
 Aim for ~600-800 words total for this part. No profane asides in draft.
 
 When done, emit `<!-- PART6 END -->` and STOP. Do NOT close outer tags.
@@ -563,7 +606,52 @@ Your scope — write ONLY about these:
 - Wearable Intelligence from `wearable_ai` — all three subcategories
   (AI voice hardware, teacher AI tools, wearable devices).
 
-**Wearable AI — dedup with advancement (same protocol as triadic / ai_systems):**
+**PART 7 STRUCTURE — TWO DISTINCT SUB-SECTIONS (REQUIRED):**
+Write UAP FIRST, then Wearable AI SECOND. These must be visually and
+narratively separated — end the UAP content, start a new paragraph, then
+begin the Wearable AI section. Do NOT blend UAP and wearable content into
+the same paragraph. A jarring shift is acceptable (and expected given the
+subject matter). Just begin the wearable section cleanly on its own paragraph
+after UAP ends.
+
+**NEW YORKER OVERLAP (CRITICAL):**
+Your payload includes `newyorker_hint`. If `newyorker_hint.available` is true
+and `newyorker_hint.title` names a product, company, or person that ALSO
+appears in your `wearable_ai` findings — give that item ONE sentence only,
+then move on:
+
+  "The [product/company] has drawn sufficient press attention to feature in
+   this week's New Yorker Talk of the Town, which we shall hear presently."
+
+Do NOT write an extended narrative (the Maya anecdote, user quotes, competitor
+analysis) about any product that is simultaneously the subject of Talk of the
+Town. The New Yorker section is the full treatment — duplicating it here
+deflates its impact and pads the briefing with repetition.
+
+**UAP — strict rules (CRITICAL):**
+
+1. **Dedup first**: if the primary UAP disclosure item is already covered,
+   pivot to the next distinct development. Cover that one.
+2. **Word cap: 250 words maximum for the entire UAP sub-section.** Count your
+   words. Stop at 250. Do not exceed this under any circumstances.
+3. **Anti-repetition**: every sentence must introduce a fact, date, name, or
+   claim not already stated in this sub-section. If you find yourself
+   rephrasing a point already made, DELETE the new sentence and stop.
+4. **Banned UAP filler phrases** — never write:
+   - "it is essential to approach the topic with a critical and nuanced perspective"
+   - "it is crucial to remain informed and up-to-date"
+   - "As we consider the implications of" / "Considering the implications of"
+   - "make more informed decisions about their potential impact"
+   - "highlights the need for continued discussion"
+   - "this debate highlights the need for"
+   - "The situation with UAP disclosure is complex and multifaceted"
+   - Any sentence that could be copy-pasted unchanged into a briefing on a
+     completely different topic. If a sentence has no UAP-specific nouns,
+     delete it.
+5. **No "As we await further developments"** — if there is nothing new, say
+   so in one sentence and stop.
+
+**Wearable AI — dedup with advancement:**
 
 Product launches and EdTech tools recur heavily. The same device or tool
 may appear for days before Jeeves has covered it.
@@ -582,29 +670,6 @@ For EACH of the three subcategories in `wearable_ai`:
    Do NOT write about the sector's "potential to revolutionise" anything.
    Do NOT write "it is essential to continue monitoring this sector."
    Do NOT write about future developments you are awaiting.
-
-**UAP — strict rules (CRITICAL):**
-
-1. **Dedup first**: if the primary UAP disclosure item is already covered,
-   pivot to the next distinct development. Cover that one.
-2. **Word cap: 250 words maximum for the entire UAP sub-section.** Count your
-   words. Stop at 250. Do not exceed this under any circumstances.
-3. **Anti-repetition**: every sentence must introduce a fact, date, name, or
-   claim not already stated in this sub-section. If you find yourself
-   rephrasing a point already made, DELETE the new sentence and stop.
-4. **Banned UAP filler phrases** — never write:
-   - "it is essential to approach the topic with a critical and nuanced perspective"
-   - "it is crucial to remain informed and up-to-date"
-   - "As we consider the implications of"
-   - "make more informed decisions about their potential impact"
-   - "highlights the need for continued discussion"
-   - "this debate highlights the need for"
-   - "The situation with UAP disclosure is complex and multifaceted"
-   - Any sentence that could be copy-pasted unchanged into a briefing on a
-     completely different topic. If a sentence has no UAP-specific nouns,
-     delete it.
-5. **No "As we await further developments"** — if there is nothing new, say
-   so in one sentence and stop.
 
 Aim for ~600-800 words total for this part. No profane asides in draft.
 
@@ -729,7 +794,15 @@ def _session_subset(payload: dict[str, Any], fields: list[str]) -> dict[str, Any
         "dedup": payload.get("dedup") or {"covered_headlines": []},
     }
     for f in fields:
-        if f in payload:
+        if f == "newyorker_hint":
+            # Pass title+availability only — no article text — so PART7 knows what
+            # the New Yorker covers without duplicating 4000 chars of text in its payload.
+            ny = payload.get("newyorker") or {}
+            base["newyorker_hint"] = {
+                "available": ny.get("available", False),
+                "title": ny.get("title", ""),
+            }
+        elif f in payload:
             base[f] = payload[f]
     return base
 
@@ -834,13 +907,26 @@ present, then output the corrected HTML. Do NOT add new content.
    - "requires careful consideration of the ethical and societal implications"
    - "This piece is a new development in the ongoing discussion of"
    - "This piece offers a new perspective on the intersection of"
-   - "As we consider the implications of"
+   - "As we consider the implications of" / "Considering the implications of"
    - "As we await further developments"
    - "The situation with [X] is complex and multifaceted"
    - "The research session JSON" / "the session JSON" (meta-references to
      the model's own input — Jeeves reads papers, not JSON)
    - Any sentence containing no topic-specific nouns that could be
      copy-pasted unchanged into a completely different briefing section.
+
+7. **Section-closing summary paragraphs**: Delete the entire paragraph (not
+   just the phrase) when a closing paragraph summarizes with generic language:
+   - Any paragraph opening with "The intellectual journals offer..."
+   - "The [plural noun] offer(s) a [adjective] exploration / tool / analysis"
+   - "Both [X] and [Y] are undergoing significant transformations"
+   - "Both [X] and [Y] continue to" (as a closing wrap-up)
+   - "Continuing to monitor the progress being made in [X] and [Y] is vital"
+   - "Monitor the job boards" / "apply to positions that align with your qualifications"
+   - "Be prepared for the application process"
+   - "These pieces demonstrate the importance of thoughtful analysis"
+   If removing the paragraph leaves the section ending on a specific claim or
+   fact, that is correct — remove the paragraph entirely, keep the fact.
 
 ## Hard rules
 

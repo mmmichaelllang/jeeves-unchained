@@ -593,7 +593,9 @@ def test_part_plan_has_nine_slots_covering_all_session_fields():
     from jeeves.write import PART_PLAN
 
     assert len(PART_PLAN) == 9
-    covered = {field for _, fields in PART_PLAN for field in fields}
+    # newyorker_hint is a synthetic derived field (not a real SessionModel field)
+    # injected into part7 so it can avoid duplicating New Yorker content.
+    covered = {f for _, fields in PART_PLAN for f in fields if f != "newyorker_hint"}
     assert covered == set(SessionModel.model_fields.keys()) - {
         "date", "status", "dedup",
     }, f"PART_PLAN should cover every researched + correspondence field; got {covered}"

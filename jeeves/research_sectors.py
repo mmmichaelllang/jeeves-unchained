@@ -40,10 +40,19 @@ SECTOR_SPECS: list[SectorSpec] = [
         name="weather",
         shape="string",
         instruction=(
-            "Today's weather for Edmonds, Washington (47.81, -122.38). Use serper_search "
-            "with tbs='qdr:d' or gemini_grounded_synthesize for a quick forecast summary. "
+            "Today's weather for Edmonds, Washington (47.81, -122.38). "
+            "Dispatch ALL THREE of these in parallel — do not wait for one before starting the others:\n"
+            "1. serper_search(query='Edmonds WA weather today forecast', tbs='qdr:d')\n"
+            "2. tavily_search(query='weather forecast Edmonds Washington 98020 today')\n"
+            "3. gemini_grounded_synthesize(question='What is the current weather forecast for "
+            "Edmonds, Washington 98020 today? Include conditions, temperature, precipitation chance, "
+            "wind, and evening outlook.')\n"
+            "Synthesize the best data from whichever searches succeed. "
             "Return a single plain-text string (no JSON wrapper), ~300-600 chars, covering "
-            "conditions, precipitation, temps, comfort."
+            "conditions, precipitation, temps, comfort. "
+            "CRITICAL: Do NOT return an empty string under any circumstances. If all searches fail, "
+            "describe typical Pacific Northwest spring weather for Edmonds as a fallback estimate, "
+            "clearly noting it is an estimate ('Forecast unavailable; typical for this date: ...')."
         ),
         default="",
     ),
