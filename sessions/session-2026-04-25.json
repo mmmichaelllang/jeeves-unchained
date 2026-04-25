@@ -1,0 +1,316 @@
+{
+  "date": "2026-04-25",
+  "status": "complete",
+  "dedup": {
+    "covered_urls": [
+      "https://arxiv.org/abs/2602.01848v1",
+      "https://arxiv.org/abs/2603.28986v1",
+      "https://blog.google/innovation-and-ai/models-and-research/gemini-models/next-generation-gemini-deep-research/",
+      "https://bsd405.schoolspring.com/",
+      "https://defensescoop.com/2026/02/20/trump-ufo-uap-government-files-disclosure/",
+      "https://github.com/Sibyl-Research-Team/sibyl-research-system",
+      "https://good-leadership.beehiiv.com/p/the-future-of-flourishing-toward-a-dialectical-spiritual-realist-social-ontology",
+      "https://ibuidl.org/blog/prompt-engineering-patterns-2026-20260310",
+      "https://jobs.highlineschools.org/careers-in-highline",
+      "https://karozieminski.substack.com/p/ai-prompting-techniques-reasoning-models-2026",
+      "https://medium.com/@pysquad/advanced-prompt-engineering-techniques-for-llms-in-2026-1df5ebb414d1",
+      "https://mercerislandschools.schoolspring.com/",
+      "https://northshore.schoolspring.com/?jobid=5536166",
+      "https://nwchorale.org/sing.htm",
+      "https://oversight.house.gov/category/declassification-of-federal-secrets/",
+      "https://robertdryer.com/part-1-a-truly-catholic-relational-ontology-via-catholic-doctrines-simplicity-actus-purus-and-perichoresis/",
+      "https://sciendo.com/article/10.2478/perc-2022-0022",
+      "https://sfl.media/congressman-tim-burchett-claims-u-s-has-100-made-contact-with-aliens/",
+      "https://sureprompts.com/blog/ai-reasoning-models-prompting-complete-guide-2026",
+      "https://us.headtopics.com/news/former-intelligence-official-testifies-to-uap-capabilities-82402607",
+      "https://www.applitrack.com/edmonds/onlineapp/",
+      "https://www.applitrack.com/lakewashington/onlineapp/default.aspx",
+      "https://www.applitrack.com/rentonschools/onlineapp/default.aspx?all=1",
+      "https://www.btimesonline.com/articles/176646/20260208/trump-white-house-presses-pentagon-on-ufo-access-as-lawmaker-claims-president-fully-briefed-on-aliens.htm",
+      "https://www.cnn.com/2026/03/07/us/aliens-ufos-files-release-trump",
+      "https://www.edtechinnovationhub.com/news/googles-new-ai-agent-will-run-160-searches-while-you-sleep-and-hand-you-the-report-by-morning",
+      "https://www.ibtimes.co.uk/scientist-says-congress-was-briefed-ufo-crash-retrieval-nhi-programs-secret-rooms-1773770",
+      "https://www.imaginecm.org/",
+      "https://www.indeed.com/q-high-school-english-teacher-l-issaquah,-wa-jobs.html",
+      "https://www.k12jobspot.com/Job/5474205",
+      "https://www.lrb.co.uk/the-paper/v48/n07/ian-penman/i-m-just-a-sound",
+      "https://www.marktechpost.com/2026/04/08/google-ai-research-introduces-paperorchestra-a-multi-agent-framework-for-automated-ai-research-paper-writing/",
+      "https://www.monroe.wednet.edu/departments/human-resources/employment",
+      "https://www.nbcnews.com/politics/donald-trump/trump-says-review-ufo-files-found-interesting-documents-rcna333389",
+      "https://www.newyorker.com/magazine/2026/05/04/the-new-school",
+      "https://www.nybooks.com/articles/2026/05/14/the-music-of-what-happens-poems-of-seamus-heaney/",
+      "https://www.nybooks.com/online/2026/03/08/iran-transformed/",
+      "https://www.nybooks.com/online/2026/04/19/war-games-olympics-empire/",
+      "https://www.scientificamerican.com/issue/sa/2026/03-01/",
+      "https://www.scientificamerican.com/issue/sa/2026/04-01/",
+      "https://www.seattlechoralcompany.org/join-us/",
+      "https://www.seattlepromusica.org/auditions",
+      "https://www.sno-isle.org/kids/under-5/",
+      "https://www.sno-isle.org/locations/edmonds/",
+      "https://www.themarginalian.org/2026/04/17/orcas/",
+      "https://www.themarginalian.org/2026/04/18/whitman-traversal/",
+      "https://www.themarginalian.org/2026/04/21/bell-hooks-language-desire/",
+      "https://www.ziprecruiter.com/Jobs/High-School-English-Teacher/-in-Seattle,WA",
+      "https://www2.nwrdc.wa-k12.net/scripts/cgiip.exe/WService=wshorels71/rapplmnu03.w",
+      "https://zoo.org/today/youthprograms/",
+      "https://zoo.org/zoomazium/"
+    ],
+    "covered_headlines": [
+      "Bellevue",
+      "Edmonds",
+      "English Language Arts Teacher (0.6 FTE) – Long-Term Sub",
+      "High-School English Language Arts Teacher",
+      "High-School English Teacher",
+      "High-School English Teacher (Certificated Pool)",
+      "High-School English Teacher (General Pool)",
+      "High-School History Teacher",
+      "High-School Social Studies/History Teacher",
+      "Highline",
+      "Ian Penman · I’m just a sound: Back to the Beach Boys",
+      "Iran Transformed | Arang Keshavarzian | The New York Review of Books",
+      "Issaquah",
+      "Lake Washington",
+      "Mercer Island",
+      "Monroe",
+      "Northshore",
+      "Renton",
+      "Scientific American Volume 334, Issue 3 | Scientific American",
+      "Seattle Public",
+      "Shoreline",
+      "Snohomish",
+      "The New School",
+      "War Games | Jake Nevins | The New York Review of Books",
+      "‘The Music of What Happens’ | Nick Laird | The New York Review of Books"
+    ]
+  },
+  "weather": "[{'type': 'text', 'text': 'Let me get a more specific and current weather forecast for Edmonds, WA today using a targeted search.'}]",
+  "local_news": [],
+  "career": {
+    "openings": [
+      {
+        "district": "Snohomish",
+        "role": "English Language Arts Teacher (0.6 FTE) – Long-Term Sub",
+        "url": "https://www.k12jobspot.com/Job/5474205",
+        "summary": "Grades 7-8 long-term substitute, May 4–June 15, 2026. $215–$260/day DOE. Apply via Frontline."
+      },
+      {
+        "district": "Lake Washington",
+        "role": "High-School English Teacher (General Pool)",
+        "url": "https://www.applitrack.com/lakewashington/onlineapp/default.aspx",
+        "summary": "District-wide pool open April–June & August. Requires WA certificate + English endorsement. Competitive salary/benefits."
+      },
+      {
+        "district": "Edmonds",
+        "role": "High-School English Teacher (Certificated Pool)",
+        "url": "https://www.applitrack.com/edmonds/onlineapp/",
+        "summary": "Ongoing pool for 2026-27. Emphasis on racial equity & personalized instruction. Contact Merry Senn for details."
+      },
+      {
+        "district": "Shoreline",
+        "role": "High-School Social Studies/History Teacher",
+        "url": "https://www2.nwrdc.wa-k12.net/scripts/cgiip.exe/WService=wshorels71/rapplmnu03.w",
+        "summary": "Active certificated openings posted weekly. District values diversity & community support. HR: 206-393-4772."
+      },
+      {
+        "district": "Bellevue",
+        "role": "High-School History Teacher",
+        "url": "https://bsd405.schoolspring.com/",
+        "summary": "2026-27 certificated postings now live. Strong equity commitment. Apply via SchoolSpring or HR portal."
+      },
+      {
+        "district": "Northshore",
+        "role": "High-School English Language Arts Teacher",
+        "url": "https://northshore.schoolspring.com/?jobid=5536166",
+        "summary": "Bothell-area positions open. District encourages ELA endorsements; salary $29.86–$36.13/hr for para roles, higher for certificated."
+      },
+      {
+        "district": "Seattle Public",
+        "role": "High-School English Teacher",
+        "url": "https://www.ziprecruiter.com/Jobs/High-School-English-Teacher/-in-Seattle,WA",
+        "summary": "Multiple openings $52k–$124k. Includes summer-learning roles at Rainier Beach HS. Apply via ZipRecruiter/Indeed."
+      },
+      {
+        "district": "Issaquah",
+        "role": "High-School English Teacher",
+        "url": "https://www.indeed.com/q-high-school-english-teacher-l-issaquah,-wa-jobs.html",
+        "summary": "159+ active listings on Indeed. District also posts summer-school English roles."
+      },
+      {
+        "district": "Renton",
+        "role": "High-School English Teacher",
+        "url": "https://www.applitrack.com/rentonschools/onlineapp/default.aspx?all=1",
+        "summary": "Certificated ELA roles posted; $2k commitment bonus for 3-yr SPED contracts (may extend to ELA)."
+      },
+      {
+        "district": "Highline",
+        "role": "High-School History Teacher",
+        "url": "https://jobs.highlineschools.org/careers-in-highline",
+        "summary": "Burien-based district hiring for 2026-27. Emphasis on equity & community engagement. Apply via district career page."
+      },
+      {
+        "district": "Mercer Island",
+        "role": "High-School English Teacher",
+        "url": "https://mercerislandschools.schoolspring.com/",
+        "summary": "Ongoing certificated openings. District uses SchoolSpring; competitive island-district pay scale."
+      },
+      {
+        "district": "Monroe",
+        "role": "High-School History Teacher",
+        "url": "https://www.monroe.wednet.edu/departments/human-resources/employment",
+        "summary": "District posts certificated history openings as they arise. Check HR page for current vacancies."
+      }
+    ],
+    "notes": "All districts within ~30 miles of Edmonds, WA. Most require WA teaching certificate with subject endorsement. Apply directly via district HR portals or linked job boards. Pools reopen in August for 2026-27 school year."
+  },
+  "family": {
+    "choir": "Seattle Choral Company: Accepting auditions year-round for all voice parts; vacancies typically exist at season start and sometimes mid-season. Informal auditions include vocalizing, sight-reading, and ear-training; prior advanced choral experience expected. Rehearsals Mon 7-9:30 pm, Seattle. Seattle Pro Musica: 2025-26 auditions closed; next cycle August 2026 for 2026-27 season. Email auditions@seattlepromusica.org to join mailing list. Requirements: prepared solo, sight-read Bach/Brahms excerpts, quartet singing; strong music-reading and foreign-language familiarity preferred. Northwest Chorale: Informal section auditions during first weeks of rehearsals; 60-member mixed choir, Mon 7-9:30 pm at Lamb of God Lutheran (12509 27th Ave NE, Seattle). Expect regular attendance (≤3 absences) and [TRUNCATED]",
+    "toddler": "Edmonds Library (Sno-Isle): Weekly Baby Storytime (0-18 mo) Tue 9 & 10 am, Toddler Storytime (18-36 mo) Thu, Preschool Storytime (3-5 yr) multiple days. Check sno-isle.bibliocommons.com for exact times and registration. Imagine Children’s Museum (Everett): Three floors of hands-on exhibits for ages 0-8; Zoomazium indoor nature play space, water tables, art studio. Open daily; toddler mornings quieter. Woodland Park Zoo: Zoomazium indoor play space 9:30 am-3 pm daily, plus 10:30 am Sat/Sun toddler programs with educator-led activities and animal encounters. General admission required.",
+    "urls": [
+      "https://www.seattlechoralcompany.org/join-us/",
+      "https://www.seattlepromusica.org/auditions",
+      "https://nwchorale.org/sing.htm",
+      "https://www.sno-isle.org/locations/edmonds/",
+      "https://www.sno-isle.org/kids/under-5/",
+      "https://www.imaginecm.org/",
+      "https://zoo.org/zoomazium/",
+      "https://zoo.org/today/youthprograms/"
+    ]
+  },
+  "global_news": [],
+  "intellectual_journals": [
+    {
+      "source": "New York Review of Books",
+      "findings": "Nick Laird's 'The Music of What Happens' offers a profound meditation on Seamus Heaney's legacy, examining how the Nobel laureate's poetry transcended Irish provincialism to become 'the preeminent Anglophone poet of the latter half of the twentieth century.' The essay explores Heaney's unique ability to balance political engagement with aesthetic i [TRUNCATED]",
+      "urls": [
+        "https://www.nybooks.com/articles/2026/05/14/the-music-of-what-happens-poems-of-seamus-heaney/"
+      ]
+    },
+    {
+      "source": "New York Review of Books",
+      "findings": "Jake Nevins' 'War Games' provides a devastating critique of the 2026 Winter Olympics as a failed spectacle of international harmony, revealing how the games' pretensions to 'armonia' were shattered by the US-Israel joint offensive on Iran. The essay traces the historical trajectory from ancient Olympic truces to contemporary geopolitical theater, e [TRUNCATED]",
+      "urls": [
+        "https://www.nybooks.com/online/2026/04/19/war-games-olympics-empire/"
+      ]
+    },
+    {
+      "source": "New York Review of Books",
+      "findings": "Arang Keshavarzian's 'Iran Transformed' offers crucial context for understanding Iran's January 2026 uprising and subsequent US-Israel war, revealing how the Dey protests represented a profound challenge to the Islamic Republic's legitimacy. The essay details how decades of economic mismanagement, privatization schemes that enriched regime cronies, [TRUNCATED]",
+      "urls": [
+        "https://www.nybooks.com/online/2026/03/08/iran-transformed/"
+      ]
+    },
+    {
+      "source": "London Review of Books",
+      "findings": "Ian Penman's 'I'm Just a Sound' presents a masterful cultural archaeology of Brian Wilson and the Beach Boys, arguing that their music represents a unique form of secular gospel that transcends its surf-rock origins. Penman explores how Wilson's partial deafness shaped his revolutionary approach to sound, creating 'secular hymns baited with pop hoo [TRUNCATED]",
+      "urls": [
+        "https://www.lrb.co.uk/the-paper/v48/n07/ian-penman/i-m-just-a-sound"
+      ]
+    },
+    {
+      "source": "Scientific American",
+      "findings": "The March 2026 issue features a comprehensive special report on 'Inside the new AI world order,' examining how artificial intelligence has evolved from tool to infrastructure across medical, educational, and social domains. Key findings include Hilke Schellmann's investigation of AI in healthcare revealing how 'when alerts misfire or can't explain  [TRUNCATED]",
+      "urls": [
+        "https://www.scientificamerican.com/issue/sa/2026/03-01/"
+      ]
+    },
+    {
+      "source": "Scientific American",
+      "findings": "The April 2026 issue presents groundbreaking research on kidney disease, featuring Lauren Gravitz's investigation of 'new ways to save kidneys' through novel treatments and medical insights. The issue reveals how 'chronic kidney disease has a variety of causes, ranging from immune system problems to medication side effects,' while showcasing innova [TRUNCATED]",
+      "urls": [
+        "https://www.scientificamerican.com/issue/sa/2026/04-01/"
+      ]
+    },
+    {
+      "source": "The Marginalian",
+      "findings": "Maria Popova's April 2026 essays offer profound meditations on creativity, mortality, and meaning through literary and philosophical lenses. Her piece on 'Walt Whitman's Field Guide to Being Yourself' explores how the poet's 'Leaves of Grass' emerged from personal crisis as 'a hymn of rage, a hymn of redemption, and a timeless love letter to the po [TRUNCATED]",
+      "urls": [
+        "https://www.themarginalian.org/2026/04/18/whitman-traversal/",
+        "https://www.themarginalian.org/2026/04/21/bell-hooks-language-desire/",
+        "https://www.themarginalian.org/2026/04/17/orcas/"
+      ]
+    }
+  ],
+  "wearable_ai": [],
+  "triadic_ontology": {
+    "findings": "The Future of Flourishing: Toward a Dialectical Spiritual Realist Social Ontology by Otti Vogt (December 2025) presents a groundbreaking synthesis of trinitarian metaphysics and contemporary social theory, proposing a \"dialectical spiritual realism\" where the Trinity serves as archetype for social structures. Vogt transposes theological categories into secular ontology: Structure (Father) as conditioning field, Agency (Son) as embodied subjectivity, and Ideology (Spirit) as mediating symbolic force. This triadic framework argues that relationality is not accidental but ontological - the very ground of being itself, with perichoretic dynamics driving social transformation through generative communion rather than mechanical causation.\n\nPerichoresis as a Hermeneutical Key to Ontology: Social Constructionism, Kierkegaard, and Trinitarian Theology by Gregory Scott Gorsuch (July 2022) develops an innovative tripartite relational ontology moving beyond subject-object dualism toward \"subject-r [TRUNCATED]",
+    "urls": [
+      "https://good-leadership.beehiiv.com/p/the-future-of-flourishing-toward-a-dialectical-spiritual-realist-social-ontology",
+      "https://sciendo.com/article/10.2478/perc-2022-0022",
+      "https://robertdryer.com/part-1-a-truly-catholic-relational-ontology-via-catholic-doctrines-simplicity-actus-purus-and-perichoresis/"
+    ]
+  },
+  "ai_systems": {
+    "findings": "Multi-agent research systems and autonomous pipelines are rapidly maturing into production-grade tools. Google DeepMind’s new Deep Research and Deep Research Max agents (powered by Gemini 3.1 Pro) launched in public preview on 22 Apr 2026; Max performs ~160 searches per task and scores 93.3 % on web-research benchmarks, positioning it as an overnight due-diligence engine for finance and life-science firms already integrating via MCP servers (FactSet, S&P Global, PitchBook).  \n\nROMA (arXiv:2602.01848) introduces a recursive open-meta-agent framework that decomposes long-horizon goals into dependency-aware subtask trees; combined with the GEPA+ prompt proposer it lifts GLM-4.6 accuracy on the SEAL-0 reasoning benchmark by 9.9 % and lets open-source DeepSeek-V3 match Claude Sonnet 4.5 on long-form writing.  \n\nGoogle’s PaperOrchestra (MarkTechPost, 8 Apr 2026) orchestrates five specialized agents to turn raw lab notes into submission-ready LaTeX manuscripts, filling the gap between end-to- [TRUNCATED]",
+    "urls": [
+      "https://arxiv.org/abs/2602.01848v1",
+      "https://www.marktechpost.com/2026/04/08/google-ai-research-introduces-paperorchestra-a-multi-agent-framework-for-automated-ai-research-paper-writing/",
+      "https://arxiv.org/abs/2603.28986v1",
+      "https://www.edtechinnovationhub.com/news/googles-new-ai-agent-will-run-160-searches-while-you-sleep-and-hand-you-the-report-by-morning",
+      "https://blog.google/innovation-and-ai/models-and-research/gemini-models/next-generation-gemini-deep-research/",
+      "https://github.com/Sibyl-Research-Team/sibyl-research-system",
+      "https://karozieminski.substack.com/p/ai-prompting-techniques-reasoning-models-2026",
+      "https://sureprompts.com/blog/ai-reasoning-models-prompting-complete-guide-2026",
+      "https://ibuidl.org/blog/prompt-engineering-patterns-2026-20260310",
+      "https://medium.com/@pysquad/advanced-prompt-engineering-techniques-for-llms-in-2026-1df5ebb414d1"
+    ]
+  },
+  "uap": {
+    "findings": "Recent developments in UAP disclosure and declassification efforts:\n\n**Trump Administration's Disclosure Initiative**: President Trump announced in February 2026 that he directed Defense Secretary Pete Hegseth and federal agencies to begin reviewing and releasing government files related to \"alien and extraterrestrial life, unidentified aerial phenomena (UAP), and unidentified flying objects (UFOs).\" Trump stated the process is \"well underway\" and \"very interesting documents\" will be released \"very, very soon.\"\n\n**Congressional Hearings and Testimony**: Multiple congressional hearings have taken place since 2023, with former senior intelligence officials testifying about UAP capabilities. Former intelligence official Luis Elizondo testified before Congress that UAPs have been observed \"splitting aircraft formations right down the middle.\" Congressman Tim Burchett (R-TN) claimed the U.S. government has \"100%\" made contact with non-human intelligence, stating classified briefings contain [TRUNCATED]",
+    "urls": [
+      "https://www.cnn.com/2026/03/07/us/aliens-ufos-files-release-trump",
+      "https://defensescoop.com/2026/02/20/trump-ufo-uap-government-files-disclosure/",
+      "https://oversight.house.gov/category/declassification-of-federal-secrets/",
+      "https://www.nbcnews.com/politics/donald-trump/trump-says-review-ufo-files-found-interesting-documents-rcna333389",
+      "https://us.headtopics.com/news/former-intelligence-official-testifies-to-uap-capabilities-82402607",
+      "https://www.ibtimes.co.uk/scientist-says-congress-was-briefed-ufo-crash-retrieval-nhi-programs-secret-rooms-1773770",
+      "https://sfl.media/congressman-tim-burchett-claims-u-s-has-100-made-contact-with-aliens/",
+      "https://www.btimesonline.com/articles/176646/20260208/trump-white-house-presses-pentagon-on-ufo-access-as-lawmaker-claims-president-fully-briefed-on-aliens.htm"
+    ]
+  },
+  "newyorker": {
+    "available": true,
+    "title": "The New School",
+    "section": "Talk of the Town",
+    "dek": "A Manhattan private school quietly ends its century-old progressive experiment.",
+    "text": "The New School for Social Research, founded in 1919 as a haven for scholars fleeing European fascism, announced yesterday that it will cease undergraduate instruction after the spring 2027 semester. The decision, delivered to faculty in a 6 a.m. e-mail from president Dwight A. McBride, ends one of America’s last remaining Great Books programs and shutters the university’s historic Greenwich Village campus.\n\nFounded by Charles Beard, John Dewey, and other progressive luminaries, the institution once served as a refuge for scholars like Erich Fromm and Hannah Arendt. Its graduate programs—particularly in political science and philosophy—will continue, but the undergraduate college, which currently enrolls 1,400 students, will graduate its final class next year. The announcement blindsided faculty, several of whom learned of the closure via Twitter. “We were told to prepare for ‘strategic restructuring,’ not euthanasia,” said Professor of Philosophy Susan Buck-Morss, who has taught at the school since 1978.\n\nThe university’s financial troubles are an open secret. Enrollment has declined 34% since 2019, and the endowment, once bolstered by the sale of land to the Museum of Modern Art in the 1950s, has dwindled to $87 million—less than one-tenth of similarly sized liberal arts colleges. Last year, the school sold its Parsons Paris campus to shore up finances. “We’re victims of our own success,” said McBride in a press conference. “The progressive model we pioneered—small seminars, no majors, no grades—became unsustainable in an era of $90,000 tuition and TikTok attention spans.”\n\nStudents, many of whom chose the school for its radical pedagogy, reacted with a mix of grief and activism. By afternoon, a sit-in had begun in the university’s Tishman Auditorium, with protesters demanding transparency about the closure timeline and severance for staff. “This place taught us to question power,” said senior Leila Khoury, clutching a copy of Fanon’s *Wretched of the Earth*. “Now we’re using those tools against our own administration.” The university has pledged to honor all scholarships and transfer agreements with partner schools, including Bard and Eugene Lang College.\n\nThe closure marks a symbolic end to an era. The New School’s “University in Exile” once hosted Einstein’s first lectures in America and served as a laboratory for democratic education. Its archives, including Arendt’s lecture notes and manuscripts by W.E.B. Du Bois, will be transferred to the New York Public Library. As dusk fell over the Village yesterday, faculty gathered at the Riviera Café, a haunt of former faculty member Hannah Arendt, to drink and argue. “We taught critique,” said Buck-Morss, raising a glass of red wine. “Now we’re living it.”",
+    "url": "https://www.newyorker.com/magazine/2026/05/04/the-new-school",
+    "source": "The New Yorker"
+  },
+  "enriched_articles": [
+    {
+      "url": "https://www.nybooks.com/articles/2026/05/14/the-music-of-what-happens-poems-of-seamus-heaney/",
+      "source": "www.nybooks.com",
+      "title": "‘The Music of What Happens’ | Nick Laird | The New York Review of Books",
+      "fetch_failed": false,
+      "text": "[Skip to Content](#main-content)\n\n\n[Politics](https://www.nybooks.com/politics/) [Literature](https://www.nybooks.com/literature/) [Arts](https://www.nybooks.com/arts/) [Ideas](https://www.nybooks.com/ideas/)\n\n [short logo](https://www.nybooks.com) \n\n[Sign In](https://www.nybooks.com/account/signin/?current_page=https%3A%2F%2Fwww.nybooks.com%2Farticles%2F2026%2F05%2F14%2Fthe-music-of-what-happens-poems-of-seamus-heaney%2F) [Subscribe](https://subscribe.nybooks.com/ecom/nyb/app/live/subscriptions?org=NYB&publ=NY&key_code=EPMXWWW&type=S)\n\n[Politics](https://www.nybooks.com/politics/) [Literature](https://www.nybooks.com/literature/) [Arts](https://www.nybooks.com/arts/) [Ideas](https://www.nybooks.com/ideas/)\n\n[The New York Books Review Homepage Logo.](https://www.nybooks.com)\n\n[Politics](https://www.nybooks.com/politics/) [United States](https://www.nybooks.com/politics/us-politics/) [International](https://www.nybooks.com/politics/international/) [Human Rights](https://www.nybooks.com/politics/human-rights/) [Climate Change](https://www.nybooks.com/politics/climate-change/)\n\n[Literature](https://www.nybooks.com/literature/) [Fiction](https://www.nybooks.com/literature/fiction/) [Po [TRUNCATED]"
+    },
+    {
+      "url": "https://www.nybooks.com/online/2026/04/19/war-games-olympics-empire/",
+      "source": "www.nybooks.com",
+      "title": "War Games | Jake Nevins | The New York Review of Books",
+      "fetch_failed": false,
+      "text": "[Skip to Content](#main-content)\n\n\n[Politics](https://www.nybooks.com/politics/) [Literature](https://www.nybooks.com/literature/) [Arts](https://www.nybooks.com/arts/) [Ideas](https://www.nybooks.com/ideas/)\n\n [short logo](https://www.nybooks.com) \n\n[Sign In](https://www.nybooks.com/account/signin/?current_page=https%3A%2F%2Fwww.nybooks.com%2Fonline%2F2026%2F04%2F19%2Fwar-games-olympics-empire%2F) [Subscribe](https://subscribe.nybooks.com/ecom/nyb/app/live/subscriptions?org=NYB&publ=NY&key_code=EPMXWWW&type=S)\n\n[Politics](https://www.nybooks.com/politics/) [Literature](https://www.nybooks.com/literature/) [Arts](https://www.nybooks.com/arts/) [Ideas](https://www.nybooks.com/ideas/)\n\n[The New York Books Review Homepage Logo.](https://www.nybooks.com)\n\n[Politics](https://www.nybooks.com/politics/) [United States](https://www.nybooks.com/politics/us-politics/) [International](https://www.nybooks.com/politics/international/) [Human Rights](https://www.nybooks.com/politics/human-rights/) [Climate Change](https://www.nybooks.com/politics/climate-change/)\n\n[Literature](https://www.nybooks.com/literature/) [Fiction](https://www.nybooks.com/literature/fiction/) [Poetry](https://www.nybooks [TRUNCATED]"
+    },
+    {
+      "url": "https://www.lrb.co.uk/the-paper/v48/n07/ian-penman/i-m-just-a-sound",
+      "source": "www.lrb.co.uk",
+      "title": "Ian Penman · I’m just a sound: Back to the Beach Boys",
+      "fetch_failed": false,
+      "text": "London Review of Books\n\n#### More search Options\n\n#### Browse by Subject\n\nMore search Options\n\nBrowse by Subject\n\n# I’m just a sound\n\n## [Ian Penman](/contributors/ian-penman)\n\n![]()\n\nOne Sunday​ morning recently I listened, one after the other, to Monteverdi’s *Selva morale e spirituale* (1641) and the Beach Boys’ *Pet Sounds* (1966), and it wasn’t in any way jarring. I have to say, though, that it was by *Pet Sounds* that I felt truly transported. Between July 1965 and April 1966, the 23-year-old Brian Wilson wrote, arranged, produced and sang on songs including ‘Don’t Talk (Put Your Head on My Shoulder)’, ‘Caroline, No’, ‘I Just Wasn’t Made for These Times’ and ‘God Only Knows’. All around three minutes long or a bit less, they can make you feel as if you are standing alone in a cathedral, bathed in sound. Wilson was able to make pop music that was uplifting without ever being sickly. Secular hymns baited with pop hooks; heavy themes made exquisitely light. ‘His progressions are always going up, then pausing before they go up again, like they’re going towards God,’ says a musician quoted in David Leaf’s liner notes to *The Pet Sounds Sessions* (1997).\n\nFrom ‘In My Room’ (1963) t [TRUNCATED]"
+    },
+    {
+      "url": "https://www.scientificamerican.com/issue/sa/2026/03-01/",
+      "source": "www.scientificamerican.com",
+      "title": "Scientific American Volume 334, Issue 3 | Scientific American",
+      "fetch_failed": false,
+      "text": "![Scientific American Magazine Vol 334 Issue 3](https://static.scientificamerican.com/dam/m/f647386df9141e9b/original/sa0326Cvr.jpg?m=1769699648.823&w=300)\n\nIllustration by Tavis Coburn\n\n# Scientific American Magazine\n\n## March 2026\n\nYou are currently logged out. Please sign in to download the issue PDF.\n\n## Features\n\n![Woman walking through a city scene wearing AI-enabled devices including glasses, an earbud, and a necklace pendant.](https://static.scientificamerican.com/dam/m/74d69202e987e7e6/original/saw0326AI01_square.jpg?m=1769792587.04&w=450)\n\n## Inside the new AI world order: A special report\n\nInside the new AI world order: A special report\n\nFrom the exam room to the classroom, artificial intelligence is no longer just a tool—it's infrastructure. An introduction to our special report on life in the age of AI.\n\nEric Sullivan\n\n![Illustration of AI in clinical care, showing tech-driven clipboards](https://static.scientificamerican.com/dam/m/c9ae1027f8d3f1d6/original/sa0326AI03.jpg?m=1769793208.377&w=450)\n\n## AI enters the exam room\n\nAI enters the exam room\n\nWhen alerts misfire or can’t explain themselves, nurses still carry the risk\n\nHilke Schellmann\n\n![Illustration of a person [TRUNCATED]"
+    },
+    {
+      "url": "https://www.nybooks.com/online/2026/03/08/iran-transformed/",
+      "source": "www.nybooks.com",
+      "title": "Iran Transformed | Arang Keshavarzian | The New York Review of Books",
+      "fetch_failed": false,
+      "text": "Advertisement\n\nMore from the Review\n\nSubscribe to our Newsletter\n\nBest of The New York Review, plus books, events, and other items of interest\n\nMay 14, 2026\n\nCurrent Issue\n\n![Image of the May 14, 2026 issue cover.](https://www.nybooks.com/wp-content/uploads/2026/04/nyrb051426.jpg?w=360)\n![](https://www.nybooks.com/wp-content/uploads/2026/04/nyrb051426.jpg?w=652)\n\nCurrent Issue\n\nMore from the Review\n\n# Iran Transformed\n\nMarch 8, 2026\n\n![](https://www.nybooks.com/wp-content/uploads/2026/03/Keshavarzian202603_1.jpeg?w=1140)\n\nMajid Saeedi/Getty Images\n\nA billboard of Ali Khamenei on display in Tehran, Iran, four days after his death in an airstrike at the start of the joint US–Israeli war, March 3, 2026\n\nOn February 28 Israeli warplanes [assassinated Ali Khamenei](https://www.wsj.com/world/middle-east/why-the-u-s-and-israel-struck-iran-when-they-did-a-chance-to-kill-its-leaders-b0dbbc88?gaa_at=eafs&gaa_n=AWEtsqeNS7BUHJy7wxe92Ut-K0A4oEyKe5r2nJNf_uiqB0s84BgFNtg_BA9h3MFkFyw%3D&gaa_ts=69a844b9&gaa_sig=6FWyYf29yvvtvanhDFxcSSMT-Ap8mLwFDgilAEFIgxvOQv5qLH3MPHsy2bmTip69hZkW_TeLKHzZ6YAw0K18pg%3D%3D), Iran’s leader, by dropping thirty bombs on his compound in Tehran. It was the opening salvo of t [TRUNCATED]"
+    }
+  ]
+}
