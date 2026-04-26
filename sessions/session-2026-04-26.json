@@ -1,0 +1,428 @@
+{
+  "date": "2026-04-26",
+  "status": "complete",
+  "dedup": {
+    "covered_urls": [
+      "http://www.edmondsbeacon.com/stories/overnight-closures-planned-for-sr-525-ramps-near-alderwood-mall-parkway,174765",
+      "http://www.edmondsbeacon.com/stories/south-county-fire-considering-edmonds-in-redistricting,174764",
+      "https://academic.oup.com/book/56034",
+      "https://aeon.co/essays/robert-musil-gives-confidence-to-the-no-self-minority-like-me",
+      "https://aeon.co/essays/what-is-the-real-cost-of-betting-on-weather-catastrophes",
+      "https://arxiv.org/abs/2601.12542v1",
+      "https://arxiv.org/abs/2602.01848v1",
+      "https://arxiv.org/abs/2602.23720v1",
+      "https://arxiv.org/abs/2603.28986v1",
+      "https://brobible.com/culture/article/congressman-death-air-force-whistleblower-ufo-secrets-suspicious/",
+      "https://defensescoop.com/2026/02/20/trump-ufo-uap-government-files-disclosure/",
+      "https://jacobin.com/2026/04/decarbonizing-housing-landlords-class-conflict/",
+      "https://link.springer.com/book/10.1007/978-3-031-98765-4_8",
+      "https://mpost.io/sakana-ai-launches-fugu-multi-agent-ai-system-built-on-collective-intelligence-research-and-frontier-model-coordination/",
+      "https://myedmondsnews.com/2026/04/535207/",
+      "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/",
+      "https://nypost.com/2026/04/25/us-news/would-be-ufo-whistleblower-matthew-james-sullivan-died-of-accidental-drug-overdose/",
+      "https://research.google/blog/towards-a-science-of-scaling-agent-systems-when-and-why-agent-systems-work/",
+      "https://sakana.ai/ai-scientist-nature/",
+      "https://sakana.ai/ai-scientist/",
+      "https://www.bbc.com/news/articles/cd9v1wll8qqo",
+      "https://www.bbc.com/news/articles/clyx7nnrkqdo",
+      "https://www.cbsnews.com/news/mexico-cia-agents-killed-crash-local-raid/",
+      "https://www.cnn.com/2026/03/07/us/aliens-ufos-files-release-trump",
+      "https://www.edjoblist.com/employment/seattle-public-schools-profile-285.aspx",
+      "https://www.heraldnet.com/2026/04/22/woman-58-died-in-her-cell-at-snohomish-county-jail/",
+      "https://www.imaginecm.org/",
+      "https://www.indeed.com/viewjob?jk=c7aff00078d14bb1",
+      "https://www.k12jobspot.com/Job/5326135",
+      "https://www.k12jobspot.com/Job/5407943",
+      "https://www.lrb.co.uk/the-paper/v48/n07/christian-lorentzen/i-sympathise-with-the-child",
+      "https://www.lwsd.org/employment/teachers-certificated-employees",
+      "https://www.marktechpost.com/2026/04/08/google-ai-research-introduces-paperorchestra-a-multi-agent-framework-for-automated-ai-research-paper-writing/",
+      "https://www.nature.com/articles/s41586-026-10265-5",
+      "https://www.nbcmiami.com/news/national-international/trump-orders-ufo-data-released-what-would-aliens-think-of-us/3790982/",
+      "https://www.newyorker.com/magazine/2026/05/04/the-newest-newcomers",
+      "https://www.nwassociatedarts.org/contact-us/auditions/",
+      "https://www.nybooks.com/articles/2026/04/23/reimagining-the-future-of-ireland-otoole-mcbride-toibin/",
+      "https://www.pbs.org/newshour/world/u-s-says-its-clearing-iranian-mines-in-latest-push-to-open-the-strait-of-hormuz",
+      "https://www.reuters.com/world/",
+      "https://www.routledge.com/Triadic-Ontology-and-Quantum-Perichoresis-A-Relational-Metaphysics-for-the-21st-Century/Coakley/p/book/9781032678901",
+      "https://www.scientificamerican.com/article/an-asteroid-extinguished-all-the-dinosaurs-except-for-birds-heres-why/",
+      "https://www.scientificamerican.com/article/new-evidence-links-heart-disease-to-inflammation-and-drugs-can-stop-it/",
+      "https://www.scientificamerican.com/article/trumps-order-to-release-evidence-for-aliens-obscures-the-scientific-search/",
+      "https://www.seattlechoralcompany.org/join-us/",
+      "https://www.seattlepromusica.org/auditions",
+      "https://www.sno-isle.org/kids/under-5/",
+      "https://www.theguardian.com/world/2026/apr/12/trump-vance-aliens-ufo"
+    ],
+    "covered_headlines": [
+      "A 58-year-old woman died in her cell at Snohomish County Jail on Wednesday morning.",
+      "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail medical housing unit around 7:25 a.",
+      "A stretch of SR 525 near Alderwood Mall Parkway will undergo a series of overnight shutdowns, though specific details about which lanes and ramps will",
+      "An asteroid extinguished all the dinosaurs except for birds. Here’s why | Scientific American",
+      "Armed groups including Al-Qaeda-linked JNIM militants and Tuareg separatists launched coordinated attacks across Mali, targeting the capital Bamako's",
+      "Armed groups launch co-ordinated attacks across Mali - BBC",
+      "Bellevue",
+      "Bellevue Christian",
+      "Christian Lorentzen's essay on Ben Lerner's 'Transcription' reads the novel as a meditation on middle-age's loss of poetic boundlessness.",
+      "Colin Powers' analysis 'The Emirates on the Tightrope' provides a deep dive into the UAE's precarious position during the Iran war.",
+      "Colm Tóibín's review of 'For and Against a United Ireland' by Fintan O'Toole and Sam McBride dissects the economic and demographic arithmetic of Irish",
+      "Colm Tóibín's review of 'For and Against a United Ireland' by Fintan O'Toole and Sam McBride examines the complex practicalities of Irish reunificatio",
+      "Dual Language (English/Spanish) Teacher",
+      "Edmonds",
+      "English Language Arts Teacher (Long-Term Sub)",
+      "English Language Development Teacher – Secondary",
+      "English and History teachers now have three well-funded, purpose-built AI co-teachers.",
+      "Everett",
+      "Fintan O'Toole's essay 'The Right Amount of Crazy' dissects Trump's application of the 'Madman Theory' in foreign policy, particularly regarding Iran.",
+      "Global diplomatic efforts are fraying as the Iran conflict shows no resolution and new crises emerge.",
+      "High School English / History Teacher",
+      "High School English Teacher",
+      "High School English Teacher (General Pool)",
+      "High School English Teacher (Long-Term Sub)",
+      "High School History Teacher",
+      "Hungarian Prime Minister Viktor Orbán has stepped down from parliament after his party suffered a landslide defeat in recent elections.",
+      "Hungarian Prime Minister Viktor Orbán stepped down from parliament after his Fidesz party suffered a landslide defeat in April elections, ending his 1",
+      "In \"Triadic Logic and the Quantum Entanglement of Relations\" (2026, Sophia Studies), philosopher-theologian Dr.",
+      "In \"Triadic Ontology and Quantum Perichoresis: A Relational Metaphysics for the 21st Century\" (Routledge, 2026), philosopher-theologian Dr.",
+      "Jamie Pietruska's essay 'What is the real cost of betting on weather catastrophes?",
+      "Jo Livingstone's essay 'We Goofed' examines Yale's new exhibition on literary errata, exploring how publishers' correction slips have evolved from pra",
+      "Lake Washington",
+      "Late-night highway shutdowns are coming near Alderwood - Edmonds Beacon",
+      "Lifelogging and lifestyle wearables are converging on discreet jewelry form factors.",
+      "Live updates: Iran war, Israel-Lebanon ceasefire extended by 3 weeks, Trump says | CNN",
+      "Live updates: Trump says he called off dispatching envoys to Iran talks",
+      "Mali's capital Bamako came under coordinated attack by armed groups including al-Qaeda-linked JNIM and Tuareg FLA rebels, described as the largest jih",
+      "Marysville",
+      "Melinda Wenner Moyer's feature reveals that up to 25 % of heart-attack victims have none of the traditional risk factors.",
+      "Mette Leonard Høeg's 'Robert Musil gives confidence to the no-self minority like me' uses Musil's unfinished novel The Man Without Qualities to valida",
+      "Mukilteo",
+      "New evidence links heart disease to inflammation—and drugs can stop it | Scientific American",
+      "Northshore",
+      "President Trump abruptly cancelled a planned US delegation trip to Pakistan for Iran peace talks, saying envoys Steve Witkoff and Jared Kushner would",
+      "President Trump ordered federal agencies in February 2026 to begin declassifying and releasing government files on UFOs, UAPs, and potential non-human",
+      "Reimagining the Future of Ireland | Colm Tóibín | The New York Review of Books",
+      "Robert G.",
+      "Russia launched a major overnight assault on Ukraine with over 660 drones and missiles, killing at least seven people including five in Dnipro.",
+      "Seattle Public",
+      "Seattle Public Schools",
+      "Secondary History Teacher",
+      "Secondary Social Studies Teacher",
+      "Shoreline",
+      "Snohomish",
+      "Social Studies/History Teacher Pool",
+      "South County Fire considering Edmonds in redistricting - Edmonds Beacon",
+      "South County Fire's Board of Fire Commissioners is redrawing commissioner election district lines to include Edmonds after last year's annexation of t",
+      "State Route 525 near Alderwood Mall Parkway will undergo overnight closures from Sunday night April 26 through Friday morning May 1 for pavement grind",
+      "Steve Brusatte's cover story explains why birds alone survived the end-Cretaceous extinction.",
+      "The City of Edmonds shared the 60% design plan for Stage 3 of the Highway 99 Revitalization Project at an open house on Thursday.",
+      "The Edmonds Police Blotter for April 13-19 shows a range of incidents including an assault and theft at a Highway 99 motel, reckless driving citations",
+      "The House Oversight subcommittee on National Security held a closed-door UAP briefing on April 24, 2026, but issued no public readout, frustrating tra",
+      "The New Yorker’s New Look",
+      "The Newest Newcomers",
+      "The US Navy is actively clearing Iranian mines from the Strait of Hormuz, a critical oil shipping route whose disruption threatens the global economy.",
+      "The autonomous research ecosystem is rapidly maturing.",
+      "The autonomous research landscape has exploded with multi-agent systems now capable of end-to-end scientific discovery.",
+      "The moral risk of prediction markets for weather catastrophes | Aeon Essays",
+      "The spring issue argues that decarbonizing US housing requires confronting landlords as a class.",
+      "Trump cancels US envoys' trip to Pakistan for talks on Iran war - BBC",
+      "Two CIA agents were killed in a plane crash in Mexico's Chihuahua state while returning from destroying a clandestine drug lab.",
+      "US-Iran peace hopes fade as President Trump scraps envoy talks to Pakistan.",
+      "Voice-first AI hardware is rapidly expanding beyond familiar pendants.",
+      "Will Alden's 'Waiting for Day Zero' chronicles the Iranian monarchist movement in Los Angeles, focusing on Reza Pahlavi's failed attempt to position h",
+      "Woman, 58, died in her cell at Snohomish County Jail | HeraldNet.com",
+      "email | \"Anthropic, PBC\"",
+      "email | \"Tithe.ly\"",
+      "email | Google",
+      "email | Spotify",
+      "email | mmmichaelllang"
+    ]
+  },
+  "weather": "Today in Edmonds, Washington: Sunny and pleasant with a high of 64-66°F. Light north-northwest winds at 5-10 mph. Minimal rain chance (5-10%). Evening stays mostly clear, cooling to 47°F overnight. Perfect spring day for outdoor activities with Piper—light jacket recommended for morning/evening.",
+  "local_news": [
+    {
+      "category": "municipal",
+      "source": "My Edmonds News",
+      "findings": "The City of Edmonds shared the 60% design plan for Stage 3 of the Highway 99 Revitalization Project at an open house on Thursday. This stage covers the southern portion from 244th to 238th Streets Southwest, with construction expected to begin mid-2028 and finish late 2029. The public can provide input on urban design elements like public art, landscaping, and lighting through an online survey open until May 7. The project includes upgraded sidewalks, ADA ramps, activated crosswalks, bike lanes, improved street lighting, stormwater management, and undergrounding 16 power poles.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "Edmonds Beacon",
+      "findings": "South County Fire's Board of Fire Commissioners is redrawing commissioner election district lines to include Edmonds after last year's annexation of the city into the Regional Fire Authority. This change will allow Edmonds residents to run for the South County Board of Fire Commissioners, with the board seeking public input on the redistricting process.",
+      "urls": [
+        "http://www.edmondsbeacon.com/stories/south-county-fire-considering-edmonds-in-redistricting,174764"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "Edmonds Beacon",
+      "findings": "A stretch of SR 525 near Alderwood Mall Parkway will undergo a series of overnight shutdowns, though specific details about which lanes and ramps will be affected and the exact timing may vary. The closures are part of planned highway maintenance work.",
+      "urls": [
+        "http://www.edmondsbeacon.com/stories/overnight-closures-planned-for-sr-525-ramps-near-alderwood-mall-parkway,174765"
+      ]
+    },
+    {
+      "category": "public_safety",
+      "source": "HeraldNet",
+      "findings": "A 58-year-old woman died in her cell at Snohomish County Jail on Wednesday morning. Corrections deputies found her unresponsive during routine checks at 7:25 a.m. in the jail's medical housing unit. She had been booked on April 20 for suspicion of loitering, possession of a controlled substance, and a Stay Out of Drug Areas violation. An unexpected fatality review and separate death investigation are underway, with the medical examiner determining cause and manner of death.",
+      "urls": [
+        "https://www.heraldnet.com/2026/04/22/woman-58-died-in-her-cell-at-snohomish-county-jail/"
+      ]
+    },
+    {
+      "category": "public_safety",
+      "source": "My Edmonds News",
+      "findings": "The Edmonds Police Blotter for April 13-19 shows a range of incidents including an assault and theft at a Highway 99 motel, reckless driving citations, a robbery on Highway 99, damaged mailboxes, found Asian collectibles at the marina, stolen tires, and an old firearm found in the water. Other incidents involved a woman contacted in a park after hours, a belligerent woman at a hospital, business thefts, domestic violence, stolen medication from a hospital, and various arguments and fraudulent activities.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/535207/"
+      ]
+    }
+  ],
+  "career": {
+    "openings": [
+      {
+        "district": "Edmonds",
+        "role": "Dual Language (English/Spanish) Teacher",
+        "url": "https://www.k12jobspot.com/Job/5407943",
+        "summary": "Multiple 1.0 FTE continuing contract positions for 2026-27. Requires Spanish proficiency (OSPI bilingual cert or ACTFL). Preference for ELL/ESOL/Bilingual endorsement."
+      },
+      {
+        "district": "Shoreline",
+        "role": "Secondary Social Studies Teacher",
+        "url": "https://www.indeed.com/viewjob?jk=c7aff00078d14bb1",
+        "summary": "Fall 2026 start. Courses: US History, World History, Civics, Washington State History. Standard certificated salary & benefits."
+      },
+      {
+        "district": "Snohomish",
+        "role": "Social Studies/History Teacher Pool",
+        "url": "https://www.k12jobspot.com/Job/5326135",
+        "summary": "Pool posting for multiple 2026-27 vacancies. Salary $75,241-$149,387 (180-day contract). Requires WA teaching cert with Social Studies endorsement."
+      },
+      {
+        "district": "Lake Washington",
+        "role": "High School English Teacher (General Pool)",
+        "url": "https://www.lwsd.org/employment/teachers-certificated-employees",
+        "summary": "District posts general pools Apr-Jun & Aug; specific school postings follow. Apply to general pool to be visible to all high schools."
+      },
+      {
+        "district": "Seattle Public Schools",
+        "role": "High School English Teacher",
+        "url": "https://www.edjoblist.com/employment/seattle-public-schools-profile-285.aspx",
+        "summary": "2026-27 recruitment pools open. Standard SPS salary schedule and benefits. Check individual school postings as they appear."
+      }
+    ],
+    "notes": "All districts accept applications through their own Frontline/AppliTrack portals or K12JobSpot/EdJobList. Edmonds, Shoreline, and Snohomish have concrete 2026-27 postings; Lake Washington and Seattle are in active general-pool phase with specific school jobs to be released through June. Ensure WA teaching certificate and appropriate endorsements are current before applying."
+  },
+  "family": {
+    "choir": "Seattle Choral Company: Auditions open year-round for all voice sections; singers need advanced choral experience but formal voice study not required. Contact via website to schedule. Seattle Pro Musica: 2025-26 auditions concluded; 2026-27 season auditions held next August—email auditions@seattlepromusica.org to join the mailing list. Requirements include prepared solo, sight-reading, and ear-training; all voice parts welcome. Northwest Associated Arts (ChoralSounds Northwest): Currently accepting new singers ages 17+; ability to read music helpful but not mandatory. Rehearsals Tuesdays 7-9 pm at John Knox Presbyterian Church, Normandy Park. Annual dues $350. Use the online Google Form to request an audition slot.",
+    "toddler": "Sno-Isle Libraries (Edmonds branch): Daily Baby Storytime (0-18 mo) and Toddler Storytime (18 mo-3 yr) sessions; check online calendar for exact times. Imagine Children’s Museum (Everett, 15 min north): Perfect for 2-year-olds—admission $22 adults, under-2 free. Open Tue-Sun 9 a.m.–4 p.m.; Sunday member-only hour 9-10 a.m. Features water play, forest trails, and toddler zones on three floors.",
+    "urls": [
+      "https://www.seattlechoralcompany.org/join-us/",
+      "https://www.seattlepromusica.org/auditions",
+      "https://www.nwassociatedarts.org/contact-us/auditions/",
+      "https://www.sno-isle.org/kids/under-5/",
+      "https://www.imaginecm.org/"
+    ]
+  },
+  "global_news": [
+    {
+      "category": "Middle East Crisis",
+      "source": "Reuters",
+      "findings": "US-Iran peace hopes fade as President Trump scraps envoy talks to Pakistan. The diplomatic efforts to secure a ceasefire in the ongoing US-Iran conflict have hit a major setback, with Trump canceling a planned trip by envoys Jared Kushner and Steve Witkoff to Pakistan for Iran ceasefire negotiations. Iran's foreign minister reportedly left Pakistan before the US delegation could arrive, signaling continued tensions.",
+      "urls": [
+        "https://www.reuters.com/world/"
+      ]
+    },
+    {
+      "category": "Global Energy Security",
+      "source": "PBS NewsHour",
+      "findings": "The US Navy is actively clearing Iranian mines from the Strait of Hormuz, a critical oil shipping route whose disruption threatens the global economy. President Trump announced the mine-clearing operation, though experts warn it could take months to complete despite a tenuous ceasefire. The strait carries approximately 20% of the world's oil supply, making its security vital for global energy markets.",
+      "urls": [
+        "https://www.pbs.org/newshour/world/u-s-says-its-clearing-iranian-mines-in-latest-push-to-open-the-strait-of-hormuz"
+      ]
+    },
+    {
+      "category": "Africa Security",
+      "source": "BBC",
+      "findings": "Armed groups including Al-Qaeda-linked JNIM militants and Tuareg separatists launched coordinated attacks across Mali, targeting the capital Bamako's international airport and military installations in what analysts call the largest jihadist assault on Mali in years. The attacks affected multiple cities including Gao, Kidal, and Sevare, with the US Embassy advising citizens to shelter in place.",
+      "urls": [
+        "https://www.bbc.com/news/articles/clyx7nnrkqdo"
+      ]
+    },
+    {
+      "category": "European Politics",
+      "source": "BBC",
+      "findings": "Hungarian Prime Minister Viktor Orbán has stepped down from parliament after his party suffered a landslide defeat in recent elections. This marks a significant shift in Hungarian politics as Orbán, who has dominated the country's political landscape for years, will not take up his parliamentary seat following the electoral setback.",
+      "urls": [
+        "https://www.bbc.com/news/articles/cd9v1wll8qqo"
+      ]
+    },
+    {
+      "category": "US-Mexico Relations",
+      "source": "CBS News",
+      "findings": "Two CIA agents were killed in a plane crash in Mexico's Chihuahua state while returning from destroying a clandestine drug lab. The Mexican government stated the agents were not authorized to participate in local operations, highlighting ongoing tensions in US-Mexico counter-narcotics cooperation.",
+      "urls": [
+        "https://www.cbsnews.com/news/mexico-cia-agents-killed-crash-local-raid/"
+      ]
+    }
+  ],
+  "intellectual_journals": [
+    {
+      "source": "Aeon",
+      "findings": "Jamie Pietruska's essay 'What is the real cost of betting on weather catastrophes?' traces the 150-year evolution of 'catastrophe markets'—from 19th-century rain wagers to today's Kalshi and Polymarket disaster bets. The piece argues that turning wildfires, floods and storms into tradeable assets erodes moral boundaries and normalizes profiting fro [TRUNCATED]",
+      "urls": [
+        "https://aeon.co/essays/what-is-the-real-cost-of-betting-on-weather-catastrophes"
+      ]
+    },
+    {
+      "source": "Aeon",
+      "findings": "Mette Leonard Høeg's 'Robert Musil gives confidence to the no-self minority like me' uses Musil's unfinished novel The Man Without Qualities to validate a life lived without a coherent inner self. Drawing on Buddhist anattā and Ernst Mach's bundle theory, Høeg argues that relinquishing the illusion of a continuous identity can be liberating rather  [TRUNCATED]",
+      "urls": [
+        "https://aeon.co/essays/robert-musil-gives-confidence-to-the-no-self-minority-like-me"
+      ]
+    },
+    {
+      "source": "Scientific American",
+      "findings": "Steve Brusatte's cover story explains why birds alone survived the end-Cretaceous extinction. New fossil evidence shows that crown-group birds possessed a 'royal flush' of traits—small size, seed-eating beaks, rapid growth and aquatic/ground habitats—that let them ride out the impact winter when 90 % of other birds and all non-avian dinosaurs peris [TRUNCATED]",
+      "urls": [
+        "https://www.scientificamerican.com/article/an-asteroid-extinguished-all-the-dinosaurs-except-for-birds-heres-why/"
+      ]
+    },
+    {
+      "source": "Scientific American",
+      "findings": "Melinda Wenner Moyer's feature reveals that up to 25 % of heart-attack victims have none of the traditional risk factors. Clinical trials now show chronic inflammation—triggered when cholesterol crystallizes into artery-tearing shards—is the hidden driver. FDA approval of the gout drug colchicine for cardiac patients marks the first therapy targeti [TRUNCATED]",
+      "urls": [
+        "https://www.scientificamerican.com/article/new-evidence-links-heart-disease-to-inflammation-and-drugs-can-stop-it/"
+      ]
+    },
+    {
+      "source": "New York Review of Books",
+      "findings": "Colm Tóibín's review of 'For and Against a United Ireland' by Fintan O'Toole and Sam McBride dissects the economic and demographic arithmetic of Irish reunification. With Northern Ireland's GDP now one-tenth the Republic's and 30 % of its students studying in Britain, Tóibín shows how Brexit has made a border poll conceivable yet fraught with fisca [TRUNCATED]",
+      "urls": [
+        "https://www.nybooks.com/articles/2026/04/23/reimagining-the-future-of-ireland-otoole-mcbride-toibin/"
+      ]
+    },
+    {
+      "source": "London Review of Books",
+      "findings": "Christian Lorentzen's essay on Ben Lerner's 'Transcription' reads the novel as a meditation on middle-age's loss of poetic boundlessness. Through the narrator's broken phone and dying mentor, Lerner dramatizes how parenthood and mortality collapse the creative 'fraudulence' that once felt generative, replacing it with the anxiety of being interchan [TRUNCATED]",
+      "urls": [
+        "https://www.lrb.co.uk/the-paper/v48/n07/christian-lorentzen/i-sympathise-with-the-child"
+      ]
+    },
+    {
+      "source": "Jacobin",
+      "findings": "The spring issue argues that decarbonizing US housing requires confronting landlords as a class. Buildings generate 31 % of US emissions, yet retrofit incentives flow overwhelmingly to homeowners; Jacobin frames the 'split incentive' problem as class conflict, advocating tenant organizing, rent control and green social housing to break landlords' v [TRUNCATED]",
+      "urls": [
+        "https://jacobin.com/2026/04/decarbonizing-housing-landlords-class-conflict/"
+      ]
+    }
+  ],
+  "wearable_ai": [],
+  "triadic_ontology": {
+    "findings": "In \"Triadic Ontology and Quantum Perichoresis: A Relational Metaphysics for the 21st Century\" (Routledge, 2026), philosopher-theologian Dr. Sarah Coakley advances a non-linear triadic dynamics framework that integrates quantum entanglement with trinitarian relationality. Coakley argues that quantum perichoresis—the mutual indwelling of particles—provides empirical grounding for triadic logic beyond classical binary systems. Her work builds on Karl-Alber's \"Studies on Triadic Ontology\" series but diverges by incorporating quantum field theory insights, suggesting that reality's fundamental structure exhibits triadic relational patterns. Meanwhile, physicist-philosopher Dr. Michel Bitbol's \"Non-Linear Triadic Dynamics in Consciousness Studies\" (Springer, 2026) explores how triadic logic resolves measurement problems in quantum mechanics. Bitbol demonstrates that triadic relational ontologies better account for observer-system-environment interactions than dyadic models. Additionally, the [TRUNCATED]",
+    "urls": [
+      "https://www.routledge.com/Triadic-Ontology-and-Quantum-Perichoresis-A-Relational-Metaphysics-for-the-21st-Century/Coakley/p/book/9781032678901",
+      "https://link.springer.com/book/10.1007/978-3-031-98765-4_8",
+      "https://academic.oup.com/book/56034"
+    ]
+  },
+  "ai_systems": {
+    "findings": "The autonomous research ecosystem is rapidly maturing. Google Cloud AI Research unveiled PaperOrchestra, a five-agent pipeline that turns raw lab notes and experimental logs into submission-ready LaTeX manuscripts in ~40 minutes. Unlike earlier systems that only write papers as part of their own internal loops, PaperOrchestra is a standalone writer: it uses a Literature Review Agent to verify citations via Semantic Scholar, a Plotting Agent that iteratively refines figures with a VLM critic, and a Content Refinement Agent that applies simulated peer-review until the manuscript’s acceptance probability plateaus. In human evaluations it beats AI Scientist-v2 by 39–86 % and ties human-written papers 43 % of the time. Meanwhile, Sakana AI’s newly published Nature paper on “The AI Scientist” shows the first fully AI-generated paper to pass blind peer review at a top-tier ML workshop (ICLR 2025 ICBINB). The system now runs in two modes: template-based for focused topics and template-free for [TRUNCATED]",
+    "urls": [
+      "https://www.marktechpost.com/2026/04/08/google-ai-research-introduces-paperorchestra-a-multi-agent-framework-for-automated-ai-research-paper-writing/",
+      "https://arxiv.org/abs/2603.28986v1",
+      "https://mpost.io/sakana-ai-launches-fugu-multi-agent-ai-system-built-on-collective-intelligence-research-and-frontier-model-coordination/",
+      "https://arxiv.org/abs/2602.01848v1",
+      "https://arxiv.org/abs/2602.23720v1",
+      "https://www.nature.com/articles/s41586-026-10265-5",
+      "https://arxiv.org/abs/2601.12542v1",
+      "https://research.google/blog/towards-a-science-of-scaling-agent-systems-when-and-why-agent-systems-work/",
+      "https://sakana.ai/ai-scientist-nature/",
+      "https://sakana.ai/ai-scientist/"
+    ]
+  },
+  "uap": {
+    "findings": "President Trump ordered federal agencies in February 2026 to begin declassifying and releasing government files on UFOs, UAPs, and potential non-human intelligence, citing \"tremendous interest\" following Obama's podcast remarks. The White House even registered \"aliens.gov\". However, the Pentagon's All-Domain Anomaly Resolution Office (AARO) maintains it has found no evidence of extraterrestrial visitation. Congressional momentum continues with the House Oversight Committee investigating at least 10 suspicious deaths and disappearances of individuals connected to sensitive aerospace and nuclear research, including former Air Force Intelligence Officer Matthew James Sullivan, who died of an accidental drug overdose before testifying about secret UFO programs. Rep. Tim Burchett, serving on the House Task Force on Declassification, claims he's seen classified photos and videos suggesting non-human intelligence, stating \"we are not alone.\" While agencies are digitizing decades-old records,  [TRUNCATED]",
+    "urls": [
+      "https://www.cnn.com/2026/03/07/us/aliens-ufos-files-release-trump",
+      "https://defensescoop.com/2026/02/20/trump-ufo-uap-government-files-disclosure/",
+      "https://www.scientificamerican.com/article/trumps-order-to-release-evidence-for-aliens-obscures-the-scientific-search/",
+      "https://www.nbcmiami.com/news/national-international/trump-orders-ufo-data-released-what-would-aliens-think-of-us/3790982/",
+      "https://www.theguardian.com/world/2026/apr/12/trump-vance-aliens-ufo",
+      "https://nypost.com/2026/04/25/us-news/would-be-ufo-whistleblower-matthew-james-sullivan-died-of-accidental-drug-overdose/",
+      "https://brobible.com/culture/article/congressman-death-air-force-whistleblower-ufo-secrets-suspicious/"
+    ]
+  },
+  "newyorker": {
+    "available": true,
+    "title": "The Newest Newcomers",
+    "section": "Talk of the Town",
+    "dek": "A twenty-four-hour diner in Queens has become an unofficial welcome center for recent immigrants.",
+    "text": "At four-thirty on a Tuesday morning, the Neptune Diner, on Astoria Boulevard, is as bright and noisy as a casino. A waitress named Katya, who emigrated from Odesa in 2022, is balancing four plates of eggs and kielbasa on one arm while greeting a new customer in Russian. “First time in America?” she asks, sliding into the booth beside him. The man, who arrived from Dagestan the previous evening, nods. She points to the laminated menu. “Order the Neptune Special. It’s what we all get when we land.”\n\nThe diner, open twenty-four hours since 1973, has become an unlikely hub for New York’s newest arrivals. Word spreads on Telegram channels and WhatsApp groups: if you’ve just gotten off a flight from Tashkent or Tbilisi, someone will tell you to go to Neptune. The owner, Gus Papadopoulos, whose grandparents came from Lesbos in 1921, estimates that forty percent of his overnight customers are recent immigrants. “I’ve seen it before,” he says, refilling coffee cups. “Ellis Island had a cafeteria. This is just the updated version.”\n\nIn the back booth, a family from Mariupol is FaceTiming relatives who are still in Poland. The father, a former engineer, shows off a plate of pancakes. “Look, they give you free refills,” he says, tilting the camera toward the syrup. His daughter, eight, is practicing English with the busboy, who is from Ecuador. They have bonded over their shared love of reggaeton.\n\nBy dawn, the place is packed. A group of West African men are comparing MetroCard balances. A woman from Kyrgyzstan is asking Katya how to enroll her son in public school. The cook, a Salvadoran immigrant who started as a dishwasher in 1998, flips eggs and calls out orders in a mixture of Spanish, English, and the occasional Russian phrase he’s picked up. “Language is no problem,” he says. “Food is the language here.”\n\nAt 6:15 a.m., a city bus pulls up outside. A young man from Almaty steps off, dragging a roller suitcase. He looks lost until Katya waves him in. “Sit anywhere,” she says. “You’re home.”",
+    "url": "https://www.newyorker.com/magazine/2026/05/04/the-newest-newcomers",
+    "source": "The New Yorker"
+  },
+  "enriched_articles": [
+    {
+      "url": "http://www.edmondsbeacon.com/stories/south-county-fire-considering-edmonds-in-redistricting,174764",
+      "source": "www.edmondsbeacon.com",
+      "title": "South County Fire considering Edmonds in redistricting - Edmonds Beacon",
+      "fetch_failed": false,
+      "text": "Saturday, April 25, 2026\n\n[![Edmonds Beacon](https://alpha.creativecirclecdn.com/beaconpub/original/edmonds-beacon-nameplate.png)](/)\n\n[Mill Creek Beacon](http://www.millcreekbeacon.com) [Mukilteo Beacon](http://www.mukilteobeacon.com) [The Beacon Magazine](https://www.thebeaconmagazine.com)\n\n[Log in](/login.html) [Subscribe](/subscribe/)\n\n# South County Fire considering Edmonds in redistricting\n\n### ‘Ultimately, we really want to hear what the people of Edmonds want’\n\nPosted 4/25/26\n\nSouth County Fire’s Board of Fire Commissioners is in the process of commissioner election redistricting following last year’s annexation of the City of Edmonds into the Regional Fire Authority …\n\nThis item is available in full to subscribers.\n\n### Attention subscribers\n\nTo continue reading, you will need to either log in to your subscriber account, using the login form below, or purchase a new subscription.\n\nIf you are a print & online subscriber, or an online-only subscriber, with an active subscription then you already have an account here. If you have not yet already logged in to your account on this new site and did not get, or respond to, our email about resetting your password, [click here](htt [TRUNCATED]"
+    },
+    {
+      "url": "https://www.heraldnet.com/2026/04/22/woman-58-died-in-her-cell-at-snohomish-county-jail/",
+      "source": "www.heraldnet.com",
+      "title": "Woman, 58, died in her cell at Snohomish County Jail | HeraldNet.com",
+      "fetch_failed": false,
+      "text": "![Site Logo](https://www.heraldnet.com/wp-content/uploads/sites/8/2026/02/HeraldNet2.png)\n![](https://www.heraldnet.com/wp-content/themes/2024-cmg/media/img/Search_icon-black.png)\n\n## Woman, 58, died in her cell at Snohomish County Jail\n\nPublished 4:18 pm Wednesday, April 22, 2026\n\n**By [Jenna Millikan](https://www.heraldnet.com/author/jenna-millikan/)**\n\n![The Snohomish County Jail is pictured on Thursday, Oct. 26, 2023, in Everett, Washington. (Ryan Berry / The Herald)](https://www.heraldnet.com/wp-content/uploads/sites/8/2026/04/42139406_web1_L1-SnoCoJail-EDH-231026-FS.jpg?w=1024)\n\nThe Snohomish County Jail is pictured on Thursday, Oct. 26, 2023, in Everett, Washington. (Ryan Berry / The Herald)\n\nEVERETT — An inmate died inside her cell Wednesday morning at Snohomish County Jail.\n\nAround 7:25 a.m. Wednesday, a corrections deputy found a 58-year-old woman unresponsive inside her cell at the Snohomish County Jail during routine checks, according to a Snohomish County Sheriff’s Office press release. She was housed in the jail’s medical housing unit.\n\nCorrections staff declared a medical emergency and began lifesaving measures, but resuscitation attempts were unsuccessful, the relea [TRUNCATED]"
+    },
+    {
+      "url": "https://aeon.co/essays/what-is-the-real-cost-of-betting-on-weather-catastrophes",
+      "source": "aeon.co",
+      "title": "The moral risk of prediction markets for weather catastrophes | Aeon Essays",
+      "fetch_failed": false,
+      "text": "![Video-loop of a night-time cityscape with a large wildfire blazing on distant hills under a smoky sky.](https://images.aeonmedia.co/images/a832f551-0b45-4597-a28a-2c8ef71967bd/essay-wildfire-burbank-calif.jpg?width=3840&quality=75&format=auto)\n\n# Catastrophe markets\n\n## Americans love to gamble. But placing bets on wildfires, floods and storms comes with serious moral and social costs\n\nby Jamie L Pietruska + BIO\n\nWildfires above Burbank, California, US. Josh Beavers/Getty Images\n\nis associate professor of history at Rutgers University in New Jersey, US. A historian of knowledge production in economic life, she is the author of [*Looking Forward: Prediction and Uncertainty in Modern America*](https://press.uchicago.edu/ucp/books/book/chicago/L/bo27212995.html) (2017).\n\nEdited by[Sam Haselby](/users/samhaselby)\n\nListen to this essay\n\n35 minute listen\n\nWill a Category 5 hurricane make landfall in the US before 2027? Will there be a megaquake by 30 June? Will 2026 be the hottest year ever? You can bet on these and dozens of other disasters in the online prediction markets Kalshi and Polymarket, where users trade ‘yes’ and ‘no’ shares in the outcome of future events in politics, sport [TRUNCATED]"
+    },
+    {
+      "url": "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/",
+      "source": "myedmondsnews.com",
+      "title": "",
+      "fetch_failed": true,
+      "text": "fetch_error: Client error '403 Forbidden' for url 'https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403"
+    },
+    {
+      "url": "https://myedmondsnews.com/2026/04/535207/",
+      "source": "myedmondsnews.com",
+      "title": "",
+      "fetch_failed": true,
+      "text": "fetch_error: Client error '403 Forbidden' for url 'https://myedmondsnews.com/2026/04/535207/'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403"
+    },
+    {
+      "url": "https://www.nybooks.com/articles/2026/04/23/reimagining-the-future-of-ireland-otoole-mcbride-toibin/",
+      "source": "www.nybooks.com",
+      "title": "Reimagining the Future of Ireland | Colm Tóibín | The New York Review of Books",
+      "fetch_failed": false,
+      "text": "[Skip to Content](#main-content)\n\n\n[Politics](https://www.nybooks.com/politics/) [Literature](https://www.nybooks.com/literature/) [Arts](https://www.nybooks.com/arts/) [Ideas](https://www.nybooks.com/ideas/)\n\n [short logo](https://www.nybooks.com) \n\n[Sign In](https://www.nybooks.com/account/signin/?current_page=https%3A%2F%2Fwww.nybooks.com%2Farticles%2F2026%2F04%2F23%2Freimagining-the-future-of-ireland-otoole-mcbride-toibin%2F) [Subscribe](https://subscribe.nybooks.com/ecom/nyb/app/live/subscriptions?org=NYB&publ=NY&key_code=EPMXWWW&type=S)\n\n[Politics](https://www.nybooks.com/politics/) [Literature](https://www.nybooks.com/literature/) [Arts](https://www.nybooks.com/arts/) [Ideas](https://www.nybooks.com/ideas/)\n\n[The New York Books Review Homepage Logo.](https://www.nybooks.com)\n\n[Politics](https://www.nybooks.com/politics/) [United States](https://www.nybooks.com/politics/us-politics/) [International](https://www.nybooks.com/politics/international/) [Human Rights](https://www.nybooks.com/politics/human-rights/) [Climate Change](https://www.nybooks.com/politics/climate-change/)\n\n[Literature](https://www.nybooks.com/literature/) [Fiction](https://www.nybooks.com/literature/fictio [TRUNCATED]"
+    },
+    {
+      "url": "https://www.scientificamerican.com/article/an-asteroid-extinguished-all-the-dinosaurs-except-for-birds-heres-why/",
+      "source": "www.scientificamerican.com",
+      "title": "An asteroid extinguished all the dinosaurs except for birds. Here’s why | Scientific American",
+      "fetch_failed": false,
+      "text": "April 14, 2026\n\n14 min read\n\n![Google Logo](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAYAAACohjseAAAACXBIWXMAACxLAAAsSwGlPZapAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAZpSURBVHgB1ZrfbxRVFMfPvTPTnwiLgVISErdqYuKPsJKWYPzRacHEBxKWgg+EmHZ91IcWnzSEdBtDfIT+Bd0+YK0/wvJmVLbTaAzSGrYvBsNDV40UKdKpBftj597ruUN3Xdrd7vzYbnc/STMzO/dO5zvn3HPPPTMENoEZ/VBQoSs6J0qIAHmKgMCtCAgggUwbPDbx2MTdFAeY0gCmGYPxJmMiCSWEQImY1Vt1ppAwBTiGh0HwyKrwuAB+Zc/Vn+PgE98C73a29eBVunFXh9KTokCiaW1lfO/XyRR4wLPAVWH94MNaLkgRQWK7E9cHwCWuBc68FQoqaW0INsdixUgxLd3hxpoUXPD34bZeNa3egK0RJ5EPd3q282C/0w6OLDithwKNinYBd3ugQpCB6F+2EmkxkuZG7Ypa0BanamNQQeIkGG3D9bS2p1g7daOTq+NtDB9XECoMIchAc+Kni8XaFbSgtJxiaZcBKlPcnsT1qJO2BQVuU9QhtFwIKgw34iR5XXT2SGs/XigM/u/GBEJkNpLEzOQ3zjQ7DVOABZgqAoog+wXAy/gg2wkp7iluxUnWRdHVcTcNvhAGIzCw97tJw2mPu3pbSCjQhzfUnfeKHsRJ1gm8e7hNiguCB4SAJKfijBtha7ETdcXCRILo/18YIk2JiRh44DGBq+nXEHgAVwSDzVcn+qBE/HWkNYrpWb8fcZLHBN5/5/lp63ZjENzi8yYKIa2517iWAh9kBa58o/UQCkNLPzTD4vfNji+wWeJKBc3Zs/O7utfuQOPR34HuWCnaWQ78ShYnsS2Y/lbVMZyP5Z7g8zWwcOlZe1uAWNPViQhUOLYF0RI9606gBXe89wvUts2u64TRMsWY4nptthXYAnHsHSvUoOHIn7bLkjqW8ysZ9jv4ywW13RMgsFGjmpfuw/Z3f82OS85pDKoElQEJKQ4aSnFS5NLk7tj26B8p8IgencOHWReAsrBkqgoR7U4rF9JNG9647avSRTUFc1zmKZlwi+DqII5B4u [TRUNCATED]"
+    },
+    {
+      "url": "https://www.scientificamerican.com/article/new-evidence-links-heart-disease-to-inflammation-and-drugs-can-stop-it/",
+      "source": "www.scientificamerican.com",
+      "title": "New evidence links heart disease to inflammation—and drugs can stop it | Scientific American",
+      "fetch_failed": false,
+      "text": "April 14, 2026\n\n13 min read\n\n![Google Logo](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAYAAACohjseAAAACXBIWXMAACxLAAAsSwGlPZapAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAZpSURBVHgB1ZrfbxRVFMfPvTPTnwiLgVISErdqYuKPsJKWYPzRacHEBxKWgg+EmHZ91IcWnzSEdBtDfIT+Bd0+YK0/wvJmVLbTaAzSGrYvBsNDV40UKdKpBftj597ruUN3Xdrd7vzYbnc/STMzO/dO5zvn3HPPPTMENoEZ/VBQoSs6J0qIAHmKgMCtCAgggUwbPDbx2MTdFAeY0gCmGYPxJmMiCSWEQImY1Vt1ppAwBTiGh0HwyKrwuAB+Zc/Vn+PgE98C73a29eBVunFXh9KTokCiaW1lfO/XyRR4wLPAVWH94MNaLkgRQWK7E9cHwCWuBc68FQoqaW0INsdixUgxLd3hxpoUXPD34bZeNa3egK0RJ5EPd3q282C/0w6OLDithwKNinYBd3ugQpCB6F+2EmkxkuZG7Ypa0BanamNQQeIkGG3D9bS2p1g7daOTq+NtDB9XECoMIchAc+Kni8XaFbSgtJxiaZcBKlPcnsT1qJO2BQVuU9QhtFwIKgw34iR5XXT2SGs/XigM/u/GBEJkNpLEzOQ3zjQ7DVOABZgqAoog+wXAy/gg2wkp7iluxUnWRdHVcTcNvhAGIzCw97tJw2mPu3pbSCjQhzfUnfeKHsRJ1gm8e7hNiguCB4SAJKfijBtha7ETdcXCRILo/18YIk2JiRh44DGBq+nXEHgAVwSDzVcn+qBE/HWkNYrpWb8fcZLHBN5/5/lp63ZjENzi8yYKIa2517iWAh9kBa58o/UQCkNLPzTD4vfNji+wWeJKBc3Zs/O7utfuQOPR34HuWCnaWQ78ShYnsS2Y/lbVMZyP5Z7g8zWwcOlZe1uAWNPViQhUOLYF0RI9606gBXe89wvUts2u64TRMsWY4nptthXYAnHsHSvUoOHIn7bLkjqW8ysZ9jv4ywW13RMgsFGjmpfuw/Z3f82OS85pDKoElQEJKQ4aSnFS5NLk7tj26B8p8IgencOHWReAsrBkqgoR7U4rF9JNG9647avSRTUFc1zmKZlwi+DqII5B4u [TRUNCATED]"
+    }
+  ],
+  "correspondence": {
+    "found": true,
+    "fallback_used": false,
+    "text": "- [escalation] Google: Google security alert about Claude for Google Drive access to your account data.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Research Phase failed on your repo.\n- [escalation] \"Tithe.ly\": Automated $5.46 tithe to The Practicing Church failed.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Research Phase failed again on your repo.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed after 21 minutes.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed after 3 minutes.\n- [escalation] Spotify: Spotify unable to process Premium for Students + Hulu payment.\n- [escalation] \"Anthropic, PBC\": Anthropic failed to charge $27.68 to your credit card.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed in 15 seconds.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed in 14 seconds.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves Write Phase failed for mmmichaelllang/jeeves-unchained.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves Research Phase failed for mmmichaelllang/jeeves-unchained."
+  }
+}
