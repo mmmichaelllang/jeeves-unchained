@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] Google: Google security alert about Claude for Google Drive access to your account data.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Research Phase failed on your repo.\n- [escalation] \"Tithe.ly\": Automated $5.46 tithe to The Practicing Church failed.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Research Phase failed again on your repo.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed after 21 minutes.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed after 3 minutes.\n- [escalation] Spotify: Spotify unable to process Premium for Students + Hulu payment.\n- [escalation] \"Anthropic, PBC\": Anthropic failed to charge $27.68 to your credit card.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed in 15 seconds.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed in 14 seconds.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves Write Phase failed for mmmichaelllang/jeeves-unchained.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves Research Phase failed for mmmichaelllang/jeeves-unchained.",
+  "text": "- [escalation] Google: Google security alert about Claude for Google Drive gaining access to the account.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for the Jeeves Research Phase workflow.\n- [escalation] \"Tithe.ly\": Tithe.ly notification that automated giving of $5.46 to The Practicing Church failed.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for the Jeeves Research Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for the Jeeves Write Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for the Jeeves Write Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for the Jeeves Write Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for the Jeeves Write Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for the Jeeves Write Phase workflow.\n- [escalation] \"Anthropic, PBC\": Anthropic payment failure notification for $27.68 charge.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed on the main branch.\n- [escalation] mmmichaelllang: Another GitHub Actions failure for Jeeves — Write Phase on main branch.",
   "counts": {
     "reply_needed": 0,
-    "decision_required": 0,
+    "decision_required": 1,
     "scheduling": 1,
     "follow_up": 0,
-    "escalation": 18,
-    "no_action": 27
+    "escalation": 19,
+    "no_action": 26
   }
 }
