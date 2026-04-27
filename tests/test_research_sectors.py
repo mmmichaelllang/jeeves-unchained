@@ -79,6 +79,32 @@ def test_collect_headlines_ignores_plain_strings_and_urls():
     assert collect_headlines_from_sector({"urls": ["https://x"]}) == []
 
 
+def test_collect_headlines_extracts_family_choir_and_toddler():
+    """family {choir, toddler} strings must produce covered_headlines entries."""
+    value = {
+        "choir": "Seattle Symphony Chorale open auditions May 3.",
+        "toddler": "Lynnwood library: Baby Storytime Thursdays 10:30am.",
+        "urls": [],
+    }
+    out = collect_headlines_from_sector(value)
+    assert any("Seattle Symphony Chorale" in h for h in out), f"choir not found: {out}"
+    assert any("Lynnwood library" in h for h in out), f"toddler not found: {out}"
+
+
+def test_collect_headlines_extracts_findings_first_sentence():
+    """findings strings in list-shaped sectors produce a headline from first sentence."""
+    value = [
+        {
+            "category": "politics",
+            "source": "BBC",
+            "findings": "Parliament voted on the budget. The result was close.",
+            "urls": [],
+        }
+    ]
+    out = collect_headlines_from_sector(value)
+    assert any("Parliament voted" in h for h in out), f"findings not extracted: {out}"
+
+
 def test_extract_correspondence_references_parses_handoff_lines():
     text = (
         "- [escalation] Sarah Lang: pick up milk, confirm storytime\n"

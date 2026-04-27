@@ -99,6 +99,45 @@ def test_postprocess_flags_banned_transitions():
     assert "Next," in result.banned_transition_hits
 
 
+def test_postprocess_flags_all_banned_transitions():
+    """All eleven banned transitions must be caught by the QA check."""
+    session = _session()
+    body = (
+        "Moving on, the weather. "
+        "Next, local news. "
+        "Turning to global affairs. "
+        "Turning now to the economy. "
+        "As we turn to the journals. "
+        "Turning our attention to AI. "
+        "In other news, a scandal. "
+        "Closer to home, the council. "
+        "Meanwhile, in Tokyo. "
+        "Sir, you may wish to know, that. "
+        "I note with interest, the report."
+    )
+    raw = f"<!DOCTYPE html><html><body><p>{body}</p></body></html>"
+    result = postprocess_html(raw, session)
+    for phrase in [
+        "Moving on,", "Next,", "Turning to", "Turning now to",
+        "As we turn to", "Turning our attention to", "In other news,",
+        "Closer to home,", "Meanwhile,", "Sir, you may wish to know,",
+        "I note with interest,",
+    ]:
+        assert phrase in result.banned_transition_hits, f"missed: {phrase!r}"
+
+
+def test_preapproved_aside_does_not_trigger_banned_word_hit():
+    """'is, if you'll excuse the expression, ass-backward' must not flag banned words."""
+    session = _session()
+    raw = (
+        "<!DOCTYPE html><html><body>"
+        "<p>The decision is, if you'll excuse the expression, ass-backward.</p>"
+        "</body></html>"
+    )
+    result = postprocess_html(raw, session)
+    assert not any("if you'll excuse" in hit for hit in result.banned_word_hits)
+
+
 def test_mock_briefing_has_enough_profane_asides():
     session = _session()
     html = render_mock_briefing(session)

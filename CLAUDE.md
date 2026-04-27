@@ -25,24 +25,30 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - **Per-section dedup advancement protocols** (PART4 toddler, PART6 triadic+ai_systems, PART7 wearable_ai): identify specific title/model/product → check covered_headlines → one backward-reference clause if already covered → pivot to next uncovered item → if all repeat, one sentence and move on. PART4 toddler: lead with new; repeats get embedded clause only; if all repeat, brief seasonal suggestion flagged as Jeeves's own.
 - **Research sectors — mandatory article reading.** CONTEXT_HEADER has a CRITICAL block: exa results carry full text; for serper/tavily hits, call `tavily_extract` before writing findings. Reinforced in local_news, global_news, intellectual_journals, wearable_ai sector instructions.
 - `_system_prompt_for_parts` strips both `## HTML scaffold` and `## Briefing structure` blocks (`re.MULTILINE` + `^## ` lookahead).
-- **89 tests** in `tests/test_write_postprocess.py` cover the full write pipeline including refine/fallback behavior, NIM-skips-sleep path, New Yorker injection, and narrative editor fallback.
+- **93 tests** across `tests/test_write_postprocess.py` and `tests/test_research_sectors.py` cover the full write pipeline including refine/fallback behavior, NIM-skips-sleep path, New Yorker injection, narrative editor fallback, all 11 banned transitions, and family-shape dedup extraction.
 
-## Where we left off (2026-04-25)
+## Where we left off (2026-04-27)
 
-- **PRs #16–#29 all merged to `main`.** Latest: PR #29 — fixed Pydantic crash on `ai_systems.findings` (field_validator coerces list→string); migrated `gemini_grounded.py` from deprecated `google-generativeai` to `google-genai` SDK (fixes `"Unknown field for FunctionDeclaration: google_search"` error); fixed invalid Exa `tech` category in tool description; hardened deep-sector prompts to explicitly require prose string for findings.
+- **PRs #16–#32, all merged or in review.** PR #32 (forensic audit, in CI) addresses 6 integration bugs found across schema, prompts, tests, and data flows — see below.
+- **PR #31 merged** — 5 output-quality bugs from the 2026-04-25 briefing: Horrific Slips → [HARD RULE], OpenRouter Part B aside-count drift fixed, geofence two-test enforcement, PART8 vault_insight field-name exposure, PART9 New Yorker attribution.
+- **PR #30 merged** — dedup improvements, exa text depth, WIT QUOTA rule, SYNTHESIS CLOSE, workflow auto-chaining (manual Correspondence → Research → Write in sequence).
 - **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run, otherwise the narrative editor step is silently skipped.
 - **Action required (optional): add `GOOGLE_CLOUD_PROJECT` + `GOOGLE_APPLICATION_CREDENTIALS_JSON` + `GOOGLE_CLOUD_REGION` to GitHub Secrets** to enable Vertex AI grounded search with Dynamic Retrieval.
-- **Next step: re-run `research.yml`** and verify: (a) `gemini_grounded` no longer logs SDK errors; (b) all 12 sectors complete without crashing; (c) `ai_systems.findings` is a string in the saved JSON.
-- **All phases are live on `main`** (Phases 2, 3, 4 fully wired). Phase 4 handoff JSON feeds Phase 2 at cron `30 12 * * *`. Write runs at `40 13 * * *`.
-- **Phase 2 per-sector loop** (`jeeves/research_sectors.py`, `scripts/research.py::_run_sector_loop`) — 12 sectors × own FunctionAgent, ~40 min wall-clock. Merged in PR #12.
-- **Phase 4 integrated narrative** — no rigid `<h2>` subsections, no family roll-call boilerplate, day-over-day continuity via `_load_prior_briefing_text`. Merged in PR #13.
-- **Three-tier dedup** — articles + events + `email | sender` entries in `dedup.covered_headlines`. Merged in PR #15.
-- `GMAIL_OAUTH_TOKEN_JSON` in GH Secrets. Auto-refreshes at runtime.
+- **All phases are live on `main`** (Phases 2, 3, 4 fully wired). Phase 4 handoff JSON feeds Phase 2 at cron `0 12 * * *`. Research at `30 12 * * *`. Write at `40 13 * * *`.
+
+### Forensic audit findings fixed in PR #32
+
+1. **PART1_INSTRUCTIONS was teaching banned transitions** — the hard-prohibitions block listed "Closer to home", "Meanwhile", "Sir, you may wish to know", "I note with interest" as *suggested alternatives*. These are all banned. Root cause of persistent banned-transition output. Fixed.
+2. **BANNED_TRANSITIONS QA only caught 4 of 11 banned phrases** — expanded to all 11. "Turning to," changed to "Turning to" (no trailing comma) to catch comma-free usage.
+3. **BANNED_WORDS false positive** — `"if you'll excuse the expression"` was in BANNED_WORDS but also embedded in the pre-approved aside `"is, if you'll excuse the expression, ass-backward"`. Removed.
+4. **family.choir / family.toddler never entered covered_headlines** — `collect_headlines_from_sector` only extracted `findings` keys; family uses `choir`/`toddler`. Added `_FINDINGS_LIKE_KEYS = {"findings", "choir", "toddler"}`.
+5. **OpenRouter A1 deletions hit mandatory phrases** — `"salient matters"` in A1 would delete the mandatory correspondence opener "the salient matters are these…"; `"in my professional estimation"` in A1 would break the aside "in my professional estimation, a piece of fucking garbage". Both removed with explanatory comments.
+6. **Mock career/wearable_ai format wrong** — `canned_session()` had `{overview, listings}` (wrong keys) and category `"teacher_tools"` (wrong value). Fixed to `{openings:[...], notes}` and `"teacher_ai_tools"`.
 
 ## Dev branch
 
-- **Current**: `claude/improve-dedup-triadic-studies-rEgcE` (merged as PRs #26–#29)
-- Prior major work merged from: `claude/caveman-style-responses-G1q1c` (#25), `claude/debug-ci-pipeline-TR6xz` (#22–#23), `claude/gmail-auth-bootstrap-9eYme` (#16–#21), `claude/jeeves-unchained-rewrite-auKzK` (#5)
+- **Current**: `claude/forensic-audit-fixes-rEgcE` (PR #32, in CI)
+- Prior major work: `claude/fix-output-quality-round2-rEgcE` (#31, merged), `claude/improve-dedup-triadic-studies-rEgcE` (#26–#30, merged), `claude/caveman-style-responses-G1q1c` (#25), `claude/debug-ci-pipeline-TR6xz` (#22–#23), `claude/gmail-auth-bootstrap-9eYme` (#16–#21)
 
 ## Gotchas the README doesn't flag
 

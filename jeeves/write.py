@@ -31,12 +31,26 @@ BANNED_WORDS = [
     "in a vacuum",
     "tapestry",
     # Apologetic recovery phrases — the profane asides stand alone.
+    # NB: "if you'll excuse the expression" is omitted — it appears verbatim
+    # inside the pre-approved aside "is, if you'll excuse the expression,
+    # ass-backward" and would cause a false positive if listed here.
     "I do beg your pardon, Sir",
     "pardon my language",
-    "if you'll excuse the expression",
     "if I may say so",
 ]
-BANNED_TRANSITIONS = ["Moving on,", "Next,", "Turning to,", "In other news,"]
+BANNED_TRANSITIONS = [
+    "Moving on,",
+    "Next,",
+    "Turning to",
+    "Turning now to",
+    "As we turn to",
+    "Turning our attention to",
+    "In other news,",
+    "Closer to home,",
+    "Meanwhile,",
+    "Sir, you may wish to know,",
+    "I note with interest,",
+]
 # Lower-cased fragments drawn from the pre-approved aside list. Used to count asides.
 PROFANE_FRAGMENTS = [
     "clusterfuck",
@@ -202,10 +216,12 @@ If `fallback_used=true`, summarize naturally without that opener.
 
 **Hard prohibitions — do NOT violate:**
 - NEVER use the words "in a vacuum" or "tapestry".
-- NEVER use the transitions "Moving on,", "Next,", "Turning to,", or "In other news,".
-  These are banned. If you need to change topics, use "Closer to home…",
-  "I note with interest…", "The situation in…", "Sir, you may wish to know…",
-  "Meanwhile…", or simply begin the topic directly.
+- NEVER use mechanical transition phrases to change topics. ALL of the following
+  are banned: "Moving on,", "Next,", "Turning to,", "Turning now to,",
+  "Turning our attention to,", "As we turn to,", "In other news,",
+  "Closer to home,", "Meanwhile,", "Sir, you may wish to know,",
+  "I note with interest,". Begin the next topic directly, use dark humour,
+  or let understatement carry the shift. Do NOT suggest these as alternatives.
 - NEVER append apologetic recovery phrases to profane asides. BANNED follow-ups:
   "— I do beg your pardon, Sir", "pardon my language", "if you'll excuse the
   expression", "if I may say so", or any variant. The aside stands alone.
@@ -1188,12 +1204,14 @@ AI filler (delete or rephrase to something concrete):
   unchanged, delete it.
 
 ChatGPT platitudes (delete or replace with a specific observation):
+Note — do NOT add "salient matters" here: the mandatory correspondence opener
+uses "the salient matters are these…" verbatim. Do NOT add "in my professional
+estimation" here: it is embedded inside the pre-approved aside "in my
+professional estimation, a piece of fucking garbage" and would break that aside.
 - "delves into"
 - "testament to"
 - "nuanced exploration"
 - "I note with interest"
-- "in my professional estimation"
-- "salient matters"
 - "a thought-provoking read"
 - "It is clear that" / "It is evident that"
 - "underscores the importance of"
