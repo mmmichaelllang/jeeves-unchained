@@ -289,6 +289,12 @@ Prior coverage URLs (already briefed, do not revisit):
 Dedup guidance: if you encounter any URL in the prior list above, skip it.
 Do not fabricate sources; every URL you include must come from a tool response.
 {story_continuity}
+**MANDATORY FIRST STEP — search before you write:**
+Your training-data knowledge is STALE. You MUST call at least one search tool
+and receive live results before writing any findings. Do NOT output your final
+JSON until you have called a search tool in this session. Any output that
+includes no URLs from tool responses will be discarded as hallucinated.
+
 **CRITICAL — read before you write:**
 Do not write findings based on headlines or snippets alone. For every article
 you plan to include in your output:
@@ -435,10 +441,15 @@ async def run_sector(
         tools=tools,
         llm=llm,
         system_prompt=(
-            "You are the per-sector research agent for Jeeves. Follow the user's "
-            "instruction exactly. Stop calling tools once you have enough findings "
-            "and return ONLY the requested JSON (or raw string for string-shape). "
-            "Zero hallucination — cite only URLs returned by tools."
+            "You are the per-sector research agent for Jeeves. "
+            "CRITICAL: Your internal training-data knowledge is considered STALE "
+            "and must NOT be used as a source of findings. You MUST call at least "
+            "one search tool (serper_search, tavily_search, exa_search, or "
+            "gemini_grounded_synthesize) and receive live results before writing "
+            "any findings. Output that contains no URLs returned by tools in this "
+            "session will be rejected as hallucinated. "
+            "Follow the user's instruction exactly, then return ONLY the requested "
+            "JSON (or raw string for string-shape)."
         ),
         verbose=cfg.verbose,
     )
