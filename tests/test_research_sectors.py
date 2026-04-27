@@ -6,6 +6,7 @@ import pytest
 
 from jeeves.research_sectors import (
     SECTOR_SPECS,
+    _build_user_prompt,
     _parse_sector_output,
     collect_headlines_from_sector,
     collect_urls_from_sector,
@@ -132,9 +133,123 @@ def test_sector_specs_cover_every_researched_session_field():
     # are researched by the agent.
     from jeeves.schema import SessionModel
 
-    excluded = {"date", "status", "dedup", "correspondence", "vault_insight"}
+    excluded = {"date", "status", "dedup", "correspondence", "vault_insight", "schema_version"}
     researched = set(SessionModel.model_fields.keys()) - excluded
     spec_names = {s.name for s in SECTOR_SPECS}
     assert researched == spec_names, (
         f"spec/schema mismatch. spec has {spec_names}, researched schema has {researched}"
     )
+
+
+def test_career_instruction_includes_deadline_and_salary_range():
+    """Career sector instruction must request deadline and salary_range fields."""
+    career_spec = _spec("career")
+    assert "deadline" in career_spec.instruction
+    assert "salary_range" in career_spec.instruction
+
+
+def test_context_header_quota_summary_inserted():
+    """_build_user_prompt includes quota summary when provided."""
+    spec = _spec("weather")
+    prompt = _build_user_prompt(
+        spec, "2026-04-23", [],
+        quota_summary="serper: 100/2500, tavily: EXHAUSTED — avoid",
+    )
+    assert "serper: 100/2500" in prompt
+    assert "EXHAUSTED" in prompt
+
+
+def test_context_header_story_continuity_inserted():
+    """_build_user_prompt includes story continuity block when provided."""
+    spec = _spec("global_news")
+    prompt = _build_user_prompt(
+        spec, "2026-04-23", [],
+        story_continuity="Ongoing stories:\n  [global] Tariff talks resumed.",
+    )
+    assert "Tariff talks resumed" in prompt
+
+
+def test_context_header_empty_quota_not_inserted():
+    """Empty quota_summary should not inject any text."""
+    spec = _spec("weather")
+    prompt = _build_user_prompt(spec, "2026-04-23", [], quota_summary="")
+    assert "Provider quota remaining" not in prompt
+
+
+def test_covered_headlines_includes_newyorker_title():
+    """covered_headlines() must include the New Yorker title from the session."""
+    from jeeves.dedup import covered_headlines
+    from jeeves.schema import SessionModel
+
+    sess = SessionModel.model_validate({
+        "date": "2026-04-23",
+        "dedup": {"covered_urls": [], "covered_headlines": ["Some headline"]},
+        "newyorker": {
+            "available": True,
+            "title": "Talk of the Town: Mock Article",
+            "url": "https://www.newyorker.com/mock",
+        },
+    })
+    hl = covered_headlines(sess)
+    assert "Talk of the Town: Mock Article" in hl
+    assert "Some headline" in hl
+
+
+def test_covered_headlines_no_newyorker_title_when_empty():
+    """covered_headlines() must not insert empty string from newyorker.title."""
+    from jeeves.dedup import covered_headlines
+    from jeeves.schema import SessionModel
+
+    sess = SessionModel.model_validate({
+        "date": "2026-04-23",
+        "dedup": {"covered_urls": [], "covered_headlines": []},
+        "newyorker": {"available": False, "title": ""},
+    })
+    hl = covered_headlines(sess)
+    assert "" not in hl
+
+
+def test_correspondence_handoff_model_validates():
+    """CorrespondenceHandoff accepts valid handoff data and rejects garbage."""
+    from pydantic import ValidationError
+
+    from jeeves.schema import CorrespondenceHandoff
+
+    h = CorrespondenceHandoff.model_validate({"found": True, "fallback_used": False, "text": "Hi"})
+    assert h.found is True
+    assert h.text == "Hi"
+
+    # Extra fields should be allowed (extra="allow").
+    h2 = CorrespondenceHandoff.model_validate({"found": False, "extra_key": "ignored"})
+    assert h2.found is False
+
+
+def test_load_prior_sessions_returns_list(tmp_path):
+    """load_prior_sessions returns a list of SessionModel objects from disk."""
+    import json
+    from datetime import date, timedelta
+
+    from jeeves.config import Config
+    from jeeves.session_io import load_prior_sessions
+
+    sessions_dir = tmp_path / "sessions"
+    sessions_dir.mkdir()
+
+    run_date = date(2026, 4, 27)
+
+    # Write two fake prior sessions.
+    for delta in (1, 2):
+        d = run_date - timedelta(days=delta)
+        path = sessions_dir / f"session-{d.isoformat()}.json"
+        path.write_text(json.dumps({"date": d.isoformat(), "status": "complete"}), encoding="utf-8")
+
+    cfg = Config(
+        nvidia_api_key="", serper_api_key="", tavily_api_key="", exa_api_key="",
+        google_api_key="", groq_api_key="", gmail_app_password="",
+        gmail_oauth_token_json="", github_token="", github_repository="test/repo",
+        run_date=run_date, repo_root=tmp_path,
+    )
+    result = load_prior_sessions(cfg, days=7)
+    assert len(result) == 2
+    assert result[0].date == (run_date - timedelta(days=1)).isoformat()
+    assert result[1].date == (run_date - timedelta(days=2)).isoformat()

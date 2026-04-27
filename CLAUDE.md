@@ -25,30 +25,39 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - **Per-section dedup advancement protocols** (PART4 toddler, PART6 triadic+ai_systems, PART7 wearable_ai): identify specific title/model/product → check covered_headlines → one backward-reference clause if already covered → pivot to next uncovered item → if all repeat, one sentence and move on. PART4 toddler: lead with new; repeats get embedded clause only; if all repeat, brief seasonal suggestion flagged as Jeeves's own.
 - **Research sectors — mandatory article reading.** CONTEXT_HEADER has a CRITICAL block: exa results carry full text; for serper/tavily hits, call `tavily_extract` before writing findings. Reinforced in local_news, global_news, intellectual_journals, wearable_ai sector instructions.
 - `_system_prompt_for_parts` strips both `## HTML scaffold` and `## Briefing structure` blocks (`re.MULTILINE` + `^## ` lookahead).
-- **93 tests** across `tests/test_write_postprocess.py` and `tests/test_research_sectors.py` cover the full write pipeline including refine/fallback behavior, NIM-skips-sleep path, New Yorker injection, narrative editor fallback, all 11 banned transitions, and family-shape dedup extraction.
+- **108 tests** across `tests/test_write_postprocess.py` and `tests/test_research_sectors.py` cover the full write pipeline including refine/fallback behavior, NIM-skips-sleep path, New Yorker injection, narrative editor fallback, all 11 banned transitions, family-shape dedup extraction, NIM 429 detection, sector_url_index coverage, and the new rolling-window + CorrespondenceHandoff features.
 
 ## Where we left off (2026-04-27)
 
-- **PRs #16–#32, all merged or in review.** PR #32 (forensic audit, in CI) addresses 6 integration bugs found across schema, prompts, tests, and data flows — see below.
-- **PR #31 merged** — 5 output-quality bugs from the 2026-04-25 briefing: Horrific Slips → [HARD RULE], OpenRouter Part B aside-count drift fixed, geofence two-test enforcement, PART8 vault_insight field-name exposure, PART9 New Yorker attribution.
-- **PR #30 merged** — dedup improvements, exa text depth, WIT QUOTA rule, SYNTHESIS CLOSE, workflow auto-chaining (manual Correspondence → Research → Write in sequence).
-- **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run, otherwise the narrative editor step is silently skipped.
-- **Action required (optional): add `GOOGLE_CLOUD_PROJECT` + `GOOGLE_APPLICATION_CREDENTIALS_JSON` + `GOOGLE_CLOUD_REGION` to GitHub Secrets** to enable Vertex AI grounded search with Dynamic Retrieval.
+- **PRs #16–#33, all merged or in CI.** PR #33 (never-empty news fallbacks) in CI. PR #34 (15-feature improvement block) in progress on `claude/improve-dedup-triadic-studies-rEgcE`.
+- **PR #32 merged** — forensic audit fixing 6 integration bugs.
+- **PR #33 in CI** — cross-provider fallback chains for weather, local_news, global_news.
 - **All phases are live on `main`** (Phases 2, 3, 4 fully wired). Phase 4 handoff JSON feeds Phase 2 at cron `0 12 * * *`. Research at `30 12 * * *`. Write at `40 13 * * *`.
+- **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run.
 
-### Forensic audit findings fixed in PR #32
+### 15-feature block implemented in PR #34
 
-1. **PART1_INSTRUCTIONS was teaching banned transitions** — the hard-prohibitions block listed "Closer to home", "Meanwhile", "Sir, you may wish to know", "I note with interest" as *suggested alternatives*. These are all banned. Root cause of persistent banned-transition output. Fixed.
-2. **BANNED_TRANSITIONS QA only caught 4 of 11 banned phrases** — expanded to all 11. "Turning to," changed to "Turning to" (no trailing comma) to catch comma-free usage.
-3. **BANNED_WORDS false positive** — `"if you'll excuse the expression"` was in BANNED_WORDS but also embedded in the pre-approved aside `"is, if you'll excuse the expression, ass-backward"`. Removed.
-4. **family.choir / family.toddler never entered covered_headlines** — `collect_headlines_from_sector` only extracted `findings` keys; family uses `choir`/`toddler`. Added `_FINDINGS_LIKE_KEYS = {"findings", "choir", "toddler"}`.
-5. **OpenRouter A1 deletions hit mandatory phrases** — `"salient matters"` in A1 would delete the mandatory correspondence opener "the salient matters are these…"; `"in my professional estimation"` in A1 would break the aside "in my professional estimation, a piece of fucking garbage". Both removed with explanatory comments.
-6. **Mock career/wearable_ai format wrong** — `canned_session()` had `{overview, listings}` (wrong keys) and category `"teacher_tools"` (wrong value). Fixed to `{openings:[...], notes}` and `"teacher_ai_tools"`.
+1. `schema_version: str = "1"` added to `SessionModel` — forward-compatible versioning.
+2. `CorrespondenceHandoff` Pydantic model in `schema.py` — validates Phase 4 handoff on merge.
+3. `intellectual_journals.findings` FIELD_CAP raised 350→600 chars.
+4. `load_prior_sessions(cfg, days=7)` in `session_io.py` — returns list of all sessions in the window.
+5. `covered_headlines()` in `dedup.py` now also includes `session.newyorker.title`.
+6. Career sector instruction now requests `deadline` and `salary_range` fields.
+7. `CONTEXT_HEADER` in `research_sectors.py` now has `{quota_summary}` and `{story_continuity}` template slots.
+8. `scripts/research.py`: parallel sector execution via `asyncio.gather()` + `Semaphore(3)`; `enriched_articles` always runs last.
+9. `scripts/research.py`: rolling 7-day dedup window via `load_prior_sessions`.
+10. `scripts/research.py`: COVERAGE_LOG feedback from prior briefing HTML (`_load_prior_coverage_urls`).
+11. `scripts/research.py`: session-to-session synthesis prompt via `_story_continuity_block`.
+12. `scripts/research.py`: correspondence handoff validated via `CorrespondenceHandoff` model.
+13. `scripts/research.py`: quota-aware context via `_quota_summary(ledger)`.
+14. `write.py`: `_sector_url_index` now labels career openings and family URLs as "Sector 2".
+15. `write.py`: PART_PLAN part4 gains `newyorker_hint`; PART4_INSTRUCTIONS adds New Yorker overlap check (mirrors PART7).
+16. `write.py`: NIM 429 retry backoff (2s, 8s, 32s) in both `_invoke_nim_refine` and `_invoke_nim_write`.
 
 ## Dev branch
 
-- **Current**: `claude/forensic-audit-fixes-rEgcE` (PR #32, in CI)
-- Prior major work: `claude/fix-output-quality-round2-rEgcE` (#31, merged), `claude/improve-dedup-triadic-studies-rEgcE` (#26–#30, merged), `claude/caveman-style-responses-G1q1c` (#25), `claude/debug-ci-pipeline-TR6xz` (#22–#23), `claude/gmail-auth-bootstrap-9eYme` (#16–#21)
+- **Current**: `claude/improve-dedup-triadic-studies-rEgcE` (PR #34, new)
+- Prior major work: `claude/never-empty-news-fallbacks-rEgcE` (#33), `claude/forensic-audit-fixes-rEgcE` (#32, merged), `claude/fix-output-quality-round2-rEgcE` (#31, merged), `claude/improve-dedup-triadic-studies-rEgcE` (#26–#30, merged)
 
 ## Gotchas the README doesn't flag
 

@@ -113,8 +113,12 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Washington, Bellevue, Snohomish, Marysville, Monroe, Lake Stevens, Renton, "
             "Highline, Mercer Island, Issaquah, Riverview, Tukwila, Seattle Public Schools. "
             "Use tavily_search or serper_search for district HR pages and job boards. "
-            "Return a JSON object: {openings: [{district, role, url, summary}, ...], "
-            "notes: '...'}."
+            "For each opening, read the posting page via tavily_extract to pull the "
+            "application deadline and salary range if listed. "
+            "Return a JSON object: "
+            "{openings: [{district, role, url, summary, deadline, salary_range}, ...], "
+            "notes: '...'}. "
+            "Use null for deadline or salary_range if not found in the posting."
         ),
         default={},
     ),
@@ -284,7 +288,7 @@ Prior coverage URLs (already briefed, do not revisit):
 
 Dedup guidance: if you encounter any URL in the prior list above, skip it.
 Do not fabricate sources; every URL you include must come from a tool response.
-
+{story_continuity}
 **CRITICAL — read before you write:**
 Do not write findings based on headlines or snippets alone. For every article
 you plan to include in your output:
@@ -297,7 +301,7 @@ Write findings only from content you have actually read, not guessed.
 
 Tool budget for this sector: 10-15 tool calls is plenty. Dispatch in parallel
 when possible, then stop calling tools and output the JSON result.
-
+{quota_summary}
 SECTOR: {sector_name}
 INSTRUCTION: {instruction}
 
@@ -338,14 +342,33 @@ def _parse_sector_output(raw: str, spec: SectorSpec) -> Any:
         return spec.default
 
 
-def _build_user_prompt(spec: SectorSpec, run_date: str, prior_urls_sample: list[str],
-                       extra: str = "") -> str:
+def _build_user_prompt(
+    spec: SectorSpec,
+    run_date: str,
+    prior_urls_sample: list[str],
+    extra: str = "",
+    *,
+    quota_summary: str = "",
+    story_continuity: str = "",
+) -> str:
     prior_block = "\n".join(prior_urls_sample) if prior_urls_sample else "(none)"
+    quota_block = (
+        f"\n**Provider quota remaining:** {quota_summary}\n"
+        if quota_summary
+        else ""
+    )
+    continuity_block = (
+        f"\n**Story continuity (prior briefings):**\n{story_continuity}\n"
+        if story_continuity
+        else ""
+    )
     base = CONTEXT_HEADER.format(
         date=run_date,
         prior_urls_sample=prior_block,
         sector_name=spec.name,
         instruction=spec.instruction,
+        quota_summary=quota_block,
+        story_continuity=continuity_block,
     )
     return f"{base}\n\n{extra}" if extra else base
 
@@ -357,6 +380,8 @@ async def run_sector(
     ledger,
     *,
     extra_user: str = "",
+    quota_summary: str = "",
+    story_continuity: str = "",
 ) -> Any:
     """Run one sector's agent and return the parsed sector-shape value."""
 
@@ -371,7 +396,10 @@ async def run_sector(
     tools = all_search_tools(cfg, ledger, set(prior_urls_sample))
     llm = build_kimi_llm(cfg)
 
-    user_msg = _build_user_prompt(spec, cfg.run_date.isoformat(), prior_urls_sample, extra_user)
+    user_msg = _build_user_prompt(
+        spec, cfg.run_date.isoformat(), prior_urls_sample, extra_user,
+        quota_summary=quota_summary, story_continuity=story_continuity,
+    )
     agent = FunctionAgent(
         tools=tools,
         llm=llm,

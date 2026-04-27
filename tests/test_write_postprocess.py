@@ -636,7 +636,7 @@ def test_part_plan_has_nine_slots_covering_all_session_fields():
     # injected into part7 so it can avoid duplicating New Yorker content.
     covered = {f for _, fields in PART_PLAN for f in fields if f != "newyorker_hint"}
     assert covered == set(SessionModel.model_fields.keys()) - {
-        "date", "status", "dedup",
+        "date", "status", "dedup", "schema_version",
     }, f"PART_PLAN should cover every researched + correspondence field; got {covered}"
 
 
@@ -652,3 +652,78 @@ def test_part_plan_gives_newyorker_its_own_slot():
     # newyorker should be alone in its slot.
     fields = dict(PART_PLAN)[name]
     assert fields == ["newyorker"], f"newyorker must ride alone; got {fields}"
+
+
+def test_part4_carries_newyorker_hint():
+    """part4 must include newyorker_hint so the New Yorker overlap check can fire."""
+    from jeeves.write import PART_PLAN
+
+    part4_fields = dict(PART_PLAN)["part4"]
+    assert "newyorker_hint" in part4_fields, f"part4 fields: {part4_fields}"
+
+
+def test_sector_url_index_labels_career_openings():
+    """Career openings URLs must be labelled Sector 2 in _sector_url_index."""
+    from jeeves.write import _sector_url_index
+
+    sess = SessionModel.model_validate({
+        "date": "2026-04-23",
+        "career": {
+            "openings": [
+                {"district": "Northshore SD", "role": "HS English",
+                 "url": "https://northshoresd.org/jobs/123", "summary": "x"},
+            ],
+            "notes": "",
+        },
+    })
+    idx = _sector_url_index(sess)
+    assert idx.get("https://northshoresd.org/jobs/123") == "Sector 2"
+
+
+def test_sector_url_index_labels_family_urls():
+    """Family URLs must be labelled Sector 2 in _sector_url_index."""
+    from jeeves.write import _sector_url_index
+
+    sess = SessionModel.model_validate({
+        "date": "2026-04-23",
+        "family": {
+            "choir": "Audition info.",
+            "toddler": "Library storytime.",
+            "urls": ["https://seattlesymphony.org/auditions"],
+        },
+    })
+    idx = _sector_url_index(sess)
+    assert idx.get("https://seattlesymphony.org/auditions") == "Sector 2"
+
+
+def test_nim_rate_limit_detection():
+    """_is_nim_rate_limit should detect 429, 'rate limit', 'too many requests'."""
+    from jeeves.write import _is_nim_rate_limit
+
+    assert _is_nim_rate_limit(Exception("HTTP 429 Too Many Requests"))
+    assert _is_nim_rate_limit(Exception("rate limit exceeded"))
+    assert _is_nim_rate_limit(Exception("too many requests"))
+    assert not _is_nim_rate_limit(Exception("HTTP 500 Internal Server Error"))
+    assert not _is_nim_rate_limit(Exception("connection refused"))
+
+
+def test_schema_version_field_present():
+    """SessionModel must carry schema_version = '1' by default."""
+    sess = SessionModel(date="2026-04-23")
+    assert sess.schema_version == "1"
+
+
+def test_intellectual_journals_cap_raised():
+    """intellectual_journals.findings cap must be at least 600 chars."""
+    from jeeves.schema import FIELD_CAPS
+
+    assert FIELD_CAPS["intellectual_journals.findings"] >= 600
+
+
+def test_part4_instructions_contain_newyorker_overlap_check():
+    """PART4_INSTRUCTIONS must include the newyorker overlap check."""
+    from jeeves.write import PART4_INSTRUCTIONS
+
+    assert "newyorker_hint" in PART4_INSTRUCTIONS, (
+        "PART4_INSTRUCTIONS should reference newyorker_hint for the overlap check"
+    )

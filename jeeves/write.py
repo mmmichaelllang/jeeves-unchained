@@ -176,7 +176,7 @@ PART_PLAN: list[tuple[str, list[str]]] = [
     ("part1", ["correspondence", "weather"]),
     ("part2", ["local_news"]),
     ("part3", ["career"]),
-    ("part4", ["family", "global_news"]),
+    ("part4", ["family", "global_news", "newyorker_hint"]),
     ("part5", ["intellectual_journals", "enriched_articles"]),
     ("part6", ["triadic_ontology", "ai_systems"]),
     ("part7", ["uap", "wearable_ai", "newyorker_hint"]),
@@ -439,6 +439,18 @@ Your scope — write ONLY about these:
 - Choral auditions for Mrs. Lang from `family.choir`.
 - Toddler activities for Piper from `family.toddler`.
 - Global / geopolitical news from `global_news`.
+
+**NEW YORKER OVERLAP — global news (CRITICAL):**
+Your payload includes `newyorker_hint`. If `newyorker_hint.available` is true
+and `newyorker_hint.title` names a company, person, or topic that ALSO appears
+in your `global_news` findings — write ONE sentence about that overlap topic,
+then move on:
+
+  "The [topic/person] has drawn sufficient attention to feature in this week's
+   New Yorker Talk of the Town, which we shall hear presently."
+
+Do NOT write a full paragraph about any global-news topic that is the New Yorker
+article's subject. The New Yorker section (Part 9) is the full treatment.
 
 **Choral dedup (REQUIRED):** Before writing any choral audition, check
 `dedup.covered_headlines`.
@@ -1037,13 +1049,25 @@ present, then output the corrected HTML. Do NOT add new content.
 """.strip()
 
 
+_NIM_RETRY_DELAYS = (2, 8, 32)  # seconds between attempts on 429
+
+
+def _is_nim_rate_limit(exc: Exception) -> bool:
+    msg = str(exc).lower()
+    return "429" in msg or "rate limit" in msg or "too many requests" in msg
+
+
 def _invoke_nim_refine(cfg: Config, draft_html: str, *, label: str) -> str:
     """Run a targeted quality-editor pass on a draft HTML fragment via NIM.
 
     Uses a short focused system prompt (not the full write system) at lower
     temperature — the task is edit/fix, not creative generation. Falls back
     to the raw draft if NIM is unavailable or the call fails.
+
+    Retries up to 3 times with exponential backoff (2s, 8s, 32s) on HTTP 429.
     """
+    import time
+
     from llama_index.core.base.llms.types import ChatMessage, MessageRole
 
     from .llm import build_nim_write_llm
@@ -1055,14 +1079,36 @@ def _invoke_nim_refine(cfg: Config, draft_html: str, *, label: str) -> str:
     llm = build_nim_write_llm(cfg, temperature=0.2, max_tokens=4096)
     user = f"Edit the following HTML fragment:\n\n{draft_html}"
     log.info("NIM refine [%s] (%d chars draft)", label, len(draft_html))
-    resp = llm.chat([
+    messages = [
         ChatMessage(role=MessageRole.SYSTEM, content=_REFINE_SYSTEM),
         ChatMessage(role=MessageRole.USER, content=user),
-    ])
-    return str(resp.message.content or draft_html)
+    ]
+    last_exc: Exception | None = None
+    for attempt, delay in enumerate((*_NIM_RETRY_DELAYS, None)):
+        try:
+            resp = llm.chat(messages)
+            return str(resp.message.content or draft_html)
+        except Exception as exc:
+            last_exc = exc
+            if _is_nim_rate_limit(exc) and delay is not None:
+                log.warning(
+                    "NIM refine [%s] got 429 (attempt %d/4); retrying in %ds",
+                    label, attempt + 1, delay,
+                )
+                time.sleep(delay)
+            else:
+                raise
+    log.warning("NIM refine [%s] exhausted retries: %s; using raw draft", label, last_exc)
+    return draft_html
 
 
 def _invoke_nim_write(cfg: Config, system: str, user: str, *, max_tokens: int, label: str) -> str:
+    """Call NIM as a fallback write-draft generator (Groq TPD exhausted).
+
+    Retries up to 3 times with exponential backoff (2s, 8s, 32s) on HTTP 429.
+    """
+    import time
+
     from llama_index.core.base.llms.types import ChatMessage, MessageRole
 
     from .llm import build_nim_write_llm
@@ -1077,11 +1123,26 @@ def _invoke_nim_write(cfg: Config, system: str, user: str, *, max_tokens: int, l
         "invoking NIM write fallback %s [%s] (max_tokens=%d, system=%d chars, user=%d chars)",
         cfg.nim_write_model_id, label, max_tokens, len(system), len(user),
     )
-    resp = llm.chat([
+    messages = [
         ChatMessage(role=MessageRole.SYSTEM, content=system),
         ChatMessage(role=MessageRole.USER, content=user),
-    ])
-    return str(resp.message.content or "")
+    ]
+    last_exc: Exception | None = None
+    for attempt, delay in enumerate((*_NIM_RETRY_DELAYS, None)):
+        try:
+            resp = llm.chat(messages)
+            return str(resp.message.content or "")
+        except Exception as exc:
+            last_exc = exc
+            if _is_nim_rate_limit(exc) and delay is not None:
+                log.warning(
+                    "NIM write [%s] got 429 (attempt %d/4); retrying in %ds",
+                    label, attempt + 1, delay,
+                )
+                time.sleep(delay)
+            else:
+                raise
+    raise RuntimeError(f"NIM write [%s] exhausted retries: {last_exc}")
 
 
 def _invoke_write_llm(
@@ -1953,6 +2014,17 @@ def _sector_url_index(session: SessionModel) -> dict[str, str]:
 
     for f in session.local_news:
         _add(f.urls, "Sector 1")
+
+    # Career openings and family URLs belong to Sector 2.
+    career = session.career or {}
+    if isinstance(career, dict):
+        for opening in career.get("openings") or []:
+            if isinstance(opening, dict) and opening.get("url"):
+                idx[opening["url"].rstrip("/")] = "Sector 2"
+    family = session.family or {}
+    if isinstance(family, dict):
+        _add(family.get("urls") or [], "Sector 2")
+
     for f in session.global_news:
         _add(f.urls, "Sector 3")
     for f in session.intellectual_journals:
