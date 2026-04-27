@@ -3,13 +3,11 @@
   "status": "complete",
   "dedup": {
     "covered_urls": [
-      "https://bsd405.tedk12.com/hire/index.aspx",
-      "https://northshore.tedk12.com/hire/index.aspx",
-      "https://www.applitrack.com/everettsd/onlineapp/",
-      "https://www.applitrack.com/lakewashington/onlineapp/default.aspx?all=1",
-      "https://www.k12jobspot.com/Job/5326135",
-      "https://www.seattleschools.org/departments/hr/careers/",
-      "https://www2.nwrdc.wa-k12.net/scripts/cgiip.exe/WService=wshorels71/rapplmnu03.w"
+      "https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States",
+      "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/",
+      "https://myedmondsnews.com/2026/04/council-approves-key-contracts-drops-potential-tree-litigation-and-proclaims-april-9-local-news-day/",
+      "https://myedmondsnews.com/2026/04/edmonds-at-center-of-discussions-as-south-county-fire-commissioners-embark-on-redistricting/",
+      "https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/"
     ],
     "covered_headlines": [
       "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail in Everett at 7:25 a.",
@@ -23,6 +21,8 @@
       "Colm Tóibín's review of 'For and Against a United Ireland' by Fintan O'Toole and Sam McBride examines the complex practicalities of Irish reunificatio",
       "Dual Language (English/Spanish) Teacher",
       "Edmonds",
+      "Edmonds Police are searching for suspects who assaulted and robbed two women walking on a trail.",
+      "Edmonds is at the center of redistricting discussions as South County Fire commissioners work to incorporate the city's 42,000+ residents into the Reg",
       "English Language Arts Teacher (Long-Term Sub)",
       "English Language Development Teacher – Secondary",
       "English and History teachers now have three well-funded, purpose-built AI co-teachers.",
@@ -31,11 +31,9 @@
       "Friend AI pendant ($99) - A circular, always-listening companion that records ambient audio and sends contextual text messages via iOS app.",
       "Friend and Tab pendants represent the new wave of lifelogging wearables that continuously record audio for AI analysis.",
       "Global diplomatic efforts are fraying as the Iran conflict shows no resolution and new crises emerge.",
-      "High School English & Social Studies Teacher Recruitment",
       "High School English / History Teacher",
       "High School English Teacher",
       "High School English Teacher (Long-Term Sub)",
-      "High School English Teacher Pool",
       "High School History Teacher",
       "Hungarian Prime Minister Viktor Orbán stepped down from parliament after his Fidesz party suffered a landslide defeat in April elections, ending his 1",
       "In \"Triadic Logic and the Quantum Entanglement of Relations\" (2026, Sophia Studies), philosopher-theologian Dr.",
@@ -60,18 +58,17 @@
       "President Trump was rushed to safety by Secret Service agents after shots were fired inside the Washington Hilton hotel during the White House Corresp",
       "Robert G.",
       "Russia launched a major overnight assault on Ukraine with over 660 drones and missiles, killing at least seven people including five in Dnipro.",
-      "Seattle",
       "Seattle Public",
       "Seattle Public Schools",
       "Secondary History Teacher",
       "Secondary Social Studies Teacher",
-      "Secondary Teacher Pool (Grades 6-12)",
       "Shoreline",
       "Snohomish",
-      "Social Studies/History Teacher Pool (2026-2027)",
       "Starting tonight, Sunday, April 26, and continuing through Friday morning, May 1, overnight closures will affect northbound SR 525 and its ramps near",
       "State Route 525 near Alderwood Mall Parkway will undergo overnight closures from Sunday night April 26 through Friday morning May 1 for pavement grind",
       "The City of Edmonds hosted an open house on Thursday, April 25 to unveil the 60 % design plan for Stage 3 of the Highway 99 Revitalization Project.",
+      "The City of Edmonds will begin construction on its 2025 Combined Cured-in-Place Pipe (CIPP) Rehabilitation Project on May 4.",
+      "The Edmonds City Council recently approved key contracts and budget amendments during its April 7 business meeting.",
       "The House Oversight Subcommittee on National Security held a closed-door briefing on UAPs on April 24, 2026, with no official readout provided to the",
       "The House Oversight subcommittee on National Security held a closed-door UAP briefing on April 24, 2026, but issued no public readout, frustrating tra",
       "The IMF has downgraded global growth forecasts to 3.",
@@ -91,69 +88,43 @@
       "email | mmmichaelllang"
     ]
   },
-  "weather": "Today in Edmonds: Cloudy morning giving way to mostly sunny skies, high 62°F. Light south winds 8-9 mph. 20% chance of light rain during the day. Evening turns increasingly cloudy with rain likely after midnight, low 49°F. Southeast winds picking up to 15-25 mph overnight. Rainfall totals 0.1-0.25\" possible. Pleasant day overall before wet evening.",
-  "local_news": [],
-  "career": {
-    "openings": [
-      {
-        "district": "Snohomish",
-        "role": "Social Studies/History Teacher Pool (2026-2027)",
-        "url": "https://www.k12jobspot.com/Job/5326135",
-        "summary": "Pool posting for multiple high-school History vacancies for the 2026-2027 school year. District may fill positions directly from this pool or post specific openings later.",
-        "deadline": "2026-04-30",
-        "salary_range": "$75,241 - $149,387"
-      },
-      {
-        "district": "Northshore",
-        "role": "Secondary Social Studies Teacher",
-        "url": "https://northshore.tedk12.com/hire/index.aspx",
-        "summary": "General pool posting for anticipated secondary Social Studies/History openings. Principals review the pool and contact selected applicants for interviews as vacancies arise.",
-        "deadline": null,
-        "salary_range": null
-      },
-      {
-        "district": "Shoreline",
-        "role": "Secondary Social Studies Teacher",
-        "url": "https://www2.nwrdc.wa-k12.net/scripts/cgiip.exe/WService=wshorels71/rapplmnu03.w",
-        "summary": "District is actively reviewing applications and conducting interviews for secondary Social Studies/History positions for 2026-2027.",
-        "deadline": null,
-        "salary_range": null
-      },
-      {
-        "district": "Everett",
-        "role": "Secondary Teacher Pool (Grades 6-12)",
-        "url": "https://www.applitrack.com/everettsd/onlineapp/",
-        "summary": "General pool for secondary teachers including English and History. Fully completed applications with two confidential references are screened for anticipated 2026-2027 openings.",
-        "deadline": null,
-        "salary_range": null
-      },
-      {
-        "district": "Lake Washington",
-        "role": "High School English Teacher Pool",
-        "url": "https://www.applitrack.com/lakewashington/onlineapp/default.aspx?all=1",
-        "summary": "District uses general “pool” postings to streamline hiring for high-school English positions. Principals access the pool as vacancies occur for 2026-2027.",
-        "deadline": null,
-        "salary_range": null
-      },
-      {
-        "district": "Bellevue",
-        "role": "High School English Teacher Pool",
-        "url": "https://bsd405.tedk12.com/hire/index.aspx",
-        "summary": "Ongoing pool for high-school English teachers. Applicants are encouraged to apply early; references are contacted automatically upon submission.",
-        "deadline": null,
-        "salary_range": null
-      },
-      {
-        "district": "Seattle",
-        "role": "High School English & Social Studies Teacher Recruitment",
-        "url": "https://www.seattleschools.org/departments/hr/careers/",
-        "summary": "District-wide recruitment for English and Social Studies teachers for 2026-2027. Hard-to-fill positions may qualify for a $500 signing bonus.",
-        "deadline": null,
-        "salary_range": null
-      }
-    ],
-    "notes": "Most districts post general “pool” openings rather than specific vacancies this early in the hiring cycle. Applicants should create profiles in each district’s applicant-tracking system (AppliTrack or FastTrack/TEDk12) and monitor postings weekly, as individual school openings appear from late spring through summer. Only Snohomish provided a firm deadline and salary range; other districts will release specifics when individual positions are posted."
-  },
+  "weather": "Today in Edmonds: Overcast and cool, 54°F currently heading to a high near 61°F. South wind 9-15 mph. Rain arrives late afternoon—20 % chance through the day, then rain likely overnight with totals under a tenth of an inch. Evening drops to the upper 40s under steady showers. Dress for damp and breezy conditions.",
+  "local_news": [
+    {
+      "category": "municipal",
+      "source": "myedmondsnews.com",
+      "findings": "The City of Edmonds will begin construction on its 2025 Combined Cured-in-Place Pipe (CIPP) Rehabilitation Project on May 4. This project will repair aging sewer and stormwater infrastructure across the city, with work including sewer and storm main rehabilitation at various locations including 80th Avenue West from 192nd Street Southwest to 194th Place Southwest. The city is also seeking public input on the 60% design plan for Stage 3 of the Highway 99 Revitalization Project, which was unveiled at an open house on April 24.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/",
+        "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "myedmondsnews.com",
+      "findings": "The Edmonds City Council recently approved key contracts and budget amendments during its April 7 business meeting. Notable approvals include a $415,116 contract with Jacobs Engineering for commissioning the gasification system at the wastewater treatment plant, and a $419,000 contract for a major sewer project to repair or replace pipes at 27 locations. The council also decided to drop potential litigation regarding a landmark tree removal case, reducing a fine from $102,245 to $20,000.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/council-approves-key-contracts-drops-potential-tree-litigation-and-proclaims-april-9-local-news-day/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "myedmondsnews.com",
+      "findings": "Edmonds is at the center of redistricting discussions as South County Fire commissioners work to incorporate the city's 42,000+ residents into the Regional Fire Authority's governance structure. Two competing plans are under consideration: one that would keep most of Edmonds in a single district, and another that would split the city along Pine Street. The fire commission is seeking public input before finalizing district boundaries that will determine how Edmonds residents are represented on the seven-member board.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/edmonds-at-center-of-discussions-as-south-county-fire-commissioners-embark-on-redistricting/"
+      ]
+    },
+    {
+      "category": "public_safety",
+      "source": "komonews.com",
+      "findings": "Edmonds Police are searching for suspects who assaulted and robbed two women walking on a trail. The incident occurred recently and police are actively investigating the case. Additionally, the state auditor has indicated that Washington police departments are lagging on required training, though local officials report this is not the case for the Edmonds Police Department.",
+      "urls": [
+        "https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States"
+      ]
+    }
+  ],
+  "career": {},
   "family": {},
   "global_news": [],
   "intellectual_journals": [],
