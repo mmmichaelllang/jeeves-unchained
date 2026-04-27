@@ -31,6 +31,25 @@ def load_previous_session(cfg: Config) -> SessionModel | None:
     return None
 
 
+def load_prior_sessions(cfg: Config, days: int = 7) -> list[SessionModel]:
+    """Load up to `days` prior sessions from disk, newest-first.
+
+    Unlike `load_previous_session` (which stops at the first hit), this returns
+    ALL sessions found in the window — used to build the rolling dedup window
+    and the story-continuity synthesis block.
+    """
+    result: list[SessionModel] = []
+    for delta in range(1, days + 1):
+        path = cfg.session_path(cfg.run_date - timedelta(days=delta))
+        if path.exists():
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+                result.append(SessionModel.model_validate(data))
+            except Exception as e:
+                log.warning("failed to parse prior session %s: %s", path, e)
+    return result
+
+
 def _write_local(path: Path, session: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(session, ensure_ascii=False, indent=2), encoding="utf-8")

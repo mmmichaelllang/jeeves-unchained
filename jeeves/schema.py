@@ -76,11 +76,21 @@ class EnrichedArticle(BaseModel):
     text: str = ""
 
 
+class CorrespondenceHandoff(BaseModel):
+    """Shape of sessions/correspondence-<date>.json produced by Phase 4."""
+
+    model_config = ConfigDict(extra="allow")
+    found: bool = False
+    fallback_used: bool = False
+    text: str = ""
+
+
 class SessionModel(BaseModel):
     """Daily research session, consumed by the write phase."""
 
     model_config = ConfigDict(extra="allow")
 
+    schema_version: str = "1"
     date: str
     status: str = "complete"
     dedup: Dedup = Field(default_factory=Dedup)
@@ -108,7 +118,7 @@ FIELD_CAPS: dict[str, int] = {
     "family": 800,
     "correspondence.text": 1500,
     "global_news.findings": 600,
-    "intellectual_journals.findings": 350,
+    "intellectual_journals.findings": 600,
     "wearable_ai.findings": 400,
     "triadic_ontology.findings": 1000,
     "ai_systems.findings": 1000,

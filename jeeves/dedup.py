@@ -29,4 +29,10 @@ def covered_urls(session: SessionModel | None) -> set[str]:
 def covered_headlines(session: SessionModel | None) -> set[str]:
     if session is None:
         return set()
-    return {h for h in session.dedup.covered_headlines if h}
+    out = {h for h in session.dedup.covered_headlines if h}
+    # Explicitly include the New Yorker title so PART9 and the research context
+    # both recognise a repeat article even if collect_headlines_from_sector
+    # wasn't called on that session's newyorker value.
+    if session.newyorker.title:
+        out.add(session.newyorker.title)
+    return out
