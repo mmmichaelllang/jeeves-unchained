@@ -47,7 +47,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Dev branch
 
-- **Current**: `claude/forensic-audit-fixes-rEgcE` (PR #32, in CI)
+- **Current**: `claude/forensic-audit-fixes-rEgcE` (PR #32, merged)
 - Prior major work: `claude/fix-output-quality-round2-rEgcE` (#31, merged), `claude/improve-dedup-triadic-studies-rEgcE` (#26–#30, merged), `claude/caveman-style-responses-G1q1c` (#25), `claude/debug-ci-pipeline-TR6xz` (#22–#23), `claude/gmail-auth-bootstrap-9eYme` (#16–#21)
 
 ## Gotchas the README doesn't flag
