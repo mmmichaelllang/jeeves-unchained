@@ -389,6 +389,10 @@ def collect_urls_from_sector(value: Any) -> list[str]:
 
 _HEADLINE_KEYS = {"title", "headline", "subject", "role", "event", "district"}
 
+# String-valued keys treated like "findings" — first sentence extracted for dedup.
+# Covers the family shape {choir: '...', toddler: '...'} which has no "findings" key.
+_FINDINGS_LIKE_KEYS = {"findings", "choir", "toddler"}
+
 
 def _first_sentence(text: str, max_chars: int = 150) -> str:
     """Extract a short dedup-usable label from a findings string.
@@ -424,7 +428,7 @@ def collect_headlines_from_sector(value: Any) -> list[str]:
         for k, v in value.items():
             if k in _HEADLINE_KEYS and isinstance(v, str) and v.strip():
                 out.append(v.strip())
-            elif k == "findings" and isinstance(v, str) and v.strip():
+            elif k in _FINDINGS_LIKE_KEYS and isinstance(v, str) and v.strip():
                 sentence = _first_sentence(v)
                 if sentence:
                     out.append(sentence)

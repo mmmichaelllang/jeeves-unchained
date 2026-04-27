@@ -35,12 +35,26 @@ def canned_session(run_date: date) -> dict[str, Any]:
             }
         ],
         "career": {
-            "overview": "Three new HS English postings in Northshore SD this week.",
-            "listings": "Northshore SD: 2 openings. Shoreline SD: 1 opening.",
+            "openings": [
+                {
+                    "district": "Northshore SD",
+                    "role": "HS English Teacher",
+                    "url": "https://northshoresd.org/jobs/hs-english",
+                    "summary": "English 9-12, posted April 2026, apply by May 15.",
+                },
+                {
+                    "district": "Shoreline SD",
+                    "role": "HS History Teacher",
+                    "url": "https://shorelinesd.org/jobs/hs-history",
+                    "summary": "World History and US History combined posting.",
+                },
+            ],
+            "notes": "Two districts actively hiring; Northshore deadline approaching.",
         },
         "family": {
             "choir": "Seattle Symphony Chorale open auditions May 3.",
             "toddler": "Lynnwood library: Baby Storytime Thursdays 10:30am.",
+            "urls": [],
         },
         "global_news": [
             {
@@ -60,7 +74,7 @@ def canned_session(run_date: date) -> dict[str, Any]:
         ],
         "wearable_ai": [
             {
-                "category": "teacher_tools",
+                "category": "teacher_ai_tools",
                 "source": "Axios",
                 "findings": "New grading assistant for HS English released.",
                 "urls": ["https://www.axios.com/mock"],
