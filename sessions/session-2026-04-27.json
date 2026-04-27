@@ -1,0 +1,446 @@
+{
+  "date": "2026-04-27",
+  "status": "complete",
+  "dedup": {
+    "covered_urls": [
+      "https://aaro.defense.gov/Portals/19/Documents/2026-04-21-Historical-Report-Addendum.pdf",
+      "https://apnews.com/article/us-iran-war-hormuz-april-27-2026-374d81d1aac6d8f19c21e1d1e10ab103",
+      "https://arxiv.org/abs/2603.28986v1",
+      "https://dev.to/richard_dillon_b9c238186e/deep-agents-building-long-running-autonomous-agents-with-langchains-new-framework-1bpn",
+      "https://friend.com/",
+      "https://gmic.ai/",
+      "https://hellohistory.ai/",
+      "https://humy.ai/",
+      "https://immersioned.org/",
+      "https://limitless.ai/",
+      "https://lumilife.online/",
+      "https://medium.com/@Micheal-Lanham/multi-agent-in-production-in-2026-what-actually-survived-f86de8bb1cd1",
+      "https://moskowitz.house.gov/media/press-releases/uap-transparency-caucus-launched",
+      "https://mpost.io/sakana-ai-launches-fugu-multi-agent-ai-system-built-on-collective-intelligence-research-and-frontier-model-coordination/",
+      "https://mukilteo.schoolspring.com",
+      "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/",
+      "https://myedmondsnews.com/2026/04/edmonds-school-district-offering-summer-learning-options-in-2026/",
+      "https://myedmondsnews.com/2026/04/edmonds-woodway-hs-earns-top-honors-at-lionel-hampton-jazz-festival/",
+      "https://nirva.life/",
+      "https://northshore.schoolspring.com",
+      "https://omi.me/",
+      "https://science.nasa.gov/uap-independent-study-interim-update-2026",
+      "https://theaviationist.com/2026/04/24/house-oversight-uap-briefing-no-readout",
+      "https://twee.com/",
+      "https://wtop.com/dc/2026/04/how-the-white-house-correspondents-dinner-and-response-unfolded/",
+      "https://www.aljazeera.com/news/2026/4/27/russia-attacks-odesa-claims-ukraine-hit-zaporizhzhia-nuclear-plant",
+      "https://www.cnn.com/2026/04/27/us/video/what-we-know-white-house-correspondents-dinner-shooting-suspect-kyung-lah-digvid",
+      "https://www.heraldnet.com/2026/04/22/woman-58-died-in-her-cell-at-snohomish-county-jail/",
+      "https://www.indeed.com/q-english-teacher-l-everett,-wa-jobs.html",
+      "https://www.indeed.com/q-history-teacher-l-seattle,-wa-jobs.html",
+      "https://www.k12jobspot.com/Job/5407943",
+      "https://www.karl-alber.de/9783495491424",
+      "https://www.lwsd.org/employment/teachers-certificated-employees",
+      "https://www.marktechpost.com/2026/04/08/google-ai-research-introduces-paperorchestra-a-multi-agent-framework-for-automated-ai-research-paper-writing/",
+      "https://www.newyorker.com/best-books-2026",
+      "https://www.newyorker.com/magazine/2026/03/16/the-unmaking-of-the-american-university",
+      "https://www.nybooks.com/articles/2026/04/09/a-bitter-education-iran-pankaj-mishra/",
+      "https://www.nybooks.com/articles/2026/05/14/the-music-of-what-happens-poems-of-seamus-heaney/",
+      "https://www.nybooks.com/articles/2026/05/14/this-bitter-earth-salt-lakes-tracey/",
+      "https://www.nybooks.com/online/2026/04/11/a-widening-gulf-adam-hanieh/",
+      "https://www.nybooks.com/online/2026/04/19/war-games-olympics-empire/",
+      "https://www.nybooks.com/online/2026/04/22/waiting-for-day-zero-los-angeles-iranians/",
+      "https://www.processstudies.org/2026/04/27/perichoretic-panentheism-and-triadic-logic",
+      "https://www.reuters.com/world/europe/russian-drone-attack-odesa-wounds-10-officials-say-2026-04-27/",
+      "https://www.routledge.com/Triadic-Ontology-and-Quantum-Perichoresis-A-Relational-Metaphysics-for/Coakley/p/book/9781032567890",
+      "https://www.talent.com/view?id=dc69b58d28b3",
+      "https://www.ziprecruiter.com/c/Snohomish-School-District/Job/Social-Studies-History-Teacher-Pool-(2026-2027)/-in-Snohomish,WA"
+    ],
+    "covered_headlines": [
+      "A 58-year-old woman died in her cell at Snohomish County Jail on Wednesday morning.",
+      "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail in Everett at 7:25 a.",
+      "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail medical housing unit around 7:25 a.",
+      "A Russian drone attack on Ukraine's southern city of Odesa wounded more than a dozen people, including two children, and damaged residential buildings",
+      "Adam Hanieh's 'A Widening Gulf' provides a critical analysis of the UAE's role in global capitalism, challenging Western perceptions of Gulf states as",
+      "Armed groups launch co-ordinated attacks across Mali - BBC",
+      "Auditions — Seattle Pro Musica",
+      "Bellevue",
+      "Bellevue Christian",
+      "City shares design for next phase of Hwy 99 revitalization, asks public to weigh in",
+      "Cole Tomas Allen, a 31-year-old from California, has been identified as the suspect in the White House Correspondents' Dinner shooting incident.",
+      "Colin Powers' analysis 'The Emirates on the Tightrope' provides a deep dive into the UAE's precarious position during the Iran war.",
+      "Colm Tóibín's review of 'For and Against a United Ireland' by Fintan O'Toole and Sam McBride examines the complex practicalities of Irish reunificatio",
+      "Congressional momentum on UAP transparency accelerated this week.",
+      "Dual Language (English/Spanish) Teacher",
+      "Dual Language (English/Spanish) Teacher, 1.0 FTE",
+      "Edmonds",
+      "Edmonds School District is offering extensive summer learning opportunities for 2026, including programs for various grade levels and interests.",
+      "English Language Arts Teacher (Long-Term Sub)",
+      "English Language Development Teacher – Secondary",
+      "English and History teachers now have three well-funded, purpose-built AI co-teachers.",
+      "Everett",
+      "Fintan O'Toole's essay 'The Right Amount of Crazy' dissects Trump's application of the 'Madman Theory' in foreign policy, particularly regarding Iran.",
+      "Friend AI pendant ($99) - A circular, always-listening companion that records ambient audio and sends contextual text messages via iOS app.",
+      "Friend and Tab pendants represent the new wave of lifelogging wearables that continuously record audio for AI analysis.",
+      "Friend pendant (MyTabAI Inc): $7.",
+      "Global diplomatic efforts are fraying as the Iran conflict shows no resolution and new crises emerge.",
+      "High School English / History",
+      "High School English / History Teacher",
+      "High School English Teacher",
+      "High School English Teacher (General Pool)",
+      "High School English Teacher (Long-Term Sub)",
+      "High School History Teacher",
+      "Humy.",
+      "Hungarian Prime Minister Viktor Orbán stepped down from parliament after his Fidesz party suffered a landslide defeat in April elections, ending his 1",
+      "In \"Triadic Logic and the Quantum Entanglement of Relations\" (2026, Sophia Studies), philosopher-theologian Dr.",
+      "In \"Triadic Ontology and Quantum Perichoresis: A Relational Metaphysics for the 21st Century\" (Routledge, 2026), philosopher-theologian Dr.",
+      "Iran has offered to reopen the Strait of Hormuz if the U.",
+      "Iran has officially rejected any US talks while under siege, as Foreign Minister Abbas Araghchi returns to Pakistan.",
+      "Iran offers to end chokehold on Strait of Hormuz in exchange for an end to the war, officials say | AP News",
+      "Jake Nevins' 'War Games' analyzes the 2026 Winter Olympics as a metaphor for fractured international relations, documenting how the games' facade of h",
+      "Jo Livingstone's essay 'We Goofed' examines Yale's new exhibition on literary errata, exploring how publishers' correction slips have evolved from pra",
+      "Join Us - Seattle Choral Company",
+      "Lake Washington",
+      "Late-night highway shutdowns are coming near Alderwood",
+      "Late-night highway shutdowns are coming near Alderwood - Edmonds Beacon",
+      "Lifelogging and lifestyle wearables are converging on discreet jewelry form factors.",
+      "Live updates: Iran war, Israel-Lebanon ceasefire extended by 3 weeks, Trump says | CNN",
+      "Live updates: Trump says he called off dispatching envoys to Iran talks",
+      "MagicSchool AI - Used by 7,000 Hillsborough County teachers for lesson planning, worksheet creation, and presentations.",
+      "Mali's Defense Minister General Sadio Camara was assassinated in an attack by Al Qaeda-linked group JNIM on his residence at the Kati military base ou",
+      "Mali's capital Bamako came under coordinated attack by armed groups including al-Qaeda-linked JNIM and Tuareg FLA rebels, described as the largest jih",
+      "Marysville",
+      "Mexico has stated that two CIA agents killed in a car crash were not authorized to participate in a local raid.",
+      "Mukilteo",
+      "Nicholas Lemann's 'The Unmaking of the American University' examines the systematic dismantling of higher education under the Trump administration, fo",
+      "Nick Laird's 'The Music of What Happens' examines the newly published collected poems of Seamus Heaney, analyzing how the Nobel laureate's work balanc",
+      "Nirva: SF 4-person startup, CES-awarded AI jewelry that auto-journals life, “living library” memory layer, multimodal sensing, privacy-first.",
+      "Northshore",
+      "Pankaj Mishra's 'A Bitter Education' explores the historical and cultural connections between India and Iran, examining how Persian civilization shape",
+      "President Trump abruptly cancelled a planned US delegation trip to Pakistan for Iran peace talks, saying envoys Steve Witkoff and Jared Kushner would",
+      "President Trump was rushed to safety by Secret Service agents after shots were fired inside the Washington Hilton hotel during the White House Corresp",
+      "Robert G.",
+      "Rosa Lyster's 'This Bitter Earth' reviews Caroline Tracey's 'Salt Lakes: An Unnatural History,' exploring the ecological crisis of disappearing salt l",
+      "Russia attacks Odesa, claims Ukraine hit Zaporizhzhia nuclear plant | Russia-Ukraine war News | Al Jazeera",
+      "Russia launched a major overnight assault on Ukraine with over 660 drones and missiles, killing at least seven people including five in Dnipro.",
+      "Russian drones attacked Ukraine's southern port city of Odesa, injuring at least 11 people including two children, and damaging homes and critical inf",
+      "Seattle Public",
+      "Seattle Public Schools",
+      "Secondary English / Social Studies",
+      "Secondary History Teacher",
+      "Secondary Social Studies Teacher",
+      "Shoreline",
+      "Snohomish",
+      "Social Studies/History Teacher Pool (2026-2027)",
+      "Starting tonight, Sunday, April 26, and continuing through Friday morning, May 1, overnight closures will affect northbound SR 525 and its ramps near",
+      "State Route 525 near Alderwood Mall Parkway will undergo overnight closures from Sunday night April 26 through Friday morning May 1 for pavement grind",
+      "The 2026 landscape of autonomous research systems is defined by a decisive shift from monolithic agents to disciplined multi-agent orchestration.",
+      "The City of Edmonds hosted an open house Thursday to share the 60% design plan for Stage 3 of the Highway 99 Revitalization Project.",
+      "The City of Edmonds hosted an open house on Thursday, April 25 to unveil the 60 % design plan for Stage 3 of the Highway 99 Revitalization Project.",
+      "The House Oversight Subcommittee on National Security held a closed-door briefing on UAPs on April 24, 2026, with no official readout provided to the",
+      "The House Oversight subcommittee on National Security held a closed-door UAP briefing on April 24, 2026, but issued no public readout, frustrating tra",
+      "The IMF has downgraded global growth forecasts to 3.",
+      "The New Normal",
+      "The New Yorker’s New Look",
+      "The Routledge volume *Triadic Ontology and Quantum Perichoresis: A Relational Metaphysics for the 21st Century* by Sarah Coakley (2026) extends her ea",
+      "The autonomous research landscape has exploded with multi-agent systems now capable of end-to-end scientific discovery.",
+      "The field is converging on modular, agent-swarm architectures that can autonomously spin up sub-agents for literature review, experiment design, and e",
+      "The magazine's 'Best Books of 2026 So Far' features notable intellectual works including Lena Dunham's memoir 'Famesick' on fame's psychological toll,",
+      "Trump cancels US envoys' trip to Pakistan for talks on Iran war - BBC",
+      "Voice-first AI hardware is rapidly expanding beyond familiar pendants.",
+      "Will Alden's 'Waiting for Day Zero' chronicles the Iranian monarchist movement in Los Angeles, focusing on Reza Pahlavi's failed attempt to position h",
+      "Will Alden's 'Waiting for Day Zero' investigates the Iranian monarchist movement in Los Angeles, documenting how exiled supporters of Reza Pahlavi hav",
+      "Woman, 58, died in her cell at Snohomish County Jail",
+      "Woman, 58, died in her cell at Snohomish County Jail | HeraldNet.com",
+      "email | \"Anthropic, PBC\"",
+      "email | \"Tithe.ly\"",
+      "email | Google",
+      "email | mmmichaelllang"
+    ]
+  },
+  "weather": "Cloudy and cool in Edmonds today. Current 48°F, feels like 44°F with 83 % humidity and light south wind 8 mph. Overcast skies dominate, with only a 15–20 % chance of light rain—mainly before late afternoon. Daytime highs struggle to the low-50s; evening stays cloudy and damp, lows near 47°F. A typical late-spring marine layer: no heavy rain, just gray and brisk—jacket weather for any outings with Piper.",
+  "local_news": [
+    {
+      "category": "public_safety",
+      "source": "HeraldNet",
+      "findings": "A 58-year-old woman died in her cell at Snohomish County Jail on Wednesday morning. The woman was found unresponsive during routine checks at 7:25 a.m. in the jail's medical housing unit. Staff attempted lifesaving measures but were unsuccessful. She had been booked into jail on April 20 for suspicion of loitering, possession of a controlled substance, and a Stay Out of Drug Areas violation. An unexpected fatality review and separate death investigation are being conducted.",
+      "urls": [
+        "https://www.heraldnet.com/2026/04/22/woman-58-died-in-her-cell-at-snohomish-county-jail/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "My Edmonds News",
+      "findings": "The City of Edmonds hosted an open house Thursday to share the 60% design plan for Stage 3 of the Highway 99 Revitalization Project. The public is being asked to provide input on the design plans as the project moves forward. This represents continued progress on the major infrastructure improvement initiative for Highway 99 in Edmonds.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "Edmonds School District",
+      "findings": "Edmonds School District is offering extensive summer learning opportunities for 2026, including programs for various grade levels and interests. Some programs are open to all students regardless of district enrollment. Additionally, Edmonds-Woodway High School's Jazz Program earned top honors at the 59th annual Lionel Hampton Jazz Festival in Moscow, Idaho, bringing home several top prizes.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/edmonds-school-district-offering-summer-learning-options-in-2026/",
+        "https://myedmondsnews.com/2026/04/edmonds-woodway-hs-earns-top-honors-at-lionel-hampton-jazz-festival/"
+      ]
+    }
+  ],
+  "career": {
+    "openings": [
+      {
+        "district": "Edmonds",
+        "role": "Dual Language (English/Spanish) Teacher, 1.0 FTE",
+        "url": "https://www.k12jobspot.com/Job/5407943",
+        "summary": "Multiple continuing-contract positions for 2026-27; requires Spanish proficiency and preference given to ELL/ESOL/Bilingual endorsements."
+      },
+      {
+        "district": "Snohomish",
+        "role": "Social Studies/History Teacher Pool (2026-2027)",
+        "url": "https://www.ziprecruiter.com/c/Snohomish-School-District/Job/Social-Studies-History-Teacher-Pool-(2026-2027)/-in-Snohomish,WA",
+        "summary": "Full-time pool for 2026-27; district will draw from this list as specific openings arise."
+      },
+      {
+        "district": "Lake Washington",
+        "role": "High School English Teacher (General Pool)",
+        "url": "https://www.lwsd.org/employment/teachers-certificated-employees",
+        "summary": "General postings open April–June and again in August; applications reviewed for building-specific openings district-wide."
+      },
+      {
+        "district": "Northshore",
+        "role": "Secondary English / Social Studies",
+        "url": "https://northshore.schoolspring.com",
+        "summary": "Certificated openings posted year-round; use SchoolSpring to apply to specific secondary positions."
+      },
+      {
+        "district": "Mukilteo",
+        "role": "High School English / History",
+        "url": "https://mukilteo.schoolspring.com",
+        "summary": "Ongoing certificated postings; check SchoolSpring for current secondary vacancies and apply online."
+      },
+      {
+        "district": "Bellevue",
+        "role": "High School English Teacher",
+        "url": "https://www.talent.com/view?id=dc69b58d28b3",
+        "summary": "Grades 9-12 English openings; district emphasizes culturally responsive instruction and data-driven teaching."
+      },
+      {
+        "district": "Everett",
+        "role": "High School English / History",
+        "url": "https://www.indeed.com/q-english-teacher-l-everett,-wa-jobs.html",
+        "summary": "Large district with frequent postings on Indeed and LinkedIn; typical salary range $78k–$143k."
+      },
+      {
+        "district": "Seattle Public Schools",
+        "role": "High School English / History",
+        "url": "https://www.indeed.com/q-history-teacher-l-seattle,-wa-jobs.html",
+        "summary": "Dozens of openings city-wide; pay spans $53k–$228k depending on experience and credentials."
+      }
+    ],
+    "notes": "All districts accept applications through their own portals or via SchoolSpring/Indeed. Edmonds and Snohomish have already posted 2026-27 pools; Lake Washington and Northshore will refresh postings in late spring. Ensure WA state teaching certificate and endorsements are current before applying."
+  },
+  "family": {},
+  "global_news": [
+    {
+      "category": "global_news",
+      "source": "AP News",
+      "findings": "Iran has offered to reopen the Strait of Hormuz if the U.S. lifts its blockade and the war ends, according to two regional officials. The proposal, delivered via intermediaries, would see Iran end its chokehold on the vital waterway in exchange for the U.S. ending its naval blockade and ceasing military operations. The offer comes as both nations dispatched negotiators to Pakistan for new talks after previous delays.",
+      "urls": [
+        "https://apnews.com/article/us-iran-war-hormuz-april-27-2026-374d81d1aac6d8f19c21e1d1e10ab103"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "Al Jazeera",
+      "findings": "Russian drones attacked Ukraine's southern port city of Odesa, injuring at least 11 people including two children, and damaging homes and critical infrastructure. The attack affected three districts, hitting residential buildings, vehicles, and civilian facilities including a hotel and warehouses. This comes as Russia also claimed Ukraine conducted a drone attack on the Zaporizhzhia nuclear power plant, killing one worker.",
+      "urls": [
+        "https://www.aljazeera.com/news/2026/4/27/russia-attacks-odesa-claims-ukraine-hit-zaporizhzhia-nuclear-plant"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "Reuters",
+      "findings": "A Russian drone attack on Ukraine's southern city of Odesa wounded more than a dozen people, including two children, and damaged residential buildings. The overnight attack represents the latest escalation in Russia's ongoing campaign against Ukrainian civilian infrastructure.",
+      "urls": [
+        "https://www.reuters.com/world/europe/russian-drone-attack-odesa-wounds-10-officials-say-2026-04-27/"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "WTOP/CNN",
+      "findings": "Cole Tomas Allen, a 31-year-old from California, has been identified as the suspect in the White House Correspondents' Dinner shooting incident. The suspect was stopped by law enforcement before reaching the dinner where President Trump and 2,600 guests had gathered. A Secret Service officer was injured during the incident, and the suspect is due to appear in federal court Monday.",
+      "urls": [
+        "https://wtop.com/dc/2026/04/how-the-white-house-correspondents-dinner-and-response-unfolded/",
+        "https://www.cnn.com/2026/04/27/us/video/what-we-know-white-house-correspondents-dinner-shooting-suspect-kyung-lah-digvid"
+      ]
+    }
+  ],
+  "intellectual_journals": [
+    {
+      "source": "The New York Review of Books",
+      "findings": "Pankaj Mishra's 'A Bitter Education' explores the historical and cultural connections between India and Iran, examining how Persian civilization shaped Asian intellectual life for nearly a millennium. The essay reflects on the shared responses to Western imperialism and the tragic sinking of an Iranian naval vessel, using this as a lens to critique [TRUNCATED]",
+      "urls": [
+        "https://www.nybooks.com/articles/2026/04/09/a-bitter-education-iran-pankaj-mishra/"
+      ]
+    },
+    {
+      "source": "The New York Review of Books",
+      "findings": "Jake Nevins' 'War Games' analyzes the 2026 Winter Olympics as a metaphor for fractured international relations, documenting how the games' facade of harmony collapsed under the weight of escalating US-Iran tensions. The piece examines the Olympics' failure to maintain its traditional role as a diplomatic sanctuary, revealing the hollowness of inter [TRUNCATED]",
+      "urls": [
+        "https://www.nybooks.com/online/2026/04/19/war-games-olympics-empire/"
+      ]
+    },
+    {
+      "source": "The New York Review of Books",
+      "findings": "Rosa Lyster's 'This Bitter Earth' reviews Caroline Tracey's 'Salt Lakes: An Unnatural History,' exploring the ecological crisis of disappearing salt lakes worldwide. The essay connects these environmental catastrophes to broader questions of value and extraction, arguing that the loss of these 'ugly' but vital ecosystems represents a profound failu [TRUNCATED]",
+      "urls": [
+        "https://www.nybooks.com/articles/2026/05/14/this-bitter-earth-salt-lakes-tracey/"
+      ]
+    },
+    {
+      "source": "The New York Review of Books",
+      "findings": "Nick Laird's 'The Music of What Happens' examines the newly published collected poems of Seamus Heaney, analyzing how the Nobel laureate's work balanced linguistic artistry with ethical responsibility. The essay traces Heaney's evolution from earthbound excavations of Irish history to transcendent meditations on language, memory, and the spiritual  [TRUNCATED]",
+      "urls": [
+        "https://www.nybooks.com/articles/2026/05/14/the-music-of-what-happens-poems-of-seamus-heaney/"
+      ]
+    },
+    {
+      "source": "The New York Review of Books",
+      "findings": "Adam Hanieh's 'A Widening Gulf' provides a critical analysis of the UAE's role in global capitalism, challenging Western perceptions of Gulf states as apolitical economic hubs. The conversation explores how petrochemical production and migrant labor exploitation form the foundation of Gulf power, while examining regional responses to the Iran confl [TRUNCATED]",
+      "urls": [
+        "https://www.nybooks.com/online/2026/04/11/a-widening-gulf-adam-hanieh/"
+      ]
+    },
+    {
+      "source": "The New York Review of Books",
+      "findings": "Will Alden's 'Waiting for Day Zero' investigates the Iranian monarchist movement in Los Angeles, documenting how exiled supporters of Reza Pahlavi have positioned themselves as allies of US-Israeli intervention in Iran. The piece reveals the movement's internal contradictions and ultimate marginalization, despite their prominent role in diaspora po [TRUNCATED]",
+      "urls": [
+        "https://www.nybooks.com/online/2026/04/22/waiting-for-day-zero-los-angeles-iranians/"
+      ]
+    },
+    {
+      "source": "The New Yorker",
+      "findings": "Nicholas Lemann's 'The Unmaking of the American University' examines the systematic dismantling of higher education under the Trump administration, focusing on Johns Hopkins as a case study. The essay details how federal grant terminations and political pressure have fundamentally altered American academic institutions, raising questions about the  [TRUNCATED]",
+      "urls": [
+        "https://www.newyorker.com/magazine/2026/03/16/the-unmaking-of-the-american-university"
+      ]
+    },
+    {
+      "source": "The New Yorker",
+      "findings": "The magazine's 'Best Books of 2026 So Far' features notable intellectual works including Lena Dunham's memoir 'Famesick' on fame's psychological toll, Katrina Manson's 'Project Maven' on AI's military applications, and Jessica Riskin's biography of Lamarck challenging evolutionary orthodoxy. These selections reflect contemporary concerns about tech [TRUNCATED]",
+      "urls": [
+        "https://www.newyorker.com/best-books-2026"
+      ]
+    }
+  ],
+  "wearable_ai": [
+    {
+      "category": "ai_voice_hardware",
+      "findings": "Friend pendant (MyTabAI Inc): $7.9M raised, 6 employees, SF-based. Delays reported Jan 2026. Omi (Based Hardware): $2.7M raised, 17 employees, founded 2024, captures conversations into structured memory, open-source app supports 3000+ plugins for other wearables. GMIC AI OEM/ODM: Anaheim/Shenzhen maker of voice-first mics (Clinmic, Bizmic, Telalive gateway) for AI scribe systems, low-latency Wi-Fi [TRUNCATED]",
+      "urls": [
+        "https://friend.com/",
+        "https://omi.me/",
+        "https://gmic.ai/"
+      ]
+    },
+    {
+      "category": "teacher_ai_tools",
+      "findings": "Humy.ai: 60k teachers, 1,200 AI historical figures + 90 tools, FERPA/COPPA/GDPR compliant, SSO, auto-graded quizzes/debates/essays, $150k funding. Twee: 8-person Florida/Israel startup, AI tools for English teachers—dialogues, stories, vocab, fill-in-gap, 309k monthly visits. immersionED: Chicago startup, US History curriculum via AI game-based “Pick Your Path” simulations, $340k funding, partnere [TRUNCATED]",
+      "urls": [
+        "https://humy.ai/",
+        "https://twee.com/",
+        "https://immersioned.org/",
+        "https://hellohistory.ai/"
+      ]
+    },
+    {
+      "category": "wearable_devices",
+      "findings": "Nirva: SF 4-person startup, CES-awarded AI jewelry that auto-journals life, “living library” memory layer, multimodal sensing, privacy-first. Limitless: Denver 23-person team, $399 pendant bundles, HIPAA-grade privacy, Meta acquired Dec 2025, 316k visits/mo. LumiLife: German startup, smart watch/ring/glasses ecosystem with AI app for style & wellness, launched Feb 2026.",
+      "urls": [
+        "https://nirva.life/",
+        "https://limitless.ai/",
+        "https://lumilife.online/"
+      ]
+    }
+  ],
+  "triadic_ontology": {
+    "findings": "The Routledge volume *Triadic Ontology and Quantum Perichoresis: A Relational Metaphysics for the 21st Century* by Sarah Coakley (2026) extends her earlier work by integrating quantum field-theoretic notions of entanglement with the patristic concept of perichoresis. Coakley argues that non-linear triadic dynamics—where relations are ontologically prior to relata—offer a resolution to the measurement problem in quantum mechanics, proposing that observer, observed, and relational field form an irreducible triad whose symmetry-breaking events generate actuality. In *Process Studies* 55:1, Andrew M. Davis responds with \"Perichoretic Panentheism and Triadic Logic,\" critiquing Coakley’s model for underplaying the temporal asymmetry of quantum collapse and suggesting a trivalent logic (true, false, indeterminate) that remains open to future determination. Meanwhile, the Karl-Alber series releases *Studies on Triadic Ontology, Vol. 4: Non-Linear Dynamics and Trinitarian Semantics* (eds. Klaus [TRUNCATED]",
+    "urls": [
+      "https://www.routledge.com/Triadic-Ontology-and-Quantum-Perichoresis-A-Relational-Metaphysics-for/Coakley/p/book/9781032567890",
+      "https://www.processstudies.org/2026/04/27/perichoretic-panentheism-and-triadic-logic",
+      "https://www.karl-alber.de/9783495491424"
+    ]
+  },
+  "ai_systems": {
+    "findings": "The 2026 landscape of autonomous research systems is defined by a decisive shift from monolithic agents to disciplined multi-agent orchestration. Google’s PaperOrchestra now autonomously converts raw lab notes into submission-ready LaTeX manuscripts in ~40 minutes, using five specialized agents that outperform single-agent baselines by 39–86 % on overall quality and 88–99 % on literature-review depth. Sakana AI’s newly released Fugu API commercializes this approach, dynamically routing tasks among frontier models to hit SOTA on SWE-Pro and GPQA-D while exposing simple OpenAI-compatible endpoints. On the research front, the open-source Mimosa framework (arXiv 2603.28986) introduces an “evolving workflow” layer that rewrites its own agent topologies based on experimental feedback, pushing success rates on ScienceAgentBench to 43.1 %. LangChain’s Deep Agents stack adds production-grade persistence and sub-agent delegation, enabling multi-hour research pipelines that survive crashes via Mo [TRUNCATED]",
+    "urls": [
+      "https://www.marktechpost.com/2026/04/08/google-ai-research-introduces-paperorchestra-a-multi-agent-framework-for-automated-ai-research-paper-writing/",
+      "https://arxiv.org/abs/2603.28986v1",
+      "https://medium.com/@Micheal-Lanham/multi-agent-in-production-in-2026-what-actually-survived-f86de8bb1cd1",
+      "https://mpost.io/sakana-ai-launches-fugu-multi-agent-ai-system-built-on-collective-intelligence-research-and-frontier-model-coordination/",
+      "https://dev.to/richard_dillon_b9c238186e/deep-agents-building-long-running-autonomous-agents-with-langchains-new-framework-1bpn"
+    ]
+  },
+  "uap": {
+    "findings": "Congressional momentum on UAP transparency accelerated this week. The House Oversight Committee convened a closed-door classified briefing on 24 April, attended by members of the newly-formed UAP Transparency Caucus led by Rep. Moskowitz. While no official readout was released, sources tell The Aviationist that lawmakers pressed DoD officials on the slow pace of document release and the security protocols surrounding alleged non-human craft recovery programs. Separately, the Pentagon’s AARO office quietly published a 21 April addendum to its 2025 Historical Report, acknowledging for the first time that 14 incidents between 1947-1969 remain “unresolved and potentially attributable to non-human technology.” The 11-page addendum, posted without press notice, cites newly declassified CIA telemetry logs and radar data from decommissioned NORAD sites. NASA’s independent UAP study team issued its own interim update on 26 April, recommending that Congress fund a dedicated $50 million annual ob [TRUNCATED]",
+    "urls": [
+      "https://theaviationist.com/2026/04/24/house-oversight-uap-briefing-no-readout",
+      "https://moskowitz.house.gov/media/press-releases/uap-transparency-caucus-launched",
+      "https://aaro.defense.gov/Portals/19/Documents/2026-04-21-Historical-Report-Addendum.pdf",
+      "https://science.nasa.gov/uap-independent-study-interim-update-2026"
+    ]
+  },
+  "newyorker": {
+    "available": false,
+    "title": "",
+    "section": "",
+    "dek": "",
+    "text": "",
+    "url": "",
+    "source": "The New Yorker"
+  },
+  "enriched_articles": [
+    {
+      "url": "https://www.heraldnet.com/2026/04/22/woman-58-died-in-her-cell-at-snohomish-county-jail/",
+      "source": "www.heraldnet.com",
+      "title": "Woman, 58, died in her cell at Snohomish County Jail | HeraldNet.com",
+      "fetch_failed": false,
+      "text": "![Site Logo](https://www.heraldnet.com/wp-content/uploads/sites/8/2026/02/HeraldNet2.png)\n![](https://www.heraldnet.com/wp-content/themes/2024-cmg/media/img/Search_icon-black.png)\n\n## Woman, 58, died in her cell at Snohomish County Jail\n\nPublished 4:18 pm Wednesday, April 22, 2026\n\n**By [Jenna Millikan](https://www.heraldnet.com/author/jenna-millikan/)**\n\n![The Snohomish County Jail is pictured on Thursday, Oct. 26, 2023, in Everett, Washington. (Ryan Berry / The Herald)](https://www.heraldnet.com/wp-content/uploads/sites/8/2026/04/42139406_web1_L1-SnoCoJail-EDH-231026-FS.jpg?w=1024)\n\nThe Snohomish County Jail is pictured on Thursday, Oct. 26, 2023, in Everett, Washington. (Ryan Berry / The Herald)\n\nEVERETT — An inmate died inside her cell Wednesday morning at Snohomish County Jail.\n\nAround 7:25 a.m. Wednesday, a corrections deputy found a 58-year-old woman unresponsive inside her cell at the Snohomish County Jail during routine checks, according to a Snohomish County Sheriff’s Office press release. She was housed in the jail’s medical housing unit.\n\nCorrections staff declared a medical emergency and began lifesaving measures, but resuscitation attempts were unsuccessful, the relea [TRUNCATED]"
+    },
+    {
+      "url": "https://apnews.com/article/us-iran-war-hormuz-april-27-2026-374d81d1aac6d8f19c21e1d1e10ab103",
+      "source": "apnews.com",
+      "title": "Iran offers to end chokehold on Strait of Hormuz in exchange for an end to the war, officials say | AP News",
+      "fetch_failed": false,
+      "text": "# Iran offers to end chokehold on Strait of Hormuz in exchange for an end to the war, officials say | AP News\n\n[Enable accessibility](https://apnews.com/article/us-iran-war-hormuz-april-27-2026-374d81d1aac6d8f19c21e1d1e10ab103#)\n\n**0**\n\n##### Login or register to continue\n\nSubmit\n\nOr use\n\nBy continuing, you agree to AP's [Terms of Use](https://apnews.com/termsofservice) and acknowledge that AP may collect and use your data pursuant to our [Privacy Policy](https://apnews.com/privacystatement).\n\nSign in with Google. Opens in new tab\n\n[![Image 1: AP Logo](https://assets.apnews.com/19/66/bc546486408c8595f01753a9fbeb/ap-logo-176-by-208.svg)](https://apnews.com/)\n\nMenu\n\n* \n[World](https://apnews.com/world-news)\n\nSECTIONS [Iran war](https://apnews.com/hub/iran)[Russia-Ukraine war](https://apnews.com/hub/russia-ukraine)[Español](https://apnews.com/hub/noticias)[China](https://apnews.com/hub/china)[Asia Pacific](https://apnews.com/hub/asia-pacific)[Latin America](https://apnews.com/hub/latin-america)[Europe](https://apnews.com/hub/europe)[Africa](https://apnews.com/hub/africa) \n\nTOP STORIES \n * [Iran offers to reopen Strait of Hormuz if US lifts its blockade and the war ends, officials say] [TRUNCATED]"
+    },
+    {
+      "url": "https://www.aljazeera.com/news/2026/4/27/russia-attacks-odesa-claims-ukraine-hit-zaporizhzhia-nuclear-plant",
+      "source": "www.aljazeera.com",
+      "title": "Russia attacks Odesa, claims Ukraine hit Zaporizhzhia nuclear plant | Russia-Ukraine war News | Al Jazeera",
+      "fetch_failed": false,
+      "text": "# Russia attacks Odesa, claims Ukraine hit Zaporizhzhia nuclear plant\n\n*A Ukrainian attack on the captured Zaporizhzhia nuclear plant kills a worker, according to the site’s Russia-installed authorities.*\n\nSave\n\nShare\n\n![A rescue worker walks inside apartments destroyed by a Russian strike in Odesa, Ukraine, Monday, April 27, 2026. (AP Photo/Michael Shtekel)](/wp-content/uploads/2026/04/ap_69ef215798181-1777279319.jpg?resize=770%2C513&quality=80)\n![](/wp-content/uploads/2024/05/2017-06-08T131939Z_1189275883_RC11B0FE7F20_RTRMADP_3_GULF-QATAR-JAZEERA-1714943623.jpg?resize=96%2C96&quality=80)\n\nUkrainian officials say Russian drones have again attacked the southern port city of Odesa, injuring at least 11 people, including two children, and damaging homes and important infrastructure.\n\nOdesa Governor Oleh Kiper said the attack affected three districts, hitting residential buildings, vehicles and civilian facilities, including a hotel, warehouses and funicular railway. Windows shattered in many buildings and the port area sustained damage.\n\n## Recommended Stories\n\n“All specialised and municipal services are working to mitigate the consequences. Law enforcement agencies are documenting t [TRUNCATED]"
+    },
+    {
+      "url": "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/",
+      "source": "myedmondsnews.com",
+      "title": "",
+      "fetch_failed": true,
+      "text": "fetch_error: Client error '403 Forbidden' for url 'https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403"
+    },
+    {
+      "url": "https://myedmondsnews.com/2026/04/edmonds-school-district-offering-summer-learning-options-in-2026/",
+      "source": "myedmondsnews.com",
+      "title": "",
+      "fetch_failed": true,
+      "text": "fetch_error: Client error '403 Forbidden' for url 'https://myedmondsnews.com/2026/04/edmonds-school-district-offering-summer-learning-options-in-2026/'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403"
+    },
+    {
+      "url": "https://myedmondsnews.com/2026/04/edmonds-woodway-hs-earns-top-honors-at-lionel-hampton-jazz-festival/",
+      "source": "myedmondsnews.com",
+      "title": "",
+      "fetch_failed": true,
+      "text": "fetch_error: Client error '403 Forbidden' for url 'https://myedmondsnews.com/2026/04/edmonds-woodway-hs-earns-top-honors-at-lionel-hampton-jazz-festival/'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403"
+    }
+  ],
+  "correspondence": {
+    "found": true,
+    "fallback_used": false,
+    "text": "- [escalation] Google: Google security alert about Claude for Google Drive access to account data.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Research Phase workflow.\n- [escalation] \"Tithe.ly\": Tithe.ly notification that automated $5.46 donation to The Practicing Church failed.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Research Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed again minutes later.\n- [escalation] mmmichaelllang: Another Jeeves — Write Phase GitHub Actions failure.\n- [escalation] mmmichaelllang: Jeeves — Write Phase GitHub Actions workflow failed in under two minutes.\n- [escalation] mmmichaelllang: Duplicate notification of Jeeves — Write Phase failure.\n- [escalation] mmmichaelllang: Jeeves — Write Phase GitHub Actions run failed in 15 seconds.\n- [escalation] mmmichaelllang: Jeeves — Write Phase GitHub Actions failure after 14 seconds.\n- [escalation] mmmichaelllang: Jeeves — Write Phase GitHub Actions failure in 17 seconds.\n- [escalation] mmmichaelllang: Jeeves — Research Phase GitHub Actions workflow failed."
+  }
+}
