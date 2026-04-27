@@ -44,9 +44,12 @@ from jeeves.tools.quota import QuotaLedger  # noqa: E402
 
 log = logging.getLogger("jeeves.research")
 
-# Maximum concurrent sector agents.  Keeps NIM request load manageable while
-# still providing meaningful parallelism for the 10+ non-enriched sectors.
-_SECTOR_SEMAPHORE = 3
+# NIM free tier allows only ~2 concurrent inference connections; running 3+
+# agents simultaneously causes the 3rd (and all subsequent) to get a 429 on
+# their very first LLM call, silently returning empty defaults for every sector
+# after the first two.  Sequential execution (semaphore=1) stays well within
+# the 65-minute workflow budget (~3 min × 11 sectors ≈ 33 min).
+_SECTOR_SEMAPHORE = 1
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
