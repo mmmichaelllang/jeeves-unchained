@@ -336,10 +336,41 @@ def _parse_sector_output(raw: str, spec: SectorSpec) -> Any:
         return spec.default
 
     try:
-        return json.loads(text[start : end + 1])
+        parsed = json.loads(text[start : end + 1])
     except json.JSONDecodeError as e:
         log.warning("sector %s: JSON parse failed: %s; returning default", spec.name, e)
         return spec.default
+
+    # For list sectors, drop any item that carries a "urls" key but has an
+    # empty list — that is the fingerprint of Kimi answering from training
+    # data without calling any search tool.  An uncited finding is worse
+    # than no finding: it will reach the write phase without a source link.
+    if spec.shape == "list" and isinstance(parsed, list):
+        cleaned = [
+            item for item in parsed
+            if not (isinstance(item, dict) and "urls" in item and not item["urls"])
+        ]
+        dropped = len(parsed) - len(cleaned)
+        if dropped:
+            log.warning(
+                "sector %s: dropped %d uncited item(s) with empty urls — "
+                "Kimi likely answered from training data without searching.",
+                spec.name, dropped,
+            )
+        parsed = cleaned if cleaned else spec.default
+
+    # For deep sectors, if urls is empty the findings are almost certainly
+    # from training data.  Return the default so write phase gets nothing
+    # rather than stale or fabricated research.
+    if spec.shape == "deep" and isinstance(parsed, dict):
+        if not parsed.get("urls"):
+            log.warning(
+                "sector %s: deep sector has no cited URLs — discarding findings.",
+                spec.name,
+            )
+            return spec.default
+
+    return parsed
 
 
 def _build_user_prompt(
