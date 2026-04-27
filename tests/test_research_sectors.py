@@ -6,8 +6,12 @@ import pytest
 
 from jeeves.research_sectors import (
     SECTOR_SPECS,
+    _NO_QUOTA_CHECK,
     _build_user_prompt,
+    _is_retryable_network_error,
     _parse_sector_output,
+    _quota_increased,
+    _quota_snapshot,
     collect_headlines_from_sector,
     collect_urls_from_sector,
     extract_correspondence_references,
@@ -275,3 +279,42 @@ def test_load_prior_sessions_returns_list(tmp_path):
     assert len(result) == 2
     assert result[0].date == (run_date - timedelta(days=1)).isoformat()
     assert result[1].date == (run_date - timedelta(days=2)).isoformat()
+
+
+# ---------------------------------------------------------------------------
+# Quota-snapshot helpers
+# ---------------------------------------------------------------------------
+
+class _FakeLedger:
+    def __init__(self, state):
+        self._state = state
+
+
+def test_quota_snapshot_captures_used_counts():
+    ledger = _FakeLedger({"providers": {"serper": {"used": 5}, "tavily": {"used": 3}}})
+    snap = _quota_snapshot(ledger)
+    assert snap == {"serper": 5, "tavily": 3}
+
+
+def test_quota_increased_true_when_any_provider_increments():
+    ledger = _FakeLedger({"providers": {"serper": {"used": 6}, "tavily": {"used": 3}}})
+    before = {"serper": 5, "tavily": 3}
+    assert _quota_increased(before, ledger) is True
+
+
+def test_quota_increased_false_when_nothing_changed():
+    ledger = _FakeLedger({"providers": {"serper": {"used": 5}, "tavily": {"used": 3}}})
+    before = {"serper": 5, "tavily": 3}
+    assert _quota_increased(before, ledger) is False
+
+
+def test_no_quota_check_excludes_newyorker():
+    assert "newyorker" in _NO_QUOTA_CHECK
+
+
+def test_is_retryable_network_error_matches_known_phrases():
+    assert _is_retryable_network_error(Exception("peer closed connection without sending complete message body"))
+    assert _is_retryable_network_error(Exception("incomplete chunked read"))
+    assert _is_retryable_network_error(Exception("connection reset by peer"))
+    assert not _is_retryable_network_error(Exception("json decode error"))
+    assert not _is_retryable_network_error(Exception("422 Unprocessable Entity"))

@@ -16,6 +16,7 @@ Design notes:
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import re
@@ -410,6 +411,35 @@ def _build_user_prompt(
     return f"{base}\n\n{extra}" if extra else base
 
 
+def _quota_snapshot(ledger) -> dict[str, int]:
+    """Snapshot per-provider used-count for change detection."""
+    state = ledger._state.get("providers", {})
+    return {name: d.get("used", 0) for name, d in state.items()}
+
+
+def _quota_increased(before: dict[str, int], ledger) -> bool:
+    """True if any search provider recorded new calls since the snapshot."""
+    state = ledger._state.get("providers", {})
+    return any(d.get("used", 0) > before.get(name, 0) for name, d in state.items())
+
+
+def _is_retryable_network_error(exc: Exception) -> bool:
+    """True for transient NIM/HTTP errors that are worth retrying once."""
+    msg = str(exc).lower()
+    return any(phrase in msg for phrase in (
+        "peer closed connection",
+        "incomplete chunked read",
+        "connection reset",
+        "read timeout",
+        "server disconnected",
+    ))
+
+
+# Sectors whose agents call non-quota tools (fetch_new_yorker_talk_of_the_town
+# or fetch_article_text) — skip the quota-increment check for these.
+_NO_QUOTA_CHECK = frozenset({"newyorker"})
+
+
 async def run_sector(
     cfg: Config,
     spec: SectorSpec,
@@ -437,28 +467,66 @@ async def run_sector(
         spec, cfg.run_date.isoformat(), prior_urls_sample, extra_user,
         quota_summary=quota_summary, story_continuity=story_continuity,
     )
+    _system_prompt = (
+        "You are the per-sector research agent for Jeeves. "
+        "CRITICAL: Your internal training-data knowledge is considered STALE "
+        "and must NOT be used as a source of findings. You MUST call at least "
+        "one search tool (serper_search, tavily_search, exa_search, or "
+        "gemini_grounded_synthesize) and receive live results before writing "
+        "any findings. Output that contains no URLs returned by tools in this "
+        "session will be rejected as hallucinated. "
+        "Follow the user's instruction exactly, then return ONLY the requested "
+        "JSON (or raw string for string-shape)."
+    )
     agent = FunctionAgent(
         tools=tools,
         llm=llm,
-        system_prompt=(
-            "You are the per-sector research agent for Jeeves. "
-            "CRITICAL: Your internal training-data knowledge is considered STALE "
-            "and must NOT be used as a source of findings. You MUST call at least "
-            "one search tool (serper_search, tavily_search, exa_search, or "
-            "gemini_grounded_synthesize) and receive live results before writing "
-            "any findings. Output that contains no URLs returned by tools in this "
-            "session will be rejected as hallucinated. "
-            "Follow the user's instruction exactly, then return ONLY the requested "
-            "JSON (or raw string for string-shape)."
-        ),
+        system_prompt=_system_prompt,
         verbose=cfg.verbose,
     )
 
+    pre_quota = _quota_snapshot(ledger)
+
     log.info("sector %s: agent starting.", spec.name)
+    response = None
     try:
         response = await agent.run(user_msg)
     except Exception as e:
-        log.warning("sector %s: agent crashed (%s); returning default", spec.name, e)
+        if _is_retryable_network_error(e):
+            log.warning(
+                "sector %s: transient network error (%s) — retrying in 10s.",
+                spec.name, e,
+            )
+            await asyncio.sleep(10)
+            # Rebuild agent with fresh tool instances for the retry.
+            tools2 = all_search_tools(cfg, ledger, set(prior_urls_sample))
+            llm2 = build_kimi_llm(cfg)
+            agent2 = FunctionAgent(
+                tools=tools2, llm=llm2,
+                system_prompt=_system_prompt,
+                verbose=cfg.verbose,
+            )
+            try:
+                response = await agent2.run(user_msg)
+            except Exception as e2:
+                log.warning(
+                    "sector %s: agent crashed after retry (%s); returning default",
+                    spec.name, e2,
+                )
+                return spec.default
+        else:
+            log.warning("sector %s: agent crashed (%s); returning default", spec.name, e)
+            return spec.default
+
+    # Guard: if no search-provider quota moved, Kimi answered entirely from
+    # training data without calling any external tools.  Reject the output so
+    # the write phase never sees hallucinated findings.
+    if spec.name not in _NO_QUOTA_CHECK and not _quota_increased(pre_quota, ledger):
+        log.warning(
+            "sector %s: no search provider was called — output likely hallucinated; "
+            "returning default.",
+            spec.name,
+        )
         return spec.default
 
     raw = str(response)
