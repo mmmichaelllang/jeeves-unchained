@@ -30,9 +30,31 @@ def test_parse_sector_output_strips_markdown_fences():
 
 
 def test_parse_sector_output_tolerates_prose_around_json():
-    raw = 'Here is the result:\n[{"source":"BBC","findings":"...","urls":[]}]\nEnd.'
+    raw = 'Here is the result:\n[{"source":"BBC","findings":"...","urls":["https://bbc.com/a"]}]\nEnd.'
     out = _parse_sector_output(raw, _spec("global_news"))
     assert isinstance(out, list) and len(out) == 1
+
+
+def test_parse_sector_output_drops_uncited_list_items():
+    """Items with urls:[] are hallucination signatures — they must be dropped."""
+    raw = '[{"source":"NYRB","findings":"Essay A","urls":[]},{"source":"Aeon","findings":"Essay B","urls":["https://aeon.co/x"]}]'
+    out = _parse_sector_output(raw, _spec("intellectual_journals"))
+    assert len(out) == 1
+    assert out[0]["source"] == "Aeon"
+
+
+def test_parse_sector_output_all_uncited_returns_default():
+    """If every list item is uncited, return the sector default (empty list)."""
+    raw = '[{"source":"NYRB","findings":"x","urls":[]},{"source":"LRB","findings":"y","urls":[]}]'
+    out = _parse_sector_output(raw, _spec("intellectual_journals"))
+    assert out == []
+
+
+def test_parse_sector_output_deep_no_urls_returns_default():
+    """Deep sector with no URLs returns default rather than uncited findings."""
+    raw = '{"findings":"some thoughts","urls":[]}'
+    out = _parse_sector_output(raw, _spec("triadic_ontology"))
+    assert out == {"findings": "", "urls": []}
 
 
 def test_parse_sector_output_returns_default_on_unparseable():

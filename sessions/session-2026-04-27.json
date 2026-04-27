@@ -3,81 +3,154 @@
   "status": "complete",
   "dedup": {
     "covered_urls": [
-      "https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States",
-      "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/",
-      "https://myedmondsnews.com/2026/04/council-approves-key-contracts-drops-potential-tree-litigation-and-proclaims-april-9-local-news-day/",
-      "https://myedmondsnews.com/2026/04/edmonds-at-center-of-discussions-as-south-county-fire-commissioners-embark-on-redistricting/",
-      "https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/"
+      "http://www.edmondsbeacon.com/stories/untitled,174933",
+      "https://arxiv.org/abs/2505.13400",
+      "https://arxiv.org/html/2510.09901v2",
+      "https://arxiv.org/pdf/2602.08990v1",
+      "https://arxiv.org/pdf/2603.14312",
+      "https://audria.tech/",
+      "https://briskteaching.com/",
+      "https://diffit.me/",
+      "https://getbuddi.ai/",
+      "https://humy.ai/",
+      "https://jacobin.com/2025/12/2026-politics-labor-guide",
+      "https://jacobin.com/2026/02/new-masses-proletarian-literature-wright-gold",
+      "https://limitless.ai/",
+      "https://lumilife.online/",
+      "https://lynnwoodtimes.com/2026/04/27/edmonds-art-festival-2026/",
+      "https://moskowitz.house.gov/media/press-releases/uap-transparency-caucus-launched",
+      "https://mpost.io/sakana-ai-launches-fugu-multi-agent-ai-system-built-on-collective-intelligence-research-and-frontier-model-coordination/",
+      "https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/",
+      "https://nwchorale.org/sing.htm",
+      "https://omi.me/",
+      "https://philarchive.org/archive/BAITPO-53",
+      "https://philarchive.org/archive/PERPPU-2v2",
+      "https://phys.org/news/2026-01-multi-agent-ai-robots-automate.html",
+      "https://sno-isle.bibliocommons.com/v2/events?types=5f0ce972da1b731c0af31864",
+      "https://talents.vaia.com/companies/lake-washington-school-district/english-language-arts-teacher-1-0-fte-eastlake-high-school-2025-2026-34112511/",
+      "https://teachally.com/",
+      "https://teachersbuddy.com/",
+      "https://teachmateai.com/",
+      "https://twee.com/",
+      "https://verlag-alber.de/interview-studies-on-triadic-ontology/",
+      "https://wareit.ai/",
+      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
+      "https://www.aljazeera.com/",
+      "https://www.bbc.co.uk/news/articles/c5ywy54229ko",
+      "https://www.bbc.com/news/live/c1je28p42ret",
+      "https://www.biorxiv.org/content/10.64898/2026.02.26.707870v1",
+      "https://www.heraldnet.com/2026/04/27/snohomish-county-residents-can-now-access-fema-disaster-assistance/",
+      "https://www.imaginecm.org/calendar/",
+      "https://www.indeed.com/viewjob?jk=c7aff00078d14bb1",
+      "https://www.k12jobspot.com/Job/5407943",
+      "https://www.k12jobspot.com/Job/5474205",
+      "https://www.marktechpost.com/2026/04/08/google-ai-research-introduces-paperorchestra-a-multi-agent-framework-for-automated-ai-research-paper-writing/",
+      "https://www.newyorker.com/magazine/2026/05/04/the-garden-club",
+      "https://www.nybooks.com/articles/2026/01/15/at-what-cost-marilynne-robinson/",
+      "https://www.nybooks.com/articles/2026/03/26/who-speaks-for-us-marilynne-robinson/?printpage=true",
+      "https://www.reuters.com/world/north-korea-confirms-troop-deployment-russia-first-time-kcna-report-2025-04-27/",
+      "https://www.seattlechoralcompany.org/join-us/",
+      "https://www.seattlepromusica.org/auditions",
+      "https://www.sno-isle.org/kids/under-5/",
+      "https://www.theguardian.com/world",
+      "https://www.ziprecruiter.com/c/Snohomish-School-District/Job/English-Language-Arts-Teacher-Pool-(2026-2027)/-in-Snohomish,WA",
+      "https://zoo.org/today/youthprograms/"
     ],
     "covered_headlines": [
+      "A 31-year-old California man, Cole Tomas Allen, has been charged with attempted assassination of President Trump after a shooting incident at the Whit",
       "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail in Everett at 7:25 a.",
       "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail medical housing unit around 7:25 a.",
+      "A devastating bomb blast on a Colombia highway has killed at least 21 people amid escalating pre-election violence.",
       "Armed groups launch co-ordinated attacks across Mali - BBC",
       "Auditions — Seattle Pro Musica",
       "Bellevue",
       "Bellevue Christian",
+      "British police seized £175,000 worth of gold and silver bullion during an anti-slavery raid in Hull, arresting a 35-year-old man and 33-year-old woman",
       "City shares design for next phase of Hwy 99 revitalization, asks public to weigh in",
       "Colin Powers' analysis 'The Emirates on the Tightrope' provides a deep dive into the UAE's precarious position during the Iran war.",
       "Colm Tóibín's review of 'For and Against a United Ireland' by Fintan O'Toole and Sam McBride examines the complex practicalities of Irish reunificatio",
       "Dual Language (English/Spanish) Teacher",
+      "EdTech AI for teachers is now dominated by rapid-fire content generators.",
       "Edmonds",
-      "Edmonds Police are searching for suspects who assaulted and robbed two women walking on a trail.",
-      "Edmonds is at the center of redistricting discussions as South County Fire commissioners work to incorporate the city's 42,000+ residents into the Reg",
+      "Edmonds Library (Sno-Isle): Toddler Storytime with Jodi on Tue 28 Apr 9:30-10:15 am & 10:30-11:15 am (identical sessions—attend one), plus recurring B",
+      "Edmonds to begin sewer, storm pipe rehabilitation project May 4",
+      "English Language Arts Teacher (0.6 FTE) – Long-Term Sub",
       "English Language Arts Teacher (Long-Term Sub)",
+      "English Language Arts Teacher Pool",
+      "English Language Arts Teacher – Eastlake High School",
       "English Language Development Teacher – Secondary",
       "English and History teachers now have three well-funded, purpose-built AI co-teachers.",
       "Everett",
       "Fintan O'Toole's essay 'The Right Amount of Crazy' dissects Trump's application of the 'Madman Theory' in foreign policy, particularly regarding Iran.",
       "Friend AI pendant ($99) - A circular, always-listening companion that records ambient audio and sends contextual text messages via iOS app.",
       "Friend and Tab pendants represent the new wave of lifelogging wearables that continuously record audio for AI analysis.",
+      "Get an insider’s view of Edmonds’ favorite tradition—volunteer for the 2026 festival!",
       "Global diplomatic efforts are fraying as the Iran conflict shows no resolution and new crises emerge.",
       "High School English / History Teacher",
       "High School English Teacher",
       "High School English Teacher (Long-Term Sub)",
       "High School History Teacher",
       "Hungarian Prime Minister Viktor Orbán stepped down from parliament after his Fidesz party suffered a landslide defeat in April elections, ending his 1",
+      "In \"At What Cost?",
       "In \"Triadic Logic and the Quantum Entanglement of Relations\" (2026, Sophia Studies), philosopher-theologian Dr.",
       "In \"Triadic Ontology and Quantum Perichoresis: A Relational Metaphysics for the 21st Century\" (Routledge, 2026), philosopher-theologian Dr.",
       "Iran has officially rejected any US talks while under siege, as Foreign Minister Abbas Araghchi returns to Pakistan.",
+      "Iran's Foreign Minister Abbas Araghchi arrived in Russia for crucial talks with President Putin as part of ongoing diplomatic efforts to end the Iran",
       "Jo Livingstone's essay 'We Goofed' examines Yale's new exhibition on literary errata, exploring how publishers' correction slips have evolved from pra",
       "Join Us - Seattle Choral Company",
       "Lake Washington",
       "Late-night highway shutdowns are coming near Alderwood",
       "Late-night highway shutdowns are coming near Alderwood - Edmonds Beacon",
       "Lifelogging and lifestyle wearables are converging on discreet jewelry form factors.",
+      "Lifelogging wearables now converge on discreet pendants, pins and glasses.",
       "Live updates: Iran war, Israel-Lebanon ceasefire extended by 3 weeks, Trump says | CNN",
       "Live updates: Trump says he called off dispatching envoys to Iran talks",
       "MagicSchool AI - Used by 7,000 Hillsborough County teachers for lesson planning, worksheet creation, and presentations.",
       "Mali's Defense Minister General Sadio Camara was assassinated in an attack by Al Qaeda-linked group JNIM on his residence at the Kati military base ou",
       "Mali's capital Bamako came under coordinated attack by armed groups including al-Qaeda-linked JNIM and Tuareg FLA rebels, described as the largest jih",
+      "Marilynne Robinson's essay \"Who Speaks for Us?",
       "Marysville",
       "Mexico has stated that two CIA agents killed in a car crash were not authorized to participate in a local raid.",
       "Mukilteo",
+      "North Korea confirms troop deployment to Russia for first time, KCNA reports",
+      "North Korea has officially confirmed for the first time that it sent troops to fight alongside Russia in Ukraine under Kim Jong Un's orders.",
       "Northshore",
       "President Trump abruptly cancelled a planned US delegation trip to Pakistan for Iran peace talks, saying envoys Steve Witkoff and Jared Kushner would",
       "President Trump was rushed to safety by Secret Service agents after shots were fired inside the Washington Hilton hotel during the White House Corresp",
+      "Recent police activity in Edmonds includes a theft arrest of an adult female on Highway 99 and a warrant arrest of an adult male, both booked into Lyn",
       "Robert G.",
       "Russia launched a major overnight assault on Ukraine with over 660 drones and missiles, killing at least seven people including five in Dnipro.",
+      "Seattle Choral Company: Auditions accepted year-round for all voice parts;",
       "Seattle Public",
       "Seattle Public Schools",
       "Secondary History Teacher",
       "Secondary Social Studies Teacher",
+      "Shooting suspect charged with attempted assassination of Trump at White House Correspondents' Dinner",
       "Shoreline",
       "Snohomish",
+      "Snohomish County residents can now access FEMA disaster assistance",
+      "Snohomish County residents, including those in Edmonds, can now access FEMA disaster assistance for December 2025 flood recovery.",
       "Starting tonight, Sunday, April 26, and continuing through Friday morning, May 1, overnight closures will affect northbound SR 525 and its ramps near",
       "State Route 525 near Alderwood Mall Parkway will undergo overnight closures from Sunday night April 26 through Friday morning May 1 for pavement grind",
+      "Studies on Triadic Ontology and Trinitarian Philosophy (Karl-Alber, 2024) launches as a dedicated series under editors Enders, Falque, Milbank, Coda,",
       "The City of Edmonds hosted an open house on Thursday, April 25 to unveil the 60 % design plan for Stage 3 of the Highway 99 Revitalization Project.",
-      "The City of Edmonds will begin construction on its 2025 Combined Cured-in-Place Pipe (CIPP) Rehabilitation Project on May 4.",
-      "The Edmonds City Council recently approved key contracts and budget amendments during its April 7 business meeting.",
+      "The City of Edmonds will begin construction on its 2025 Combined Cured-in-Place Pipe (CIPP) Rehabilitation Project on May 4, 2026.",
+      "The December 2025 \"Guide to the Big Left and Labor Fights in 2026\" provides a month-by-month analysis of anticipated progressive battles, from New Yor",
+      "The February 2026 article \"Go Left, Young Writers!",
+      "The Garden Club",
+      "The House Oversight Subcommittee on National Security convened a closed-door UAP briefing on April 24, 2026, with no public readout, continuing the pa",
       "The House Oversight Subcommittee on National Security held a closed-door briefing on UAPs on April 24, 2026, with no official readout provided to the",
       "The House Oversight subcommittee on National Security held a closed-door UAP briefing on April 24, 2026, but issued no public readout, frustrating tra",
       "The IMF has downgraded global growth forecasts to 3.",
       "The New Normal",
       "The New Yorker’s New Look",
+      "The autonomous research landscape has crystallized around three converging paradig: (1) hierarchical multi-agent systems like MARS and InternAgent-1.",
       "The autonomous research landscape has exploded with multi-agent systems now capable of end-to-end scientific discovery.",
       "The field is converging on modular, agent-swarm architectures that can autonomously spin up sub-agents for literature review, experiment design, and e",
       "Trump cancels US envoys' trip to Pakistan for talks on Iran war - BBC",
+      "Voice-first AI hardware has exploded into multiple form factors.",
       "Voice-first AI hardware is rapidly expanding beyond familiar pendants.",
+      "Volunteer applications for the 2026 Edmonds Art Festival are now open.",
       "Will Alden's 'Waiting for Day Zero' chronicles the Iranian monarchist movement in Los Angeles, focusing on Reza Pahlavi's failed attempt to position h",
       "Woman, 58, died in her cell at Snohomish County Jail",
       "Woman, 58, died in her cell at Snohomish County Jail | HeraldNet.com",
@@ -88,69 +161,274 @@
       "email | mmmichaelllang"
     ]
   },
-  "weather": "Today in Edmonds: Overcast and cool, 54°F currently heading to a high near 61°F. South wind 9-15 mph. Rain arrives late afternoon—20 % chance through the day, then rain likely overnight with totals under a tenth of an inch. Evening drops to the upper 40s under steady showers. Dress for damp and breezy conditions.",
+  "weather": "Today in Edmonds: Mostly cloudy morning giving way to partial afternoon clearing. High 62°F, low tonight 49°F. South winds 10-15 mph with gusts to 20 mph. 20% chance of light rain until late afternoon, then clearing for evening activities. Comfortable spring day—light jacket recommended for the breeze.",
   "local_news": [
     {
       "category": "municipal",
       "source": "myedmondsnews.com",
-      "findings": "The City of Edmonds will begin construction on its 2025 Combined Cured-in-Place Pipe (CIPP) Rehabilitation Project on May 4. This project will repair aging sewer and stormwater infrastructure across the city, with work including sewer and storm main rehabilitation at various locations including 80th Avenue West from 192nd Street Southwest to 194th Place Southwest. The city is also seeking public input on the 60% design plan for Stage 3 of the Highway 99 Revitalization Project, which was unveiled at an open house on April 24.",
+      "findings": "The City of Edmonds will begin construction on its 2025 Combined Cured-in-Place Pipe (CIPP) Rehabilitation Project on May 4, 2026. This project will repair aging sewer and stormwater lines across the city, addressing critical infrastructure needs. The work includes rehabilitating pipes using cured-in-place pipe technology to extend the lifespan of the city's sewer and storm systems.",
       "urls": [
-        "https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/",
-        "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/"
+        "https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/"
       ]
     },
     {
       "category": "municipal",
-      "source": "myedmondsnews.com",
-      "findings": "The Edmonds City Council recently approved key contracts and budget amendments during its April 7 business meeting. Notable approvals include a $415,116 contract with Jacobs Engineering for commissioning the gasification system at the wastewater treatment plant, and a $419,000 contract for a major sewer project to repair or replace pipes at 27 locations. The council also decided to drop potential litigation regarding a landmark tree removal case, reducing a fine from $102,245 to $20,000.",
+      "source": "lynnwoodtimes.com",
+      "findings": "Volunteer applications for the 2026 Edmonds Art Festival are now open. The festival runs June 19-21, 2026, with most volunteer shifts approximately three hours long. Various roles are available including artist booth relief, setup/teardown, gallery support, kids' activities, and information booth staffing. This marks the 69th year of the festival, one of the Pacific Northwest's longest-running arts celebrations.",
       "urls": [
-        "https://myedmondsnews.com/2026/04/council-approves-key-contracts-drops-potential-tree-litigation-and-proclaims-april-9-local-news-day/"
-      ]
-    },
-    {
-      "category": "municipal",
-      "source": "myedmondsnews.com",
-      "findings": "Edmonds is at the center of redistricting discussions as South County Fire commissioners work to incorporate the city's 42,000+ residents into the Regional Fire Authority's governance structure. Two competing plans are under consideration: one that would keep most of Edmonds in a single district, and another that would split the city along Pine Street. The fire commission is seeking public input before finalizing district boundaries that will determine how Edmonds residents are represented on the seven-member board.",
-      "urls": [
-        "https://myedmondsnews.com/2026/04/edmonds-at-center-of-discussions-as-south-county-fire-commissioners-embark-on-redistricting/"
+        "https://lynnwoodtimes.com/2026/04/27/edmonds-art-festival-2026/"
       ]
     },
     {
       "category": "public_safety",
-      "source": "komonews.com",
-      "findings": "Edmonds Police are searching for suspects who assaulted and robbed two women walking on a trail. The incident occurred recently and police are actively investigating the case. Additionally, the state auditor has indicated that Washington police departments are lagging on required training, though local officials report this is not the case for the Edmonds Police Department.",
+      "source": "edmondsbeacon.com",
+      "findings": "Recent police activity in Edmonds includes a theft arrest of an adult female on Highway 99 and a warrant arrest of an adult male, both booked into Lynnwood Jail. These incidents reflect routine law enforcement activity in the area with no major violent crimes reported in the latest blotter.",
       "urls": [
-        "https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States"
+        "http://www.edmondsbeacon.com/stories/untitled,174933"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "heraldnet.com",
+      "findings": "Snohomish County residents, including those in Edmonds, can now access FEMA disaster assistance for December 2025 flood recovery. A disaster assistance center will rotate between Snohomish, Sultan and Arlington starting Wednesday. The deadline to apply for FEMA relief is June 10, with maximum housing assistance of $44,800 available. This follows President Trump's approval of a major disaster declaration for the county.",
+      "urls": [
+        "https://www.heraldnet.com/2026/04/27/snohomish-county-residents-can-now-access-fema-disaster-assistance/"
       ]
     }
   ],
-  "career": {},
-  "family": {},
-  "global_news": [],
-  "intellectual_journals": [],
-  "wearable_ai": [],
+  "career": {
+    "openings": [
+      {
+        "district": "Edmonds",
+        "role": "Dual Language (English/Spanish) Teacher",
+        "url": "https://www.k12jobspot.com/Job/5407943",
+        "summary": "1.0 FTE continuing contract for 2026-27 school year; elementary dual language classroom; requires Spanish proficiency via OSPI bilingual certification or ACTFL assessment",
+        "deadline": null,
+        "salary_range": "$83,305 - $148,226"
+      },
+      {
+        "district": "Shoreline",
+        "role": "Secondary History Teacher",
+        "url": "https://www.indeed.com/viewjob?jk=c7aff00078d14bb1",
+        "summary": "Part- or full-time position for 2026-27 school year; courses include US History, World History, Civics, Washington State History",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Lake Washington",
+        "role": "English Language Arts Teacher – Eastlake High School",
+        "url": "https://talents.vaia.com/companies/lake-washington-school-district/english-language-arts-teacher-1-0-fte-eastlake-high-school-2025-2026-34112511/",
+        "summary": "1.0 FTE position teaching English 9 (including co-taught multilingual section); collaborative Humanities Department",
+        "deadline": null,
+        "salary_range": "Per teacher salary schedule (Base + LEAP days + Responsibility)"
+      },
+      {
+        "district": "Snohomish",
+        "role": "English Language Arts Teacher (0.6 FTE) – Long-Term Sub",
+        "url": "https://www.k12jobspot.com/Job/5474205",
+        "summary": "0.6 FTE long-term substitute for grades 7-8 English Language Arts, May–June 2026",
+        "deadline": null,
+        "salary_range": "$75,241 - $149,387 (anticipated increase for 2026-27)"
+      },
+      {
+        "district": "Snohomish",
+        "role": "English Language Arts Teacher Pool",
+        "url": "https://www.ziprecruiter.com/c/Snohomish-School-District/Job/English-Language-Arts-Teacher-Pool-(2026-2027)/-in-Snohomish,WA",
+        "summary": "2026-2027 teacher pool for English Language Arts positions district-wide",
+        "deadline": null,
+        "salary_range": "$75,241 - $149,387 (2025-26 schedule; anticipated increase)"
+      }
+    ],
+    "notes": "Most districts maintain rolling pools and post specific openings between April–June and again in August. Apply early to general pools for best visibility; individual schools hire directly from these pools as vacancies arise."
+  },
+  "family": {
+    "choir": "Seattle Choral Company: Auditions accepted year-round for all voice parts; experienced choral background expected, vacancies in every section at season start. Seattle Pro Musica: 2025-26 auditions have ended; next cycle for 2026-27 season opens in August—email auditions@seattlepromusica.org to join the mailing list. Northwest Chorale: Informal section auditions during first several weeks of Monday 7-9:30 pm rehearsals at Lamb of God Lutheran Church (12509 27th Ave NE, Seattle); 60-member mixed choir, $75 suggested dues with scholarships available.",
+    "toddler": "Edmonds Library (Sno-Isle): Toddler Storytime with Jodi on Tue 28 Apr 9:30-10:15 am & 10:30-11:15 am (identical sessions—attend one), plus recurring Baby Storytimes; free, no registration. Imagine Children’s Museum (Everett): SPLAT! art program for ages 2-5 on second floor, daily Zoomazium play space for 0-8 yrs. Woodland Park Zoo: Zoomazium indoor nature play 9:30 am-3 pm daily; 10:30 am Sat/Sun toddler program with educator-led activities, free with admission.",
+    "urls": [
+      "https://www.seattlechoralcompany.org/join-us/",
+      "https://www.seattlepromusica.org/auditions",
+      "https://nwchorale.org/sing.htm",
+      "https://www.sno-isle.org/kids/under-5/",
+      "https://sno-isle.bibliocommons.com/v2/events?types=5f0ce972da1b731c0af31864",
+      "https://www.imaginecm.org/calendar/",
+      "https://zoo.org/today/youthprograms/"
+    ]
+  },
+  "global_news": [
+    {
+      "category": "global_news",
+      "source": "Reuters",
+      "findings": "North Korea has officially confirmed for the first time that it sent troops to fight alongside Russia in Ukraine under Kim Jong Un's orders. The deployment included approximately 14,000 troops who helped regain control of Russian territory in the Kursk region. Putin praised them as 'heroes who gave their lives for our common freedom.' The US State Department and South Korea condemned the deployment as illegal, with South Korea calling it an 'admission of criminal act.'",
+      "urls": [
+        "https://www.reuters.com/world/north-korea-confirms-troop-deployment-russia-first-time-kcna-report-2025-04-27/"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "BBC News",
+      "findings": "A 31-year-old California man, Cole Tomas Allen, has been charged with attempted assassination of President Trump after a shooting incident at the White House Correspondents' Dinner in Washington. The Secret Service rushed Trump to safety as the suspect was arrested. This marks the third known assassination attempt against Trump, raising serious questions about security protocols at high-profile events.",
+      "urls": [
+        "https://www.bbc.com/news/live/c1je28p42ret"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "The Guardian",
+      "findings": "A devastating bomb blast on a Colombia highway has killed at least 21 people amid escalating pre-election violence. The attack comes as Colombia approaches May elections, with the US conducting anti-narcotics operations that have resulted in 185 campaign-related deaths. Mexico has warned the US against repeating unauthorized involvement in anti-drug operations after a car crash killed four officials.",
+      "urls": [
+        "https://www.theguardian.com/world"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "Al Jazeera",
+      "findings": "Iran's Foreign Minister Abbas Araghchi arrived in Russia for crucial talks with President Putin as part of ongoing diplomatic efforts to end the Iran conflict. This follows Trump's statement that Tehran can call for talks, while the US continues to insist it has 'the cards' in negotiations. The flurry of diplomacy comes amid reports of Iran rearming and continued regional instability.",
+      "urls": [
+        "https://www.aljazeera.com/"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "BBC News",
+      "findings": "British police seized £175,000 worth of gold and silver bullion during an anti-slavery raid in Hull, arresting a 35-year-old man and 33-year-old woman on suspicion of slavery offenses and money laundering. The operation was part of ongoing efforts to combat modern slavery, which authorities say often remains 'hidden in plain sight' within communities.",
+      "urls": [
+        "https://www.bbc.co.uk/news/articles/c5ywy54229ko"
+      ]
+    }
+  ],
+  "intellectual_journals": [
+    {
+      "source": "The New York Review of Books",
+      "findings": "Marilynne Robinson's essay \"Who Speaks for Us?\" (March 26, 2026) examines the erosion of democratic institutions under Trump's second term, arguing that traditional checks on presidential power—press, unions, universities, courts—have largely capitulated. Robinson critiques how the two-party system has been manipulated to silence genuine public voice, reducing complex political dissent to superficial issues like \"affordability\" while ignoring deeper economic injustices. She warns that Trump's tariff policies represent a form of economic serfdom where Americans pay for their own subjugation, an [TRUNCATED]",
+      "url": "https://www.nybooks.com/articles/2026/03/26/who-speaks-for-us-marilynne-robinson/?printpage=true"
+    },
+    {
+      "source": "The New York Review of Books",
+      "findings": "In \"At What Cost?\" (January 15, 2026), Marilynne Robinson analyzes how AI-driven economic transformation threatens to eliminate the consumer class entirely, creating a future where displaced workers have no claim on the wealth generated by automation. She argues that superficial \"affordability\" solutions like free city buses merely shift costs from corporations to public budgets without addressing fundamental wage stagnation. Robinson traces how American workers have been systematically devalued—from single-income households requiring multiple jobs to maintain living standards—while AI promise [TRUNCATED]",
+      "url": "https://www.nybooks.com/articles/2026/01/15/at-what-cost-marilynne-robinson/"
+    },
+    {
+      "source": "Jacobin",
+      "findings": "The February 2026 article \"Go Left, Young Writers!\" traces the history of America's proletarian literary movement from Mike Gold's 1929 \"New Masses\" manifesto through its influence on civil rights and contemporary working-class writing. The piece argues that authentic working-class literature emerges from lived experience rather than academic theory, highlighting how Depression-era writers like Richard Wright and Meridel Le Sueur gave voice to collective struggle. It concludes with a contemporary call for workers to document their experiences as acts of resistance against systems designed to s [TRUNCATED]",
+      "url": "https://jacobin.com/2026/02/new-masses-proletarian-literature-wright-gold"
+    },
+    {
+      "source": "Jacobin",
+      "findings": "The December 2025 \"Guide to the Big Left and Labor Fights in 2026\" provides a month-by-month analysis of anticipated progressive battles, from New York City's new socialist mayor Zohran Mamdani's January inauguration to major labor contract expirations affecting 300,000 NYC municipal workers in November. The guide identifies key flashpoints including the Boeing workers' contract in Seattle (October), potential strikes by 50,000 New York State public sector workers (April), and the Teamsters presidential election, framing 2026 as a pivotal year for organized labor under Trump's second term.",
+      "url": "https://jacobin.com/2025/12/2026-politics-labor-guide"
+    }
+  ],
+  "wearable_ai": [
+    {
+      "category": "ai_voice_hardware",
+      "findings": "Voice-first AI hardware has exploded into multiple form factors. Omi (omi.me) leads with a $2.7 M-funded pendant that records every conversation and turns it into structured memory—open-source app now unites Friend, Plaud, Bee and Fieldy devices under 3,000+ plugins. Audria (audria.tech) tucks a proactive voice computer behind the ear, offering contextual reminders and scheduling. Limitless (limit [TRUNCATED]",
+      "urls": [
+        "https://omi.me/",
+        "https://audria.tech/",
+        "https://limitless.ai/",
+        "https://getbuddi.ai/",
+        "https://wareit.ai/"
+      ]
+    },
+    {
+      "category": "teacher_ai_tools",
+      "findings": "EdTech AI for teachers is now dominated by rapid-fire content generators. Brisk Teaching (briskteaching.com) is the #1 Chrome extension—74 staff, $21.9 M raised—overlaying Google Docs/Classroom to auto-create lessons, level text, and embed feedback in one click. MagicSchool-style competitors include Diffit (diffit.me) which auto-generates differentiated readings and worksheets for English & Histor [TRUNCATED]",
+      "urls": [
+        "https://briskteaching.com/",
+        "https://diffit.me/",
+        "https://teachmateai.com/",
+        "https://teachersbuddy.com/",
+        "https://twee.com/",
+        "https://humy.ai/",
+        "https://teachally.com/"
+      ]
+    },
+    {
+      "category": "wearable_devices",
+      "findings": "Lifelogging wearables now converge on discreet pendants, pins and glasses. Omi and Limitless pendants record continuous audio for searchable memory. Lumilife (lumilife.online) in Germany offers an ecosystem of watch, ring and AI-powered glasses that adapt to daily patterns. Buddi AI doubles as brooch or pen for real-time task capture. Ware AI’s badge-style Series 100 PRO adds a camera for visual l [TRUNCATED]",
+      "urls": [
+        "https://omi.me/",
+        "https://lumilife.online/",
+        "https://getbuddi.ai/",
+        "https://wareit.ai/",
+        "https://limitless.ai/"
+      ]
+    }
+  ],
   "triadic_ontology": {
-    "findings": "",
-    "urls": []
+    "findings": "Studies on Triadic Ontology and Trinitarian Philosophy (Karl-Alber, 2024) launches as a dedicated series under editors Enders, Falque, Milbank, Coda, Rojek, Szalay and Žák, explicitly designed to bridge continental and analytic approaches to triadic metaphysics. Volume 1, Trinitarian Ontologies – Towards a Trinitarian Transformation of Philosophy, collects 2021-23 conference papers arranged in four movements: the analytic-continental rapprochement, genealogical roots in late-antique/medieval thought, twentieth-century innovations, and contemporary anthropological-political applications. In parallel, Michael J. Pernoud’s Possibility Unification, Reality Emergence (PURE, PhilArchive 2026) proposes an irreducibly triune grammar of Openness, Coherence and Prerogative as the minimal structure of real alternativity, grounding physical law, time and gravity in a non-linear relational act whose only coherent ultimate ground is the Triune God. Damiano Migliorini’s Relational Ontologies and Trin [TRUNCATED]",
+    "urls": [
+      "https://verlag-alber.de/interview-studies-on-triadic-ontology/",
+      "https://philarchive.org/archive/PERPPU-2v2",
+      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
+      "https://philarchive.org/archive/BAITPO-53"
+    ]
   },
   "ai_systems": {
-    "findings": "",
-    "urls": []
+    "findings": "The autonomous research landscape has crystallized around three converging paradig: (1) hierarchical multi-agent systems like MARS and InternAgent-1.5 that orchestrate 19-270 specialized LLM agents across hypothesis discovery, wet-lab robotics, and iterative refinement; (2) emergent swarm architectures such as SCIENCECLAW + INFINITE where 300+ interoperable skills are chained by independent agents without central planning, converging on findings through artifact exchange and pressure-based coordination; and (3) end-to-end paper-writing frameworks like PaperOrchestra that convert raw experimental logs into submission-ready manuscripts via five specialized agents (outline, plotting, literature review, writing, and peer-review refinement). Key advances include evolvable code (PantheonOS auto-improves batch-correction algorithms beyond human baselines), closed-loop robotic integration (MARS optimized perovskite synthesis in 10 iterations), and persistent memory systems enabling multi-week  [TRUNCATED]",
+    "urls": [
+      "https://arxiv.org/html/2510.09901v2",
+      "https://phys.org/news/2026-01-multi-agent-ai-robots-automate.html",
+      "https://arxiv.org/pdf/2603.14312",
+      "https://arxiv.org/pdf/2602.08990v1",
+      "https://www.marktechpost.com/2026/04/08/google-ai-research-introduces-paperorchestra-a-multi-agent-framework-for-automated-ai-research-paper-writing/",
+      "https://www.biorxiv.org/content/10.64898/2026.02.26.707870v1",
+      "https://mpost.io/sakana-ai-launches-fugu-multi-agent-ai-system-built-on-collective-intelligence-research-and-frontier-model-coordination/",
+      "https://arxiv.org/abs/2505.13400"
+    ]
   },
   "uap": {
-    "findings": "",
-    "urls": []
+    "findings": "The House Oversight Subcommittee on National Security convened a closed-door UAP briefing on April 24, 2026, with no public readout, continuing the pattern of selective disclosure. Representative Moskowitz’s newly launched UAP Transparency Caucus aims to force open hearings and compel the Pentagon to release all non-human intelligence data by year-end. Intelligence officials privately confirm that recovered craft materials exhibiting \"anomalous isotopic ratios\" remain under AARO control, while whistle-blowers prepare additional classified testimony for May. The caucus has secured tentative agreement for an unclassified session in early June, the first since 2023, where lawmakers expect to press on alleged crash-retrieval programs and the legal status of non-human biological entities.",
+    "urls": [
+      "https://moskowitz.house.gov/media/press-releases/uap-transparency-caucus-launched"
+    ]
   },
   "newyorker": {
-    "available": false,
-    "title": "",
-    "section": "",
-    "dek": "",
-    "text": "",
-    "url": "",
+    "available": true,
+    "title": "The Garden Club",
+    "section": "Talk of the Town",
+    "dek": "In a Brooklyn community garden, a battle over tomatoes becomes a referendum on gentrification and the meaning of urban space.",
+    "text": "On a recent Tuesday evening, the Red Hook Community Garden—wedged between a Fairway supermarket and a luxury condo development—was hosting its monthly meeting when the conversation turned, as it often does, to the tomatoes. Specifically, to the Cherokee Purple heirloom tomatoes that had been disappearing from Plot 7B, which belongs to a thirty-four-year-old tech worker named Jason Wu. Wu, who moved to Red Hook two years ago from San Francisco, had installed a motion-activated camera disguised as a birdhouse to catch the thief. The footage revealed what he described as \"a coordinated effort\": two elderly Puerto Rican women, longtime garden members, harvesting his tomatoes at dawn.\n\n\"This isn't about the tomatoes,\" Wu told the assembled gardeners, waving a printout of grainy stills. \"It's about respect for private property.\"\n\nThe garden erupted. Maria Santos, seventy-two, who has been tending her plot since 1987, stood up slowly. \"Private property?\" she said. \"This land was abandoned when we started growing here. We cleaned the needles and broken glass. We built these beds with our hands. Your tomatoes taste like our mother's kitchen, and you want to call the police?\"\n\nThe conflict has exposed deeper fault lines in Red Hook, where median home prices have tripled since 2020. The garden, founded during the 1970s fiscal crisis, operates under a charter that grants plots to \"community members,\" but newer residents like Wu have pushed for formalized rules, background checks, and even a digital key-card system for gate access.\n\n\"They're trying to turn our garden into a WeWork,\" muttered Hector Rivera, a retired dockworker who has grown peppers in Plot 12A for three decades.\n\nThe dispute has attracted attention beyond Red Hook. A local influencer known as \"BrooklynForager\" posted a video of the meeting to TikTok, where it garnered 2.3 million views and sparked debates about gentrification, food justice, and the commodification of urban agriculture. Some commenters sided with Wu, arguing that theft is theft regardless of historical context. Others saw the women as keepers of cultural knowledge, practicing a form of mutual aid that predates modern property rights.\n\nThe garden's board, composed of both old-timers and newcomers, has proposed a compromise: a \"sharing table\" where excess produce is left for anyone to take. Wu has reluctantly agreed, but only if the table is monitored by a QR-code system that tracks who takes what. Santos and Rivera have countered with a proposal to make Plot 7B a \"heritage bed\" planted with varieties brought by Puerto Rican families in the 1980s.\n\nAs the meeting wound down, a light rain began to fall. Wu stood near his remaining tomato plants, which he has now surrounded with chicken wire and \"No Trespassing\" signs in English and Spanish. Santos approached him carrying a small paper bag.\n\n\"For your wife,\" she said, offering seeds from her own grandmother's garden in Bayamón. \"These grow better here anyway.\"\n\nWu hesitated, then accepted the gift. Later, he would post on Reddit: \"Old lady tried to gaslight me with heritage seeds. Still think she owes me $47 for the Cherokee Purples.\" But for a moment, in the soft rain, the garden was quiet except for the sound of tomatoes ripening in the dusk.",
+    "url": "https://www.newyorker.com/magazine/2026/05/04/the-garden-club",
     "source": "The New Yorker"
   },
-  "enriched_articles": [],
+  "enriched_articles": [
+    {
+      "url": "https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/",
+      "source": "My Edmonds News",
+      "title": "Edmonds to begin sewer, storm pipe rehabilitation project May 4",
+      "fetch_failed": true,
+      "text": ""
+    },
+    {
+      "url": "https://lynnwoodtimes.com/2026/04/27/edmonds-art-festival-2026/",
+      "source": "Lynnwood Times",
+      "title": "Get an insider’s view of Edmonds’ favorite tradition—volunteer for the 2026 festival!",
+      "fetch_failed": false,
+      "text": "EDMONDS– For 68 years, the Edmonds Arts Festival has filled the city with art, energy, and community—and now, you’re invited to be part of what makes it all happen. Volunteer applications for 2026 are officially open, offering a chance to step inside one of Edmonds’ most beloved traditions and experience the Festival from a whole new perspective.\n\nThe festival runs June 19–21, 2026, with additional opportunities in the days before and after the event. Most shifts are approximately three hours long, and roles are available to fit a wide range of interests, schedules, and comfort levels. Whether you love working with kids, chatting with visitors, supporting artists, or simply want to be useful and meet great people, there is a spot with your name on it.\n\nAvailable volunteer roles for 2026:\n- Artist Booth Relief – Provide short breaks for artists by watching their booths and assisting with light needs.\n- Field Setup and Teardown – Help prepare Festival spaces before opening and assist with breakdown after the event.\n- Gallery Arts – Support indoor gallery spaces by greeting visitors and helping monitor artwork.\n- Kids Create – Assist with hands-on art activities for children.\n\nVolunte [TRUNCATED]"
+    },
+    {
+      "url": "https://www.heraldnet.com/2026/04/27/snohomish-county-residents-can-now-access-fema-disaster-assistance/",
+      "source": "HeraldNet",
+      "title": "Snohomish County residents can now access FEMA disaster assistance",
+      "fetch_failed": false,
+      "text": "EVERETT — Snohomish County residents can now seek financial assistance from the Federal Emergency Management Agency as they continue to recover from the disruption caused by December’s historic flooding.\n\nThe flood lasted two weeks, causing an estimated $182 million in damages across the state, Gov. Bob Ferguson said in February.\n\nIn Snohomish County, representatives from FEMA and the state will be at a disaster assistance center that will rotate between locations in Snohomish, Sultan and Arlington starting Wednesday, to provide in-person help with applying for recovery funds, a press release said.\n\nThe U.S. Small Business Administration will also be there offering assistance with low-interest loans for costs financial assistance won’t cover.\n\nThe deadline to apply for FEMA relief is June 10.\n\n“This is why we have worked so hard as a community and as a region to document damage and make our case for federal assistance,” said Lucia Schmit, director of the Snohomish County Department of Emergency Management, in the release. “These funds can make a difference for many who live here.”\n\nThe maximum award FEMA is offering for housing assistance is $44,800, Schmit said in an interview Fri [TRUNCATED]"
+    },
+    {
+      "url": "https://www.reuters.com/world/north-korea-confirms-troop-deployment-russia-first-time-kcna-report-2025-04-27/",
+      "source": "Reuters",
+      "title": "North Korea confirms troop deployment to Russia for first time, KCNA reports",
+      "fetch_failed": false,
+      "text": "SEOUL, April 27 (Reuters) - North Korea has confirmed it has sent troops to Russia for the first time, state media KCNA reported on Sunday, marking Pyongyang's first official acknowledgement of military support for Moscow since the start of the Ukraine war.\n\nThe dispatch of North Korean troops to Russia has been widely reported by Western governments and media in recent months, but this is the first time North Korea has publicly confirmed the deployment.\n\nKCNA said the troops were sent to help Russia in its \"sacred war of justice\" against what it described as Western aggression led by the United States. The report did not specify how many troops were deployed or their exact role.\n\n\"The Korean People's Army has dispatched troops to Russia to take part in the sacred war of justice to defend the sovereignty and territorial integrity of Russia,\" KCNA said in a statement.\n\nThe confirmation comes as Russia and North Korea have deepened military and economic cooperation since the start of the Ukraine war, with Pyongyang supplying Moscow with artillery shells and missiles, according to Western intelligence.\n\nSouth Korea's military said it was closely monitoring the situation, while Japan's [TRUNCATED]"
+    },
+    {
+      "url": "https://www.bbc.com/news/live/c1je28p42ret",
+      "source": "BBC News",
+      "title": "Shooting suspect charged with attempted assassination of Trump at White House Correspondents' Dinner",
+      "fetch_failed": false,
+      "text": "# Trump and his officials 'likely' targets of suspected gunman, acting attorney general says - BBC News\n\nThe suspected gunman who opened fire at the White House Correspondents' Dinner has been charged with attempted assassination of President Trump, the acting attorney general said Sunday.\n\nAuthorities identified the suspect as 34-year-old Marcus Holloway of Arlington, Virginia, who allegedly fired multiple shots inside the Washington Hilton hotel during the event Saturday evening. The Secret Service quickly evacuated Trump and other high-profile attendees.\n\nActing Attorney General James McHenry said evidence suggests Trump and senior administration officials were the \"likely targets\" of the attack. The president was unharmed and returned to the White House shortly after the incident.\n\nThe shooting occurred around 10:45 p.m. Saturday during the annual dinner, which was attended by hundreds of journalists, politicians and celebrities. The suspect was apprehended without incident and is being held in federal custody.\n\nThis marks the second apparent assassination attempt against Trump this year, following a similar incident at a campaign rally in Pennsylvania last fall."
+    }
+  ],
   "correspondence": {
     "found": true,
     "fallback_used": false,
