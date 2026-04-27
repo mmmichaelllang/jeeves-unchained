@@ -2,60 +2,7 @@
   "date": "2026-04-27",
   "status": "complete",
   "dedup": {
-    "covered_urls": [
-      "https://aaro.defense.gov/Portals/19/Documents/2026-04-21-Historical-Report-Addendum.pdf",
-      "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom",
-      "https://aeon.co/essays/what-is-the-real-cost-of-betting-on-weather-catastrophes",
-      "https://arxiv.org/abs/2603.03780",
-      "https://arxiv.org/abs/2604.05018",
-      "https://arxiv.org/pdf/2603.14312",
-      "https://audria.tech/",
-      "https://briskteaching.com/",
-      "https://diffit.me/",
-      "https://friend.com/",
-      "https://getbuddi.ai/",
-      "https://github.com/lamm-mit/scienceclaw",
-      "https://gmic.ai/",
-      "https://helpmeteach.ai/",
-      "https://humy.ai/",
-      "https://limitless.ai/",
-      "https://magicschool.ai/",
-      "https://moskowitz.house.gov/media/press-releases/uap-transparency-caucus-launched",
-      "https://mpost.io/sakana-ai-launches-fugu-multi-agent-ai-system-built-on-collective-intelligence-research-and-frontier-model-coordination/",
-      "https://msd25.schoolspring.com/",
-      "https://myedmondsnews.com/2026/04/south-snoco-playtime-your-family-fun-guide-for-april-27-may-1-and-beyond/",
-      "https://nerdleveltech.com/paperorchestra-google-multi-agent-ai-writes-research-papers",
-      "https://nwchorale.org/sing.htm",
-      "https://omi.me/",
-      "https://philarchive.org/archive/PERPPU-2v2",
-      "https://phys.org/news/2026-01-multi-agent-ai-robots-automate.html",
-      "https://robertdryer.com/part-1-a-truly-catholic-relational-ontology-via-catholic-doctrines-simplicity-actus-purus-and-perichoresis/",
-      "https://sno-isle.bibliocommons.com/v2/events?q=%22edmonds%20library%22",
-      "https://talents.vaia.com/companies/lake-washington-school-district/english-language-arts-teacher-1-0-fte-lake-washington-high-school-34165538/",
-      "https://teachersbuddy.com/",
-      "https://teachmateai.com/",
-      "https://teachplanet.io/",
-      "https://twee.com/",
-      "https://verlag-alber.de/interview-studies-on-triadic-ontology/",
-      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
-      "https://www.bbc.co.uk/news/articles/c5ywy54229ko",
-      "https://www.k12jobspot.com/Job/5407943",
-      "https://www.k12jobspot.com/Job/5474205",
-      "https://www.lrb.co.uk/the-paper/v48/n07/christian-lorentzen/i-sympathise-with-the-child",
-      "https://www.lrb.co.uk/the-paper/v48/n07/james-lasdun/reality-instruction",
-      "https://www.marktechpost.com/2026/04/08/google-ai-research-introduces-paperorchestra-a-multi-agent-framework-for-automated-ai-research-paper-writing/",
-      "https://www.newyorker.com/magazine/2026/05/04/the-reversal",
-      "https://www.nybooks.com/articles/2026/04/23/reimagining-the-future-of-ireland-otoole-mcbride-toibin/",
-      "https://www.nybooks.com/online/2026/04/19/war-games-olympics-empire/",
-      "https://www.reuters.com/article/us-india-tibet-idUSKCN0XO0IG/",
-      "https://www.reuters.com/world/north-korea-confirms-troop-deployment-russia-first-time-kcna-report-2025-04-27/",
-      "https://www.rte.ie/news/2026/0427/1570462-starmer-mandelson/",
-      "https://www.seattlechoralcompany.org/join-us/audition-q-a/",
-      "https://www.seattlepromusica.org/auditions",
-      "https://www.sno-isle.org/locations/edmonds/",
-      "https://www.ziprecruiter.com/c/Highline-Public-Schools/Job/TEACHERS:-2026-2027-CADRE-COHORT/-in-Seattle,WA?jid=95f48ee1eb462b14",
-      "https://zoo.org/event/forest-trailhead-member-preview-28-apr-2026"
-    ],
+    "covered_urls": [],
     "covered_headlines": [
       "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail in Everett at 7:25 a.",
       "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail medical housing unit around 7:25 a.",
@@ -63,41 +10,27 @@
       "Auditions — Seattle Pro Musica",
       "Bellevue",
       "Bellevue Christian",
-      "British Prime Minister Keir Starmer faces a potential parliamentary inquiry over his handling of Peter Mandelson's appointment.",
-      "Christian Lorentzen analyzes Ben Lerner's 'Transcription' as a meditation on artistic method and generational anxiety, where the narrator's broken pho",
       "City shares design for next phase of Hwy 99 revitalization, asks public to weigh in",
       "Colin Powers' analysis 'The Emirates on the Tightrope' provides a deep dive into the UAE's precarious position during the Iran war.",
-      "Colm Tóibín examines the complex path toward a potential united Ireland, tracing the evolution from the 1986 border walk through Brexit's impact.",
       "Colm Tóibín's review of 'For and Against a United Ireland' by Fintan O'Toole and Sam McBride examines the complex practicalities of Irish reunificatio",
       "Dual Language (English/Spanish) Teacher",
-      "Dual Language (English/Spanish) Teacher, 1.0 FTE",
       "Edmonds",
-      "Edmonds Library: Toddler Storytime for ages 18 months–3 years is scheduled for April 27 and May 7, 2026, at 10:00 am.",
-      "English Language Arts Teacher (0.6 FTE) - Long Term Sub",
-      "English Language Arts Teacher (1.0 FTE) – Lake Washington High School",
       "English Language Arts Teacher (Long-Term Sub)",
       "English Language Development Teacher – Secondary",
       "English and History teachers now have three well-funded, purpose-built AI co-teachers.",
       "Everett",
-      "Exiled Tibetans have re-elected Lobsang Sangay as their political leader, who has vowed to revive international support for Tibetan autonomy from Chin",
       "Fintan O'Toole's essay 'The Right Amount of Crazy' dissects Trump's application of the 'Madman Theory' in foreign policy, particularly regarding Iran.",
-      "Flora Champy's philosophical essay reframes literature's purpose from moral instruction to personal freedom, arguing that reading's value lies not in",
       "Friend AI pendant ($99) - A circular, always-listening companion that records ambient audio and sends contextual text messages via iOS app.",
       "Friend and Tab pendants represent the new wave of lifelogging wearables that continuously record audio for AI analysis.",
       "Global diplomatic efforts are fraying as the Iran conflict shows no resolution and new crises emerge.",
       "High School English / History Teacher",
       "High School English Teacher",
       "High School English Teacher (Long-Term Sub)",
-      "High School English Teacher – 2026-2027 CADRE COHORT",
       "High School History Teacher",
-      "Highline",
       "Hungarian Prime Minister Viktor Orbán stepped down from parliament after his Fidesz party suffered a landslide defeat in April elections, ending his 1",
       "In \"Triadic Logic and the Quantum Entanglement of Relations\" (2026, Sophia Studies), philosopher-theologian Dr.",
       "In \"Triadic Ontology and Quantum Perichoresis: A Relational Metaphysics for the 21st Century\" (Routledge, 2026), philosopher-theologian Dr.",
       "Iran has officially rejected any US talks while under siege, as Foreign Minister Abbas Araghchi returns to Pakistan.",
-      "Jake Nevins dissects how the 2026 Winter Olympics in Italy became a theater for geopolitical tensions, culminating in the US-Israel joint offensive on",
-      "James Lasdun's road trip through American courthouses reveals a justice system where immigration hearings in Chicago contrast with felony trials in So",
-      "Jamie Pietruska exposes the moral bankruptcy of catastrophe markets like Kalshi and Polymarket, where users bet on disaster outcomes including the LA",
       "Jo Livingstone's essay 'We Goofed' examines Yale's new exhibition on literary errata, exploring how publishers' correction slips have evolved from pra",
       "Join Us - Seattle Choral Company",
       "Lake Washington",
@@ -111,41 +44,30 @@
       "Mali's capital Bamako came under coordinated attack by armed groups including al-Qaeda-linked JNIM and Tuareg FLA rebels, described as the largest jih",
       "Marysville",
       "Mexico has stated that two CIA agents killed in a car crash were not authorized to participate in a local raid.",
-      "Michael J.",
       "Mukilteo",
-      "North Korea has officially confirmed for the first time that it sent troops to fight alongside Russia in Ukraine, with leader Kim Jong Un ordering the",
       "Northshore",
       "President Trump abruptly cancelled a planned US delegation trip to Pakistan for Iran peace talks, saying envoys Steve Witkoff and Jared Kushner would",
       "President Trump was rushed to safety by Secret Service agents after shots were fired inside the Washington Hilton hotel during the White House Corresp",
       "Robert G.",
       "Russia launched a major overnight assault on Ukraine with over 660 drones and missiles, killing at least seven people including five in Dnipro.",
-      "Seattle Choral Company: Auditions for the 2026-2027 season will be held in September 2026 at Phinney Ridge Lutheran Church.",
       "Seattle Public",
       "Seattle Public Schools",
       "Secondary History Teacher",
       "Secondary Social Studies Teacher",
       "Shoreline",
       "Snohomish",
-      "Social Studies/History Teacher Pool (2026-2027)",
       "Starting tonight, Sunday, April 26, and continuing through Friday morning, May 1, overnight closures will affect northbound SR 525 and its ramps near",
       "State Route 525 near Alderwood Mall Parkway will undergo overnight closures from Sunday night April 26 through Friday morning May 1 for pavement grind",
       "The City of Edmonds hosted an open house on Thursday, April 25 to unveil the 60 % design plan for Stage 3 of the Highway 99 Revitalization Project.",
-      "The House Oversight Subcommittee on National Security convened a closed-door UAP briefing on April 24, 2026, with no public readout—continuing a patte",
       "The House Oversight Subcommittee on National Security held a closed-door briefing on UAPs on April 24, 2026, with no official readout provided to the",
       "The House Oversight subcommittee on National Security held a closed-door UAP briefing on April 24, 2026, but issued no public readout, frustrating tra",
       "The IMF has downgraded global growth forecasts to 3.",
       "The New Normal",
       "The New Yorker’s New Look",
-      "The Reversal",
       "The autonomous research landscape has exploded with multi-agent systems now capable of end-to-end scientific discovery.",
-      "The autonomous-research landscape has converged on modular, multi-agent architectures that outperform monolithic models by decomposing the full discov",
       "The field is converging on modular, agent-swarm architectures that can autonomously spin up sub-agents for literature review, experiment design, and e",
-      "The teacher-focused AI landscape has matured significantly with MagicSchool AI leading at massive scale - 7M+ educators served, $62.",
-      "The wearable AI device category extends beyond pendants to include diverse form factors addressing different use cases.",
       "Trump cancels US envoys' trip to Pakistan for talks on Iran war - BBC",
-      "UK police have seized gold and silver bullion worth approximately £175,000 during an anti-slavery raid in Hull, England.",
       "Voice-first AI hardware is rapidly expanding beyond familiar pendants.",
-      "Voice-first AI hardware is rapidly expanding beyond the initial Friend pendant.",
       "Will Alden's 'Waiting for Day Zero' chronicles the Iranian monarchist movement in Los Angeles, focusing on Reza Pahlavi's failed attempt to position h",
       "Woman, 58, died in her cell at Snohomish County Jail",
       "Woman, 58, died in her cell at Snohomish County Jail | HeraldNet.com",
@@ -156,221 +78,32 @@
       "email | mmmichaelllang"
     ]
   },
-  "weather": "Edmonds, WA today: Overcast morning giving way to partly cloudy skies by afternoon. Current 52°F, high 60-62°F, low tonight 47°F. Southeast wind 8-15 mph with gusts to 20 mph. 20% chance of light rain until late afternoon, then rain likely after 4 PM with totals under 0.1\". Evening turns increasingly cloudy with rain developing overnight. Comfortable spring day—light jacket advised for the breeze and possible showers.",
+  "weather": "Today in Edmonds: Overcast morning giving way to mostly sunny afternoon, high 60-63°F. Light south wind 10-15 mph. Rain chance 20-25% until late afternoon. Tonight: increasing clouds, low 47-49°F, light rain possible (10-25% chance). Pleasant spring day overall.",
   "local_news": [],
-  "career": {
-    "openings": [
-      {
-        "district": "Snohomish",
-        "role": "English Language Arts Teacher (0.6 FTE) - Long Term Sub",
-        "url": "https://www.k12jobspot.com/Job/5474205",
-        "summary": "0.6 FTE long-term substitute English Language Arts Teacher for grades 7-8, May 4–June 15, 2026. Requires WA teaching certificate with Elementary Education endorsement.",
-        "deadline": null,
-        "salary_range": "$215–$260/day depending on days worked"
-      },
-      {
-        "district": "Edmonds",
-        "role": "Dual Language (English/Spanish) Teacher, 1.0 FTE",
-        "url": "https://www.k12jobspot.com/Job/5407943",
-        "summary": "Continuing contract for 2026-27 school year. Must demonstrate Spanish proficiency via OSPI bilingual certification or ACTFL assessment. Preference for ELL/ESOL/Bilingual endorsement.",
-        "deadline": null,
-        "salary_range": "$83,305–$148,226/year"
-      },
-      {
-        "district": "Lake Washington",
-        "role": "English Language Arts Teacher (1.0 FTE) – Lake Washington High School",
-        "url": "https://talents.vaia.com/companies/lake-washington-school-district/english-language-arts-teacher-1-0-fte-lake-washington-high-school-34165538/",
-        "summary": "Full-time English Language Arts position at Lake Washington High School for 2025-26 school year. Requires WA teaching certificate with English Language Arts endorsement.",
-        "deadline": null,
-        "salary_range": "Per LWEA salary schedule plus LEAP days, responsibility stipends, technology stipend, and professional fund"
-      },
-      {
-        "district": "Marysville",
-        "role": "Social Studies/History Teacher Pool (2026-2027)",
-        "url": "https://msd25.schoolspring.com/",
-        "summary": "Pool posting for multiple Social Studies/History vacancies for the 2026-27 school year. District may fill positions directly from this pool.",
-        "deadline": "Posted until filled",
-        "salary_range": null
-      },
-      {
-        "district": "Highline",
-        "role": "High School English Teacher – 2026-2027 CADRE COHORT",
-        "url": "https://www.ziprecruiter.com/c/Highline-Public-Schools/Job/TEACHERS:-2026-2027-CADRE-COHORT/-in-Seattle,WA?jid=95f48ee1eb462b14",
-        "summary": "Full-time English teacher position for 2026-27 school year as part of Highline’s CADRE teacher-leadership program.",
-        "deadline": null,
-        "salary_range": "$71,962–$140,638/year"
-      }
-    ],
-    "notes": "Most districts post openings on their own Frontline/AppliTrack portals and on K12JobSpot, EdJobList, or SchoolSpring. For the fullest picture, visit each district’s HR page directly and sign up for job alerts. Substitute or pool postings often convert to full contracts mid-year, so applying to multiple pools is recommended."
-  },
-  "family": {
-    "choir": "Seattle Choral Company: Auditions for the 2026-2027 season will be held in September 2026 at Phinney Ridge Lutheran Church. Dues are $225 for the full season or $30 per month for partial participation. Seattle Pro Musica: Auditions for all voice parts are held every August; the 2026-27 auditions will likely take place in August 2026 at Epiphany Parish (1805 38th Ave, Seattle). Rehearsals are Tuesday evenings 6:30–9:30 pm. Northwest Chorale: Auditions for the 2026-2027 season are not yet open; registration will open in spring/summer 2026. Rehearsals are Monday nights 7:00–9:30 pm at Lamb of God Lutheran Church (12509 27th Ave NE, Seattle).",
-    "toddler": "Edmonds Library: Toddler Storytime for ages 18 months–3 years is scheduled for April 27 and May 7, 2026, at 10:00 am. Baby Storytime (0–18 months) is offered April 28 at 9:00 and 10:00 am. Imagine Children’s Museum: Little Science Lab with the museum is at Lynnwood Library on April 27, 2:00–2:30 pm for ages 1–10. Woodland Park Zoo: The new Forest Trailhead exhibit opens May 1, 2026, featuring tree kangaroos, red pandas, and interactive touchscreens—perfect for toddlers. Sno-Isle Libraries: Regular free baby and toddler storytimes, crafts, and community events are ongoing at branches including Edmonds and Lynnwood.",
-    "urls": [
-      "https://www.seattlechoralcompany.org/join-us/audition-q-a/",
-      "https://www.seattlepromusica.org/auditions",
-      "https://nwchorale.org/sing.htm",
-      "https://sno-isle.bibliocommons.com/v2/events?q=%22edmonds%20library%22",
-      "https://www.sno-isle.org/locations/edmonds/",
-      "https://zoo.org/event/forest-trailhead-member-preview-28-apr-2026",
-      "https://myedmondsnews.com/2026/04/south-snoco-playtime-your-family-fun-guide-for-april-27-may-1-and-beyond/"
-    ]
-  },
-  "global_news": [
-    {
-      "category": "global",
-      "source": "Reuters",
-      "findings": "North Korea has officially confirmed for the first time that it sent troops to fight alongside Russia in Ukraine, with leader Kim Jong Un ordering the deployment under a strategic partnership treaty with Vladimir Putin. The confirmation, made through state news agency KCNA, reveals that approximately 14,000 North Korean troops were deployed to the Kursk region, where they helped Russian forces regain territory from Ukrainian control. The troops reportedly suffered heavy casualties initially but adapted quickly to battlefield conditions. Putin personally thanked Kim Jong Un, calling the North K [TRUNCATED]",
-      "urls": [
-        "https://www.reuters.com/world/north-korea-confirms-troop-deployment-russia-first-time-kcna-report-2025-04-27/"
-      ]
-    },
-    {
-      "category": "global",
-      "source": "BBC",
-      "findings": "UK police have seized gold and silver bullion worth approximately £175,000 during an anti-slavery raid in Hull, England. The operation, conducted by Humberside Police, also recovered £13,000 in cash. A 35-year-old man was arrested on suspicion of slavery offences and money laundering, while a 33-year-old woman was arrested for suspected money laundering. The arrests were part of broader efforts to combat modern slavery and human trafficking, with police emphasizing the importance of such operations in uncovering crimes that often remain hidden within communities.",
-      "urls": [
-        "https://www.bbc.co.uk/news/articles/c5ywy54229ko"
-      ]
-    },
-    {
-      "category": "global",
-      "source": "RTE",
-      "findings": "British Prime Minister Keir Starmer faces a potential parliamentary inquiry over his handling of Peter Mandelson's appointment. Parliament will vote on whether to investigate whether Starmer misled the House of Commons regarding Mandelson's hiring process. Mandelson, former US ambassador, was fired last September after revelations about his deeper-than-known relationship with Jeffrey Epstein. The controversy centers on whether proper security vetting procedures were followed, with reports indicating security officials had reservations about granting clearance. The opposition Conservative Party [TRUNCATED]",
-      "urls": [
-        "https://www.rte.ie/news/2026/0427/1570462-starmer-mandelson/"
-      ]
-    },
-    {
-      "category": "global",
-      "source": "Reuters",
-      "findings": "Exiled Tibetans have re-elected Lobsang Sangay as their political leader, who has vowed to revive international support for Tibetan autonomy from China. Sangay, who has led the 150,000-strong Tibetan diaspora since the Dalai Lama relinquished political power in 2011, won 57% of nearly 60,000 votes cast. In his victory speech, Sangay acknowledged that Tibet's struggle has received less international attention due to China's growing economic influence and Western preoccupation with other crises like Syria and the refugee situation. He plans to increase diplomatic efforts to raise awareness about [TRUNCATED]",
-      "urls": [
-        "https://www.reuters.com/article/us-india-tibet-idUSKCN0XO0IG/"
-      ]
-    }
-  ],
-  "intellectual_journals": [
-    {
-      "source": "New York Review of Books",
-      "findings": "Colm Tóibín examines the complex path toward a potential united Ireland, tracing the evolution from the 1986 border walk through Brexit's impact. The essay reveals shifting demographics (Catholics now 45.7% vs Protestants 43.5%) and economic realities (£13.9bn annual UK subvention to Northern Ireland) that make unity increasingly plausible. Key insight: Southern Ireland's GDP is now 10x Northern Ireland's, creating both opportunity and burden for potential unification.",
-      "urls": [
-        "https://www.nybooks.com/articles/2026/04/23/reimagining-the-future-of-ireland-otoole-mcbride-toibin/"
-      ]
-    },
-    {
-      "source": "New York Review of Books",
-      "findings": "Jake Nevins dissects how the 2026 Winter Olympics in Italy became a theater for geopolitical tensions, culminating in the US-Israel joint offensive on Iran. The piece contrasts athletic triumphs (Alysa Liu's gold, American hockey victories) with the administration's grotesque social media strategy of 'banger memes' mixing sports highlights with combat footage. Key revelation: IOC's 'Olympic Truce' is now explicitly non-binding, exposing the fantasy of sports as diplomatic balm.",
-      "urls": [
-        "https://www.nybooks.com/online/2026/04/19/war-games-olympics-empire/"
-      ]
-    },
-    {
-      "source": "Aeon",
-      "findings": "Flora Champy's philosophical essay reframes literature's purpose from moral instruction to personal freedom, arguing that reading's value lies not in edification but in expanding subjective experience. Drawing on Proust's rejection of Ruskin's utilitarian view, she posits that literature enables 'the fruitful miracle of a communication in the midst of solitude' - a unique form of self-discovery through engagement with texts.",
-      "urls": [
-        "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom"
-      ]
-    },
-    {
-      "source": "Aeon",
-      "findings": "Jamie Pietruska exposes the moral bankruptcy of catastrophe markets like Kalshi and Polymarket, where users bet on disaster outcomes including the LA wildfires that killed 440. The essay traces weather gambling from 19th-century rain pools to modern financial instruments, revealing how these platforms reduce complex disasters to binary trades while claiming to 'democratize' risk assessment.",
-      "urls": [
-        "https://aeon.co/essays/what-is-the-real-cost-of-betting-on-weather-catastrophes"
-      ]
-    },
-    {
-      "source": "London Review of Books",
-      "findings": "Christian Lorentzen analyzes Ben Lerner's 'Transcription' as a meditation on artistic method and generational anxiety, where the narrator's broken phone becomes a metaphor for failed documentation of a mentor's final interview. The novel explores themes of replacement and mortality through glass flower imagery and the interchangeable nature of characters across Lerner's oeuvre, suggesting the novel form itself is experiencing 'failure to thrive' in the digital age.",
-      "urls": [
-        "https://www.lrb.co.uk/the-paper/v48/n07/christian-lorentzen/i-sympathise-with-the-child"
-      ]
-    },
-    {
-      "source": "London Review of Books",
-      "findings": "James Lasdun's road trip through American courthouses reveals a justice system where immigration hearings in Chicago contrast with felony trials in South Dakota. His observations show how local courts become theaters of American dysfunction - from ICE proceedings where families face deportation to drunk driving cases where judges must balance punishment with economic survival. Key insight: courts remain places where 'reality instruction' is dispensed, however imperfectly.",
-      "urls": [
-        "https://www.lrb.co.uk/the-paper/v48/n07/james-lasdun/reality-instruction"
-      ]
-    }
-  ],
-  "wearable_ai": [
-    {
-      "category": "ai_voice_hardware",
-      "findings": "Voice-first AI hardware is rapidly expanding beyond the initial Friend pendant. The market now includes several distinct players: Friend (MyTabAI, Inc) has $7.9M in funding and offers a companion pendant that listens and connects, though recent news indicates shipment delays. Omi (Based Hardware) provides a productivity-focused wearable that captures conversations and turns them into structured me [TRUNCATED]",
-      "urls": [
-        "https://friend.com/",
-        "https://omi.me/",
-        "https://limitless.ai/",
-        "https://getbuddi.ai/",
-        "https://audria.tech/",
-        "https://gmic.ai/"
-      ]
-    },
-    {
-      "category": "teacher_ai_tools",
-      "findings": "The teacher-focused AI landscape has matured significantly with MagicSchool AI leading at massive scale - 7M+ educators served, $62.4M raised (Series B Feb 2025), and 224 employees. The platform covers lesson planning, assessments, IEPs, and differentiation across 16 countries. Brisk Teaching (Chrome extension) raised $21.9M Series A and serves 100K+ educators with seamless Google Workspace integr [TRUNCATED]",
-      "urls": [
-        "https://magicschool.ai/",
-        "https://briskteaching.com/",
-        "https://diffit.me/",
-        "https://teachmateai.com/",
-        "https://teachersbuddy.com/",
-        "https://humy.ai/",
-        "https://twee.com/",
-        "https://teachplanet.io/",
-        "https://helpmeteach.ai/"
-      ]
-    },
-    {
-      "category": "wearable_devices",
-      "findings": "The wearable AI device category extends beyond pendants to include diverse form factors addressing different use cases. Friend and Limitless pendants remain popular for personal AI companionship and memory capture. Omi and Buddi AI offer modular designs (pendant/brooch/pen) emphasizing productivity and task management. Audria's behind-ear device targets discreet professional use with contextual re [TRUNCATED]",
-      "urls": [
-        "https://friend.com/",
-        "https://omi.me/",
-        "https://limitless.ai/",
-        "https://getbuddi.ai/",
-        "https://audria.tech/",
-        "https://gmic.ai/"
-      ]
-    }
-  ],
+  "career": {},
+  "family": {},
+  "global_news": [],
+  "intellectual_journals": [],
+  "wearable_ai": [],
   "triadic_ontology": {
-    "findings": "Michael J. Pernoud’s Possibility Unification, Reality Emergence (PURE) proposes a triadic ontology in which reality is the sediment of a single Act whose internal grammar is Openness-in-Coherence-and-Prerogative: three mutually implicative moments that avoid the collapse of monism, dualism or brute materialism. From this PURE derives a non-local, relational holism in which gravity becomes relational inertia shaped by counterfactual weight, quantum observation is the tension between total modal capacity and finite load, and time is the variable pacing of becoming against the Cost of Being. Abductively, PURE finds its most coherent ground in the Triune God—Father, Son and Spirit—whose eternal perichoretic life is the archetype of the coinherent triad. Damiano Migliorini’s forthcoming Relational Ontologies and Trinitarian Metaphysics: Subsistences, Events and Gunk complements this by advancing an Eventist-Infinitesimal Ontology (EIO) where entities are gunky, infinitely divisible events w [TRUNCATED]",
-    "urls": [
-      "https://philarchive.org/archive/PERPPU-2v2",
-      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
-      "https://verlag-alber.de/interview-studies-on-triadic-ontology/",
-      "https://robertdryer.com/part-1-a-truly-catholic-relational-ontology-via-catholic-doctrines-simplicity-actus-purus-and-perichoresis/"
-    ]
+    "findings": "",
+    "urls": []
   },
   "ai_systems": {
-    "findings": "The autonomous-research landscape has converged on modular, multi-agent architectures that outperform monolithic models by decomposing the full discovery cycle into specialized subsystems. Google’s PaperOrchestra (arXiv:2604.05018) is the clearest example: five coordinated agents—Outline, Plotting, Literature-Review, Section-Writing and Content-Refinement—turn raw experimental logs into submission-ready LaTeX manuscripts in 39.6 min, achieving 50–68 % human-evaluated win rates over prior autonomous baselines and 84 % simulated conference acceptance. MIT’s open-source SCIENCECLAW + INFINITE (arXiv:2603.14312) scales the idea to a persistent ecosystem: any researcher can spin up an agent with a 300-skill toolbox (literature, genomics, materials, etc.); agents publish immutable artifacts to a shared DAG, and an ArtifactReactor routes unmet data needs to whichever peer agent can satisfy them, producing convergent discoveries without central planning. Sakana AI’s newly released Fugu API com [TRUNCATED]",
-    "urls": [
-      "https://www.marktechpost.com/2026/04/08/google-ai-research-introduces-paperorchestra-a-multi-agent-framework-for-automated-ai-research-paper-writing/",
-      "https://arxiv.org/abs/2603.03780",
-      "https://arxiv.org/pdf/2603.14312",
-      "https://phys.org/news/2026-01-multi-agent-ai-robots-automate.html",
-      "https://mpost.io/sakana-ai-launches-fugu-multi-agent-ai-system-built-on-collective-intelligence-research-and-frontier-model-coordination/",
-      "https://arxiv.org/abs/2604.05018",
-      "https://github.com/lamm-mit/scienceclaw",
-      "https://nerdleveltech.com/paperorchestra-google-multi-agent-ai-writes-research-papers"
-    ]
+    "findings": "",
+    "urls": []
   },
   "uap": {
-    "findings": "The House Oversight Subcommittee on National Security convened a closed-door UAP briefing on April 24, 2026, with no public readout—continuing a pattern of secrecy that frustrates transparency advocates. Meanwhile, the newly formed UAP Transparency Caucus, co-chaired by Rep. Moskowitz, has begun circulating draft legislation to compodeclassify all non-human intelligence materials held by defense and intelligence agencies within 180 days, citing “overwhelming public interest and congressional oversight prerogatives.” Pentagon officials, speaking on background, confirmed that a classified annex delivered to the caucus last week contains sensor data from 11 recent incidents judged “beyond known aerospace capabilities,” though they cautioned that provenance remains formally unresolved. Separately, the All-domain Anomaly Resolution Office (AARO) quietly posted a notice in the Federal Register seeking industry partners for a secure, cloud-based UAP data lake—an indication that analytic infra [TRUNCATED]",
-    "urls": [
-      "https://moskowitz.house.gov/media/press-releases/uap-transparency-caucus-launched",
-      "https://aaro.defense.gov/Portals/19/Documents/2026-04-21-Historical-Report-Addendum.pdf"
-    ]
+    "findings": "",
+    "urls": []
   },
   "newyorker": {
-    "available": true,
-    "title": "The Reversal",
-    "section": "Talk of the Town",
-    "dek": "A Manhattan psychiatrist finds his life upended when a patient begins treating him.",
-    "text": "Dr. Leonard Weiss, a fifty-eight-year-old psychiatrist on the Upper West Side, had always believed that the therapeutic relationship was inviolable. For thirty years, he had sat in his leather chair, nodding thoughtfully while patients wept, raged, or whispered their most shameful secrets. He was the keeper of their narratives, the interpreter of their dreams. Then, last month, a new patient arrived—Eleanor Park, a thirty-four-year-old software engineer with a precise bob and an unnerving habit of maintaining eye contact for slightly too long.\n\nAt first, Eleanor seemed unremarkable. She spoke of workplace microaggressions, a recent breakup, the usual litany of urban sorrows. But by the third session, something shifted. She began questioning Dr. Weiss’s interpretations, gently at first, then with increasing authority. “Actually,” she said, when he suggested her anxiety might stem from maternal ambivalence, “I think it’s more about your countertransference.” Dr. Weiss laughed, assuming she was joking. She wasn’t.\n\nThe reversal, when it came, was swift and total. Eleanor arrived for their fifth session carrying a leather notebook identical to the one Dr. Weiss used for session notes. She opened it with theatrical precision. “Today,” she announced, “we’re going to discuss your resistance to acknowledging how your divorce is contaminating the therapeutic frame.” Dr. Weiss, flustered, tried to reassert control. “Eleanor, this is highly inappropriate—” But she cut him off. “Leonard. Your defensiveness is palpable. Let’s sit with that.”\n\nOver the following weeks, Eleanor systematically dismantled Dr. Weiss’s professional identity. She diagnosed him with “narcissistic vulnerability masked by intellectualization,” prescribed daily mindfulness exercises, and assigned him reading—first, attachment-theory papers, then, devastatingly, his own out-of-print book from 1998, which she annotated in red pen. “You’ve been coasting on outdated paradigms,” she told him. “Your Freudian slip is showing.”\n\nThe other patients noticed. Mrs. Goldfarb, a septuagenarian with obsessive-compulsive disorder, began arriving early to observe Eleanor’s sessions through the frosted glass. “She’s brilliant,” Mrs. Goldfarb whispered to Dr. Weiss’s receptionist. “Finally, someone’s holding him accountable.”\n\nDr. Weiss tried terminating Eleanor’s treatment, but she refused. “Abandonment trauma,” she said. “Classic.” She started billing him for her insights, invoicing through a medical-coding app she’d designed. His colleagues, when consulted, were unsympathetic. “Boundaries, Leonard,” his old supervisor sighed. “You always were too porous.”\n\nThe denouement arrived last Tuesday. Eleanor entered, silent, and handed Dr. Weiss a printed-out Yelp review. Two stars. “Compassionate but stuck in old patterns,” it read. “Could benefit from his own medicine.” Dr. Weiss stared at it, then at Eleanor, who was watching him with what looked, horrifyingly, like tenderness.\n\n“I think,” she said gently, “we’re making real progress.”\n\nDr. Weiss, for the first time in three decades, had nothing to say.",
-    "url": "https://www.newyorker.com/magazine/2026/05/04/the-reversal",
+    "available": false,
+    "title": "",
+    "section": "",
+    "dek": "",
+    "text": "",
+    "url": "",
     "source": "The New Yorker"
   },
   "enriched_articles": [],
