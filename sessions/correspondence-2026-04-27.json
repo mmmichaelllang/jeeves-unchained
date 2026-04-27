@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Google: Google security alert about Claude for Google Drive access to account data.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Research Phase workflow.\n- [escalation] \"Tithe.ly\": Tithe.ly notification that automated $5.46 donation to The Practicing Church failed.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Research Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed again minutes later.\n- [escalation] mmmichaelllang: Another Jeeves — Write Phase GitHub Actions failure.\n- [escalation] mmmichaelllang: Jeeves — Write Phase GitHub Actions workflow failed in under two minutes.\n- [escalation] mmmichaelllang: Duplicate notification of Jeeves — Write Phase failure.\n- [escalation] mmmichaelllang: Jeeves — Write Phase GitHub Actions run failed in 15 seconds.\n- [escalation] mmmichaelllang: Jeeves — Write Phase GitHub Actions failure after 14 seconds.\n- [escalation] mmmichaelllang: Jeeves — Write Phase GitHub Actions failure in 17 seconds.\n- [escalation] mmmichaelllang: Jeeves — Research Phase GitHub Actions workflow failed.",
+  "counts": {
+    "reply_needed": 0,
+    "decision_required": 3,
+    "scheduling": 1,
+    "follow_up": 0,
+    "escalation": 15,
+    "no_action": 31
+  }
+}
