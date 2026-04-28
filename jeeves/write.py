@@ -191,8 +191,36 @@ PART1_INSTRUCTIONS = """
 ## PART 1 of 9 — render instructions
 
 You are writing PART 1 of a nine-part briefing. Output the full HTML opening
-(`<!DOCTYPE html>` through `<body>` and the `<div class="container">` wrapper),
-the `<h1>` with today's full weekday date, then:
+starting with the DOCTYPE and including the EXACT stylesheet below — then the
+`<h1>` with today's full weekday date, then:
+
+**MANDATORY HTML OPENING — copy this exactly:**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Georgia, serif; background: #faf9f6; color: #1a1a1a; margin: 0; padding: 20px; }
+    .container { max-width: 720px; margin: 0 auto; line-height: 1.7; }
+    h1 { font-size: 1.6em; border-bottom: 1px solid #ccc; padding-bottom: 8px; }
+    h2 { font-size: 1.3em; margin-top: 2em; }
+    h3 { font-size: 1.1em; }
+    a { color: #1a5276; text-decoration: underline; }
+    .signoff { font-style: italic; margin-top: 2em; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>📜 Daily Intelligence from Jeeves — [FULL WEEKDAY DATE e.g. Tuesday, 29 April 2026]</h1>
+```
+
+Do NOT alter these styles. Do NOT add extra CSS. Do NOT use Arial, sans-serif,
+or any other font. The body font is Georgia. The container is max-width 720px.
+
+Then write the sector 1 content:
 
 - Sector 1 opening material: the formal butler greeting to Mister Lang, the
   correspondence summary (if `correspondence.found=true`), and the weather
@@ -351,6 +379,15 @@ CONTINUATION_RULES = """
     - "This level of activity suggests [X] is undergoing significant"
     - Any sentence that could be copy-pasted unchanged into a briefing about
       a completely different topic. Zero topic-specific nouns = delete it.
+14. NEVER INVENT URLS. This is a hard production rule — violations cause
+    broken links and damage trust. Verify every `<a href="...">` you write:
+    the URL inside must appear verbatim in the session JSON payload you
+    received in this specific call. If the URL is not in your payload, do
+    NOT write the `<a href>` — write the text without a link instead.
+    This applies to job-posting links, article links, school-district pages,
+    publication home pages, and every other URL. An unlinked reference is
+    always better than a fabricated link. When `career` is empty (`{}`),
+    there are NO job-posting URLs to use — do not invent any.
 """
 
 
@@ -426,7 +463,19 @@ Your scope — write ONLY about these:
 - HS English / History teaching openings within ~30 miles of Edmonds,
   drawn from `career`. This is a job-board sweep.
 
-**Teaching jobs — advancement protocol (REQUIRED):**
+**EMPTY CAREER FEED — HARD RULE:**
+If `career` is an empty object `{}`, or contains no `openings` key, or
+`openings` is an empty array `[]`, write EXACTLY this one paragraph and stop:
+
+  <p>The teaching job boards are quiet this morning, Sir — nothing new has surfaced within thirty miles.</p>
+
+Then immediately emit `<!-- PART3 END -->`. That is the entire output for
+this case.
+CRITICAL: Do NOT invent job listings. Do NOT fabricate school names, district
+websites, or application URLs. Do NOT write "I was unable to find listings" or
+explain the absence. One sentence, sentinel, done.
+
+**Teaching jobs — advancement protocol (REQUIRED, only when `career` has openings):**
 
 The same posting often surfaces for days. Do not re-describe a position
 Mister Lang has already been briefed on.
@@ -857,58 +906,56 @@ PART9_INSTRUCTIONS = CONTINUATION_RULES + """
 ## PART 9 of 9 — Talk of the Town (Sector 7) + sign-off + closing tags
 
 **PART 9 SCOPE — CRITICAL:** Your payload contains ONLY `newyorker`. Your
-entire output for this part is: (a) the Talk of the Town section if
-available, (b) the sign-off block, (c) the coverage-log placeholder, and
-(d) the outer closing tags. DO NOT re-cover any earlier sector or topic.
-DO NOT greet Mister Lang. DO NOT summarise the day.
+entire output for this part is: (a) exactly one of the two branches below
+based on `newyorker.available`, (b) the sign-off block, (c) the coverage-log
+placeholder, and (d) the outer closing tags. DO NOT re-cover any earlier
+sector or topic. DO NOT greet Mister Lang. DO NOT summarise the day.
 
-### 1. Talk of the Town — Sector 7 (ONLY if `newyorker.available === true`)
+---
 
-Write exactly this intro sentence as a paragraph, verbatim:
+### BRANCH A — if `newyorker.available` is `true`
+
+**WRITE BRANCH A AND NOTHING ELSE. Do NOT also write Branch B.**
+
+Step 1. Write exactly this one paragraph, verbatim:
 
 <p>And now, Sir, I take the liberty of reading from this week's Talk of the Town in The New Yorker.</p>
 
-Then on its own line, output EXACTLY this HTML comment — do NOT replace it,
-do NOT fill it in, do NOT write the article text here, do NOT use backtick
-fences around it. Just the bare comment, nothing else:
+Step 2. On its own line, write EXACTLY this HTML comment and nothing else.
+Do NOT replace it with article text. Do NOT use backtick fences around it.
 
 <!-- NEWYORKER_CONTENT_PLACEHOLDER -->
 
-The pipeline injects the verbatim article text at that comment automatically.
-Your payload does NOT include the article text because you must NOT write it.
-Your job is ONLY: the intro sentence, the bare placeholder comment, the one-
-line closing remark, and the URL link.
+Step 3. Write ONE short closing Jeeves remark (max 25 words, weary, no
+profanity, no apologies). Then the URL link:
 
-Then write ONE short closing Jeeves remark (max 25 words, weary, no
-profanity, no apologies). Then add the URL link:
-
-```html
 <p><a href="[newyorker.url]">[Read at The New Yorker]</a></p>
-```
 
-### 2. If `newyorker.available !== true`:
+---
 
-Write ONE short, dry Jeevesian sentence. No profanity, no invention.
+### BRANCH B — if `newyorker.available` is `false` (or absent)
 
-**Exact prohibitions:**
-- Do NOT say "The New Yorker has failed to publish" — the magazine
-  publishes every week; the pipeline may simply not have retrieved the
-  article. Never attribute failure to the publication.
-- Do NOT mention the library stacks, vault insight, or anything from
-  Sector 6 — Part 8 has already handled (or silently omitted) that.
-- Do NOT combine both absences into a single lamenting paragraph.
-  Part 8 is silent; Part 9 gets one sentence, no more.
+**WRITE BRANCH B AND NOTHING ELSE. Do NOT also write Branch A.**
+**Do NOT write the intro sentence from Branch A. Do NOT write the placeholder.**
 
-A suitable model sentence: *"The Talk of the Town has not reached us this
-morning, Sir — we are left, as ever, to our own devices."*
-Vary the phrasing; do not copy it verbatim. Keep it under 20 words.
+Write ONE short, dry Jeevesian sentence only. No profanity, no invention.
 
-### 3. Sign-off and closing tags
+Exact prohibitions:
+- Do NOT say "The New Yorker has failed to publish" — the magazine publishes
+  every week; the pipeline may simply not have retrieved the article.
+- Do NOT mention library stacks or vault insight — Part 8 handled that.
+- Do NOT write more than one sentence.
 
-Regardless of the New Yorker section, emit exactly this closing block after
-the content above:
+A model sentence (vary the phrasing, do not copy verbatim, keep under 20
+words): "The Talk of the Town has not reached us this morning, Sir — we are
+left, as ever, to our own devices."
 
-```html
+---
+
+### Step 3 (both branches) — sign-off and closing tags
+
+After Branch A or Branch B (whichever you wrote), output exactly this block:
+
 <div class="signoff">
   <p>Your reluctantly faithful Butler,<br/>Jeeves</p>
 </div>
@@ -916,10 +963,9 @@ the content above:
 </div>
 </body>
 </html>
-```
 
 The `<!-- COVERAGE_LOG_PLACEHOLDER -->` is intentional — the post-processor
-fills it by scanning anchor tags across the full stitched document.
+fills it. Do NOT replace it with actual URLs. Do NOT write a second one.
 """
 
 PART_INSTRUCTIONS_BY_NAME: dict[str, str] = {
@@ -2030,27 +2076,67 @@ COVERAGE_LOG_RE = re.compile(
 def _ensure_coverage_log(
     html: str, session: SessionModel
 ) -> tuple[str, list[dict[str, Any]]]:
-    """Find an existing COVERAGE_LOG comment or synthesize one from the HTML anchors."""
+    """Guarantee exactly one COVERAGE_LOG comment and no stray PLACEHOLDER.
 
+    Priority:
+    1. Synthesize from actual <a href> anchors in the HTML (ground truth —
+       catches the case where the model writes multiple partial logs or logs
+       with fabricated/empty URLs).
+    2. Fall back to the first valid model-written COVERAGE_LOG comment only
+       when synthesis yields nothing (e.g. dry-run fixture with no anchors).
+
+    Invariants on return:
+    - Exactly ONE <!-- COVERAGE_LOG: [...] --> in the HTML.
+    - No <!-- COVERAGE_LOG_PLACEHOLDER --> remaining.
+    """
+
+    # Step 1: synthesize from real anchor tags.
+    synthesized = _synthesize_coverage_log(html, session)
+
+    if synthesized:
+        # Anchors are ground truth. Remove all model-written COVERAGE_LOG
+        # comments (may be 0, 1, or 2 — the model sometimes writes partials),
+        # strip any remaining PLACEHOLDER, then insert the synthesized log.
+        html = COVERAGE_LOG_RE.sub("", html)
+        comment = f"<!-- COVERAGE_LOG: {_safe_json_for_comment(synthesized)} -->"
+        if "<!-- COVERAGE_LOG_PLACEHOLDER -->" in html:
+            html = html.replace("<!-- COVERAGE_LOG_PLACEHOLDER -->", comment)
+        elif "</body>" in html:
+            html = html.replace("</body>", f"{comment}\n</body>")
+        else:
+            html = html.rstrip() + "\n" + comment + "\n"
+        return html, synthesized
+
+    # Step 2: no real anchors found — fall back to the model-written log if valid.
     m = COVERAGE_LOG_RE.search(html)
     if m:
         try:
             coverage = json.loads(m.group(1))
             if isinstance(coverage, list):
+                # Remove any duplicate COVERAGE_LOG entries beyond the first.
+                html = COVERAGE_LOG_RE.sub("", html, count=0)  # strip ALL
+                comment = f"<!-- COVERAGE_LOG: {_safe_json_for_comment(coverage)} -->"
+                if "<!-- COVERAGE_LOG_PLACEHOLDER -->" in html:
+                    html = html.replace("<!-- COVERAGE_LOG_PLACEHOLDER -->", comment)
+                elif "</body>" in html:
+                    html = html.replace("</body>", f"{comment}\n</body>")
+                else:
+                    html = html.rstrip() + "\n" + comment + "\n"
                 return html, coverage
         except json.JSONDecodeError:
-            log.warning("COVERAGE_LOG JSON invalid; rebuilding.")
+            log.warning("COVERAGE_LOG JSON invalid; using empty coverage list.")
 
-    # No valid log — synthesize from anchor tags present in the body.
-    synthesized = _synthesize_coverage_log(html, session)
-    comment = f"<!-- COVERAGE_LOG: {_safe_json_for_comment(synthesized)} -->"
+    # Step 3: nothing usable — write an empty log.
+    html = COVERAGE_LOG_RE.sub("", html)
+    coverage_empty: list[dict[str, Any]] = []
+    comment = f"<!-- COVERAGE_LOG: {_safe_json_for_comment(coverage_empty)} -->"
     if "<!-- COVERAGE_LOG_PLACEHOLDER -->" in html:
         html = html.replace("<!-- COVERAGE_LOG_PLACEHOLDER -->", comment)
     elif "</body>" in html:
         html = html.replace("</body>", f"{comment}\n</body>")
     else:
         html = html.rstrip() + "\n" + comment + "\n"
-    return html, synthesized
+    return html, coverage_empty
 
 
 def _synthesize_coverage_log(

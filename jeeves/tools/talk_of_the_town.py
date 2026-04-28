@@ -208,6 +208,15 @@ def fetch_talk_of_the_town(covered_urls: set[str]):
 
         paths = _extract_paths(toc_html)
         if not paths:
+            # New Yorker's TOC is often JS-rendered; the raw HTML contains no
+            # article links. Try Jina AI reader which processes client-side JS.
+            log.debug("raw TOC yielded no paths; trying Jina reader for %s", TOC_URL)
+            try:
+                jina_toc = _jina_fetch(TOC_URL)
+                paths = _extract_paths(jina_toc)
+            except Exception as jina_err:
+                log.debug("Jina TOC fetch failed: %s", jina_err)
+        if not paths:
             base["error"] = "toc_no_paths_found"
             return _json.dumps(base)
 
