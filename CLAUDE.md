@@ -59,13 +59,14 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - **All phases live on `main`** (Phases 2, 3, 4 fully wired). Cron: correspondence `0 12`, research `30 12`, write `40 13`.
 - **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run.
 
-### Fourth research debug sprint (PR #50) — what was fixed
+### Fourth research debug sprint (PRs #50–#51) — what was fixed
 
 | PR | Problem | Fix |
 |---|---|---|
 | #50 | All sectors still failing after PR #48 — `_normalize_tool_kwargs` never ran | `FunctionAgent` uses `streaming=True` → calls `astream_chat_with_tools`, not `achat_with_tools`. Added `astream_chat_with_tools` override to `KimiNVIDIA`. |
 | #50 | `local_news`/`enriched_articles` "Unterminated string" from `fetch_article_text` returning dict | `fetch_article_text` now returns `json.dumps(base)` at all exits (str, not dict) |
 | #50 | ALL sectors risk "Unterminated string" from serper/tavily/exa returning dicts | `serper.py`, `tavily.py` (search+extract), `exa.py` success and error paths now return `json.dumps(...)` |
+| #51 | `global_news`/any Gemini-using sector "Unterminated string" from `gemini_grounded` returning dict | `gemini_grounded.py` all exit paths (cap hit, 429, API error, success) now return `json.dumps(...)`. Added empty-question guard. |
 
 ### Third research debug sprint (PRs #48–#49) — what was fixed
 
