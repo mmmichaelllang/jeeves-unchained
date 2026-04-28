@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 from typing import Any
 
@@ -16,13 +17,16 @@ def make_tavily_search(cfg: Config, ledger: QuotaLedger):
         query: str = "",
         max_results: int = 8,
         depth: str = "basic",
-    ) -> dict[str, Any]:
+    ) -> str:
         """Tavily AI-native search with an optional synthesized answer.
 
         Args:
             query: question or keyword string (required — must be a non-empty string).
             max_results: max results to return.
             depth: 'basic' (1 credit) or 'advanced' (2 credits).
+
+        Returns a JSON string so LlamaIndex's _parse_tool_output() produces valid
+        JSON in the NIM context rather than Python repr with single quotes.
         """
         if not (query or "").strip():
             log.warning("tavily_search called with empty query — returning error string")
@@ -42,7 +46,7 @@ def make_tavily_search(cfg: Config, ledger: QuotaLedger):
             )
         except Exception as e:
             log.warning("tavily search error: %s", e)
-            return {"provider": "tavily", "error": str(e), "results": []}
+            return json.dumps({"provider": "tavily", "error": str(e), "results": []})
 
         ledger.record("tavily", 2 if depth == "advanced" else 1)
         results = [
@@ -57,22 +61,25 @@ def make_tavily_search(cfg: Config, ledger: QuotaLedger):
             }
             for r in (resp.get("results") or [])
         ]
-        return {
+        return json.dumps({
             "provider": "tavily",
             "query": query,
             "answer": resp.get("answer", ""),
             "results": results,
-        }
+        })
 
     return tavily_search
 
 
 def make_tavily_extract(cfg: Config, ledger: QuotaLedger):
-    def tavily_extract(urls: list[str]) -> Any:
+    def tavily_extract(urls: list[str]) -> str:
         """Extract clean article text for up to 10 URLs via Tavily.
 
         Each result's `text` is capped at 2500 chars so the FunctionAgent's
         context window doesn't fill from a single extraction turn.
+
+        Returns a JSON string so LlamaIndex's _parse_tool_output() produces valid
+        JSON in the NIM context rather than Python repr with single quotes.
         """
         if not urls:
             return (
@@ -87,7 +94,7 @@ def make_tavily_extract(cfg: Config, ledger: QuotaLedger):
             resp = client.extract(urls=urls)
         except Exception as e:
             log.warning("tavily extract error: %s", e)
-            return {"provider": "tavily", "error": str(e), "results": []}
+            return json.dumps({"provider": "tavily", "error": str(e), "results": []})
 
         ledger.record("tavily", len(urls))
         results = []
@@ -102,7 +109,7 @@ def make_tavily_extract(cfg: Config, ledger: QuotaLedger):
                     "source": _host(r.get("url", "")),
                 }
             )
-        return {"provider": "tavily", "results": results}
+        return json.dumps({"provider": "tavily", "results": results})
 
     return tavily_extract
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 from typing import Any
 
@@ -16,13 +17,16 @@ ENDPOINT = "https://google.serper.dev/search"
 
 
 def make_serper_search(cfg: Config, ledger: QuotaLedger):
-    def serper_search(query: str = "", num: int = 10, tbs: str | None = None) -> Any:
+    def serper_search(query: str = "", num: int = 10, tbs: str | None = None) -> str:
         """Google SERP via Serper.dev.
 
         Args:
             query: search query (required — must be a non-empty string).
             num: number of organic results to return (max ~100).
             tbs: Google TBS filter, e.g. 'qdr:d' (last day), 'qdr:w' (last week).
+
+        Returns a JSON string so LlamaIndex's _parse_tool_output() produces valid
+        JSON in the NIM context rather than Python repr with single quotes.
         """
         if not (query or "").strip():
             log.warning("serper_search called with empty query — returning error string")
@@ -41,7 +45,7 @@ def make_serper_search(cfg: Config, ledger: QuotaLedger):
             data = r.json()
         except Exception as e:
             log.warning("serper error: %s", e)
-            return {"provider": "serper", "error": str(e), "results": []}
+            return json.dumps({"provider": "serper", "error": str(e), "results": []})
 
         ledger.record("serper", 1)
         organic = data.get("organic") or []
@@ -56,6 +60,6 @@ def make_serper_search(cfg: Config, ledger: QuotaLedger):
             }
             for o in organic
         ]
-        return {"provider": "serper", "query": query, "results": results}
+        return json.dumps({"provider": "serper", "query": query, "results": results})
 
     return serper_search

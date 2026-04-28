@@ -93,6 +93,16 @@ def _build_kimi_class():
                         kept.append(tc)
                     msg.additional_kwargs["tool_calls"] = kept
 
+        async def astream_chat_with_tools(self, tools, user_msg=None, chat_history=None, **kwargs):
+            # FunctionAgent.take_step() always uses streaming=True (BaseWorkflowAgent default),
+            # so it calls astream_chat_with_tools — NOT achat_with_tools. This is the only
+            # method that actually runs before each NIM request in production.
+            if chat_history:
+                self._normalize_tool_kwargs(chat_history)
+            return await super().astream_chat_with_tools(
+                tools, user_msg=user_msg, chat_history=chat_history, **kwargs
+            )
+
         async def achat_with_tools(self, tools, user_msg=None, chat_history=None, **kwargs):
             if chat_history:
                 self._normalize_tool_kwargs(chat_history)
