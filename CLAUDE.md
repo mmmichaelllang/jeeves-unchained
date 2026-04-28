@@ -10,7 +10,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Current focus
 
-**Phase 2 (research) — fourth debug sprint in progress (PR #50, 2026-04-28).** Comprehensive fix: `astream_chat_with_tools` override (FunctionAgent ALWAYS uses streaming path, so previous `achat_with_tools` override was dead code), plus all search tools now return `json.dumps()` strings instead of Python dicts.
+**Phase 2/4 — fifth forensic sprint complete (PR #53, 2026-04-28).** Security + correctness cleanup: HTML injection fix in `render_mock_correspondence`, pagination fix in `list_message_ids`, dead code removal (`parse_rfc2822_date`). All 150 tests green.
 
 **Research architecture (as of 2026-04-28, post PRs #43–#46):**
 - Sequential sector execution (`_SECTOR_SEMAPHORE=1`) — NIM free tier can't handle concurrent Kimi agents.
@@ -36,7 +36,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - **Gemini daily cap**: `DAILY_HARD_CAPS["gemini_grounded"] = 12` (corrected from 1490 which assumed paid Search Grounding tier; actual free-tier limit is 20 generate_content RPD for gemini-2.5-flash). On a 429 response, `gemini_grounded.py` immediately exhausts the daily counter so subsequent sectors skip Gemini automatically.
 - `family` instruction has 3 explicit mandatory parallel searches with specific query strings.
 - **All search tools return JSON strings (PR #50)**: `serper.py`, `tavily.py`, `exa.py`, `enrichment.py` now return `json.dumps(...)` at all exit points (success and error). This prevents LlamaIndex's `str(dict)` Python-repr conversion from producing single-quoted strings that NIM cannot parse. The empty-query guards already returned plain strings; now SUCCESS paths do too.
-- **138 tests** across `tests/test_write_postprocess.py`, `tests/test_research_sectors.py`, and `tests/test_llm_factories.py` (8 `_normalize_tool_kwargs` tests + 2 `astream_chat_with_tools` tests added in PR #50).
+- **150 tests** across `tests/test_write_postprocess.py`, `tests/test_research_sectors.py`, `tests/test_llm_factories.py`, and `tests/test_correspondence.py` (added in PRs #50–#53).
 
 **Phase 3 (write) — three-model pipeline: 9 sequential Groq drafts + 9 concurrent NIM quality-editor passes + 1 OpenRouter Gemma 4 final narrative editor.** Per user direction: safety and quality over speed. Wall-clock ~10m 30s (Groq path) or ~9–13m (NIM-fallback path).
 
@@ -55,9 +55,19 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Where we left off (2026-04-28)
 
-- **PRs #43–#49, all merged. PR #50 open** (fourth debug sprint: streaming path fix + all tools return JSON strings).
+- **PRs #43–#52, all merged. PR #53 open** (fifth forensic sprint: HTML injection fix, pagination fix, dead code removal).
 - **All phases live on `main`** (Phases 2, 3, 4 fully wired). Cron: correspondence `0 12`, research `30 12`, write `40 13`.
 - **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run.
+- **150 tests green** as of this sprint.
+
+### Fifth forensic sprint (PR #53) — what was fixed
+
+| PR | Problem | Fix |
+|---|---|---|
+| #53 | `render_mock_correspondence` inserts Gmail sender/summary directly into HTML without escaping — XSS/injection if attacker-controlled email arrives | `html.escape()` applied to `c.sender`, `c.summary`, `c.classification` |
+| #53 | `list_message_ids` breaks on empty batch even when `nextPageToken` exists — could miss messages at page boundaries | Removed `or not batch` from break condition; now breaks only on absent `nextPageToken` |
+| #53 | `parse_rfc2822_date` dead code in `gmail.py` — never called anywhere in the codebase | Removed function and unused `datetime` import |
+| #53 | No regression test for HTML escaping in mock renderer | Added `test_render_mock_correspondence_escapes_html_in_user_fields` |
 
 ### Fourth research debug sprint (PRs #50–#51) — what was fixed
 
@@ -105,7 +115,8 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Dev branch
 
-- **Current**: `claude/update-claude-debug-sprint-0BsjF` (PR #50 open — streaming path fix + all tools JSON string returns)
+- **Current**: `claude/forensic-fixes-sprint6` (PR #53 open — HTML injection fix, pagination fix, dead code removal)
+- Prior sprint: `claude/fix-gemini-json-return-sprint5` (PRs #50–#52 all merged)
 - Prior sprint: `claude/fix-jeeves-research-workflow-Jo1u5` (PRs #43–#49 all merged)
 - Prior major work: `claude/improve-dedup-triadic-studies-rEgcE` (#34), `claude/never-empty-news-fallbacks-rEgcE` (#33), `claude/forensic-audit-fixes-rEgcE` (#32)
 
