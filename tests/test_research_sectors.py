@@ -8,6 +8,7 @@ from jeeves.research_sectors import (
     SECTOR_SPECS,
     _NO_QUOTA_CHECK,
     _build_user_prompt,
+    _is_redirect_artifact,
     _is_retryable_network_error,
     _parse_sector_output,
     _quota_increased,
@@ -167,6 +168,29 @@ def test_sector_specs_cover_every_researched_session_field():
     )
 
 
+def test_intellectual_journals_instruction_has_three_parallel_searches():
+    """intellectual_journals must mandate 3 parallel exa calls covering different outlet groups."""
+    spec = _spec("intellectual_journals")
+    assert "LRB" in spec.instruction and "Aeon" in spec.instruction
+    assert "NYRB" in spec.instruction and "ProPublica" in spec.instruction
+    assert "Marginalian" in spec.instruction or "Big Think" in spec.instruction
+    # At least 3 numbered parallel dispatch lines
+    assert spec.instruction.count("exa_search(") >= 3
+
+
+def test_global_news_instruction_has_diversity_requirement():
+    """global_news must require BBC/Guardian/Al Jazeera diversity."""
+    spec = _spec("global_news")
+    assert "BBC" in spec.instruction
+    assert "Guardian" in spec.instruction or "Al Jazeera" in spec.instruction
+
+
+def test_global_news_instruction_bans_redirect_urls():
+    """global_news must explicitly warn against vertexaisearch redirect URLs."""
+    spec = _spec("global_news")
+    assert "vertexaisearch" in spec.instruction
+
+
 def test_career_instruction_includes_deadline_and_salary_range():
     """Career sector instruction must request deadline and salary_range fields."""
     career_spec = _spec("career")
@@ -279,6 +303,40 @@ def test_load_prior_sessions_returns_list(tmp_path):
     assert len(result) == 2
     assert result[0].date == (run_date - timedelta(days=1)).isoformat()
     assert result[1].date == (run_date - timedelta(days=2)).isoformat()
+
+
+def test_is_redirect_artifact_identifies_vertexaisearch():
+    """vertexaisearch.cloud.google.com URLs are redirect artifacts."""
+    url = "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYX123"
+    assert _is_redirect_artifact(url) is True
+
+
+def test_is_redirect_artifact_allows_real_urls():
+    assert _is_redirect_artifact("https://www.reuters.com/world/story") is False
+    assert _is_redirect_artifact("https://www.theguardian.com/article") is False
+
+
+def test_collect_urls_filters_redirect_artifacts():
+    """vertexaisearch redirect URLs must not enter the covered_urls dedup window."""
+    value = [
+        {
+            "source": "Gemini",
+            "findings": "Iran war update.",
+            "urls": [
+                "https://vertexaisearch.cloud.google.com/grounding-api-redirect/ABC123",
+                "https://www.reuters.com/world/middle-east/iran-story",
+            ],
+        }
+    ]
+    urls = collect_urls_from_sector(value)
+    assert "https://www.reuters.com/world/middle-east/iran-story" in urls
+    assert not any("vertexaisearch" in u for u in urls)
+
+
+def test_collect_urls_filters_redirect_artifacts_single_url_key():
+    """Single 'url' key redirect artifacts are also filtered."""
+    value = {"url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/XYZ"}
+    assert collect_urls_from_sector(value) == []
 
 
 # ---------------------------------------------------------------------------
