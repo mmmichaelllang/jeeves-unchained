@@ -1,4 +1,29 @@
-"""New Yorker 'Talk of the Town' fetcher. Ported from jeeves-memory."""
+"""New Yorker 'Talk of the Town' fetcher. Ported from jeeves-memory.
+
+Article-discovery priority (newest → oldest uncovered):
+  1. RSS feed  (stdlib XML, JS-free, authoritative)
+  2. Raw HTML TOC scrape
+  3. Jina AI reader TOC
+
+Per-article text-fetch priority (tried for each novel URL, newest first):
+  A. Direct HTTP → ld+json articleBody
+  B. Direct HTTP → Jina AI reader
+  C. Direct HTTP → raw <p> extraction
+  D. Wayback Machine (CDX API, up to _MAX_WAYBACK_SNAPSHOTS newest status:200 captures)
+     → ld+json → raw <p> (Wayback captures SSR HTML with full articleBody even for
+       soft-paywalled pages because the paywall is client-side JS only)
+  E. archive.ph/newest/ lookup → ld+json → raw <p>
+
+  On failure for a URL the loop continues to the next novel URL (newest first).
+  Up to _MAX_NOVEL_URLS articles are tried before returning available:false.
+
+  Dedup: base["url"] is always the canonical newyorker.com URL so it feeds
+  correctly into the session dedup ledger. base["archived_from"] records
+  provenance ("" | "wayback" | "archiveph") for logging/diagnostics.
+
+  Unpaywall (unpaywall.org) was researched and ruled out: it only covers
+  academic papers with DOIs. New Yorker articles have neither.
+"""
 
 from __future__ import annotations
 
@@ -9,6 +34,7 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from html import unescape
 from typing import Any
+from urllib.parse import quote, urlparse
 
 log = logging.getLogger(__name__)
 
@@ -32,6 +58,19 @@ LD_JSON_RE = re.compile(
 )
 JINA_BASE = "https://r.jina.ai/"
 
+_WAYBACK_CDX_URL = "https://web.archive.org/cdx/search/cdx"
+_WAYBACK_BASE = "https://web.archive.org/web"
+# All known mirror domains for archive.ph / archive.today.
+_ARCHIVEPH_DOMAINS = frozenset(
+    {"archive.ph", "archive.today", "archive.is", "archive.fo", "archive.li", "archive.vn"}
+)
+
+# Max novel articles to attempt before giving up.  Prevents runaway latency when
+# all recent articles are behind a hard paywall or lack Wayback snapshots.
+_MAX_NOVEL_URLS = 5
+# Max Wayback snapshots to try per article (newest first).
+_MAX_WAYBACK_SNAPSHOTS = 3
+
 # Content stop markers: everything after these lines belongs to the footer.
 _CONTENT_STOP_MARKERS = (
     "Published in the print edition",
@@ -42,6 +81,10 @@ _CONTENT_STOP_MARKERS = (
     "© 20",  # © 20xx copyright line
 )
 
+
+# ---------------------------------------------------------------------------
+# Low-level HTTP helpers
+# ---------------------------------------------------------------------------
 
 def _http_get(url: str, timeout: int = 20) -> str:
     req = urllib.request.Request(url, headers=HEADERS)
@@ -67,6 +110,10 @@ def _jina_fetch(url: str, timeout: int = 30, api_key: str = "") -> str:
         return r.read().decode("utf-8", errors="replace")
 
 
+# ---------------------------------------------------------------------------
+# Discovery helpers
+# ---------------------------------------------------------------------------
+
 def _discover_from_rss(timeout: int = 15) -> list[tuple[int, str]]:
     """Discover TOTT article URLs from the RSS feed (stdlib, JS-free).
 
@@ -87,7 +134,6 @@ def _discover_from_rss(timeout: int = 15) -> list[tuple[int, str]]:
         return []
 
     results: dict[str, int] = {}
-    # RSS 2.0: items are under <channel><item>
     for item in root.iter("item"):
         link_el = item.find("link")
         if link_el is None or not link_el.text:
@@ -104,54 +150,6 @@ def _discover_from_rss(timeout: int = 15) -> list[tuple[int, str]]:
     return sorted(((dk, u) for u, dk in results.items()), key=lambda kv: kv[0], reverse=True)
 
 
-def _clean_jina_text(text: str) -> str:
-    """Strip Jina metadata, nav boilerplate, credits, and markdown noise."""
-    # Strip Jina header lines (Title:, URL:, Published Time:)
-    text = re.sub(r"^(Title|URL|Published Time|Source URL):.*\n", "", text, flags=re.MULTILINE)
-
-    # Hard stop at footer markers
-    for marker in _CONTENT_STOP_MARKERS:
-        idx = text.find(marker)
-        if idx != -1:
-            text = text[:idx]
-
-    # Remove photo / illustration / cartoon credits
-    text = re.sub(
-        r"(?:Photograph|Illustration|Cartoon|Image)s?\s+by\s+[^\n]+\n?",
-        "",
-        text,
-        flags=re.IGNORECASE,
-    )
-
-    # Remove newsletter signup boilerplate
-    text = re.sub(
-        r"By signing up,[\s\S]*?privacy policy\.?",
-        "",
-        text,
-        flags=re.IGNORECASE,
-    )
-
-    # Remove inline images: ![alt](url) → ''
-    text = re.sub(r"!\[[^\]]*\]\([^\)]*\)", "", text)
-
-    # Unlink remaining markdown links: [text](url) → text
-    text = re.sub(r"\[([^\]]+)\]\([^\)]+\)", r"\1", text)
-
-    # Strip bold/italic markers
-    text = re.sub(r"\*\*|__", "", text)
-    text = re.sub(r"(?<!\w)_([^_\n]+)_(?!\w)", r"\1", text)
-
-    # Strip markdown headers and horizontal rules
-    text = re.sub(r"^#{1,6}\s+", "", text, flags=re.MULTILINE)
-    text = re.sub(r"^[-=]{3,}$", "", text, flags=re.MULTILINE)
-
-    # Normalise whitespace
-    text = re.sub(r"[ \t]+\n", "\n", text)
-    text = re.sub(r"\n{3,}", "\n\n", text)
-
-    return text.strip()
-
-
 def _extract_paths(toc_html: str) -> list[tuple[int, str]]:
     seen: dict[str, int] = {}
     for m in ARTICLE_PATH_RE.finditer(toc_html):
@@ -162,12 +160,45 @@ def _extract_paths(toc_html: str) -> list[tuple[int, str]]:
     return sorted(((dk, u) for u, dk in seen.items()), key=lambda kv: kv[0], reverse=True)
 
 
-def _pick_novel(paths: list[tuple[int, str]], covered: set[str]) -> str | None:
+def _novel_urls_sorted(paths: list[tuple[int, str]], covered: set[str]) -> list[str]:
+    """Return all uncovered article URLs, preserving newest-first order from paths.
+
+    Replaces the old _pick_novel() single-result function so the main loop can
+    work backwards through time when earlier articles fail all fetch strategies.
+    """
     covered_norm = {c.rstrip("/") for c in covered}
-    for _, url in paths:
-        if url.rstrip("/") not in covered_norm:
-            return url
-    return None
+    return [url for _, url in paths if url.rstrip("/") not in covered_norm]
+
+
+# ---------------------------------------------------------------------------
+# Text extraction helpers
+# ---------------------------------------------------------------------------
+
+def _clean_jina_text(text: str) -> str:
+    """Strip Jina metadata, nav boilerplate, credits, and markdown noise."""
+    text = re.sub(r"^(Title|URL|Published Time|Source URL):.*\n", "", text, flags=re.MULTILINE)
+
+    for marker in _CONTENT_STOP_MARKERS:
+        idx = text.find(marker)
+        if idx != -1:
+            text = text[:idx]
+
+    text = re.sub(
+        r"(?:Photograph|Illustration|Cartoon|Image)s?\s+by\s+[^\n]+\n?",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+    text = re.sub(r"By signing up,[\s\S]*?privacy policy\.?", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"!\[[^\]]*\]\([^\)]*\)", "", text)
+    text = re.sub(r"\[([^\]]+)\]\([^\)]+\)", r"\1", text)
+    text = re.sub(r"\*\*|__", "", text)
+    text = re.sub(r"(?<!\w)_([^_\n]+)_(?!\w)", r"\1", text)
+    text = re.sub(r"^#{1,6}\s+", "", text, flags=re.MULTILINE)
+    text = re.sub(r"^[-=]{3,}$", "", text, flags=re.MULTILINE)
+    text = re.sub(r"[ \t]+\n", "\n", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
 
 
 def _load_ld(html: str) -> dict | None:
@@ -214,22 +245,265 @@ def _fallback_paragraphs(html: str) -> str:
     return "\n\n".join(out)
 
 
+def _fill_meta_from_ld(html: str, base: dict) -> None:
+    """Populate title/section/dek/byline/date from ld+json into base (in-place).
+
+    Only fills fields that are currently empty so earlier successful fetches
+    are not overwritten by later fallback attempts.
+    """
+    article = _load_ld(html)
+    if not article:
+        return
+    if not base.get("title"):
+        base["title"] = article.get("headline", "") or ""
+    if not base.get("section"):
+        base["section"] = article.get("articleSection", "") or ""
+    if not base.get("dek"):
+        base["dek"] = article.get("alternativeHeadline", "") or ""
+    if not base.get("byline"):
+        base["byline"] = _extract_byline(article.get("author"))
+    if not base.get("date"):
+        base["date"] = article.get("datePublished", "") or ""
+
+
+# ---------------------------------------------------------------------------
+# Archive lookup helpers
+# ---------------------------------------------------------------------------
+
+def _wayback_snapshot_urls(article_url: str, n: int = _MAX_WAYBACK_SNAPSHOTS, timeout: int = 10) -> list[str]:
+    """Return up to n most-recent Wayback status:200 snapshot URLs for article_url.
+
+    Uses the CDX API (no key required). Returns an empty list on any error so
+    callers can chain gracefully.
+
+    The `if_` modifier on the returned URLs instructs Wayback to serve the
+    original archived HTML without injecting the Wayback toolbar banner,
+    which gives cleaner HTML for ld+json and paragraph extraction.
+
+    Why New Yorker SSR snapshots have full text: the New Yorker uses a
+    client-side JS paywall. The server renders the full article HTML
+    (including ld+json with articleBody) for SEO/crawlers. Wayback captures
+    this SSR output, so snapshots typically contain the full article text
+    regardless of the live paywall status.
+    """
+    cdx = (
+        f"{_WAYBACK_CDX_URL}"
+        f"?url={quote(article_url, safe='')}"
+        f"&output=json&fl=timestamp&filter=statuscode:200"
+        f"&limit=-{n}&matchType=exact"
+    )
+    try:
+        req = urllib.request.Request(cdx, headers={"User-Agent": UA})
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            data = json.loads(r.read().decode("utf-8"))
+    except Exception as e:
+        log.debug("CDX query failed for %s: %s", article_url, e)
+        return []
+
+    # data[0] is always the header row ['timestamp']; data[1..] are capture rows.
+    if len(data) < 2:
+        return []
+
+    # CDX returns rows oldest-first; limit=-n gives the last n (most recent).
+    # Reverse so we try newest first, consistent with the "most recent first"
+    # requirement.
+    snapshots = []
+    for row in reversed(data[1:]):
+        ts = row[0]
+        snapshots.append(f"{_WAYBACK_BASE}/{ts}if_/{article_url}")
+    return snapshots
+
+
+def _archiveph_snapshot_url(article_url: str, timeout: int = 15) -> str | None:
+    """Return the archive.ph snapshot URL for article_url, or None if not found.
+
+    Queries `archive.ph/newest/{url}`, which redirects (HTTP 302) to
+    `archive.ph/{hash}` when a snapshot exists.  urllib follows the redirect
+    automatically; we check the final URL's path to confirm it's a snapshot
+    (short alphanumeric hash) rather than the submission/search form page.
+
+    Mirror domains (archive.today, archive.is, etc.) are all accepted.
+    """
+    lookup = f"https://archive.ph/newest/{article_url}"
+    req = urllib.request.Request(
+        lookup,
+        headers={**HEADERS, "Accept": "text/html,application/xhtml+xml"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            final_url = r.url
+    except Exception as e:
+        log.debug("archive.ph lookup failed for %s: %s", article_url, e)
+        return None
+
+    # Snapshot redirect lands on archive.ph/{hash} where hash is a short
+    # alphanumeric string (typically 5-7 chars).  Form / search pages have
+    # longer or slash-separated paths.
+    parsed = urlparse(final_url)
+    if parsed.netloc not in _ARCHIVEPH_DOMAINS:
+        return None
+    path_segment = parsed.path.strip("/")
+    if re.match(r"^[A-Za-z0-9]{3,12}$", path_segment):
+        return final_url
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Per-article fetch strategies
+# ---------------------------------------------------------------------------
+
+def _try_direct(url: str, jina_api_key: str, base: dict) -> bool:
+    """Attempt direct HTTP fetch of the live article page.
+
+    Tries: ld+json articleBody → Jina AI reader → raw <p> extraction.
+    Returns True and populates base on success; False otherwise.
+    """
+    try:
+        html = _http_get(url)
+    except Exception as e:
+        log.debug("direct HTTP fetch failed for %s: %s", url, e)
+        return False
+
+    _fill_meta_from_ld(html, base)
+    article = _load_ld(html)
+    if article:
+        body = article.get("articleBody", "") or ""
+        if len(body) > 500:
+            base["text"] = body
+            base["available"] = True
+            base["archived_from"] = ""
+            return True
+
+    # Jina AI reader on the original URL (handles JS-rendered paywall pages).
+    try:
+        raw_jina = _jina_fetch(url, api_key=jina_api_key)
+        jina_text = _clean_jina_text(raw_jina)
+        if len(jina_text) > 500:
+            if not base.get("title"):
+                m = re.search(r"^Title:\s*(.+)$", raw_jina, re.MULTILINE)
+                if m:
+                    base["title"] = m.group(1).strip()
+            base["text"] = jina_text
+            base["available"] = True
+            base["archived_from"] = ""
+            return True
+    except Exception as e:
+        log.debug("Jina fetch failed for %s: %s", url, e)
+
+    # Raw paragraph extraction from the HTML we already have.
+    text = _fallback_paragraphs(html)
+    if not base.get("title"):
+        m = re.search(r"<title>(.*?)</title>", html, re.DOTALL)
+        if m:
+            base["title"] = unescape(re.sub(r"\s+", " ", m.group(1))).strip()
+    if len(text) > 500:
+        base["text"] = text
+        base["available"] = True
+        base["archived_from"] = ""
+        return True
+
+    return False
+
+
+def _try_wayback(article_url: str, base: dict) -> bool:
+    """Attempt text extraction from Wayback Machine snapshots.
+
+    Iterates up to _MAX_WAYBACK_SNAPSHOTS captures newest-first.  For each:
+      ld+json articleBody (usually present in SSR snapshot) → raw <p>.
+    Does NOT call Jina on Wayback URLs — Jina cannot meaningfully process
+    archive.org proxy URLs, and ld+json is nearly always sufficient here.
+
+    Returns True and populates base on success; False otherwise.
+    """
+    snapshots = _wayback_snapshot_urls(article_url)
+    if not snapshots:
+        log.debug("Wayback: no status:200 snapshots found for %s", article_url)
+        return False
+
+    for snap_url in snapshots:
+        try:
+            html = _http_get(snap_url, timeout=25)
+        except Exception as e:
+            log.debug("Wayback fetch failed for %s: %s", snap_url, e)
+            continue
+
+        _fill_meta_from_ld(html, base)
+        article = _load_ld(html)
+        text = ""
+        if article:
+            text = article.get("articleBody", "") or ""
+        if len(text) < 500:
+            text = _fallback_paragraphs(html)
+        if len(text) > 500:
+            base["text"] = text
+            base["available"] = True
+            base["archived_from"] = "wayback"
+            log.info("TOTT: text retrieved from Wayback snapshot %s", snap_url)
+            return True
+
+        log.debug(
+            "Wayback snapshot %s: insufficient text (%d chars), trying next",
+            snap_url, len(text),
+        )
+
+    return False
+
+
+def _try_archiveph(article_url: str, base: dict) -> bool:
+    """Attempt text extraction from an archive.ph snapshot.
+
+    Returns True and populates base on success; False otherwise.
+    """
+    snap_url = _archiveph_snapshot_url(article_url)
+    if not snap_url:
+        log.debug("archive.ph: no snapshot found for %s", article_url)
+        return False
+
+    try:
+        html = _http_get(snap_url, timeout=20)
+    except Exception as e:
+        log.debug("archive.ph page fetch failed for %s: %s", snap_url, e)
+        return False
+
+    _fill_meta_from_ld(html, base)
+    article = _load_ld(html)
+    text = ""
+    if article:
+        text = article.get("articleBody", "") or ""
+    if len(text) < 500:
+        text = _fallback_paragraphs(html)
+    if len(text) > 500:
+        base["text"] = text
+        base["available"] = True
+        base["archived_from"] = "archiveph"
+        log.info("TOTT: text retrieved from archive.ph snapshot %s", snap_url)
+        return True
+
+    return False
+
+
+# ---------------------------------------------------------------------------
+# Public closure
+# ---------------------------------------------------------------------------
+
 def fetch_talk_of_the_town(covered_urls: set[str], jina_api_key: str = ""):
-    """Closure capturing the covered-URL set so the tool takes no args."""
+    """Closure capturing the covered-URL set so the tool takes no args.
+
+    Tries up to _MAX_NOVEL_URLS uncovered articles, newest first.
+    For each article all fetch strategies are tried in order:
+      direct (ld+json → Jina → raw HTML) → Wayback (newest snapshot first) → archive.ph
+
+    Dedup contract:
+      - base["url"] is ALWAYS the canonical newyorker.com URL (not an archive URL)
+        so it feeds correctly into the session dedup ledger.
+      - base["archived_from"] records provenance for logging ("" | "wayback" | "archiveph").
+      - The returned URL will be collected by collect_urls_from_sector() and added to
+        session["dedup"]["covered_urls"], preventing the same article from being
+        fetched again in future sessions.
+    """
 
     def _run() -> str:
-        """Fetch the latest 'Talk of the Town' article not already covered.
-
-        Returns a JSON-encoded string so LlamaIndex's _parse_tool_output()
-        produces TextBlock(text=<valid-JSON>) rather than TextBlock(text=str(dict))
-        which yields Python repr with single quotes that NIM cannot parse.
-
-        Fetch priority:
-          1. ld+json articleBody (structured data, cleanest)
-          2. Jina AI reader (r.jina.ai — clean markdown, no HTML noise)
-          3. Raw HTML <p> extraction (last resort)
-        """
-        import json as _json
+        """Try to fetch the latest uncovered TOTT article and return JSON."""
 
         base: dict[str, Any] = {
             "available": False,
@@ -241,12 +515,12 @@ def fetch_talk_of_the_town(covered_urls: set[str], jina_api_key: str = ""):
             "text": "",
             "url": "",
             "source": "The New Yorker",
+            "archived_from": "",
             "error": None,
         }
-        # Discovery priority:
-        # 1. RSS feed — stdlib XML, JS-free, most reliable.
-        # 2. Raw HTML TOC — fast but often empty (JS-rendered page).
-        # 3. Jina TOC reader — processes JS, but free tier is rate-limited.
+
+        # ----- 1. Discover article URLs -----
+        # Priority: RSS (JS-free, reliable) → raw HTML TOC → Jina TOC.
         paths = _discover_from_rss()
         if paths:
             log.debug("RSS discovery: %d TOTT URLs found", len(paths))
@@ -258,7 +532,7 @@ def fetch_talk_of_the_town(covered_urls: set[str], jina_api_key: str = ""):
             except Exception as e:
                 log.debug("raw TOC fetch failed: %s", e)
             if not paths:
-                log.debug("raw TOC yielded no paths; trying Jina reader for %s", TOC_URL)
+                log.debug("raw TOC yielded no paths; trying Jina reader for TOC")
                 try:
                     jina_toc = _jina_fetch(TOC_URL, api_key=jina_api_key)
                     paths = _extract_paths(jina_toc)
@@ -267,60 +541,56 @@ def fetch_talk_of_the_town(covered_urls: set[str], jina_api_key: str = ""):
 
         if not paths:
             base["error"] = "toc_no_paths_found"
-            return _json.dumps(base)
+            return json.dumps(base)
 
-        url = _pick_novel(paths, covered_urls)
-        if not url:
+        # ----- 2. Build newest-first list of uncovered articles -----
+        novel_urls = _novel_urls_sorted(paths, covered_urls)
+        if not novel_urls:
             base["error"] = "all_articles_already_covered"
-            return _json.dumps(base)
-        base["url"] = url
+            return json.dumps(base)
 
-        try:
-            html = _http_get(url)
-        except Exception as e:
-            base["error"] = f"article_fetch_failed: {e}"
-            return _json.dumps(base)
+        log.debug(
+            "TOTT: %d novel URLs (of %d discovered); will try up to %d",
+            len(novel_urls), len(paths), _MAX_NOVEL_URLS,
+        )
 
-        article = _load_ld(html)
-        if article:
-            base["title"] = article.get("headline", "") or ""
-            base["section"] = article.get("articleSection", "") or ""
-            base["dek"] = article.get("alternativeHeadline", "") or ""
-            base["byline"] = _extract_byline(article.get("author"))
-            base["date"] = article.get("datePublished", "") or ""
-            body = article.get("articleBody", "") or ""
-            if body and len(body) > 500:
-                base["text"] = body
-                base["available"] = True
-                return _json.dumps(base)
+        # ----- 3. Try each novel article, newest first -----
+        for attempt_idx, url in enumerate(novel_urls[:_MAX_NOVEL_URLS]):
+            # Reset per-attempt state so a failed earlier article doesn't
+            # leak partial metadata into the next attempt.
+            for k in ("title", "section", "dek", "byline", "date", "text", "archived_from"):
+                base[k] = ""
+            base["available"] = False
+            base["error"] = None
+            base["url"] = url  # canonical newyorker.com URL for dedup
 
-        # ld+json body absent or too short — try Jina for clean markdown.
-        try:
-            raw_jina = _jina_fetch(url, api_key=jina_api_key)
-            jina_text = _clean_jina_text(raw_jina)
-            if len(jina_text) > 500:
-                base["text"] = jina_text
-                base["available"] = True
-                if not base["title"]:
-                    m = re.search(r"^Title:\s*(.+)$", raw_jina, re.MULTILINE)
-                    if m:
-                        base["title"] = m.group(1).strip()
-                return _json.dumps(base)
-        except Exception as e:
-            log.debug("jina fetch failed for %s: %s", url, e)
+            log.debug(
+                "TOTT attempt %d/%d: %s",
+                attempt_idx + 1, min(len(novel_urls), _MAX_NOVEL_URLS), url,
+            )
 
-        # Last resort: raw HTML paragraph extraction.
-        text = _fallback_paragraphs(html)
-        if len(text) > 500:
-            base["text"] = text
-            base["available"] = True
-            if not base["title"]:
-                m = re.search(r"<title>(.*?)</title>", html, re.DOTALL)
-                if m:
-                    base["title"] = unescape(re.sub(r"\s+", " ", m.group(1))).strip()
-            return _json.dumps(base)
+            if _try_direct(url, jina_api_key, base):
+                return json.dumps(base)
 
-        base["error"] = f"article_text_too_short ({len(text)} chars)"
-        return _json.dumps(base)
+            log.debug("direct fetch failed for %s; trying Wayback", url)
+            if _try_wayback(url, base):
+                return json.dumps(base)
+
+            log.debug("Wayback failed for %s; trying archive.ph", url)
+            if _try_archiveph(url, base):
+                return json.dumps(base)
+
+            log.debug("all fetch methods failed for %s; trying next article", url)
+
+        # ----- 4. All strategies failed for all tried articles -----
+        # Report the most-recent article as the intended target in the error.
+        base["url"] = novel_urls[0]
+        tried = min(len(novel_urls), _MAX_NOVEL_URLS)
+        base["error"] = (
+            f"all_fetch_methods_failed: tried {tried} article(s) "
+            f"(direct + wayback + archiveph)"
+        )
+        log.warning("TOTT: could not retrieve text after %d article attempts", tried)
+        return json.dumps(base)
 
     return _run
