@@ -87,8 +87,14 @@ def _fallback_paragraphs(html: str) -> str:
 def fetch_talk_of_the_town(covered_urls: set[str]):
     """Closure capturing the covered-URL set so the tool takes no args."""
 
-    def _run() -> dict[str, Any]:
-        """Fetch the latest 'Talk of the Town' article not already covered."""
+    def _run() -> str:
+        """Fetch the latest 'Talk of the Town' article not already covered.
+
+        Returns a JSON-encoded string so LlamaIndex's _parse_tool_output()
+        produces TextBlock(text=<valid-JSON>) rather than TextBlock(text=str(dict))
+        which yields Python repr with single quotes that NIM cannot parse.
+        """
+        import json as _json
 
         base: dict[str, Any] = {
             "available": False,
@@ -104,24 +110,24 @@ def fetch_talk_of_the_town(covered_urls: set[str]):
             toc_html = _http_get(TOC_URL)
         except Exception as e:
             base["error"] = f"toc_fetch_failed: {e}"
-            return base
+            return _json.dumps(base)
 
         paths = _extract_paths(toc_html)
         if not paths:
             base["error"] = "toc_no_paths_found"
-            return base
+            return _json.dumps(base)
 
         url = _pick_novel(paths, covered_urls)
         if not url:
             base["error"] = "all_articles_already_covered"
-            return base
+            return _json.dumps(base)
         base["url"] = url
 
         try:
             html = _http_get(url)
         except Exception as e:
             base["error"] = f"article_fetch_failed: {e}"
-            return base
+            return _json.dumps(base)
 
         article = _load_ld(html)
         if article:
@@ -132,7 +138,7 @@ def fetch_talk_of_the_town(covered_urls: set[str]):
             if body and len(body) > 500:
                 base["text"] = body
                 base["available"] = True
-                return base
+                return _json.dumps(base)
 
         text = _fallback_paragraphs(html)
         if len(text) > 500:
@@ -142,9 +148,9 @@ def fetch_talk_of_the_town(covered_urls: set[str]):
                 m = re.search(r"<title>(.*?)</title>", html, re.DOTALL)
                 if m:
                     base["title"] = unescape(re.sub(r"\s+", " ", m.group(1))).strip()
-            return base
+            return _json.dumps(base)
 
         base["error"] = f"article_text_too_short ({len(text)} chars)"
-        return base
+        return _json.dumps(base)
 
     return _run
