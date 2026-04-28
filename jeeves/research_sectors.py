@@ -127,10 +127,19 @@ SECTOR_SPECS: list[SectorSpec] = [
         name="family",
         shape="dict",
         instruction=(
-            "Two subkeys. 'choir': Seattle/Puget Sound choral auditions (Seattle Choral Co, "
-            "Seattle Pro Musica, Northwest Chorale, etc.). 'toddler': Edmonds activities for "
-            "a 2-year-old (library storytime, Imagine Children's Museum, Woodland Park Zoo, "
-            "Sno-Isle Libraries). "
+            "Two subkeys. 'choir': Seattle/Puget Sound choral auditions. 'toddler': "
+            "Edmonds/Lynnwood activities for a 2-year-old.\n\n"
+            "MANDATORY FIRST STEP — dispatch ALL THREE in parallel right now:\n"
+            "1. serper_search(query='Seattle choral ensemble choir auditions open 2026', "
+            "tbs='qdr:m')\n"
+            "2. serper_search(query='Edmonds Lynnwood library storytime toddler activities "
+            "May 2026')\n"
+            "3. exa_search(query='Seattle Pro Musica Northwest Chorale choral auditions 2026', "
+            "search_type='fast', num_results=3)\n"
+            "Organisations to check for choir: Seattle Choral Company, Seattle Pro Musica, "
+            "Northwest Chorale, Choral Arts NW, Pacific Lutheran Univ Choirs. "
+            "Toddler venues: Edmonds Library (Main St), Lynnwood Library, Sno-Isle system, "
+            "Imagine Children's Museum. "
             "Return {choir: 'findings string', toddler: 'findings string', urls: [...]}."
         ),
         default={},
@@ -303,8 +312,14 @@ SECTOR_SPECS: list[SectorSpec] = [
             "  3. Wearable AI / tech product pages\n"
             "  4. UAP / triadic ontology / AI systems sources\n"
             "  5. Edmonds local news (lowest priority — already well-covered)\n"
+            "IMPORTANT — Reuters blocks direct fetches with 401. Before picking Reuters URLs, "
+            "prefer alternative sources covering the same story (BBC, Guardian, AP, Al Jazeera). "
             "Call tavily_extract on your 5 chosen URLs in ONE batch call. "
             "Fall back to fetch_article_text for any Tavily refuses. "
+            "If a URL fails (401, 403, timeout, or fetch_failed=true in the result), DO NOT "
+            "include it — immediately replace it with the next best candidate from the priority "
+            "list and call tavily_extract again on the replacement. "
+            "Your final array must have 5 entries with fetch_failed=false. "
             "Return a JSON array of {url, source, title, fetch_failed, text} — one entry "
             "per extracted URL."
         ),
@@ -482,6 +497,80 @@ def _is_retryable_network_error(exc: Exception) -> bool:
 # or fetch_article_text) — skip the quota-increment check for these.
 _NO_QUOTA_CHECK = frozenset({"newyorker"})
 
+# Fallback exa queries for deep sectors when the quota guard fires (Kimi answered
+# from training data without calling any search tool).
+_DEEP_FALLBACK_QUERIES: dict[str, str] = {
+    "triadic_ontology": "triadic ontology relational metaphysics 2025 2026",
+    "ai_systems": "multi-agent AI research autonomous pipeline reasoning model 2026",
+    "uap": "UAP disclosure congressional hearing non-human intelligence 2026",
+}
+
+
+async def _deep_sector_forced_retry(
+    cfg: Config,
+    spec: SectorSpec,
+    prior_urls_sample: list[str],
+    ledger,
+    sector_max_tokens: int,
+) -> Any:
+    """One forced-search retry for deep sectors where the quota guard fired.
+
+    Kimi sometimes answers triadic_ontology / ai_systems from training data
+    without calling any search tool, triggering the quota guard. This retry
+    uses a stripped-down system + user prompt that gives Kimi no room to
+    reason before calling exa_search, preventing the training-data bypass.
+    """
+    from llama_index.core.agent.workflow import FunctionAgent
+
+    from .llm import build_kimi_llm
+    from .tools import all_search_tools
+
+    query = _DEEP_FALLBACK_QUERIES.get(spec.name, f"{spec.name.replace('_', ' ')} research 2026")
+    forced_system = (
+        "Your ONLY job: call exa_search IMMEDIATELY, then return JSON. "
+        "No reasoning. No preamble. Your first response MUST be a tool call."
+    )
+    forced_user = (
+        f"Call exa_search right now with these exact parameters:\n"
+        f"  query='{query}'\n"
+        f"  search_type='auto'\n"
+        f"  num_results=3\n"
+        f"  text_max_chars=3000\n\n"
+        f"After you get results, return ONLY this JSON object (no markdown, no preamble):\n"
+        f'  {{"findings": "<single prose string, 300-600 chars summarising the results>", '
+        f'"urls": [<url strings from exa results>]}}'
+    )
+
+    pre_quota = _quota_snapshot(ledger)
+    tools_r = all_search_tools(cfg, ledger, set(prior_urls_sample))
+    llm_r = build_kimi_llm(cfg, max_tokens=sector_max_tokens)
+    agent_r = FunctionAgent(
+        tools=tools_r, llm=llm_r,
+        system_prompt=forced_system,
+        verbose=cfg.verbose,
+    )
+
+    log.info("sector %s: attempting forced-search retry.", spec.name)
+    try:
+        response_r = await agent_r.run(forced_user)
+    except Exception as exc:
+        log.warning("sector %s: forced retry crashed (%s); returning default", spec.name, exc)
+        return spec.default
+
+    if not _quota_increased(pre_quota, ledger):
+        log.warning(
+            "sector %s: forced retry also skipped search tools; returning default.", spec.name
+        )
+        return spec.default
+
+    raw_r = str(response_r)
+    result_r = _parse_sector_output(raw_r, spec)
+    log.info(
+        "sector %s: forced retry succeeded — parsed %s",
+        spec.name, type(result_r).__name__,
+    )
+    return result_r
+
 
 async def run_sector(
     cfg: Config,
@@ -579,9 +668,18 @@ async def run_sector(
                 return spec.default
 
     # Guard: if no search-provider quota moved, Kimi answered entirely from
-    # training data without calling any external tools.  Reject the output so
-    # the write phase never sees hallucinated findings.
+    # training data without calling any external tools.  For deep sectors, try
+    # one forced-search retry before giving up.  For all others, return default
+    # so the write phase never sees hallucinated findings.
     if spec.name not in _NO_QUOTA_CHECK and not _quota_increased(pre_quota, ledger):
+        if spec.shape == "deep":
+            log.warning(
+                "sector %s: no search provider called — attempting forced-search retry.",
+                spec.name,
+            )
+            return await _deep_sector_forced_retry(
+                cfg, spec, prior_urls_sample, ledger, sector_max_tokens
+            )
         log.warning(
             "sector %s: no search provider was called — output likely hallucinated; "
             "returning default.",

@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 def make_exa_search(cfg: Config, ledger: QuotaLedger):
     def exa_search(
-        query: str,
+        query: str = "",
         num_results: int = 10,
         category: str | None = None,
         search_type: str = "auto",
@@ -25,7 +25,7 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
         `cfg.exa_api_key`). Endpoint: `https://api.exa.ai/search`.
 
         Args:
-            query: natural-language query (supports 'find similar to X').
+            query: natural-language query (required — must be a non-empty string).
             num_results: result count (default 10).
             category: optional category, e.g. 'news', 'research paper', 'company'.
             search_type: one of 'auto' (default, ~1s balanced), 'fast' (~450ms),
@@ -38,6 +38,9 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
         (capped full content), so the agent can skip a follow-up extraction
         call on Exa hits.
         """
+        if not (query or "").strip():
+            log.warning("exa_search called with empty query — returning error dict")
+            return {"provider": "exa", "error": "query is required — provide a non-empty search string", "results": []}
         try:
             from exa_py import Exa  # type: ignore
 

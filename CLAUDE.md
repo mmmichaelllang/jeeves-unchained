@@ -10,6 +10,20 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Current focus
 
+**Phase 2 (research) — production-stable after a 6-PR debugging sprint (PRs #37–#42).** Research completes in ~8–12 minutes with all 12 sectors populated and real cited URLs.
+
+**Research architecture (as of 2026-04-28):**
+- Sequential sector execution (`_SECTOR_SEMAPHORE=1`) — NIM free tier can't handle concurrent Kimi agents.
+- Per-sector `FunctionAgent` (Kimi K2.5 on NIM) with `max_tokens=4096` for deep sectors (triadic_ontology, ai_systems, uap) to prevent NIM streaming drops.
+- IMMEDIATE FIRST ACTION directives in triadic_ontology and ai_systems force Kimi to call exa_search before generating any reasoning, preventing the "23s reasoning → NIM stream drop" crash.
+- 3 retries with 10s/30s/60s backoff for "peer closed connection" network errors.
+- Quota guard: `_quota_snapshot` / `_quota_increased` reject sectors where no search provider was called (hallucination prevention).
+- `_REDIRECT_ARTIFACT_HOSTS` filter in `collect_urls_from_sector` strips Gemini grounding API redirect URLs from `covered_urls` and the `enriched_articles` seed.
+- CONTEXT_HEADER enforces mandatory Round 1 (search) → Round 2 (read/extract) research discipline.
+- `intellectual_journals` mandates 3 parallel exa searches targeting separate outlet groups (LRB/Aeon, NYRB/ProPublica, Marginalian/Big Think) with a DIVERSITY RULE requiring ≥3 different publications.
+- `global_news` requires SOURCE DIVERSITY (BBC/Guardian/Al Jazeera must appear) and bans Gemini redirect URLs from the output.
+- `enriched_articles` has an explicit PRIORITY ORDER (global → intellectual → wearable → deep → local news last).
+
 **Phase 3 (write) — three-model pipeline: 9 sequential Groq drafts + 9 concurrent NIM quality-editor passes + 1 OpenRouter Gemma 4 final narrative editor.** Per user direction: safety and quality over speed. Wall-clock ~10m 30s (Groq path) or ~9–13m (NIM-fallback path).
 
 - **Draft stage (Groq llama-3.3-70b-versatile, 9 calls with conditional 65s TPM sleeps)**. Each part has scoped PART_INSTRUCTIONS + CONTINUATION_RULES (rules 1–9). Part 9 outputs `<!-- NEWYORKER_CONTENT_PLACEHOLDER -->` rather than trying to copy the article (verbatim injection happens post-stitch — see below).
@@ -23,41 +37,32 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
   - *Within-run*: `generate_briefing` tracks phrases each part used via `_parse_all_asides()`, passes accumulated list to subsequent parts' system prompt via `run_used_asides=`.
 - **Profanity moved to OpenRouter pass.** Drafts (PART1–PART8) write ZERO profane asides. The OpenRouter editor inserts exactly five, thematically placed. `recently_used_asides` is passed so it picks fresh phrases.
 - **Per-section dedup advancement protocols** (PART4 toddler, PART6 triadic+ai_systems, PART7 wearable_ai): identify specific title/model/product → check covered_headlines → one backward-reference clause if already covered → pivot to next uncovered item → if all repeat, one sentence and move on. PART4 toddler: lead with new; repeats get embedded clause only; if all repeat, brief seasonal suggestion flagged as Jeeves's own.
-- **Research sectors — mandatory article reading.** CONTEXT_HEADER has a CRITICAL block: exa results carry full text; for serper/tavily hits, call `tavily_extract` before writing findings. Reinforced in local_news, global_news, intellectual_journals, wearable_ai sector instructions.
 - `_system_prompt_for_parts` strips both `## HTML scaffold` and `## Briefing structure` blocks (`re.MULTILINE` + `^## ` lookahead).
-- **108 tests** across `tests/test_write_postprocess.py` and `tests/test_research_sectors.py` cover the full write pipeline including refine/fallback behavior, NIM-skips-sleep path, New Yorker injection, narrative editor fallback, all 11 banned transitions, family-shape dedup extraction, NIM 429 detection, sector_url_index coverage, and the new rolling-window + CorrespondenceHandoff features.
+- **123 tests** across `tests/test_write_postprocess.py` and `tests/test_research_sectors.py` cover the full write pipeline including refine/fallback behavior, NIM-skips-sleep path, New Yorker injection, narrative editor fallback, all 11 banned transitions, family-shape dedup extraction, NIM 429 detection, sector_url_index coverage, rolling-window + CorrespondenceHandoff features, redirect artifact URL filtering, and intellectual_journals diversity enforcement.
 
-## Where we left off (2026-04-27)
+## Where we left off (2026-04-28)
 
-- **PRs #16–#33, all merged or in CI.** PR #33 (never-empty news fallbacks) in CI. PR #34 (15-feature improvement block) in progress on `claude/improve-dedup-triadic-studies-rEgcE`.
-- **PR #32 merged** — forensic audit fixing 6 integration bugs.
-- **PR #33 in CI** — cross-provider fallback chains for weather, local_news, global_news.
-- **All phases are live on `main`** (Phases 2, 3, 4 fully wired). Phase 4 handoff JSON feeds Phase 2 at cron `0 12 * * *`. Research at `30 12 * * *`. Write at `40 13 * * *`.
+- **PRs #37–#42, all merged.** Research workflow now stable.
+- **PR #41 merged** — NIM streaming crash fix for triadic_ontology and ai_systems (IMMEDIATE FIRST ACTION, max_tokens=4096 for deep sectors, 3-retry backoff).
+- **PR #42 merged** — comprehensive research quality audit: intellectual_journals source diversity, global_news BBC/Guardian enforcement, Gemini redirect URL filtering, enriched_articles priority ordering, text_max_chars raise (2000→3000), mandatory 2-round research discipline.
+- **All phases live on `main`** (Phases 2, 3, 4 fully wired). Cron: correspondence `0 12`, research `30 12`, write `40 13`.
 - **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run.
 
-### 15-feature block implemented in PR #34
+### Research debug sprint (PRs #37–#42) — what was fixed
 
-1. `schema_version: str = "1"` added to `SessionModel` — forward-compatible versioning.
-2. `CorrespondenceHandoff` Pydantic model in `schema.py` — validates Phase 4 handoff on merge.
-3. `intellectual_journals.findings` FIELD_CAP raised 350→600 chars.
-4. `load_prior_sessions(cfg, days=7)` in `session_io.py` — returns list of all sessions in the window.
-5. `covered_headlines()` in `dedup.py` now also includes `session.newyorker.title`.
-6. Career sector instruction now requests `deadline` and `salary_range` fields.
-7. `CONTEXT_HEADER` in `research_sectors.py` now has `{quota_summary}` and `{story_continuity}` template slots.
-8. `scripts/research.py`: parallel sector execution via `asyncio.gather()` + `Semaphore(3)`; `enriched_articles` always runs last.
-9. `scripts/research.py`: rolling 7-day dedup window via `load_prior_sessions`.
-10. `scripts/research.py`: COVERAGE_LOG feedback from prior briefing HTML (`_load_prior_coverage_urls`).
-11. `scripts/research.py`: session-to-session synthesis prompt via `_story_continuity_block`.
-12. `scripts/research.py`: correspondence handoff validated via `CorrespondenceHandoff` model.
-13. `scripts/research.py`: quota-aware context via `_quota_summary(ledger)`.
-14. `write.py`: `_sector_url_index` now labels career openings and family URLs as "Sector 2".
-15. `write.py`: PART_PLAN part4 gains `newyorker_hint`; PART4_INSTRUCTIONS adds New Yorker overlap check (mirrors PART7).
-16. `write.py`: NIM 429 retry backoff (2s, 8s, 32s) in both `_invoke_nim_refine` and `_invoke_nim_write`.
+| PR | Problem | Fix |
+|---|---|---|
+| #37 | All sectors returned defaults in <1 min (NIM 429 from semaphore=3) | `_SECTOR_SEMAPHORE=1` (sequential) |
+| #38 | Kimi answering from training data (no tool calls) | URL validation filter drops uncited items; "STALE" prompt |
+| #39 | `agent._system_prompt` attribute error on retry | Extract `_system_prompt` as local variable before `FunctionAgent()` |
+| #40 | `intellectual_journals`, `wearable_ai` passing quota guard on training-data answers | Quota snapshot diff guard + per-sector `pre_quota` snapshot |
+| #41 | triadic_ontology/ai_systems NIM stream crash (23s response → peer closed) | IMMEDIATE FIRST ACTION directive; `max_tokens=4096` for deep sectors; 3 retries (10/30/60s) |
+| #42 | Session quality: monoculture journals, Reuters-only global news, Gemini redirect URLs | 3-parallel exa for journals; diversity rules; `_REDIRECT_ARTIFACT_HOSTS` filter; 2-round discipline |
 
 ## Dev branch
 
-- **Current**: `claude/improve-dedup-triadic-studies-rEgcE` (PR #34, new)
-- Prior major work: `claude/never-empty-news-fallbacks-rEgcE` (#33), `claude/forensic-audit-fixes-rEgcE` (#32, merged), `claude/fix-output-quality-round2-rEgcE` (#31, merged), `claude/improve-dedup-triadic-studies-rEgcE` (#26–#30, merged)
+- **Current**: `claude/fix-jeeves-research-workflow-Jo1u5` (all merged, no outstanding PRs)
+- Prior major work: `claude/improve-dedup-triadic-studies-rEgcE` (#34), `claude/never-empty-news-fallbacks-rEgcE` (#33), `claude/forensic-audit-fixes-rEgcE` (#32)
 
 ## Gotchas the README doesn't flag
 
@@ -72,6 +77,11 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - **New Yorker verbatim is now a code guarantee, not a model instruction.** Part 9 outputs `<!-- NEWYORKER_CONTENT_PLACEHOLDER -->`. `_inject_newyorker_verbatim` replaces it with the actual `session.newyorker.text` paragraphs. If the placeholder is absent (model ignored the instruction), a WARNING is logged and the New Yorker text is simply missing — it won't hallucinate content, it just won't appear.
 - **Within-run aside dedup lives in code, not the prompt.** `generate_briefing` scans each part's output against `_parse_all_asides()`, accumulates a `used_this_run` list, and injects it into the next part's system prompt via `run_used_asides=`. If you refactor the loop, preserve this — otherwise all 9 parts will independently pick "clusterfuck of biblical proportions" and Jeeves repeats himself.
 - **Dedup is headline-matched, not URL-matched in the write phase.** The write prompt explicitly gets `dedup.covered_headlines` but NOT `covered_urls` (see `_trim_session_for_prompt`). If you see the same Karl-Alber volume appear day after day, it means the research phase isn't adding the item's headline to `covered_headlines` — check there, not in write.
+- **Gemini grounding API returns ephemeral redirect URLs** (`vertexaisearch.cloud.google.com/grounding-api-redirect/...`) as citation sources. These expire within hours and can't be deduped by URL. `collect_urls_from_sector` filters them via `_REDIRECT_ARTIFACT_HOSTS`. The `global_news` sector instruction additionally tells Kimi to look up canonical article URLs via `serper_search` instead of including the redirect directly. Do not add redirect domains back to the URL extraction logic.
+- **Research sector exa_py calls are invisible in httpx logs.** The `exa_py` SDK uses `requests` not `httpx`, so exa searches don't appear in the `httpx INFO HTTP Request:` log lines. When counting tool calls from logs, infer exa was called from: (a) time gaps between NIM calls, (b) quota ledger delta for "exa", (c) the presence of exa.ai URLs in the session JSON.
+- **NIM streaming drop threshold is ~20-25 seconds of continuous output.** Kimi K2.5 uses extended chain-of-thought tokens. If the model generates >~2000 output tokens continuously, NIM drops the streaming connection with "peer closed connection without sending complete message body". Mitigations: `max_tokens=4096` for deep sectors (halves the output budget), IMMEDIATE FIRST ACTION (forces tool call before reasoning), `text_max_chars=3000` (limits exa payload feeding into reasoning). Do NOT raise any of these limits for deep sectors without testing.
+- **`intellectual_journals` must span ≥3 different publications.** The DIVERSITY RULE in the instruction is enforced by the prompt, not code. If you see all results from NYRB + New Yorker again, the 3-parallel exa search instruction wasn't followed — check that Kimi saw all three numbered calls in the instruction and dispatched them.
+- **The research quota guard uses provider `used` count delta, not absolute counts.** `_quota_snapshot` is taken before the agent runs; `_quota_increased` checks if any provider's count increased. If a sector's agent calls only the `fetch_new_yorker_talk_of_the_town` tool (not in quota), the guard fires and returns the default. `_NO_QUOTA_CHECK = frozenset({"newyorker"})` exempts that sector. If you add a new sector that uses only non-quota tools, add it to `_NO_QUOTA_CHECK`.
 - **The 65s TPM sleep is conditional, not unconditional.** `_invoke_write_llm` returns `(text, used_groq: bool)`. `generate_briefing` only sleeps 65s before a call if the *previous* call used Groq. Once Groq TPD is exhausted and NIM takes over, the sleep is skipped for every subsequent inter-part gap. If you refactor the loop, preserve the `last_used_groq` flag — without it the pipeline wastes ~9 minutes of sleep on NIM-fallback runs and will breach the 60-min workflow timeout under extreme NIM latency.
 - **Groq TPD (tokens-per-day) limit = input_tokens + max_tokens_requested per call.** The free tier is 100k tokens/day. With max_tokens=8192 × 9 write calls, write alone would need ~110k tokens (input ~37k + output budget ~74k), blowing the daily limit. Default is now max_tokens=4096 per call: each part targets 500–900 words (~700–1200 output tokens), 4096 gives a 3.4× margin and matches NVIDIA NIM's native output cap for meta/llama-3.3-70b-instruct. Total daily write budget: ~73k tokens; plus correspondence Groq call: ~9k; grand total ~82k — within 100k. If you raise max_tokens above ~5000, the production pipeline will fail daily at Part 2 (or fall through to NIM, which has its own throttle).
 

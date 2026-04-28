@@ -13,17 +13,20 @@ log = logging.getLogger(__name__)
 
 def make_tavily_search(cfg: Config, ledger: QuotaLedger):
     def tavily_search(
-        query: str,
+        query: str = "",
         max_results: int = 8,
         depth: str = "basic",
     ) -> dict[str, Any]:
         """Tavily AI-native search with an optional synthesized answer.
 
         Args:
-            query: question or keyword string.
+            query: question or keyword string (required — must be a non-empty string).
             max_results: max results to return.
             depth: 'basic' (1 credit) or 'advanced' (2 credits).
         """
+        if not (query or "").strip():
+            log.warning("tavily_search called with empty query — returning error dict")
+            return {"provider": "tavily", "error": "query is required — provide a non-empty search string", "results": []}
         try:
             from tavily import TavilyClient  # type: ignore
 
