@@ -632,3 +632,85 @@ def test_parse_sector_output_repairs_truncated_enriched_array():
     assert isinstance(out, list)
     assert len(out) == 1
     assert out[0]["title"] == "AI chip"
+
+
+def test_repair_shape_hint_newyorker_uses_correct_schema():
+    """_REPAIR_SHAPE_HINT for newyorker must include 'available' not 'findings'."""
+    from jeeves.research_sectors import _REPAIR_SHAPE_HINT
+
+    hint = _REPAIR_SHAPE_HINT["newyorker"]
+    assert "available" in hint, "repair hint must include 'available' field"
+    assert "findings" not in hint, "repair hint must NOT use generic 'findings' shape"
+    assert "title" in hint
+    assert "text" in hint
+    assert "url" in hint
+
+
+def test_repair_shape_hint_newyorker_is_valid_json_template():
+    """The newyorker repair hint must be valid JSON when placeholders are substituted."""
+    import json
+    from jeeves.research_sectors import _REPAIR_SHAPE_HINT
+
+    hint = _REPAIR_SHAPE_HINT["newyorker"]
+    # Replace the literal ... placeholders with actual values to check structural validity.
+    filled = (
+        hint
+        .replace('"..."', '"placeholder"')
+        .replace("true", "true")  # already valid JSON
+    )
+    obj = json.loads(filled)
+    assert isinstance(obj, dict)
+    assert "available" in obj
+
+
+def test_tavily_extract_coerces_string_url_to_list(monkeypatch):
+    """tavily_extract must accept a bare string URL and treat it as a one-element list."""
+    import json
+    from jeeves.config import Config
+    from jeeves.tools.quota import QuotaLedger
+
+    captured: list = []
+
+    class FakeTavilyClient:
+        def __init__(self, api_key):
+            pass
+
+        def extract(self, urls):
+            captured.append(urls)
+            return {"results": [{"url": urls[0], "raw_content": "article text", "title": "T"}]}
+
+    monkeypatch.setattr("jeeves.tools.tavily.TavilyClient", FakeTavilyClient, raising=False)
+
+    import sys
+    import types
+    # Ensure tavily package mock is available.
+    if "tavily" not in sys.modules:
+        fake_mod = types.ModuleType("tavily")
+        fake_mod.TavilyClient = FakeTavilyClient
+        sys.modules["tavily"] = fake_mod
+
+    from datetime import date
+    from pathlib import Path
+    cfg = Config(
+        nvidia_api_key="", serper_api_key="", tavily_api_key="key", exa_api_key="",
+        google_api_key="", groq_api_key="", gmail_app_password="",
+        gmail_oauth_token_json="", github_token="", github_repository="test/repo",
+        run_date=date(2026, 4, 28),
+    )
+    ledger = QuotaLedger.__new__(QuotaLedger)
+    ledger._state = {"providers": {}}
+    import threading
+    ledger._lock = threading.Lock()
+
+    from jeeves.tools.tavily import make_tavily_extract
+    fn = make_tavily_extract(cfg, ledger)
+
+    # Call with a bare string — should NOT slice into individual characters.
+    result = fn("https://example.com/article")
+    data = json.loads(result)
+    assert "results" in data
+    # Verify Tavily client received a list with the full URL, not sliced chars.
+    assert captured, "TavilyClient.extract was never called"
+    assert captured[0] == ["https://example.com/article"], (
+        f"Expected list with full URL, got: {captured[0]}"
+    )

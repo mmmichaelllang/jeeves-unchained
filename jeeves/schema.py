@@ -54,6 +54,8 @@ class NewYorker(BaseModel):
     title: str = ""
     section: str = ""
     dek: str = ""
+    byline: str = ""
+    date: str = ""
     text: str = ""
     url: str = ""
     source: str = "The New Yorker"

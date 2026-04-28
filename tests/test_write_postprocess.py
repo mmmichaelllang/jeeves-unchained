@@ -848,3 +848,28 @@ def test_render_mock_briefing_escapes_html_in_session_fields():
     # Escaped forms must appear (proves escaping ran, not just omission).
     assert '&lt;script&gt;' in html
     assert '&lt;/p&gt;' in html or '&lt;b&gt;' in html
+
+
+def test_newyorker_schema_declares_byline_and_date():
+    """NewYorker model must have byline and date as declared fields (not extras)."""
+    from jeeves.schema import NewYorker
+
+    ny = NewYorker(available=True, title="Test", byline="By Jane Doe", date="2026-04-28")
+    assert ny.byline == "By Jane Doe"
+    assert ny.date == "2026-04-28"
+    # Defaults to empty string when absent.
+    ny2 = NewYorker(available=False)
+    assert ny2.byline == ""
+    assert ny2.date == ""
+
+
+def test_newyorker_schema_byline_and_date_in_model_dump():
+    """model_dump() must include byline and date (not silently dropped)."""
+    from jeeves.schema import NewYorker
+
+    ny = NewYorker(available=True, title="T", byline="By X", date="2026-01-01")
+    d = ny.model_dump()
+    assert "byline" in d
+    assert "date" in d
+    assert d["byline"] == "By X"
+    assert d["date"] == "2026-01-01"
