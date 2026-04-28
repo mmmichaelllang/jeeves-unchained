@@ -239,3 +239,85 @@ def test_astream_chat_with_tools_is_overridden():
         "uses the streaming path (streaming=True by default) and never calls "
         "achat_with_tools in production."
     )
+
+
+# ---------------------------------------------------------------------------
+# get_tool_calls_from_response must NOT mutate tool_call.function.arguments
+# ---------------------------------------------------------------------------
+
+def test_get_tool_calls_does_not_mutate_arguments_when_none():
+    """get_tool_calls_from_response must not set tool_call.function.arguments when None.
+
+    The method is called on every streaming chunk. Mutating the live accumulator
+    causes update_tool_calls() to concatenate "{}" + next_delta (e.g. "null") →
+    "{}null", which NIM rejects as 'Extra data: line 1 column 3 (char 2)'.
+    """
+    from jeeves.llm import _build_kimi_class
+
+    cls = _build_kimi_class()
+    parser = cls.get_tool_calls_from_response
+    tc = _tool_call("c1", "emit_session", None)
+    resp = _make_response([tc])
+    parser(SimpleNamespace(), resp)
+    # Must NOT have been mutated
+    assert tc.function.arguments is None
+
+
+def test_get_tool_calls_does_not_mutate_arguments_when_empty():
+    """get_tool_calls_from_response must not mutate tool_call.function.arguments when ''."""
+    from jeeves.llm import _build_kimi_class
+
+    cls = _build_kimi_class()
+    parser = cls.get_tool_calls_from_response
+    tc = _tool_call("c2", "emit_session", "")
+    resp = _make_response([tc])
+    parser(SimpleNamespace(), resp)
+    assert tc.function.arguments == ""
+
+
+def test_get_tool_calls_handles_json_null_arguments():
+    """get_tool_calls_from_response must coerce JSON 'null' arguments to {}."""
+    from jeeves.llm import _build_kimi_class
+
+    cls = _build_kimi_class()
+    parser = cls.get_tool_calls_from_response
+    resp = _make_response([_tool_call("c3", "emit_session", "null")])
+    out = parser(SimpleNamespace(), resp)
+    assert out[0].tool_kwargs == {}
+
+
+# ---------------------------------------------------------------------------
+# _normalize_tool_kwargs: string ToolCallBlocks with null/invalid JSON
+# ---------------------------------------------------------------------------
+
+def test_normalize_tool_kwargs_null_string_becomes_empty_json():
+    """ToolCallBlock.tool_kwargs='null' (JSON null) must become '{}'."""
+    from jeeves.llm import _build_kimi_class
+
+    cls = _build_kimi_class()
+    block = _make_tool_call_block("null")
+    msg = _make_chat_message(blocks=[block])
+    cls._normalize_tool_kwargs([msg])
+    assert block.tool_kwargs == "{}"
+
+
+def test_normalize_tool_kwargs_corrupted_string_becomes_empty_json():
+    """ToolCallBlock.tool_kwargs='{}null' (corrupted from old mutation bug) must become '{}'."""
+    from jeeves.llm import _build_kimi_class
+
+    cls = _build_kimi_class()
+    block = _make_tool_call_block("{}null")
+    msg = _make_chat_message(blocks=[block])
+    cls._normalize_tool_kwargs([msg])
+    assert block.tool_kwargs == "{}"
+
+
+def test_normalize_tool_kwargs_valid_json_string_unchanged():
+    """ToolCallBlock.tool_kwargs='{"q":"x"}' (valid JSON object) is left as-is."""
+    from jeeves.llm import _build_kimi_class
+
+    cls = _build_kimi_class()
+    block = _make_tool_call_block('{"q": "x"}')
+    msg = _make_chat_message(blocks=[block])
+    cls._normalize_tool_kwargs([msg])
+    assert block.tool_kwargs == '{"q": "x"}'

@@ -64,6 +64,16 @@ def _build_kimi_class():
                         block.tool_kwargs = "{}"
                     elif isinstance(kw, dict):
                         block.tool_kwargs = json.dumps(kw)
+                    elif isinstance(kw, str):
+                        # Validate the string — "null" or invalid JSON must become "{}".
+                        # This catches the "{}null" corruption produced by the old mutation
+                        # bug, as well as JSON-null arguments Kimi occasionally emits.
+                        try:
+                            parsed = json.loads(kw)
+                            if parsed is None:
+                                block.tool_kwargs = "{}"
+                        except (TypeError, json.JSONDecodeError):
+                            block.tool_kwargs = "{}"
                 # Belt-and-suspenders: also fix additional_kwargs["tool_calls"]
                 # (used by to_openai_message_dict for the non-ToolCallBlock path).
                 # Also strips entries with id=None — NIM's pydantic validator
@@ -142,14 +152,18 @@ def _build_kimi_class():
                         tc_name,
                     )
                     args = {}
-                    # Also normalise the raw field so that when LlamaIndex records
-                    # this assistant message in history and re-sends it to NIM,
-                    # NIM's pydantic validator sees a string (required) rather than
-                    # None/dict, avoiding a 400 error on the next call.
-                    tool_call.function.arguments = "{}"
+                    # IMPORTANT: do NOT mutate tool_call.function.arguments here.
+                    # This method is called on every streaming chunk (function_agent.py
+                    # line 78). Mutating the live accumulator corrupts update_tool_calls()
+                    # concatenation: "" → "{}", then Kimi's next delta (e.g. "null") appends
+                    # → "{}null". json.loads("{}null") → "Extra data: line 1 column 3 (char 2)".
+                    # _normalize_tool_kwargs in astream_chat_with_tools handles history
+                    # normalization before each NIM send, which is the right place.
                 else:
                     try:
                         args = json.loads(raw)
+                        if args is None:  # handles JSON "null" from Kimi
+                            args = {}
                     except (TypeError, json.JSONDecodeError):
                         # FunctionAgent calls this parser on every streamed chunk,
                         # so partial args like '{"query": "Edm' flood the log mid-
