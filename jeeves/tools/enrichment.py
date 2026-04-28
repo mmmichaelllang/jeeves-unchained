@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+import json
 import logging
-from typing import Any
 from urllib.parse import urlparse
 
 import httpx
@@ -16,10 +16,14 @@ UA = (
 )
 
 
-def fetch_article_text(url: str) -> dict[str, Any]:
+def fetch_article_text(url: str) -> str:
     """Fetch a URL and extract clean article text via trafilatura.
 
-    Returns: {url, title, text, fetch_failed, source}
+    Returns a JSON string so LlamaIndex's _parse_tool_output() produces
+    TextBlock(text=<valid-JSON>) rather than TextBlock(text=str(dict))
+    which yields Python repr with single quotes that NIM cannot parse.
+
+    JSON shape: {url, title, text, fetch_failed, source}
     """
     base = {
         "url": url,
@@ -29,7 +33,7 @@ def fetch_article_text(url: str) -> dict[str, Any]:
         "source": _host(url),
     }
     if not url:
-        return base
+        return json.dumps(base)
     try:
         r = httpx.get(url, headers={"User-Agent": UA}, timeout=25.0, follow_redirects=True)
         r.raise_for_status()
@@ -37,7 +41,7 @@ def fetch_article_text(url: str) -> dict[str, Any]:
     except Exception as e:
         log.info("fetch failed %s: %s", url, e)
         base["text"] = f"fetch_error: {e}"
-        return base
+        return json.dumps(base)
 
     try:
         import trafilatura  # type: ignore
@@ -53,11 +57,11 @@ def fetch_article_text(url: str) -> dict[str, Any]:
         text = ""
 
     if len(text) < 300:
-        return base
+        return json.dumps(base)
 
     title = _extract_title(html)
     base.update({"title": title, "text": text[:3000], "fetch_failed": False})
-    return base
+    return json.dumps(base)
 
 
 def _host(url: str) -> str:

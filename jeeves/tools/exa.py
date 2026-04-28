@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 from typing import Any
 
@@ -18,7 +19,7 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
         category: str | None = None,
         search_type: str = "auto",
         text_max_chars: int = 20000,
-    ) -> dict[str, Any]:
+    ) -> str:
         """Exa neural semantic search with full-text content.
 
         Auth: `x-api-key` header (handled by the exa-py SDK internally from
@@ -34,6 +35,8 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
             text_max_chars: cap on per-result full-text (default 20000, ~3000 words
                 per article — enough for synthesis without requiring a follow-up extract).
 
+        Returns a JSON string so LlamaIndex's _parse_tool_output() produces valid
+        JSON in the NIM context rather than Python repr with single quotes.
         Returns normalized hits with `snippet` (first 600 chars) AND `text`
         (capped full content), so the agent can skip a follow-up extraction
         call on Exa hits.
@@ -58,7 +61,7 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
             resp = client.search(query, **kwargs)
         except Exception as e:
             log.warning("exa search error: %s", e)
-            return {"provider": "exa", "error": str(e), "results": []}
+            return json.dumps({"provider": "exa", "error": str(e), "results": []})
 
         ledger.record("exa", 1)
         results = [
@@ -74,12 +77,12 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
             }
             for r in (resp.results or [])
         ]
-        return {
+        return json.dumps({
             "provider": "exa",
             "query": query,
             "type": search_type,
             "results": results,
-        }
+        })
 
     return exa_search
 

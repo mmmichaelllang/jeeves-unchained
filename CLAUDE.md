@@ -10,7 +10,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Current focus
 
-**Phase 2 (research) — third debug sprint in progress (PR #48, 2026-04-28).** Root-cause fix for "Extra data: line 1 column 3 (char 2)" 400 crash that was killing `weather`, `local_news`, `career`, and `newyorker` sectors every run. Expected wall-clock: 8–14 minutes depending on NIM 429 backoff needed for `uap`.
+**Phase 2 (research) — fourth debug sprint in progress (PR #50, 2026-04-28).** Comprehensive fix: `astream_chat_with_tools` override (FunctionAgent ALWAYS uses streaming path, so previous `achat_with_tools` override was dead code), plus all search tools now return `json.dumps()` strings instead of Python dicts.
 
 **Research architecture (as of 2026-04-28, post PRs #43–#46):**
 - Sequential sector execution (`_SECTOR_SEMAPHORE=1`) — NIM free tier can't handle concurrent Kimi agents.
@@ -27,7 +27,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - `enriched_articles` has an explicit PRIORITY ORDER (global → intellectual → wearable → deep → local news last); Reuters warned as 401 source; failed fetches must be replaced; text field capped at 500 chars in JSON output.
 - **Empty-query guards**: serper, tavily_search, tavily_extract, exa return plain **strings** (not dicts) when called with empty args. LlamaIndex's `_parse_tool_output` calls `str()` on dict returns, producing Python repr with single quotes that NIM's JSON parser rejects with "Unterminated string" 400.
 - **`function.arguments` normalization**: `get_tool_calls_from_response` in `llm.py` now also sets `tool_call.function.arguments = "{}"` when arguments are None/empty, so the raw history entry that LlamaIndex records is a valid JSON string that NIM's pydantic validator accepts.
-- **`ToolCallBlock.tool_kwargs` normalization (PR #48)**: `KimiNVIDIA._normalize_tool_kwargs` is called inside the `achat_with_tools` override before every NIM request. Converts any `ToolCallBlock.tool_kwargs={}` (empty dict) → `"{}"` (string) and any `dict` → `json.dumps(dict)`. This is the *true* fix for the "Extra data: line 1 column 3 (char 2)" 400 crash — PR #46's fix to `additional_kwargs` was irrelevant because `to_openai_message_dict` reads `ToolCallBlock.tool_kwargs`, not `additional_kwargs`.
+- **`ToolCallBlock.tool_kwargs` normalization (PR #48, corrected in PR #50)**: `KimiNVIDIA._normalize_tool_kwargs` converts any `ToolCallBlock.tool_kwargs={}` (empty dict) → `"{}"` (string) and any `dict` → `json.dumps(dict)`. This is the *true* fix for the "Extra data: line 1 column 3 (char 2)" 400 crash. CRITICAL: it must be called from `astream_chat_with_tools` (not `achat_with_tools`) because `FunctionAgent.take_step()` always uses `streaming=True` (set in `BaseWorkflowAgent` default) and calls `astream_chat_with_tools`. The `achat_with_tools` override in PR #48 was never executed in production.
 - **`talk_of_the_town` returns JSON string** (PR #48): `_run()` now returns `json.dumps(base)` at every exit, not `dict`. This prevents LlamaIndex's `str(dict)` Python-repr conversion (single quotes) from landing in the NIM context as invalid JSON.
 - **`talk_of_the_town` Jina fallback** (PR #48): when ld+json `articleBody` is absent/short, `_jina_fetch()` fetches clean markdown via `r.jina.ai` (free tier, no key). `_clean_jina_text()` applies stop markers, photo-credit removal, newsletter boilerplate stripping, and markdown artifact cleanup. Raw HTML `_fallback_paragraphs` is now a last resort only.
 - **`talk_of_the_town` byline/date** (PR #48): `_extract_byline()` normalises the ld+json `author` field; `datePublished` is also captured. Both appear in the returned JSON and the newyorker sector output.
@@ -35,7 +35,8 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - **None id/name skip**: degenerate tool calls with `tool_call.id=None` or `function.name=None` are skipped (logged at WARNING) rather than propagating a pydantic `ToolSelection` crash.
 - **Gemini daily cap**: `DAILY_HARD_CAPS["gemini_grounded"] = 12` (corrected from 1490 which assumed paid Search Grounding tier; actual free-tier limit is 20 generate_content RPD for gemini-2.5-flash). On a 429 response, `gemini_grounded.py` immediately exhausts the daily counter so subsequent sectors skip Gemini automatically.
 - `family` instruction has 3 explicit mandatory parallel searches with specific query strings.
-- **136 tests** across `tests/test_write_postprocess.py`, `tests/test_research_sectors.py`, and `tests/test_llm_factories.py` (8 new `_normalize_tool_kwargs` tests added in PR #48, including id=None stripping).
+- **All search tools return JSON strings (PR #50)**: `serper.py`, `tavily.py`, `exa.py`, `enrichment.py` now return `json.dumps(...)` at all exit points (success and error). This prevents LlamaIndex's `str(dict)` Python-repr conversion from producing single-quoted strings that NIM cannot parse. The empty-query guards already returned plain strings; now SUCCESS paths do too.
+- **138 tests** across `tests/test_write_postprocess.py`, `tests/test_research_sectors.py`, and `tests/test_llm_factories.py` (8 `_normalize_tool_kwargs` tests + 2 `astream_chat_with_tools` tests added in PR #50).
 
 **Phase 3 (write) — three-model pipeline: 9 sequential Groq drafts + 9 concurrent NIM quality-editor passes + 1 OpenRouter Gemma 4 final narrative editor.** Per user direction: safety and quality over speed. Wall-clock ~10m 30s (Groq path) or ~9–13m (NIM-fallback path).
 
@@ -54,19 +55,27 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Where we left off (2026-04-28)
 
-- **PRs #43–#46, all merged. PR #48 open** (third debug sprint: ToolCallBlock normalization + Talk-of-Town JSON fix).
+- **PRs #43–#49, all merged. PR #50 open** (fourth debug sprint: streaming path fix + all tools return JSON strings).
 - **All phases live on `main`** (Phases 2, 3, 4 fully wired). Cron: correspondence `0 12`, research `30 12`, write `40 13`.
 - **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run.
 
-### Third research debug sprint (PR #48) — what was fixed
+### Fourth research debug sprint (PR #50) — what was fixed
 
 | PR | Problem | Fix |
 |---|---|---|
-| #48 | `weather`/`local_news`/`career`/`newyorker` NIM 400 "Extra data: line 1 column 3 (char 2)" every run | `KimiNVIDIA._normalize_tool_kwargs` + `achat_with_tools` override converts `ToolCallBlock.tool_kwargs={}` → `"{}"` before every NIM call |
+| #50 | All sectors still failing after PR #48 — `_normalize_tool_kwargs` never ran | `FunctionAgent` uses `streaming=True` → calls `astream_chat_with_tools`, not `achat_with_tools`. Added `astream_chat_with_tools` override to `KimiNVIDIA`. |
+| #50 | `local_news`/`enriched_articles` "Unterminated string" from `fetch_article_text` returning dict | `fetch_article_text` now returns `json.dumps(base)` at all exits (str, not dict) |
+| #50 | ALL sectors risk "Unterminated string" from serper/tavily/exa returning dicts | `serper.py`, `tavily.py` (search+extract), `exa.py` success and error paths now return `json.dumps(...)` |
+
+### Third research debug sprint (PRs #48–#49) — what was fixed
+
+| PR | Problem | Fix |
+|---|---|---|
+| #48 | `weather`/`local_news`/`career`/`newyorker` NIM 400 "Extra data: line 1 column 3 (char 2)" every run | `KimiNVIDIA._normalize_tool_kwargs` + (wrong) `achat_with_tools` override — logic correct, method wrong (fixed in #50) |
 | #48 | `talk_of_the_town` returning Python dict → `str(dict)` repr (single quotes) in NIM context | `_run()` now returns `json.dumps(base)` at all exit points |
 | #48 | `career` NIM 400 pydantic "Input should be a valid string" for `tool_call.id=None` | `_normalize_tool_kwargs` now strips `additional_kwargs["tool_calls"]` entries where `id=None` before each NIM send |
-| #48 | `enriched_articles` 4+ min NIM response → JSON truncated at ~12.5KB | `max_tokens=2048` for enriched shape; `_parse_sector_output` truncates `text` fields to 500 chars after parse |
-| #48 | `newyorker` sector missing byline and date | `talk_of_the_town._run()` now extracts `byline`/`date` from ld+json; Jina AI reader added as fallback before raw HTML extraction; content cleaning (stop markers, credits, markdown noise) applied to Jina text |
+| #49 | `enriched_articles` 4+ min NIM response → JSON truncated at ~12.5KB | `max_tokens=2048` for enriched shape; `_parse_sector_output` truncates `text` fields to 500 chars after parse |
+| #49 | `newyorker` sector missing byline and date | `talk_of_the_town._run()` now extracts `byline`/`date` from ld+json; Jina AI reader added as fallback before raw HTML extraction; content cleaning (stop markers, credits, markdown noise) applied to Jina text |
 
 ### Second research debug sprint (PRs #43–#46) — what was fixed
 
@@ -95,8 +104,8 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Dev branch
 
-- **Current**: `claude/update-claude-debug-sprint-0BsjF` (PR #48 open — ToolCallBlock normalization fix)
-- Prior sprint: `claude/fix-jeeves-research-workflow-Jo1u5` (PRs #43–#46 all merged)
+- **Current**: `claude/update-claude-debug-sprint-0BsjF` (PR #50 open — streaming path fix + all tools JSON string returns)
+- Prior sprint: `claude/fix-jeeves-research-workflow-Jo1u5` (PRs #43–#49 all merged)
 - Prior major work: `claude/improve-dedup-triadic-studies-rEgcE` (#34), `claude/never-empty-news-fallbacks-rEgcE` (#33), `claude/forensic-audit-fixes-rEgcE` (#32)
 
 ## Gotchas the README doesn't flag
@@ -115,7 +124,8 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - **Gemini grounding API returns ephemeral redirect URLs** (`vertexaisearch.cloud.google.com/grounding-api-redirect/...`) as citation sources. These expire within hours and can't be deduped by URL. `collect_urls_from_sector` filters them via `_REDIRECT_ARTIFACT_HOSTS`. The `global_news` sector instruction additionally tells Kimi to look up canonical article URLs via `serper_search` instead of including the redirect directly. Do not add redirect domains back to the URL extraction logic.
 - **Empty-query guards must return strings, not dicts.** LlamaIndex's `FunctionTool._parse_tool_output()` falls through to `TextBlock(text=str(raw_output))` for any return value that isn't a `TextBlock`/`ImageBlock`/`BaseNode`. `str()` on a Python dict produces repr with single quotes (`{'error': '...'}`), which is not valid JSON. NIM receives this as a tool call result and tries to parse it, failing with `"Unterminated string starting at: line 1 column 11 (char 10)"`. All empty-query/empty-input guards in the search tools return plain strings.
 - **`function.arguments` must be a JSON string in history, not None/dict.** Kimi occasionally emits tool calls with `function.arguments=None` or `{}` (dict). `get_tool_calls_from_response` coerces the parsed args to `{}`, but if the RAW `tool_call.function.arguments` is left as None/dict, LlamaIndex records that in the conversation history. On the next NIM call, NIM's pydantic validator rejects it (`Input should be a valid string [type=string_type, input_value={}, input_type=dict]`), returning 400. Fix: also set `tool_call.function.arguments = "{}"` when normalizing.
-- **`ToolCallBlock.tool_kwargs` is what `to_openai_message_dict` actually serializes — NOT `additional_kwargs`.** When Kimi emits `function.arguments=None`, LlamaIndex's `from_openai_message()` stores `ToolCallBlock(tool_kwargs=tool_call.function.arguments or {})` — an empty **dict**, not `"{}"`. On the next NIM call, `to_openai_message_dict` emits `"arguments": {}` (JSON object), which NIM rejects with "Extra data: line 1 column 3 (char 2)" 400. The PR #46 fix to `additional_kwargs` was insufficient because `to_openai_message_dict` checks `already_has_tool_calls=True` and uses the `ToolCallBlock` path, bypassing `additional_kwargs` entirely. The real fix (PR #48): `_normalize_tool_kwargs` called inside `achat_with_tools` before every NIM request converts `ToolCallBlock.tool_kwargs={}` → `"{}"` in-place.
+- **`ToolCallBlock.tool_kwargs` is what `to_openai_message_dict` actually serializes — NOT `additional_kwargs`.** When Kimi emits `function.arguments=None`, LlamaIndex's `from_openai_message()` stores `ToolCallBlock(tool_kwargs=tool_call.function.arguments or {})` — an empty **dict**, not `"{}"`. On the next NIM call, `to_openai_message_dict` emits `"arguments": {}` (JSON object), which NIM rejects with "Extra data: line 1 column 3 (char 2)" 400. The PR #46 fix to `additional_kwargs` was insufficient because `to_openai_message_dict` checks `already_has_tool_calls=True` and uses the `ToolCallBlock` path, bypassing `additional_kwargs` entirely. The real fix: `_normalize_tool_kwargs` converts `ToolCallBlock.tool_kwargs={}` → `"{}"` in-place. CRITICAL: must be called from `astream_chat_with_tools`, NOT `achat_with_tools`. `FunctionAgent.take_step()` always uses `streaming=True` (default in `BaseWorkflowAgent`) and calls `self.llm.astream_chat_with_tools(...)`. The `achat_with_tools` path is NEVER reached in production — an override there is completely dead code.
+- **ALL search tool returns must be JSON strings, not Python dicts.** `LlamaIndex.FunctionTool._parse_tool_output()` (line 307) falls through to `TextBlock(text=str(raw_output))` for any non-ContentBlock return. `str(dict)` → Python repr with single quotes (`{'key': 'value'}`). NIM receives this as tool message content and rejects it with "Unterminated string" 400 when it tries to parse the content as JSON. Fix: `serper.py`, `tavily.py`, `exa.py`, `enrichment.py` all return `json.dumps(...)` at every exit point. Empty-query guards already returned strings; success/error dict paths were the remaining bug.
 - **Kimi emits degenerate tool calls with None id/name.** Occasionally `tool_call.id=None` and `function.name=None` come through. Creating `ToolSelection(tool_id=None, tool_name=None)` raises pydantic ValidationError and kills the sector. `get_tool_calls_from_response` skips these with a WARNING. However, LlamaIndex still records the raw assistant message (including the id=None entries) in the chat history. On the next NIM call, NIM's pydantic validator rejects `id=None` with 400 "Input should be a valid string for ChatCompletionMessageFunctionToolCallParam.id", crashing the sector. Fix: `_normalize_tool_kwargs` also strips any `additional_kwargs["tool_calls"]` entries where `id=None` before each NIM send.
 - **Gemini 2.5 Flash free tier is 20 generate_content RPD, not 1500 grounded-search calls/day.** The original `DAILY_HARD_CAPS["gemini_grounded"] = 1490` assumed the paid Search Grounding quota. The actual free-tier metric is `GenerateRequestsPerDayPerProjectPerModel-FreeTier` with `quotaValue=20`. Cap is now 12. When a 429 arrives, `gemini_grounded.py` immediately sets the counter to the cap so all subsequent sectors skip Gemini without another 429 hit.
 - **NIM 429 rate-limit amplification.** With `max_retries=2` (SDK default), each logical NIM call that 429s becomes 3 actual requests (1 original + 2 retries at 0.45s/0.95s). This burns 3× the rate-limit budget. By sector 4, the limit is saturated and every subsequent sector crashes on its first call. Fix: `max_retries=0` in `build_kimi_llm`; `run_sector` handles all retries with proper 60s backoff.
