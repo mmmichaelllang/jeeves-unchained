@@ -15,6 +15,7 @@ deprecated google-generativeai package.
 
 from __future__ import annotations
 
+import json
 import logging
 from typing import Any
 
@@ -25,7 +26,7 @@ log = logging.getLogger(__name__)
 
 
 def make_gemini_grounded(cfg: Config, ledger: QuotaLedger):
-    def gemini_grounded_synthesize(question: str) -> dict[str, Any]:
+    def gemini_grounded_synthesize(question: str = "") -> str:
         """Gemini 2.5 Flash with Google Search grounding.
 
         Returns a narrative answer plus citation URLs. Use this tool when a
@@ -34,18 +35,28 @@ def make_gemini_grounded(cfg: Config, ledger: QuotaLedger):
 
         Hard daily cap: 12 calls per UTC day (free tier is 20; we stop at 12
         to leave headroom for earlier-in-day usage from correspondence/tests).
+
+        Returns a JSON string so LlamaIndex's _parse_tool_output() produces valid
+        JSON in the NIM context rather than Python repr with single quotes.
         """
+        if not (question or "").strip():
+            log.warning("gemini_grounded_synthesize called with empty question — returning error string")
+            return (
+                "ERROR: gemini_grounded_synthesize requires a non-empty 'question' argument. "
+                "Example: gemini_grounded_synthesize(question='What are the latest AI breakthroughs?')"
+            )
+
         # --- daily cap check (hard stop) ---
         try:
             ledger.check_daily_allow("gemini_grounded")
         except QuotaExceeded as exc:
             log.warning("gemini_grounded: %s", exc)
-            return {
+            return json.dumps({
                 "provider": "gemini",
                 "error": "daily cap reached — no further calls today",
                 "answer": "",
                 "citations": [],
-            }
+            })
 
         try:
             from google import genai  # type: ignore
@@ -72,7 +83,7 @@ def make_gemini_grounded(cfg: Config, ledger: QuotaLedger):
                     "gemini_grounded: 429 — daily counter exhausted; "
                     "subsequent sectors will skip Gemini."
                 )
-            return {"provider": "gemini", "error": str(e), "answer": "", "citations": []}
+            return json.dumps({"provider": "gemini", "error": str(e), "answer": "", "citations": []})
 
         ledger.record("gemini", 1)
         ledger.record_daily("gemini_grounded", 1)
@@ -83,12 +94,12 @@ def make_gemini_grounded(cfg: Config, ledger: QuotaLedger):
             "gemini_grounded: answered (%d chars, %d citations) [daily=%d/%d]",
             len(answer), len(citations), ledger.daily_used("gemini_grounded"), cap,
         )
-        return {
+        return json.dumps({
             "provider": "gemini",
             "question": question,
             "answer": answer,
             "citations": citations,
-        }
+        })
 
     return gemini_grounded_synthesize
 
