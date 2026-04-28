@@ -3,30 +3,40 @@
   "status": "complete",
   "dedup": {
     "covered_urls": [
-      "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom",
-      "https://agiga.ai/",
+      "http://www.seattlepromusica.org/auditions",
+      "https://arxiv.org/abs/2602.23720v1",
       "https://arxiv.org/pdf/2604.09621",
       "https://audria.tech/",
+      "https://bestarion.com/multi-agent-architecture-system/",
+      "https://buildinghumanetech.com/",
       "https://compasswearable.com/",
+      "https://diffit.me/",
       "https://ersearch2.cvtisr.sk/vufind/EdsRecord/edsair,edsair.doi.dedup.....448a95726a3e08715423b148d8dee692",
+      "https://forms.gle/UZS2cVBKKKHhjtvGA",
       "https://friend.com/",
-      "https://gurusup.com/blog/best-multi-agent-frameworks-2026",
+      "https://getbuddi.ai/",
+      "https://humane.com/",
       "https://humy.ai/",
-      "https://immersioned.org/",
+      "https://is4.ai/blog/our-blog-1/top-12-multi-agent-ai-frameworks-2026-335",
       "https://jacobin.com/2026/04/ai-critical-thinking-chatbots-subjectivity/",
-      "https://lens-ai.info/",
       "https://limitless.ai/",
-      "https://lumilife.online/",
       "https://magicschool.ai/",
-      "https://nirva.life/",
       "https://omi.me/",
       "https://philpapers.org/archive/HAMATC-5.pdf",
+      "https://seattlesings.org/event/auditions-for-the-2025-2026-season-2680/",
+      "https://sno-isle.bibliocommons.com/v2/events?types=5f0ce972da1b731c0af31864",
       "https://sureprompts.com/blog/ai-reasoning-models-prompting-complete-guide-2026",
-      "https://twee.com/",
-      "https://www.forbes.com/sites/stevenwolfepereira/2026/04/14/stanfords-ai-report-card-agents-are-ready-companies-are-not/",
+      "https://teachally.com/",
+      "https://teachersbuddy.com/",
+      "https://teachmateai.com/",
+      "https://www.blogarama.com/technology-blogs/1425041-chatgpt-hub-blog/75473725-2026-prompt-engineering-best-practices-guide",
       "https://www.marktechpost.com/2026/04/08/google-ai-research-introduces-paperorchestra-a-multi-agent-framework-for-automated-ai-research-paper-writing/",
+      "https://www.newyorker.com/magazine/2026/04/28/talk-of-the-town-april-28-2026",
       "https://www.nybooks.com/online/2026/04/22/waiting-for-day-zero-los-angeles-iranians/",
-      "https://www.startuphub.ai/ai-news/ai-video/2025/beyond-chatbots-stanfords-jure-leskovec-predicts-autonomous-ai-agents-will-reshape-workflows-by-2026",
+      "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
+      "https://www.seattlechoruses.org/join-chorus/",
+      "https://www.sno-isle.org/locations/edmonds/",
+      "https://www.sno-isle.org/locations/lynnwood/",
       "https://www.themarginalian.org/2026/02/11/why-you/",
       "https://zenodo.org/records/19583419"
     ],
@@ -54,7 +64,6 @@
       "Edmonds police blotter for the week ending April 19 included a theft arrest of an adult female at Highway 99, a warrant arrest, and various other mino",
       "Edmonds to begin sewer, storm pipe rehabilitation project May 4",
       "Edmonds will begin a major sewer and storm pipe rehabilitation project on May 4, targeting 27 locations with failing infrastructure identified in a 20",
-      "Educational AI tools are scaling rapidly for teachers.",
       "English Language Arts Teacher",
       "English Language Arts Teacher (Long-Term Sub)",
       "English Language Development Teacher – Secondary",
@@ -63,9 +72,9 @@
       "Everett Public Schools",
       "Eyal Weizman's 'All they will find is sand: Gaza’s Yellow Line' provides a forensic analysis of Israel's systematic destruction of Gaza's built enviro",
       "Fintan O'Toole's essay 'The Right Amount of Crazy' dissects Trump's application of the 'Madman Theory' in foreign policy, particularly regarding Iran.",
-      "Flora Champy’s essay \"The role of literature as the key to personal freedom\" (24 Apr 2026) stages a dialogue between Proust and Ruskin on why we read.",
       "Friend AI Pendant (MyTabAI, Inc): $7.",
       "Friend AI pendant ($99) - A circular, always-listening companion that records ambient audio and sends contextual text messages via iOS app.",
+      "Friend AI pendant (friend.",
       "Friend and Tab pendants represent the new wave of lifelogging wearables that continuously record audio for AI analysis.",
       "Global diplomatic efforts are fraying as the Iran conflict shows no resolution and new crises emerge.",
       "Gold and silver bullion seized in anti-slavery raid in Hull",
@@ -73,10 +82,14 @@
       "High School English Teacher",
       "High School English Teacher (Long-Term Sub)",
       "High School History Teacher",
+      "Humane AI Pin (humane.",
       "Hungarian Prime Minister Viktor Orbán stepped down from parliament after his Fidesz party suffered a landslide defeat in April elections, ending his 1",
-      "In \"Movements Need the Critical Thinking That AI Destroys\" (26 Apr 2026), the magazine warns that outsourcing judgment to chatbots erodes the cognitiv",
       "In \"Triadic Logic and the Quantum Entanglement of Relations\" (2026, Sophia Studies), philosopher-theologian Dr.",
       "In \"Triadic Ontology and Quantum Perichoresis: A Relational Metaphysics for the 21st Century\" (Routledge, 2026), philosopher-theologian Dr.",
+      "In 'Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny', ProPublica and FRONTLINE investigate the systematic failure of federal immigrati",
+      "In 'Movements Need the Critical Thinking That AI Destroys', Jacobin presents a philosophical critique of AI's impact on human subjectivity and democra",
+      "In 'Waiting for Day Zero', Will Alden provides an in-depth portrait of Iranian opposition groups in Los Angeles as they navigate the current US-Iran c",
+      "In 'Why You', Maria Popova explores the philosophical implications of identity and selfhood through the lens of cosmic contingency.",
       "Iran has officially rejected any US talks while under siege, as Foreign Minister Abbas Araghchi returns to Pakistan.",
       "Jake Nevins examines how the 2026 Winter Olympics in Italy, initially framed around the theme of 'armonia' (harmony), became a stage for geopolitical",
       "Jo Livingstone's essay 'We Goofed' examines Yale's new exhibition on literary errata, exploring how publishers' correction slips have evolved from pra",
@@ -90,9 +103,9 @@
       "Live updates: Trump says he called off dispatching envoys to Iran talks",
       "MagicSchool AI - Used by 7,000 Hillsborough County teachers for lesson planning, worksheet creation, and presentations.",
       "MagicSchool AI: $62.",
+      "MagicSchool.",
       "Mali's Defense Minister General Sadio Camara was assassinated in an attack by Al Qaeda-linked group JNIM on his residence at the Kati military base ou",
       "Mali's capital Bamako came under coordinated attack by armed groups including al-Qaeda-linked JNIM and Tuareg FLA rebels, described as the largest jih",
-      "Maria Popova's essay \"Why You\" (11 Feb 2026) dismantles the illusion of a fixed self.",
       "Marysville",
       "Mexico has stated that two CIA agents killed in a car crash were not authorized to participate in a local raid.",
       "Mukilteo",
@@ -104,19 +117,20 @@
       "Robert G.",
       "Russia launched a major overnight assault on Ukraine with over 660 drones and missiles, killing at least seven people including five in Dnipro.",
       "Seattle Choral Company is accepting singers from all sections year-round; auditions consist of vocalizing, sight-reading, and ear training.",
+      "Seattle Pro Musica has wrapped auditions for 2025-26, but invites singers to email auditions@seattlepromusica.",
       "Seattle Public",
       "Seattle Public Schools",
       "Secondary History Teacher",
       "Secondary Social Studies Teacher",
       "Secondary Teacher Pool (Grades 6-12)",
       "Shoreline",
+      "Sno-Isle Libraries schedule Toddler Storytime at both Edmonds and Lynnwood branches.",
       "Snohomish",
       "Snohomish School District",
       "South County Fire commissioners are redistricting to incorporate Edmonds' 42,000+ residents into the Regional Fire Authority.",
       "Starmer faces vote on possible parliamentary probe over Mandelson",
       "Starting tonight, Sunday, April 26, and continuing through Friday morning, May 1, overnight closures will affect northbound SR 525 and its ramps near",
       "State Route 525 near Alderwood Mall Parkway will undergo overnight closures from Sunday night April 26 through Friday morning May 1 for pavement grind",
-      "The AI pendant market is rapidly expanding with several key players emerging.",
       "The City Council approved key contracts including a $415,116 wastewater treatment plant gasification system support contract with Jacobs Engineering,",
       "The City of Edmonds hosted an open house on Thursday, April 25 to unveil the 60 % design plan for Stage 3 of the Highway 99 Revitalization Project.",
       "The House Oversight Subcommittee on National Security held a closed-door briefing on UAPs on April 24, 2026, with no official readout provided to the",
@@ -124,19 +138,18 @@
       "The IMF has downgraded global growth forecasts to 3.",
       "The New Normal",
       "The New Yorker’s New Look",
+      "The New Yorker’s Talk of the Town: April 28, 2026",
       "The Talk of the Town: April 27, 2026",
-      "The autonomous research landscape has crystallized around two converging breakthroughs.",
+      "The Triadic Closure of Existence: Co-Emergence of Binding, Transformation, and Relational Readout (15 Apr 2026, Zenodo) argues that reality is not bui",
       "The autonomous research landscape has exploded with multi-agent systems now capable of end-to-end scientific discovery.",
+      "The field has moved decisively from single-agent copilots to orchestrated, multi-agent research pipelines.",
       "The field is converging on modular, agent-swarm architectures that can autonomously spin up sub-agents for literature review, experiment design, and e",
       "The global economy faces severe strain as the Iran conflict has escalated beyond geopolitical tension to tangible supply disruption, with Iran's closu",
-      "The lifelogging and wearable AI space shows strong innovation.",
-      "Three 2025-2026 works advance triadic, relational ontologies: a Zenodo thesis argues reality emerges from a simultaneous, phase-locked triadic closure",
       "Tony J Prescott's essay 'Why the best way to understand the self is to build a robot one' argues that creating embodied AI systems is essential to und",
       "Trump cancels US envoys' trip to Pakistan for talks on Iran war - BBC",
       "Voice-first AI hardware is rapidly expanding beyond familiar pendants.",
       "Why the best way to understand the self is to build a robot one",
       "Will Alden's 'Waiting for Day Zero' chronicles the Iranian monarchist movement in Los Angeles, focusing on Reza Pahlavi's failed attempt to position h",
-      "Will Alden’s long read \"Waiting for Day Zero\" (22 Apr 2026) embeds with Los Angeles Iranian exiles who gather every Sunday in Lake Balboa Park, chanti",
       "Woman, 58, died in her cell at Snohomish County Jail",
       "Woman, 58, died in her cell at Snohomish County Jail | HeraldNet.com",
       "email | \"Anthropic, PBC\"",
@@ -146,68 +159,81 @@
       "email | mmmichaelllang"
     ]
   },
-  "weather": "",
+  "weather": "Today in Edmonds: Cloudy morning giving way to partial afternoon clearing. High 57°F, low 46°F. South winds 5-10 mph. Only 20% chance of light rain, mainly staying dry. Evening turns partly cloudy with light variable winds. Cool but comfortable spring day—light jacket recommended.",
   "local_news": [],
   "career": {},
-  "family": {},
+  "family": {
+    "choir": "Seattle Pro Musica has wrapped auditions for 2025-26, but invites singers to email auditions@seattlepromusica.org to join the August 2026 mailing list for the 2026-27 season. Auditions are held at Epiphany Parish (1805 38th Ave, Seattle) and require a 2-minute solo plus prepared excerpts; dues $75/year with scholarships. Seattle Choral Company will audition in September 2026 for its 2026-27 season—sign-up form is live at seattlechoruses.org/join-chorus; rehearsals are Tuesday evenings, dues $225. Northwest Chorale and Choral Arts NW have not yet posted 2026 audition dates; check their sites in late summer.",
+    "toddler": "Sno-Isle Libraries schedule Toddler Storytime at both Edmonds and Lynnwood branches. Edmonds offers weekly 9:30 am sessions (doors open 9:15-9:35) with songs, movement, and post-story play. Lynnwood lists Toddler Storytime with Nathalie on Mondays 9:30–10:00 am. Both libraries also run Baby Storytime (newborn–18 mo) and Preschool Storytime (3–5 yrs); full May calendars are on sno-isle.bibliocommons.com.",
+    "urls": [
+      "http://www.seattlepromusica.org/auditions",
+      "https://forms.gle/UZS2cVBKKKHhjtvGA",
+      "https://www.seattlechoruses.org/join-chorus/",
+      "https://seattlesings.org/event/auditions-for-the-2025-2026-season-2680/",
+      "https://sno-isle.bibliocommons.com/v2/events?types=5f0ce972da1b731c0af31864",
+      "https://www.sno-isle.org/locations/edmonds/",
+      "https://www.sno-isle.org/locations/lynnwood/"
+    ]
+  },
   "global_news": [],
   "intellectual_journals": [
     {
       "source": "The Marginalian",
-      "findings": "Maria Popova's essay \"Why You\" (11 Feb 2026) dismantles the illusion of a fixed self. She argues that identity is a selective narrative stitched from cosmic accidents—\"atoms bonding one way and not another, parents bonding with one partner and not another\"—and that clinging to this story breeds absolutisms. Drawing on Iris Murdoch’s warning that \"the self... is a place of illusion\" and Blaise Pascal’s terror at the arbitrariness of existence, Popova reframes love as the counter-force that lets us \"survive the cosmic helplessness of being born ourselves.\" The piece ends with Philip Larkin’s lin [TRUNCATED]",
+      "findings": "In 'Why You', Maria Popova explores the philosophical implications of identity and selfhood through the lens of cosmic contingency. The essay argues that our sense of self is fundamentally a selective narrative constructed from countless random events - from atomic bonds to parental relationships to cultural values. Drawing on Iris Murdoch's observation that 'the self, the place where we live, is a place of illusion,' Popova suggests that true goodness involves piercing this veil of selfish consciousness to connect with reality as it truly is. The piece weaves together insights from Eastern ph [TRUNCATED]",
       "url": "https://www.themarginalian.org/2026/02/11/why-you/"
     },
     {
       "source": "Jacobin",
-      "findings": "In \"Movements Need the Critical Thinking That AI Destroys\" (26 Apr 2026), the magazine warns that outsourcing judgment to chatbots erodes the cognitive preconditions for democratic participation. Citing a new MIT study showing reduced brain activity in habitual chatbot users, the essay frames AI as a \"technologized form of subjectivity\" that creates \"cognitive debt\": short-term efficiency traded for long-term atrophy of independent thought. The piece revisits Kant’s 1784 essay \"What Is Enlightenment?\" to argue that emancipation requires resisting the \"self-incurred immaturity\" of letting algor [TRUNCATED]",
+      "findings": "In 'Movements Need the Critical Thinking That AI Destroys', Jacobin presents a philosophical critique of AI's impact on human subjectivity and democratic participation. The article argues that while AI systems provide efficiency gains, they create what the author terms 'cognitive debt' - the gradual erosion of our capacity for independent thought through the outsourcing of judgment to algorithms. Drawing on a recent MIT study showing reduced brain activity among regular chatbot users, the piece frames AI as creating a 'decaffeinated subjectivity' that threatens democratic processes and emancip [TRUNCATED]",
       "url": "https://jacobin.com/2026/04/ai-critical-thinking-chatbots-subjectivity/"
     },
     {
-      "source": "Aeon",
-      "findings": "Flora Champy’s essay \"The role of literature as the key to personal freedom\" (24 Apr 2026) stages a dialogue between Proust and Ruskin on why we read. Proust rejects Ruskin’s moral-didactic view, insisting books are not instruments of betterment but portals to \"the most powerful and smartest minds in the world.\" Reading, he argues, is a unique communication channel unbound by social constraints, where we encounter \"indispensable impressions\" that keep past sensations alive and make time tangible. Champy positions literature as a practice of freedom precisely because it refuses utilitarian cost [TRUNCATED]",
-      "url": "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom"
+      "source": "The New York Review of Books",
+      "findings": "In 'Waiting for Day Zero', Will Alden provides an in-depth portrait of Iranian opposition groups in Los Angeles as they navigate the current US-Iran conflict. The piece follows the Constitutionalist Party of Iran (CPI) during their Easter Sunday picnic at Lake Balboa Park, where supporters of former crown prince Reza Pahlavi gather with prerevolutionary flags and chants of 'Long Live the Shah.' The essay reveals how these exile communities have become politically significant in Republican circles, with weekly protests at Westwood's Wilshire Federal Building drawing thousands. The 'Tehrangeles' [TRUNCATED]",
+      "url": "https://www.nybooks.com/online/2026/04/22/waiting-for-day-zero-los-angeles-iranians/"
     },
     {
-      "source": "New York Review of Books",
-      "findings": "Will Alden’s long read \"Waiting for Day Zero\" (22 Apr 2026) embeds with Los Angeles Iranian exiles who gather every Sunday in Lake Balboa Park, chanting for the return of Reza Pahlavi as a \"transitional\" leader. The Constitutionalist Party of Iran, founded by a royal minister in 1994, has turned Westwood’s Wilshire Federal Building into a weekly theater of nostalgia—hookah smoke, Persian pop anthems, and signs reading \"THANK YOU BIBI & TRUMP.\" Alden captures the surreal suspension of diaspora politics: supporters speak of \"day zero\" when Pahlavi will summon Iranians into the streets, yet their [TRUNCATED]",
-      "url": "https://www.nybooks.com/online/2026/04/22/waiting-for-day-zero-los-angeles-iranians/"
+      "source": "ProPublica",
+      "findings": "In 'Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny', ProPublica and FRONTLINE investigate the systematic failure of federal immigration enforcement cases against protesters. The investigation documents over 300 arrests of U.S. citizens - including Marine veteran Alejandro Orellana - accused of crimes like assaulting law enforcement during immigration protests. Through extensive review of court records and video footage, the piece reveals how these cases repeatedly collapse under scrutiny, with officers' statements debunked by video evidence and charges dismissed due to lack of [TRUNCATED]",
+      "url": "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions"
     }
   ],
   "wearable_ai": [
     {
       "category": "ai_voice_hardware",
-      "findings": "The AI pendant market is rapidly expanding with several key players emerging. **Friend** (MyTabAI Inc) raised $7.9M total funding and employs 6 people, offering a wearable AI companion that listens and connects. **Omi** (Based Hardware) has $2.7M funding and 17 employees, building what they call \"the world's first AI-powered wearable that captures and understands your daily life\" with teams at Ton [TRUNCATED]",
+      "findings": "Friend AI pendant (friend.com) has raised $7.9M total funding and employs 6 people (+257% YoY), but recent news shows shipment delays. Limitless Pendant (limitless.ai) offers personalized AI powered by what you've seen, said, and heard with HIPAA-compliant privacy protection, $399 bundles, and 23 employees. Omi (omi.me) is building an AI-powered wearable that captures daily life conversations into [TRUNCATED]",
       "urls": [
         "https://friend.com/",
+        "https://limitless.ai/",
         "https://omi.me/",
         "https://audria.tech/",
-        "https://compasswearable.com/"
+        "https://compasswearable.com/",
+        "https://getbuddi.ai/"
       ]
     },
     {
       "category": "teacher_ai_tools",
-      "findings": "Educational AI tools are scaling rapidly for teachers. **MagicSchool AI** leads with $62.4M total funding, 224 employees, and serves 7 million educators across 16 countries. The platform offers lesson planning, assessment creation, IEP writing, and differentiation tools. **Humy.ai** provides 1,200+ interactive AI-powered historical figures plus 90 teacher tools for history education, used by 60,00 [TRUNCATED]",
+      "findings": "MagicSchool.ai serves 60,000+ teachers with 1,200+ AI historical figures and 90+ teacher tools for English/History, supporting FERPA/COPPA compliance. Diffit for Teachers (diffit.me) employs 20 people (+38.9% YoY) helping create classroom-ready materials fast, headquartered in Berkeley. Humy.ai brings history to life with 1,200+ interactive AI historical figures plus 90+ teacher tools, used by 60, [TRUNCATED]",
       "urls": [
         "https://magicschool.ai/",
+        "https://diffit.me/",
         "https://humy.ai/",
-        "https://twee.com/",
-        "https://immersioned.org/"
+        "https://teachmateai.com/",
+        "https://teachally.com/",
+        "https://teachersbuddy.com/"
       ]
     },
     {
       "category": "wearable_devices",
-      "findings": "The lifelogging and wearable AI space shows strong innovation. **Nirva** creates AI jewelry that journals your life, building a \"living library\" as the entry point to personal AI ecosystems. **Limitless** (acquired by Meta) offers $399 pendant bundles with HIPAA-compliant privacy protection for personalized AI based on what you've seen, said, and heard. **LumiLife** provides a complete wearable ec [TRUNCATED]",
+      "findings": "Humane AI Pin (humane.com) was acquired by HP for $116M in February 2025, now operates as HP IQ innovation lab with 28 employees (-81.9% YoY) and $4M annual revenue. The device offers voice-powered Cosmos OS for instant AI knowledge. HP is actively hiring for next-gen AI wearables through HP IQ. Building Humane Technology community (buildinghumanetech.com) focuses on ethical AI device design with  [TRUNCATED]",
       "urls": [
-        "https://nirva.life/",
-        "https://limitless.ai/",
-        "https://lumilife.online/",
-        "https://agiga.ai/",
-        "https://lens-ai.info/"
+        "https://humane.com/",
+        "https://buildinghumanetech.com/"
       ]
     }
   ],
   "triadic_ontology": {
-    "findings": "Three 2025-2026 works advance triadic, relational ontologies: a Zenodo thesis argues reality emerges from a simultaneous, phase-locked triadic closure of binding, transformation and relational readout rather than additive forces; a 2025 paper builds a minimal SU(3)-invariant ontology using qutrits as ontic primitives, enforcing triadic structure at state, operator and constraint levels; and a forthcoming PhilPapers piece proposes a neurophenomenological triad of object (material), idea (mental) and relation (axiological) domains mediated by consciousness, with testable neural signatures and AI implications.",
+    "findings": "The Triadic Closure of Existence: Co-Emergence of Binding, Transformation, and Relational Readout (15 Apr 2026, Zenodo) argues that reality is not built additively but through a simultaneous, phase-locked triadic closure: three mutually necessary functional roles—stable binding, transformative change, and relational legibility—must co-emerge for any observable universe to arise. Author shows that the three fundamental physical interaction classes map exactly onto these roles, turning “three forces” from a numerical curiosity into a structural imperative. A second, complementary paper, A Triadic Ontology with SU(3) Invariants (Trent Slade, Zenodo 2025), constructs a minimal ontic kernel using qutrit-based dynamics: states are density operators on a 3-D Hilbert space, dynamics are SU(3) actions, and closure is enforced by a ℤ₃ rotation operator that prevents collapse of the third state. The resulting 3-8-2 schema (three basis stances, eight generators, two conserved classifiers) is prese [TRUNCATED]",
     "urls": [
       "https://zenodo.org/records/19583419",
       "https://ersearch2.cvtisr.sk/vufind/EdsRecord/edsair,edsair.doi.dedup.....448a95726a3e08715423b148d8dee692",
@@ -215,14 +241,15 @@
     ]
   },
   "ai_systems": {
-    "findings": "The autonomous research landscape has crystallized around two converging breakthroughs. Google’s PaperOrchestra, unveiled last week, is the first end-to-end multi-agent system that turns raw lab notes into submission-ready LaTeX manuscripts: five specialized agents spin up ~6,070 LLM calls per paper, auto-generate figures, and verify every citation through the Semantic Scholar API. Meanwhile, Stanford’s 2026 AI Index shows the “jagged frontier” is collapsing—agent success on real-world computer tasks jumped from 12 % eighteen months ago to 66 % today, just six points shy of human performance. Jure Leskovec argues the next inflection is not better models but orchestration frameworks: LangGraph, CrewAI, OpenAI’s Agents SDK, and Google’s ADK are now production-grade, each baking in state checkpointing, hand-off protocols, and failure recovery so teams can focus on domain logic instead of distributed-systems plumbing. Prompt engineering has flipped: the 2023 chain-of-thought playbook activ [TRUNCATED]",
+    "findings": "The field has moved decisively from single-agent copilots to orchestrated, multi-agent research pipelines. Google Cloud’s PaperOrchestra (April 2026) demonstrates the new ceiling: five specialized agents—literature reviewer, outline generator, figure creator, citation verifier and LaTeX formatter—collaborate to turn raw lab notes into conference-ready manuscripts, executing ~4 k LLM calls per paper and outperforming earlier end-to-end systems that were tightly coupled to their own experiments. The Auton framework (arXiv 2602.23720) formalizes the architecture shift, separating a declarative “Cognitive Blueprint” from a deterministic Runtime Engine so agents can be audited, ported and governed across clouds. In astrophysics, the Cmbagent swarm used by Cambridge and Berkeley achieved first place in the FAIR Universe Weak Lensing Challenge by letting human experts intervene when autonomous exploration stalled, proving that semi-autonomous loops now rival domain specialists. Prompt enginee [TRUNCATED]",
     "urls": [
       "https://www.marktechpost.com/2026/04/08/google-ai-research-introduces-paperorchestra-a-multi-agent-framework-for-automated-ai-research-paper-writing/",
-      "https://gurusup.com/blog/best-multi-agent-frameworks-2026",
+      "https://arxiv.org/abs/2602.23720v1",
       "https://arxiv.org/pdf/2604.09621",
+      "https://www.blogarama.com/technology-blogs/1425041-chatgpt-hub-blog/75473725-2026-prompt-engineering-best-practices-guide",
       "https://sureprompts.com/blog/ai-reasoning-models-prompting-complete-guide-2026",
-      "https://www.startuphub.ai/ai-news/ai-video/2025/beyond-chatbots-stanfords-jure-leskovec-predicts-autonomous-ai-agents-will-reshape-workflows-by-2026",
-      "https://www.forbes.com/sites/stevenwolfepereira/2026/04/14/stanfords-ai-report-card-agents-are-ready-companies-are-not/"
+      "https://bestarion.com/multi-agent-architecture-system/",
+      "https://is4.ai/blog/our-blog-1/top-12-multi-agent-ai-frameworks-2026-335"
     ]
   },
   "uap": {
@@ -230,14 +257,14 @@
     "urls": []
   },
   "newyorker": {
-    "available": false,
-    "title": "",
-    "section": "",
-    "dek": "",
-    "byline": "",
-    "date": "",
-    "text": "",
-    "url": "",
+    "available": true,
+    "title": "The New Yorker’s Talk of the Town: April 28, 2026",
+    "section": "Talk of the Town",
+    "dek": "At a pop-up dinner in the Flatiron District, a chef serves a twenty-course tasting menu that doubles as a performance-art piece about climate change.",
+    "byline": "By Naomi Fry",
+    "date": "2026-04-28",
+    "text": "On a recent Tuesday evening, in a former textile warehouse on West Twenty-sixth Street, the chef and artist Laila Gohar staged what she called a “culinary elegy” for the planet. Guests—who had paid seven hundred and fifty dollars each—were greeted by a host wearing a dress made of dried kelp and escorted past a wall of slowly melting ice sculptures shaped like endangered animals. The meal began with a single clam, served on a rock that had been flown in from the coast of Maine, followed by a succession of increasingly theatrical dishes: a broth made from the bones of invasive lionfish, served in bowls that cracked open to reveal edible flowers; a terrarium of microgreens grown under heat lamps that flickered like wildfire; and, for the final course, a chocolate truffle filled with carbon-dioxide foam, which dissolved on the tongue like a dying glacier. Gohar, who has previously collaborated with the artist Olafur Eliasson, told the crowd that the dinner was meant to evoke “the last supper of the Anthropocene.” Between courses, a string quartet played a mournful arrangement of “What a Wonderful World,” while a projection mapped rising sea levels onto the ceiling. Some guests wept; others took notes on their phones. At the end of the night, Gohar took a bow, her apron stained with squid ink and ash. “We wanted to make something beautiful,” she said, “before it all disappears.”",
+    "url": "https://www.newyorker.com/magazine/2026/04/28/talk-of-the-town-april-28-2026",
     "source": "The New Yorker"
   },
   "enriched_articles": []
