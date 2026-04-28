@@ -295,10 +295,11 @@ SECTOR_SPECS: list[SectorSpec] = [
         shape="newyorker",
         instruction=(
             "Call fetch_new_yorker_talk_of_the_town() exactly once. It returns "
-            "{available, title, section, dek, text, url, source}. Return that result "
-            "verbatim as a JSON object. If available=false, return the object as-is."
+            "{available, title, section, dek, byline, date, text, url, source}. "
+            "Return that result verbatim as a JSON object. If available=false, return the object as-is."
         ),
         default={"available": False, "title": "", "section": "", "dek": "",
+                 "byline": "", "date": "",
                  "text": "", "url": "", "source": "The New Yorker"},
     ),
     SectorSpec(
@@ -406,6 +407,14 @@ def _parse_sector_output(raw: str, spec: SectorSpec) -> Any:
     except json.JSONDecodeError as e:
         log.warning("sector %s: JSON parse failed: %s; returning default", spec.name, e)
         return spec.default
+
+    # For enriched sectors, enforce the 500-char text cap regardless of model
+    # compliance — avoids bloated session JSON and downstream NIM context issues.
+    if spec.shape == "enriched" and isinstance(parsed, list):
+        for entry in parsed:
+            if isinstance(entry, dict) and isinstance(entry.get("text"), str):
+                if len(entry["text"]) > 500:
+                    entry["text"] = entry["text"][:500]
 
     # For list sectors, drop any item that carries a "urls" key but has an
     # empty list — that is the fingerprint of Kimi answering from training
@@ -605,8 +614,19 @@ async def run_sector(
     # input can exceed 4000 tokens, making NIM drop the streaming connection
     # mid-response ("peer closed connection").  Halving max_tokens keeps each
     # streaming response shorter and faster, preventing the drop.
+    #
+    # Enriched sectors emit a compact JSON array (5 entries × ≤500-char text).
+    # Despite the instruction, Kimi often includes full article texts, bloating
+    # the output to 3000+ tokens and causing a 4+ minute NIM response that
+    # eventually truncates mid-JSON.  Capping at 2048 limits response time;
+    # _parse_sector_output enforces the 500-char text limit after parse.
     _deep_max_tokens = 4096
-    sector_max_tokens = _deep_max_tokens if spec.shape == "deep" else 8192
+    _enriched_max_tokens = 2048
+    sector_max_tokens = (
+        _deep_max_tokens if spec.shape == "deep"
+        else _enriched_max_tokens if spec.shape == "enriched"
+        else 8192
+    )
 
     tools = all_search_tools(cfg, ledger, set(prior_urls_sample))
     llm = build_kimi_llm(cfg, max_tokens=sector_max_tokens)
