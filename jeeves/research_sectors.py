@@ -215,8 +215,13 @@ SECTOR_SPECS: list[SectorSpec] = [
         instruction=(
             "Deep research: relational ontologies, triadic logic, quantum perichoresis, "
             "non-linear triadic dynamics, trinitarianism in contemporary metaphysics. "
-            "Use exa_search with search_type='deep' or 'deep-reasoning' for multi-step "
-            "synthesis. IMPORTANT: the same series (e.g. Karl-Alber 'Studies on Triadic "
+            "IMMEDIATE FIRST ACTION — call this tool right now, before any reasoning:\n"
+            "  exa_search(query='triadic ontology relational metaphysics 2025 2026', "
+            "search_type='auto', num_results=3, text_max_chars=2000)\n"
+            "Then call a second search if needed:\n"
+            "  exa_search(query='quantum perichoresis trinitarian philosophy new paper', "
+            "search_type='auto', num_results=2, text_max_chars=2000)\n"
+            "IMPORTANT: the same series (e.g. Karl-Alber 'Studies on Triadic "
             "Ontology') may appear in prior coverage. Prefer to find the NEXT uncovered "
             "volume, paper, or author — check prior_urls and avoid repeating what is there. "
             "Begin your findings prose with the specific TITLE and AUTHOR of each paper or "
@@ -231,8 +236,13 @@ SECTOR_SPECS: list[SectorSpec] = [
         shape="deep",
         instruction=(
             "Deep research: multi-agent research systems, reasoning models, autonomous "
-            "research pipelines, prompt-engineering advances. Use exa_search with "
-            "search_type='deep'. "
+            "research pipelines, prompt-engineering advances. "
+            "IMMEDIATE FIRST ACTION — call this tool right now, before any reasoning:\n"
+            "  exa_search(query='multi-agent AI research systems autonomous pipeline 2026', "
+            "search_type='auto', num_results=3, text_max_chars=2000)\n"
+            "Then optionally:\n"
+            "  exa_search(query='reasoning model prompt engineering advances 2025 2026', "
+            "search_type='auto', num_results=2, text_max_chars=2000)\n"
             "CRITICAL: 'findings' MUST be a single prose string (500-1000 chars), NOT an "
             "array or list. Return exactly: {\"findings\": \"<prose string>\", \"urls\": [...]}. "
             "Do not put an array in the findings field."
@@ -460,8 +470,17 @@ async def run_sector(
     # Each sector gets its own agent, LLM, and tool instances so no state
     # leaks across runs (the quota ledger is the only shared object and is
     # inherently cumulative).
+    #
+    # Deep sectors read full article text (up to 2000 chars × 3-5 results) and
+    # synthesise it into prose findings.  Kimi's chain-of-thought over that
+    # input can exceed 4000 tokens, making NIM drop the streaming connection
+    # mid-response ("peer closed connection").  Halving max_tokens keeps each
+    # streaming response shorter and faster, preventing the drop.
+    _deep_max_tokens = 4096
+    sector_max_tokens = _deep_max_tokens if spec.shape == "deep" else 8192
+
     tools = all_search_tools(cfg, ledger, set(prior_urls_sample))
-    llm = build_kimi_llm(cfg)
+    llm = build_kimi_llm(cfg, max_tokens=sector_max_tokens)
 
     user_msg = _build_user_prompt(
         spec, cfg.run_date.isoformat(), prior_urls_sample, extra_user,
@@ -489,34 +508,42 @@ async def run_sector(
 
     log.info("sector %s: agent starting.", spec.name)
     response = None
-    try:
-        response = await agent.run(user_msg)
-    except Exception as e:
-        if _is_retryable_network_error(e):
-            log.warning(
-                "sector %s: transient network error (%s) — retrying in 10s.",
-                spec.name, e,
-            )
-            await asyncio.sleep(10)
-            # Rebuild agent with fresh tool instances for the retry.
-            tools2 = all_search_tools(cfg, ledger, set(prior_urls_sample))
-            llm2 = build_kimi_llm(cfg)
-            agent2 = FunctionAgent(
-                tools=tools2, llm=llm2,
-                system_prompt=_system_prompt,
-                verbose=cfg.verbose,
-            )
-            try:
-                response = await agent2.run(user_msg)
-            except Exception as e2:
+    _retry_delays = [10, 30, 60]  # seconds between successive attempts
+    last_exc: Exception | None = None
+    for attempt in range(1 + len(_retry_delays)):
+        try:
+            if attempt == 0:
+                response = await agent.run(user_msg)
+            else:
+                delay = _retry_delays[attempt - 1]
                 log.warning(
-                    "sector %s: agent crashed after retry (%s); returning default",
-                    spec.name, e2,
+                    "sector %s: transient network error on attempt %d (%s) — "
+                    "retrying in %ds.",
+                    spec.name, attempt, last_exc, delay,
+                )
+                await asyncio.sleep(delay)
+                # Rebuild agent with fresh tool instances for each retry so
+                # no stale streaming state from the crashed connection leaks.
+                tools_r = all_search_tools(cfg, ledger, set(prior_urls_sample))
+                llm_r = build_kimi_llm(cfg, max_tokens=sector_max_tokens)
+                agent_r = FunctionAgent(
+                    tools=tools_r, llm=llm_r,
+                    system_prompt=_system_prompt,
+                    verbose=cfg.verbose,
+                )
+                response = await agent_r.run(user_msg)
+            break  # success
+        except Exception as e:
+            last_exc = e
+            if not _is_retryable_network_error(e):
+                log.warning("sector %s: agent crashed (%s); returning default", spec.name, e)
+                return spec.default
+            if attempt == len(_retry_delays):
+                log.warning(
+                    "sector %s: agent crashed on all %d attempts (%s); returning default",
+                    spec.name, attempt + 1, e,
                 )
                 return spec.default
-        else:
-            log.warning("sector %s: agent crashed (%s); returning default", spec.name, e)
-            return spec.default
 
     # Guard: if no search-provider quota moved, Kimi answered entirely from
     # training data without calling any external tools.  Reject the output so
