@@ -3,47 +3,80 @@
   "status": "complete",
   "dedup": {
     "covered_urls": [
+      "http://www.edmondsbeacon.com/stories/untitled,174933",
+      "http://www.seattlepromusica.org/auditions",
+      "https://9to5mac.com/2026/04/27/key-takeaways-after-testing-out-speakon-an-ai-powered-dictation-iphone-accessory/",
+      "https://aeon.co/essays/medieval-art-makes-the-body-a-site-of-theology-and-politics",
       "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom",
+      "https://andreyandrade.com/static/voice-first-future/",
+      "https://apnews.com/live/iran-war-israel-trump-04-28-2026",
       "https://arxiv.org/abs/2602.23720v1",
       "https://arxiv.org/pdf/2604.09621",
-      "https://audria.tech/",
-      "https://briskteaching.com/",
+      "https://defensescoop.com/2026/02/20/trump-ufo-uap-government-files-disclosure/",
       "https://dev.to/aibughunter/ai-agents-in-april-2026-from-research-to-production-whats-actually-happening-55oc",
       "https://ersearch2.cvtisr.sk/vufind/EdsRecord/edsair,edsair.doi.dedup.....448a95726a3e08715423b148d8dee692",
-      "https://getbuddi.ai/",
-      "https://humy.ai/",
-      "https://immersioned.org/",
-      "https://jacobin.com/2026/04/ai-critical-thinking-chatbots-subjectivity",
-      "https://limitless.ai/",
-      "https://lumilife.online/",
-      "https://madure.blogspot.com/2026/01/the-doctrine-of-trinity-has-long-served.html",
+      "https://ibtimes.co.uk/rubio-senators-heard-credible-scif-testimony-non-human-beings-recovered-alien-bodies-1772665",
+      "https://jacobin.com/2026/04/ai-critical-thinking-chatbots-subjectivity/",
+      "https://jaredhenderson.substack.com/p/i-bought-an-ai-friend",
+      "https://lamag.com/news-and-politics/what-happened-inside-congress-classified-uap-briefing/",
       "https://medium.com/product-powerhouse/the-2026-ai-agent-revolution-7-tools-that-actually-automate-your-work-not-just-chat-13e9f82e3a9b",
-      "https://omi.me/",
+      "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/",
+      "https://myedmondsnews.com/2026/04/council-approves-key-contracts-drops-potential-tree-litigation-and-proclaims-april-9-local-news-day/",
+      "https://myedmondsnews.com/2026/04/edmonds-at-center-of-discussions-as-south-county-fire-commissioners-embark-on-redistricting/",
+      "https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/",
+      "https://oversight.house.gov/release/hearing-wrap-up-government-must-be-more-transparent-about-uaps/",
+      "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
+      "https://promptrefinery.ai/ai-prompting-techniques-reasoning-models-2026/",
       "https://pub.towardsai.net/20-agentic-ai-projects-that-will-define-real-world-ai-in-2026-294ffff5d696",
-      "https://revolutioned.ai/",
-      "https://socraeducation.com/",
-      "https://sureprompts.com/blog/advanced-prompt-engineering-2026-claude-gpt5-gemini",
+      "https://punchng.com/bombing-kills-21-in-colombia/?amp=",
+      "https://seattlesings.org/event/auditions-for-2025-2026-season-all-voice-types-2616/",
+      "https://seattlesings.org/event/season-auditions-2085/",
+      "https://sfl.media/congressman-tim-burchett-claims-u-s-has-100-made-contact-with-aliens/",
+      "https://sno-isle.bibliocommons.com/events/search/fq=types:(5f0ce972da1b731c0af31864%20OR%2060c925525f9fa8370015086e%20OR%205f0ce8fd8497d4760a06c15e%20OR%205f0ce903da1b731c0af31862)/event/61b2a2172268d34100c0318f",
       "https://sureprompts.com/blog/prompting-reasoning-models-guide",
-      "https://twee.com/",
-      "https://wareit.ai/",
       "https://web.diffit.me/",
-      "https://www.academia.edu/145764519/Gradientology_Foundations_of_the_Primordial_Triad_Treatise_II_The_Logical_Insufficiency_of_the_Dyad_and_the_Necessity_of_Mediational_Closure",
-      "https://www.instaclustr.com/education/agentic-ai/agentic-ai-frameworks-top-10-options-in-2026/",
+      "https://www.bbc.com/news/articles/c62d43vdgmmo",
+      "https://www.briskteaching.com/",
+      "https://www.briskteaching.com/post/brisk-announces-curriculum-intelligence-for-back-to-school-2026",
+      "https://www.choralartsnw.org/music-educators-sing-in/",
+      "https://www.cnn.com/2026/03/07/us/aliens-ufos-files-release-trump",
+      "https://www.gadgetreview.com/apples-next-ai-device-might-be-a-pendant-that-needs-your-iphone-to-work",
+      "https://www.hackster.io/tab/tab-your-second-brain-ce348c",
+      "https://www.heraldnet.com/2026/04/20/south-county-fire-board-considers-redistricting-proposals/",
       "https://www.linkedin.com/posts/dlsheng_new-ai-model-releases-news-april-2026-activity-7448731026853433344-qmU_",
-      "https://www.lrb.co.uk/the-paper/v48/n07/ian-penman/i-m-just-a-sound",
+      "https://www.magicschool.ai/blog-posts/ai-teaching-tools-updates-2026",
+      "https://www.magicschool.ai/blog-posts/whats-new-april-2026",
+      "https://www.magicschool.ai/magic-tools",
       "https://www.marktechpost.com/2026/04/08/google-ai-research-introduces-paperorchestra-a-multi-agent-framework-for-automated-ai-research-paper-writing/",
-      "https://www.nybooks.com/articles/2026/04/23/blood-in-the-game-bloodline-fever-beach/",
+      "https://www.newyorker.com/magazine/2026/05/04/ellen-burstyns-inner-library",
       "https://www.nybooks.com/online/2026/04/22/waiting-for-day-zero-los-angeles-iranians/",
+      "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
+      "https://www.reuters.com/world/europe/germany-says-it-will-step-up-military-role-nato-amid-increased-uncertainty-2025-04-28/",
+      "https://www.reuters.com/world/middle-east/israels-gaza-aid-blockade-contested-world-court-hearings-2025-04-28/",
+      "https://www.sno-isle.org/locations/edmonds/",
+      "https://www.sno-isle.org/locations/lynnwood/",
+      "https://www.theguardian.com/world/2026/apr/12/trump-vance-aliens-ufo",
+      "https://www.theguardian.com/world/2026/apr/27/gunmen-kill-at-least-29-at-football-pitch-in-north-east-nigeria-governor-says",
+      "https://www.triertium.cz/2026/02/21/matteo-raffaelli-on-triertium-in-modern-theology/",
+      "https://www.wired.com/story/friend-ai-pendant/",
       "https://zenodo.org/records/19583419"
     ],
     "covered_headlines": [
+      "**AI Rings** (Pebble Index, Wizpr, Stream, Sandbar) - $99-149 range of AI-enabled rings with tiny microphones for discreet AI access.",
+      "**Friend AI Pendant** ($99, shipping) - Avi Schiffmann's minimalist approach: \"a fancy Bluetooth microphone with a shell around it\" that uses Claude 3",
+      "**MagicSchool** dominates with 80+ teacher tools including new April 2026 features: Educational Song Generator creating curriculum-aligned songs with",
       "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail in Everett at 7:25 a.",
       "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail medical housing unit around 7:25 a.",
+      "A bombing on the Pan-American Highway in Colombia’s Cauca department has killed at least 21 people and injured dozens more, the deadliest civilian att",
+      "A joint ProPublica–FRONTLINE investigation (14 Apr 2026) documents how ICE and CBP mass-arrests of protesters during immigration sweeps routinely coll",
+      "AI research systems are rapidly evolving from passive tools to autonomous research collaborators.",
       "Armed groups launch co-ordinated attacks across Mali - BBC",
+      "Art historian Denva Gallant's 'Medieval art makes the body a site of theology and politics' (27 Apr 2026) analyses 13th-century mosaics in Venice's St",
       "Auditions — Seattle Pro Musica",
       "Bellevue",
       "Bellevue Christian",
       "Bellevue Christian School",
+      "Both Edmonds Library and Lynnwood Library offer regular toddler storytime sessions for ages 18 months-3 years through the Sno-Isle Libraries system.",
       "British Prime Minister Keir Starmer faces a parliamentary vote tomorrow on whether to launch an inquiry into whether he misled the House of Commons ov",
       "British police seized £175,000 worth of gold and silver bullion along with £13,000 cash in Hull during an anti-slavery operation.",
       "Buddi AI Wearable: 6-person Bothell, WA (local) startup founded 2024.",
@@ -52,28 +85,31 @@
       "Colin Powers' analysis 'The Emirates on the Tightrope' provides a deep dive into the UAE's precarious position during the Iran war.",
       "Colm Tóibín's review of 'For and Against a United Ireland' by Fintan O'Toole and Sam McBride examines the complex practicalities of Irish reunificatio",
       "Congress is accelerating its UAP-disclosure drive.",
+      "Congressional UAP disclosure efforts intensified this week as the House Oversight Task Force demanded 46 classified videos from the Pentagon by April",
       "Council approves key contracts, drops potential tree litigation and proclaims April 9 Local News Day",
       "Dual Language (English/Spanish) Teacher",
       "Edmonds",
       "Edmonds Library (650 Main St) offers Toddler Storytime for 18 months–3 years on Thursdays, next session May 7 at 10:30 am with Cami—check sno-isle.",
       "Edmonds School District",
       "Edmonds police blotter for the week ending April 19 included a theft arrest of an adult female at Highway 99, a warrant arrest, and various other mino",
+      "Edmonds police responded to routine public safety incidents in the week ending April 19, including a theft arrest of an adult female at Highway 99 and",
       "Edmonds to begin sewer, storm pipe rehabilitation project May 4",
       "Edmonds will begin a major sewer and storm pipe rehabilitation project on May 4, targeting 27 locations with failing infrastructure identified in a 20",
+      "Edmonds will launch a major sewer and storm pipe rehabilitation project starting May 4, targeting 27 locations with failing infrastructure identified",
+      "Ellen Burstyn’s Inner Library",
       "English Language Arts Teacher",
       "English Language Arts Teacher (Long-Term Sub)",
       "English Language Development Teacher – Secondary",
-      "English and History teachers have an expanding toolkit of AI-powered resources.",
       "English and History teachers now have three well-funded, purpose-built AI co-teachers.",
       "Everett",
       "Everett Public Schools",
       "Eyal Weizman's 'All they will find is sand: Gaza’s Yellow Line' provides a forensic analysis of Israel's systematic destruction of Gaza's built enviro",
       "Fintan O'Toole's essay 'The Right Amount of Crazy' dissects Trump's application of the 'Madman Theory' in foreign policy, particularly regarding Iran.",
-      "Flora Champy's essay defends literature's role in personal freedom through Proust's argument that books are not instruments of moral betterment but ra",
-      "Francine Prose's review examines two novels addressing contemporary violence and corruption: Lee Clay Johnson's 'Bloodline' about a Tennessee man who",
+      "Flora Champy's essay 'The role of literature as the key to personal freedom' (24 Apr 2026) revisits Marcel Proust's 1905 essay 'On Reading' to argue t",
       "Friend AI Pendant (MyTabAI, Inc): $7.",
       "Friend AI pendant ($99) - A circular, always-listening companion that records ambient audio and sends contextual text messages via iOS app.",
       "Friend and Tab pendants represent the new wave of lifelogging wearables that continuously record audio for AI analysis.",
+      "Germany has pledged to become the 'backbone of conventional defence in Europe,' announcing a historic 500 billion euro military investment as Chancell",
       "Global diplomatic efforts are fraying as the Iran conflict shows no resolution and new crises emerge.",
       "Gold and silver bullion seized in anti-slavery raid in Hull",
       "High School English / History Teacher",
@@ -81,11 +117,11 @@
       "High School English Teacher (Long-Term Sub)",
       "High School History Teacher",
       "Hungarian Prime Minister Viktor Orbán stepped down from parliament after his Fidesz party suffered a landslide defeat in April elections, ending his 1",
-      "Ian Penman's essay on the Beach Boys explores how Brian Wilson's music transcends mere pop to become what Penman calls 'secular hymns baited with pop",
       "In \"Triadic Logic and the Quantum Entanglement of Relations\" (2026, Sophia Studies), philosopher-theologian Dr.",
       "In \"Triadic Ontology and Quantum Perichoresis: A Relational Metaphysics for the 21st Century\" (Routledge, 2026), philosopher-theologian Dr.",
+      "In 'Movements Need the Critical Thinking That AI Destroys' (26 Apr 2026), Jacobin warns that delegating judgment to chatbots risks a 'cognitive debt'",
+      "Iran has offered to reopen the Strait of Hormuz and end the war if the US lifts its blockade, but the Trump administration appears cold to the proposa",
       "Iran has officially rejected any US talks while under siege, as Foreign Minister Abbas Araghchi returns to Pakistan.",
-      "Jacobin's analysis warns that AI systems are creating 'cognitive debt' by outsourcing human judgment, citing an MIT study showing reduced brain activi",
       "Jake Nevins examines how the 2026 Winter Olympics in Italy, initially framed around the theme of 'armonia' (harmony), became a stage for geopolitical",
       "Jo Livingstone's essay 'We Goofed' examines Yale's new exhibition on literary errata, exploring how publishers' correction slips have evolved from pra",
       "Join Us - Seattle Choral Company",
@@ -111,6 +147,7 @@
       "Robert G.",
       "Russia launched a major overnight assault on Ukraine with over 660 drones and missiles, killing at least seven people including five in Dnipro.",
       "Seattle Choral Company is accepting singers from all sections year-round; auditions consist of vocalizing, sight-reading, and ear training.",
+      "Seattle Pro Musica has completed auditions for the 2025-26 season, but singers interested in joining the 2026-27 season can email auditions@seattlepro",
       "Seattle Public",
       "Seattle Public Schools",
       "Secondary History Teacher",
@@ -119,31 +156,32 @@
       "Shoreline",
       "Snohomish",
       "Snohomish School District",
+      "South County Fire commissioners are actively redistricting to incorporate Edmonds' 42,000+ residents into the Regional Fire Authority's governance str",
       "South County Fire commissioners are redistricting to incorporate Edmonds' 42,000+ residents into the Regional Fire Authority.",
       "Starmer faces vote on possible parliamentary probe over Mandelson",
       "Starting tonight, Sunday, April 26, and continuing through Friday morning, May 1, overnight closures will affect northbound SR 525 and its ramps near",
       "State Route 525 near Alderwood Mall Parkway will undergo overnight closures from Sunday night April 26 through Friday morning May 1 for pavement grind",
-      "The AI systems sector is rapidly evolving from passive tools to autonomous research collaborators.",
       "The City Council approved key contracts including a $415,116 wastewater treatment plant gasification system support contract with Jacobs Engineering,",
       "The City of Edmonds hosted an open house on Thursday, April 25 to unveil the 60 % design plan for Stage 3 of the Highway 99 Revitalization Project.",
+      "The Edmonds City Council has approved key infrastructure contracts totaling over $834,000, including a $415,116 wastewater treatment plant gasificatio",
       "The House Oversight Subcommittee on National Security held a closed-door briefing on UAPs on April 24, 2026, with no official readout provided to the",
       "The House Oversight subcommittee on National Security held a closed-door UAP briefing on April 24, 2026, but issued no public readout, frustrating tra",
       "The IMF has downgraded global growth forecasts to 3.",
+      "The Islamic State group has claimed responsibility for a deadly attack in Nigeria’s Adamawa state that killed at least 29 people.",
       "The New Normal",
       "The New Yorker’s New Look",
       "The Talk of the Town: April 27, 2026",
+      "The United Nations and Palestinian representatives told the International Court of Justice that Israel is violating international law by blocking all",
       "The autonomous research landscape has exploded with multi-agent systems now capable of end-to-end scientific discovery.",
       "The field is converging on modular, agent-swarm architectures that can autonomously spin up sub-agents for literature review, experiment design, and e",
       "The global economy faces severe strain as the Iran conflict has escalated beyond geopolitical tension to tangible supply disruption, with Iran's closu",
-      "The lifelogging pendant category has evolved into comprehensive wearable ecosystems.",
+      "Three 2025-2026 papers advance triadic relational metaphysics: the TRIERTIUM 2025 conference and Raffaelli’s Modern Theology article root Trinitarian",
       "Tony J Prescott's essay 'Why the best way to understand the self is to build a robot one' argues that creating embodied AI systems is essential to und",
       "Trump cancels US envoys' trip to Pakistan for talks on Iran war - BBC",
-      "Two new works advance triadic ontology beyond the prior coverage.",
       "Voice-first AI hardware is rapidly expanding beyond familiar pendants.",
-      "Voice-first AI hardware is rapidly expanding beyond the familiar Friend pendant.",
       "Why the best way to understand the self is to build a robot one",
       "Will Alden's 'Waiting for Day Zero' chronicles the Iranian monarchist movement in Los Angeles, focusing on Reza Pahlavi's failed attempt to position h",
-      "Will Alden's 'Waiting for Day Zero' profiles the Iranian opposition in exile at Lake Balboa Park, Los Angeles, where the Constitutionalist Party of Ir",
+      "Will Alden's long-form report 'Waiting for Day Zero' (22 Apr 2026) embeds with the Los Angeles exile wing of Iran's Constitutionalist Party.",
       "Woman, 58, died in her cell at Snohomish County Jail",
       "Woman, 58, died in her cell at Snohomish County Jail | HeraldNet.com",
       "email | \"Anthropic, PBC\"",
@@ -153,123 +191,204 @@
       "email | mmmichaelllang"
     ]
   },
-  "weather": "",
-  "local_news": [],
+  "weather": "Today in Edmonds: Overcast and cool. Morning low 47°F, afternoon high only 57°F. Light SSE winds 5-10 mph with gusts to 10 mph. Humidity 64-80%. No rain expected—just 8-20 % chance of light showers—so the day stays dry but gray. Skies begin clearing tonight, dropping to 46°F. Dress in layers; it feels brisk.",
+  "local_news": [
+    {
+      "category": "municipal",
+      "source": "My Edmonds News",
+      "findings": "Edmonds will launch a major sewer and storm pipe rehabilitation project starting May 4, targeting 27 locations with failing infrastructure identified in a 2013 review. The $419,000 project uses cured-in-place pipe (CIPP) technology to repair aging sewer and stormwater systems without major excavation. Additionally, the city has unveiled the 60% design plan for Stage 3 of the Highway 99 Revitalization Project, with a public open house held on April 24 to gather community feedback on the next phase of improvements to the corridor.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/",
+        "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "My Edmonds News",
+      "findings": "South County Fire commissioners are actively redistricting to incorporate Edmonds' 42,000+ residents into the Regional Fire Authority's governance structure. Two competing plans are under consideration: Plan 1 would keep nearly all of Edmonds in a single district, while Plan 2 would split the city at Pine Street between two districts. The commission is seeking public input before finalizing boundaries that will determine how Edmonds residents are represented on the seven-member fire board.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/edmonds-at-center-of-discussions-as-south-county-fire-commissioners-embark-on-redistricting/",
+        "https://www.heraldnet.com/2026/04/20/south-county-fire-board-considers-redistricting-proposals/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "My Edmonds News",
+      "findings": "The Edmonds City Council has approved key infrastructure contracts totaling over $834,000, including a $415,116 wastewater treatment plant gasification system support contract with Jacobs Engineering and a $419,000 sewer rehabilitation project. The council also declined to pursue further litigation in the landmark Redelfs tree case, accepting a reduced $20,000 fine after initially imposing a $102,245 penalty for unauthorized removal of a 33-inch-diameter heritage tree.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/council-approves-key-contracts-drops-potential-tree-litigation-and-proclaims-april-9-local-news-day/"
+      ]
+    },
+    {
+      "category": "public_safety",
+      "source": "Edmonds Beacon",
+      "findings": "Edmonds police responded to routine public safety incidents in the week ending April 19, including a theft arrest of an adult female at Highway 99 and a warrant arrest. No major violent crimes or homicides were reported within the 3-mile radius of the Lang residence during this period.",
+      "urls": [
+        "http://www.edmondsbeacon.com/stories/untitled,174933"
+      ]
+    }
+  ],
   "career": {},
-  "family": {},
-  "global_news": [],
+  "family": {
+    "choir": "Seattle Pro Musica has completed auditions for the 2025-26 season, but singers interested in joining the 2026-27 season can email auditions@seattlepromusica.org to be added to the auditions mailing list. Auditions for all voice parts are held each August at Epiphany Parish Seattle (1805 38th Avenue, Seattle). Requirements include music reading skills, vocalizing, sight-reading two short choral pieces in a quartet, and preparing a short solo piece. Rehearsals are Tuesday evenings 6:30-9:30 pm at Epiphany Parish. The Seattle Choral Company held auditions for their 2025-2026 season in July-August 2025 at Phinney Ridge Lutheran Church, with future auditions likely in summer 2026. Choral Arts Northwest has a music educator sing-in on March 15, 2026 at First United Methodist Church (Queen Anne).",
+    "toddler": "Both Edmonds Library and Lynnwood Library offer regular toddler storytime sessions for ages 18 months-3 years through the Sno-Isle Libraries system. Edmonds Library provides Baby Storytime (newborn-18 months), Toddler Storytime (18 months-3 years), and Preschool Storytime (3-5 years). Lynnwood Library offers similar programs including Baby Storytime and Toddler Storytime with music and movement activities. These programs are free and designed to nurture early literacy through stories, songs, rhymes and activities. Check the Sno-Isle Libraries website for specific May 2026 schedules.",
+    "urls": [
+      "http://www.seattlepromusica.org/auditions",
+      "https://seattlesings.org/event/season-auditions-2085/",
+      "https://seattlesings.org/event/auditions-for-2025-2026-season-all-voice-types-2616/",
+      "https://www.choralartsnw.org/music-educators-sing-in/",
+      "https://www.sno-isle.org/locations/edmonds/",
+      "https://www.sno-isle.org/locations/lynnwood/",
+      "https://sno-isle.bibliocommons.com/events/search/fq=types:(5f0ce972da1b731c0af31864%20OR%2060c925525f9fa8370015086e%20OR%205f0ce8fd8497d4760a06c15e%20OR%205f0ce903da1b731c0af31862)/event/61b2a2172268d34100c0318f"
+    ]
+  },
+  "global_news": [
+    {
+      "category": "global_news",
+      "source": "AP",
+      "findings": "Iran has offered to reopen the Strait of Hormuz and end the war if the US lifts its blockade, but the Trump administration appears cold to the proposal, which notably omits any mention of Iran's nuclear program. The offer was delivered as Foreign Minister Abbas Araghchi visited Russia for talks, underscoring Tehran's effort to build diplomatic support while Washington signals skepticism.",
+      "urls": [
+        "https://apnews.com/live/iran-war-israel-trump-04-28-2026"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "BBC",
+      "findings": "The Islamic State group has claimed responsibility for a deadly attack in Nigeria’s Adamawa state that killed at least 29 people. Gunmen raided a football pitch in Guyaku village, firing indiscriminately at civilians before burning homes, places of worship, and motorcycles. Governor Ahmadu Umaru Fintiri called the assault an 'affront to our humanity' and vowed intensified security operations. The region, bordering Cameroon, has suffered repeated attacks by IS-affiliated militants and criminal gangs.",
+      "urls": [
+        "https://www.bbc.com/news/articles/c62d43vdgmmo"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "The Guardian",
+      "findings": "A bombing on the Pan-American Highway in Colombia’s Cauca department has killed at least 21 people and injured dozens more, the deadliest civilian attack since 2003. President Gustavo Petro blamed a dissident FARC faction led by Iván Mordisco, accusing the group of terrorism and drug trafficking. The explosion, which created a massive crater, comes one month before presidential elections on May 31, with security dominating the campaign as right-wing candidates vow a crackdown.",
+      "urls": [
+        "https://www.theguardian.com/world/2026/apr/27/gunmen-kill-at-least-29-at-football-pitch-in-north-east-nigeria-governor-says",
+        "https://punchng.com/bombing-kills-21-in-colombia/?amp="
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "Reuters",
+      "findings": "Germany has pledged to become the 'backbone of conventional defence in Europe,' announcing a historic 500 billion euro military investment as Chancellor-designate Friedrich Merz prepares to take office. President Frank-Walter Steinmeier, marking 70 years of German NATO membership, vowed to expand Germany’s military role amid uncertainty over US support and Russia’s ongoing war in Ukraine. The plan includes lifting borrowing caps to fund defense, a major shift for Europe’s largest economy.",
+      "urls": [
+        "https://www.reuters.com/world/europe/germany-says-it-will-step-up-military-role-nato-amid-increased-uncertainty-2025-04-28/"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "Reuters",
+      "findings": "The United Nations and Palestinian representatives told the International Court of Justice that Israel is violating international law by blocking all humanitarian aid to Gaza since March 2, leaving 2.3 million residents on the brink of starvation. Israel’s foreign minister dismissed the hearings as a 'circus,' insisting aid will not flow until Hamas releases all hostages. The court’s advisory opinion, expected in months, carries political weight but no enforcement power.",
+      "urls": [
+        "https://www.reuters.com/world/middle-east/israels-gaza-aid-blockade-contested-world-court-hearings-2025-04-28/"
+      ]
+    }
+  ],
   "intellectual_journals": [
     {
-      "source": "LRB",
-      "findings": "Ian Penman's essay on the Beach Boys explores how Brian Wilson's music transcends mere pop to become what Penman calls 'secular hymns baited with pop hooks.' The piece examines Wilson's ability to create three-minute songs that feel like standing alone in a cathedral, noting how tracks like 'Don't Talk (Put Your Head on My Shoulder)' and 'Caroline, No' achieve an almost sacred quality. Penman argues that the Beach Boys' legacy exists in the tension between Saturday night and Sunday morning, between carnal jolt and sacred intimation, with Wilson's progressions described as 'always going up, the [TRUNCATED]",
-      "urls": [
-        "https://www.lrb.co.uk/the-paper/v48/n07/ian-penman/i-m-just-a-sound"
-      ]
+      "source": "Aeon",
+      "findings": "Flora Champy's essay 'The role of literature as the key to personal freedom' (24 Apr 2026) revisits Marcel Proust's 1905 essay 'On Reading' to argue that literature's value lies not in moral improvement but in its capacity to preserve and re-activate past sensations, making time tangible. Champy contrasts Proust's view with John Ruskin's moralising defence of reading, siding with Proust's notion that books offer a unique, socially unconstrained communication channel with great minds. The piece warns against reducing reading to a cost-benefit calculus and defends literature as a realm where tru [TRUNCATED]",
+      "url": "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom"
     },
     {
       "source": "Aeon",
-      "findings": "Flora Champy's essay defends literature's role in personal freedom through Proust's argument that books are not instruments of moral betterment but rather preserve 'indelible impressions of surroundings' and make 'time tangible.' The piece contrasts Proust's view with Ruskin's moralizing defense of reading, arguing that literature provides access to wisdom through unique communication with powerful minds rather than serving as networking tools. Champy emphasizes how reading allows connection with the 'most powerful and smartest minds in the world' without the social constraints that govern spe [TRUNCATED]",
-      "urls": [
-        "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom"
-      ]
+      "findings": "Art historian Denva Gallant's 'Medieval art makes the body a site of theology and politics' (27 Apr 2026) analyses 13th-century mosaics in Venice's St Mark's Basilica. Gallant shows how the depiction of Saint Mark's composed, silent endurance of torture turns the saint's body into a political text: the repeated visual motif of composure under pain naturalises hierarchy and makes spiritual authority appear embodied. The essay highlights how medieval art distributed social roles across bodies so effectively that these roles began to seem inherent rather than constructed.",
+      "url": "https://aeon.co/essays/medieval-art-makes-the-body-a-site-of-theology-and-politics"
+    },
+    {
+      "source": "New York Review of Books",
+      "findings": "Will Alden's long-form report 'Waiting for Day Zero' (22 Apr 2026) embeds with the Los Angeles exile wing of Iran's Constitutionalist Party. Alden chronicles weekly rallies in Westwood's 'Tehrangeles', where supporters of former crown prince Reza Pahlavi chant alongside Trump posters, convinced that US-Israeli military pressure will soon trigger 'day zero'—the moment Pahlavi calls Iranians into the streets. The piece captures generational splits between monarchist hardliners and liberal constitutionalists, all united by the belief that war, not diplomacy, will end the Islamic Republic.",
+      "url": "https://www.nybooks.com/online/2026/04/22/waiting-for-day-zero-los-angeles-iranians/"
+    },
+    {
+      "source": "ProPublica",
+      "findings": "A joint ProPublica–FRONTLINE investigation (14 Apr 2026) documents how ICE and CBP mass-arrests of protesters during immigration sweeps routinely collapse under scrutiny. Reviewing 300+ cases, reporters find officers' claims repeatedly contradicted by video, leading prosecutors to dismiss over a third of cases. The pattern—flash-bang raids, televised perp-walks, then quiet dropped charges—creates a chilling effect on dissent even when convictions never materialise. The piece centres on Alejandro Orellana, a Marine veteran whose 'domestic-terror conspiracy' case evaporated within weeks, emblema [TRUNCATED]",
+      "url": "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions"
     },
     {
       "source": "Jacobin",
-      "findings": "Jacobin's analysis warns that AI systems are creating 'cognitive debt' by outsourcing human judgment, citing an MIT study showing reduced brain activity among regular chatbot users. The piece argues this represents a technologized form of 'decaffeinated subjectivity' that threatens democratic participation and emancipatory politics. Drawing on Kant's 'What Is Enlightenment?' the essay frames the danger not as AI apocalypse but as the erosion of independent thought through the 'self-incurred immaturity' of letting algorithms think for us, potentially undermining the cognitive capacities necessa [TRUNCATED]",
-      "urls": [
-        "https://jacobin.com/2026/04/ai-critical-thinking-chatbots-subjectivity"
-      ]
-    },
-    {
-      "source": "NYRB",
-      "findings": "Will Alden's 'Waiting for Day Zero' profiles the Iranian opposition in exile at Lake Balboa Park, Los Angeles, where the Constitutionalist Party of Iran hosts weekly protests supporting Reza Pahlavi as a 'transitional leader.' The piece captures the surreal scene of Easter Sunday celebrations with Persian pop anthems and 'THANK YOU BIBI & TRUMP' posters, revealing how LA's 'Tehrangeles' community has become a significant force in Republican politics while maintaining hope for regime change in Iran.",
-      "urls": [
-        "https://www.nybooks.com/online/2026/04/22/waiting-for-day-zero-los-angeles-iranians/"
-      ]
-    },
-    {
-      "source": "NYRB",
-      "findings": "Francine Prose's review examines two novels addressing contemporary violence and corruption: Lee Clay Johnson's 'Bloodline' about a Tennessee man who amputates his own hand in an insurance scam to claim Confederate heritage, and Carl Hiaasen's 'Fever Beach' about environmental destruction in Florida. Both novels, according to Prose, manage to address 'the grotesque and infuriating nature of contemporary public life' while remaining 'surprising and funny,' reflecting deep concern for environmental destruction and historical ignorance threatening American foundations.",
-      "urls": [
-        "https://www.nybooks.com/articles/2026/04/23/blood-in-the-game-bloodline-fever-beach/"
-      ]
+      "findings": "In 'Movements Need the Critical Thinking That AI Destroys' (26 Apr 2026), Jacobin warns that delegating judgment to chatbots risks a 'cognitive debt' that erodes the autonomous reasoning essential for democratic participation. Citing an MIT study showing reduced brain activity in habitual chatbot users, the essay frames AI assistance as a new form of Kant's 'self-incurred immaturity': outsourcing thought imperils emancipatory politics by dulling the very faculties movements require to contest power.",
+      "url": "https://jacobin.com/2026/04/ai-critical-thinking-chatbots-subjectivity/"
     }
   ],
   "wearable_ai": [
     {
       "category": "ai_voice_hardware",
-      "findings": "Voice-first AI hardware is rapidly expanding beyond the familiar Friend pendant. Omi (formerly Friend) has pivoted to become an open platform supporting 3000+ integrations across multiple wearable brands, while new entrants like Audria offer discreet behind-ear devices with contextual AI assistance. Local startup Buddi AI, headquartered in Bothell, Washington (just 20 miles north of Edmonds), prov [TRUNCATED]",
+      "findings": "**Friend AI Pendant** ($99, shipping) - Avi Schiffmann's minimalist approach: \"a fancy Bluetooth microphone with a shell around it\" that uses Claude 3.5 to send supportive messages. Early user Jared Henderson found it \"barely functional, buggy, and annoying\" with 48 notifications in 90 minutes, constant battery fluctuation warnings, and manipulative-feeling interactions. **Tab AI Pendant** - A \"se [TRUNCATED]",
       "urls": [
-        "https://omi.me/",
-        "https://audria.tech/",
-        "https://getbuddi.ai/",
-        "https://limitless.ai/",
-        "https://wareit.ai/",
-        "https://lumilife.online/"
+        "https://www.wired.com/story/friend-ai-pendant/",
+        "https://jaredhenderson.substack.com/p/i-bought-an-ai-friend",
+        "https://www.hackster.io/tab/tab-your-second-brain-ce348c",
+        "https://www.gadgetreview.com/apples-next-ai-device-might-be-a-pendant-that-needs-your-iphone-to-work",
+        "https://9to5mac.com/2026/04/27/key-takeaways-after-testing-out-speakon-an-ai-powered-dictation-iphone-accessory/"
       ]
     },
     {
       "category": "teacher_ai_tools",
-      "findings": "English and History teachers have an expanding toolkit of AI-powered resources. Brisk Teaching leads with 74 employees and $21.9M funding, offering Chrome extension integration for lesson planning and student feedback. Diffit provides curriculum-aligned materials creation with 20 employees and strong teacher community engagement. New specialized tools include Humy.ai for interactive historical fig [TRUNCATED]",
+      "findings": "**MagicSchool** dominates with 80+ teacher tools including new April 2026 features: Educational Song Generator creating curriculum-aligned songs with vocals/album art in 60 seconds; Studio Mode for document-based editing; MagicQuizzes with customizable questions and feedback timing; Class Writing Feedback that integrates with Google Docs. Claims 7-10 hours weekly time savings and 28% literacy impr [TRUNCATED]",
       "urls": [
-        "https://briskteaching.com/",
+        "https://www.magicschool.ai/magic-tools",
+        "https://www.magicschool.ai/blog-posts/ai-teaching-tools-updates-2026",
+        "https://www.magicschool.ai/blog-posts/whats-new-april-2026",
         "https://web.diffit.me/",
-        "https://humy.ai/",
-        "https://immersioned.org/",
-        "https://socraeducation.com/",
-        "https://twee.com/",
-        "https://revolutioned.ai/"
+        "https://www.briskteaching.com/",
+        "https://www.briskteaching.com/post/brisk-announces-curriculum-intelligence-for-back-to-school-2026"
       ]
     },
     {
       "category": "wearable_devices",
-      "findings": "The lifelogging pendant category has evolved into comprehensive wearable ecosystems. Beyond single-purpose devices, companies now offer interconnected systems: LumiLife combines watches, rings, and glasses under one AI app; WARE AI provides Series 100/PRO models with camera/audio capabilities; Omi acts as a universal platform connecting multiple wearable brands. Local presence includes Bothell-bas [TRUNCATED]",
+      "findings": "**AI Rings** (Pebble Index, Wizpr, Stream, Sandbar) - $99-149 range of AI-enabled rings with tiny microphones for discreet AI access. Pebble Index uses offline AI models for privacy. **Smart Glasses** - Apple's rumored N50 with high-resolution cameras alongside enhanced AirPods as part of 2026-2027 wearable trio strategy. **Lifelogging pendants** - Beyond Friend/Tab, the category includes failed p [TRUNCATED]",
       "urls": [
-        "https://lumilife.online/",
-        "https://wareit.ai/",
-        "https://omi.me/",
-        "https://getbuddi.ai/",
-        "https://limitless.ai/"
+        "https://andreyandrade.com/static/voice-first-future/",
+        "https://www.gadgetreview.com/apples-next-ai-device-might-be-a-pendant-that-needs-your-iphone-to-work"
       ]
     }
   ],
   "triadic_ontology": {
-    "findings": "Two new works advance triadic ontology beyond the prior coverage. In \"The Triadic Closure of Existence: Co-Emergence of Binding, Transformation, and Relational Readout\" (Zenodo, 15 Apr 2026) an anonymous collective argues that reality is not built additively but through a simultaneous, phase-locked triadic closure. Three functional primitives—Systematization (E), Constraint (C), and Registration (F)—are shown to be jointly necessary and sufficient for any observable, self-maintaining system, directly linking the grammar of being to the physics of fundamental interactions. Complementing this, Trent Slade’s 2025 paper \"A Triadic Ontology with SU(3) Invariants\" constructs a minimal ontic kernel that treats the qutrit—not the qubit—as the basic unit. Density operators on a three-dimensional Hilbert space evolve under SU(3) while preserving quadratic and cubic Casimir invariants; a discrete ℤ₃ rotation operator enforces triadic mediation without collapsing the third state, yielding a compac [TRUNCATED]",
+    "findings": "Three 2025-2026 papers advance triadic relational metaphysics: the TRIERTIUM 2025 conference and Raffaelli’s Modern Theology article root Trinitarian ontology in Comenian triadic science; a Zenodo thesis argues reality emerges from a simultaneous three-role closure of binding, transformation and relational readout; and a 2025 SU(3) study builds a minimal, falsifiable qutrit ontology whose states, operators and constraints are all triadically mediated while preserving Casimir invariants.",
     "urls": [
+      "https://www.triertium.cz/2026/02/21/matteo-raffaelli-on-triertium-in-modern-theology/",
       "https://zenodo.org/records/19583419",
-      "https://www.academia.edu/145764519/Gradientology_Foundations_of_the_Primordial_Triad_Treatise_II_The_Logical_Insufficiency_of_the_Dyad_and_the_Necessity_of_Mediational_Closure",
-      "https://ersearch2.cvtisr.sk/vufind/EdsRecord/edsair,edsair.doi.dedup.....448a95726a3e08715423b148d8dee692",
-      "https://madure.blogspot.com/2026/01/the-doctrine-of-trinity-has-long-served.html"
+      "https://ersearch2.cvtisr.sk/vufind/EdsRecord/edsair,edsair.doi.dedup.....448a95726a3e08715423b148d8dee692"
     ]
   },
   "ai_systems": {
-    "findings": "The AI systems sector is rapidly evolving from passive tools to autonomous research collaborators. Google Cloud AI Research's PaperOrchestra framework demonstrates this shift, using five specialized agents to convert raw experimental data into submission-ready LaTeX manuscripts with verified citations. The Auton Agentic AI Framework addresses architectural mismatches between LLMs and deterministic backend systems through a Cognitive Blueprint/Runtime Engine separation, enabling cross-language portability and formal auditability. Meanwhile, Cambridge astrophysicists achieved first-place results in the FAIR Universe Weak Lensing Challenge using Cmbagent, a semi-autonomous system that combines human intervention with agent-driven pipeline construction. Prompt engineering has fundamentally changed for 2026's reasoning models—Claude 4.6's adaptive thinking, GPT-5.4's reasoning effort levels, and Gemini 2.5's Deep Think mode make traditional \"step-by-step\" prompts obsolete. The field now rew [TRUNCATED]",
+    "findings": "AI research systems are rapidly evolving from passive tools to autonomous research collaborators. Google Cloud AI Research has introduced PaperOrchestra, a multi-agent framework that autonomously converts raw experimental logs into submission-ready LaTeX manuscripts with literature reviews, figures, and verified citations. The system uses five specialized agents and makes approximately 6,070 LLM calls per paper. Meanwhile, the Auton Agentic AI Framework provides a principled architecture for creating autonomous agent systems, addressing the architectural mismatch between LLMs' stochastic outputs and the deterministic requirements of backend infrastructure. In astrophysics, researchers have demonstrated that semi-autonomous agent systems can compete with expert solutions, achieving first-place results in the FAIR Universe Weak Lensing Uncertainty Challenge. Prompt engineering has also evolved significantly for 2026's reasoning models like GPT-4o variants, Gemini 2.5 Pro, and Claude Sonn [TRUNCATED]",
     "urls": [
       "https://www.marktechpost.com/2026/04/08/google-ai-research-introduces-paperorchestra-a-multi-agent-framework-for-automated-ai-research-paper-writing/",
       "https://arxiv.org/abs/2602.23720v1",
       "https://arxiv.org/pdf/2604.09621",
-      "https://sureprompts.com/blog/advanced-prompt-engineering-2026-claude-gpt5-gemini",
+      "https://promptrefinery.ai/ai-prompting-techniques-reasoning-models-2026/",
       "https://sureprompts.com/blog/prompting-reasoning-models-guide",
       "https://medium.com/product-powerhouse/the-2026-ai-agent-revolution-7-tools-that-actually-automate-your-work-not-just-chat-13e9f82e3a9b",
       "https://pub.towardsai.net/20-agentic-ai-projects-that-will-define-real-world-ai-in-2026-294ffff5d696",
       "https://dev.to/aibughunter/ai-agents-in-april-2026-from-research-to-production-whats-actually-happening-55oc",
-      "https://www.instaclustr.com/education/agentic-ai/agentic-ai-frameworks-top-10-options-in-2026/",
       "https://www.linkedin.com/posts/dlsheng_new-ai-model-releases-news-april-2026-activity-7448731026853433344-qmU_"
     ]
   },
   "uap": {
-    "findings": "",
-    "urls": []
+    "findings": "Congressional UAP disclosure efforts intensified this week as the House Oversight Task Force demanded 46 classified videos from the Pentagon by April 14—a deadline the Defense Department missed. Rep. Anna Paulina Luna, chairing the Task Force on Declassification, warned that UAP incursions near military bases pose \"a very real threat\" and accused the All-domain Anomaly Resolution Office (AARO) of providing \"less than adequate\" responses. Meanwhile, Rep. Tim Burchett escalated claims after classified briefings, asserting the U.S. government has \"100%\" made contact with non-human intelligence and that public release of what he has seen would \"set the Earth on fire.\" A March 25 SCIF briefing, confirmed by Rep. Eric Burlison, remains shrouded in secrecy but reportedly included testimony on recovered alien craft and non-human biologics. The Pentagon, under Trump's February directive to release UAP files, has yet to produce promised documentation, prompting skepticism from transparency advoc [TRUNCATED]",
+    "urls": [
+      "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
+      "https://oversight.house.gov/release/hearing-wrap-up-government-must-be-more-transparent-about-uaps/",
+      "https://lamag.com/news-and-politics/what-happened-inside-congress-classified-uap-briefing/",
+      "https://sfl.media/congressman-tim-burchett-claims-u-s-has-100-made-contact-with-aliens/",
+      "https://ibtimes.co.uk/rubio-senators-heard-credible-scif-testimony-non-human-beings-recovered-alien-bodies-1772665",
+      "https://defensescoop.com/2026/02/20/trump-ufo-uap-government-files-disclosure/",
+      "https://www.theguardian.com/world/2026/apr/12/trump-vance-aliens-ufo",
+      "https://www.cnn.com/2026/03/07/us/aliens-ufos-files-release-trump"
+    ]
   },
   "newyorker": {
-    "available": false,
-    "title": "",
-    "section": "",
-    "dek": "",
-    "byline": "",
-    "date": "",
-    "text": "",
-    "url": "",
+    "available": true,
+    "title": "Ellen Burstyn’s Inner Library",
+    "section": "retrospective",
+    "dek": "Kris Kristofferson told her he was a poet when they co-starred in “Alice Doesn’t Live Here Anymore.” Her new book tells the story of her life in poetry, Michael Schulman writes.",
+    "byline": "By Michael Schulman",
+    "date": "2026-04-27T06:00:00.000-04:00",
+    "text": "She wore green slacks, a green turtleneck, and a green cardigan (“I do like green”), with chunky metallic necklaces. In her writing room, lined with shelves of Mary Oliver and Rumi—her Oscar, for “Alice Doesn’t Live Here Anymore,” was across the hall—she showed off the desk where she wrote her new book, “Poetry Says It Better,” in which she revisits her life story through verses she has loved. “I like what metaphors set off in your mind,” she said. “I like what poetry plays with.”\nShe settled into a wicker chair in the living room, beneath a wooden mermaid that she got in Mexico. Her cavapoo, Kerri, sat regally on a divan. The first poem that spoke to Burstyn, she recalled, was William Ernest Henley’s “Invictus,” which she read in high school, in Detroit. “‘I am the master of my fate, I am the captain of my soul’—that awakened an understanding in me that life was not always going to be the way it was.” At school, she was head cheerleader, but her home life was arduous. “My mother married a man who hated her two children,” she said. “I was being punished a lot physically.” She wrote her own poem and gave it to a boy in her class. “He said, ‘Just because your name is Edna’—which was my original name—‘doesn’t mean you have to copy her style.’ I said, ‘Who?’” That’s how she discovered Edna St. Vincent Millay. “It was like she was my voice,” she said, and rattled off Millay’s sonnet “Love Is Not All.”\nAt nineteen, Burstyn married her first husband, a poet and car salesman (“In Detroit, everybody’s involved with cars”), who introduced her to Baudelaire. “When I read Baudelaire now, I go, Boy, he’s really dark!” she said. By twenty-four, she was modelling in New York and decided to become an actress. “I went around saying, ‘I’m going to do a Broadway play this fall. Do you know how I can get an audition?’” It worked: she made her Broadway début in 1957, in the comedy “Fair Game.” Her determination put her in mind of the poem “For Longing,” by John O’Donohue: “May you have the courage to listen to the voice of desire.”\nSome years later, in Hollywood, she was acting in the Debbie Reynolds flick “Goodbye Charlie.” “I said, ‘This is it. This is the big time. Next I’ll be playing Debbie Reynolds’s part!’ And this voice in my head said, I don’t want it,” she recalled. Through Shelley Winters, she met the acting teacher Lee Strasberg and studied with him. “I did a scene for him, and he said, ‘I don’t know, dear. You either laugh or you cry. If you would laugh and cry at the same time, then we’d see something.’” She found herself doing just that in her breakout film, “The Last Picture Show.” This reminded her of what the poet Wisława Szymborska wrote about the soul: “Joy and sorrow / aren’t two different feelings for it.”\nBurstyn starred in “Alice” in 1974, alongside Kris Kristofferson, who insisted that he couldn’t act or sing. “What is it you do?” she remembered asking him. “I am a poet,” he answered. In her book, she included a sampling of his lyrics. (“He’s a walkin’ contradiction, partly truth and partly fiction.”) Did any poems remind her of starring in “The Exorcist”? Not quite, she said, but the film does open with the Muslim call to prayer. In the seventies, inspired by an etching of a chanting muezzin in her copy of “The Rubáiyát of Omar Khayyám,” she began travelling the Middle East. In Iran, she visited the Tomb of Hafez. “People come reading Hafez’s poetry,” she said, recalling a path lined with roses “about at nose height, so as you’re walking you’re sniffing a different rose each step.”\nIn 1995, she was in “How to Make an American Quilt”; her co-star Maya Angelou would recite poems for her. “The makeup department threw up their hands, because I had to be completely re-made up after lunch every day from crying in Maya’s trailer,” Burstyn recalled. “So then I snuck in and brought Q-tips.” She leaned back in her chair and mimed holding the cotton tips to her eyes. “I would lay down in her trailer with Q-tips and go, ‘O.K., hit me [TRUNCATED]",
+    "url": "https://www.newyorker.com/magazine/2026/05/04/ellen-burstyns-inner-library",
     "source": "The New Yorker"
   },
   "enriched_articles": []
