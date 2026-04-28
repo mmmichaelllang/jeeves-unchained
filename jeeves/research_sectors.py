@@ -321,7 +321,8 @@ SECTOR_SPECS: list[SectorSpec] = [
             "list and call tavily_extract again on the replacement. "
             "Your final array must have 5 entries with fetch_failed=false. "
             "Return a JSON array of {url, source, title, fetch_failed, text} — one entry "
-            "per extracted URL."
+            "per extracted URL. For the 'text' field include ONLY the first 500 characters "
+            "of extracted content — do not paste full article text into the JSON."
         ),
         default=[],
     ),
