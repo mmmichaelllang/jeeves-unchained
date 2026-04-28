@@ -76,6 +76,8 @@ class Config:
     kimi_base_url: str = "https://integrate.api.nvidia.com/v1"
     groq_model_id: str = "llama-3.3-70b-versatile"
     nim_write_model_id: str = "meta/llama-3.3-70b-instruct"
+    # Jina AI reader (optional — used by talk_of_the_town for clean markdown)
+    jina_api_key: str = ""
     # OpenRouter (optional — narrative editor pass in write phase)
     openrouter_api_key: str = ""
     openrouter_model_id: str = "nvidia/nemotron-3-super-120b-a12b:free"
@@ -163,6 +165,7 @@ class Config:
             nim_write_model_id=os.environ.get(
                 "NIM_WRITE_MODEL_ID", "meta/llama-3.3-70b-instruct"
             ),
+            jina_api_key=os.environ.get("JINA_API_KEY", ""),
             openrouter_api_key=os.environ.get("OPENROUTER_API_KEY", ""),
             openrouter_model_id=os.environ.get(
                 "OPENROUTER_MODEL_ID", "nvidia/nemotron-3-super-120b-a12b:free"
