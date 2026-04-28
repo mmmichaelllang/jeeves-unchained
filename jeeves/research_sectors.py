@@ -377,6 +377,115 @@ instruction's shape. No markdown fences. No prose before or after the JSON.
 For a string-shape sector, output the raw string (no quotes)."""
 
 
+def _python_repr_to_json(s: str) -> str:
+    """Convert Python repr-style tokens to JSON equivalents.
+
+    Kimi occasionally returns ``{'key': 'value', 'flag': True}`` because
+    LlamaIndex's ``str(dict)`` conversion produces Python repr rather than
+    JSON (single quotes, capitalised booleans/None).  This is the most
+    common cause of JSONDecodeError in production.
+    """
+    s = re.sub(r"\bTrue\b", "true", s)
+    s = re.sub(r"\bFalse\b", "false", s)
+    s = re.sub(r"\bNone\b", "null", s)
+    # Replace single-quoted strings with double-quoted ones.
+    # The regex handles the common case where values don't contain internal
+    # apostrophes.  It does NOT handle "it's" inside a single-quoted string —
+    # those rare cases fall through to the LLM repair retry.
+    s = re.sub(r"'([^'\\]*(?:\\.[^'\\]*)*)'", r'"\1"', s)
+    return s
+
+
+def _remove_trailing_commas(s: str) -> str:
+    """Strip trailing commas before closing brackets/braces.
+
+    Some models (and truncated streams) leave a trailing comma on the last
+    element: ``[{"a": 1},]`` or ``{"k": "v",}``.  Standard ``json.loads``
+    rejects these.
+    """
+    return re.sub(r",\s*([}\]])", r"\1", s)
+
+
+def _recover_truncated_array(s: str) -> str | None:
+    """Salvage complete items from a NIM stream-truncated JSON array.
+
+    When NIM drops the streaming connection mid-response the JSON array is
+    left open: ``[{"a":"x"},{"b":"y``.  We find the last complete ``}`` and
+    close the array there, preserving every fully-received item.
+
+    Returns the repaired string, or None if no salvageable content was found.
+    """
+    if not s.lstrip().startswith("["):
+        return None
+    last_close = s.rfind("}")
+    if last_close < 0:
+        return None
+    candidate = s[: last_close + 1].rstrip().rstrip(",")
+    return candidate + "]"
+
+
+def _try_normalize_json(fragment: str, *, is_array: bool) -> Any | None:
+    """Apply deterministic lightweight normalizations to fix common JSON errors.
+
+    Tries a progressive sequence of cheap transforms so that the vast majority
+    of real-world parse failures are resolved without an extra LLM call:
+
+    0. Single-object-to-array coercion (checked FIRST when is_array=True) —
+       if the shape expects a list but the model returned a bare ``{...}``
+       object, wrap it immediately before any other attempt so earlier steps
+       don't accidentally return a dict.
+    1. Python repr → JSON  (``True``/``False``/``None``, single-quoted keys)
+    2. Trailing-comma removal
+    3. Combinations of 1 + 2
+    4. Truncation recovery (arrays only) — salvage complete items from a
+       mid-stream-dropped response, then re-apply repr + comma fixes
+
+    Returns the parsed Python value on the first successful attempt, or None
+    if all normalizations fail (caller should escalate to LLM repair retry).
+    """
+    def _try(s: str) -> Any | None:
+        try:
+            return json.loads(s)
+        except (json.JSONDecodeError, ValueError):
+            return None
+
+    # 0. Bare-object-to-array coercion — must run BEFORE steps 1-3 so a valid
+    #    JSON object doesn't get returned as a dict when the shape wants a list.
+    if is_array and fragment.strip().startswith("{"):
+        wrapped = f"[{fragment.strip()}]"
+        if (v := _try(wrapped)) is not None:
+            return v
+        if (v := _try(_remove_trailing_commas(_python_repr_to_json(wrapped)))) is not None:
+            return v
+
+    # 1. Python repr conversion alone.
+    repr_fixed = _python_repr_to_json(fragment)
+    if (v := _try(repr_fixed)) is not None:
+        return v
+
+    # 2. Trailing commas alone.
+    comma_fixed = _remove_trailing_commas(fragment)
+    if (v := _try(comma_fixed)) is not None:
+        return v
+
+    # 3. Both combined.
+    both_fixed = _remove_trailing_commas(repr_fixed)
+    if (v := _try(both_fixed)) is not None:
+        return v
+
+    # 4. Truncation recovery (arrays only).
+    if is_array:
+        recovered = _recover_truncated_array(fragment)
+        if recovered:
+            if (v := _try(recovered)) is not None:
+                return v
+            # Also try repr + comma fixes on the recovered fragment.
+            if (v := _try(_remove_trailing_commas(_python_repr_to_json(recovered)))) is not None:
+                return v
+
+    return None
+
+
 class _ParseFailed:
     """Sentinel: _parse_sector_output could not extract valid JSON from the output.
 
@@ -416,18 +525,38 @@ def _parse_sector_output(raw: str, spec: SectorSpec) -> Any:
     else:
         start, end = text.find("{"), text.rfind("}")
 
-    if start < 0 or end <= start:
-        log.warning(
-            "sector %s: no JSON %s found in output; will attempt repair retry",
-            spec.name, "array" if spec.shape in ("list", "enriched") else "object",
-        )
-        return _ParseFailed(raw or "")
+    _is_array = spec.shape in ("list", "enriched")
 
-    try:
-        parsed = json.loads(text[start : end + 1])
-    except json.JSONDecodeError as e:
-        log.warning("sector %s: JSON parse failed: %s; will attempt repair retry", spec.name, e)
-        return _ParseFailed(raw or "")
+    if start < 0 or end <= start:
+        # No bracket found — try deterministic normalizations on the full text
+        # before escalating to LLM repair (e.g. truncated array with no `]`).
+        fixed = _try_normalize_json(text, is_array=_is_array)
+        if fixed is not None:
+            log.info("sector %s: no JSON bracket found but deterministic repair succeeded.", spec.name)
+            parsed = fixed
+        else:
+            log.warning(
+                "sector %s: no JSON %s found in output; will attempt repair retry",
+                spec.name, "array" if _is_array else "object",
+            )
+            return _ParseFailed(raw or "")
+    else:
+        fragment = text[start : end + 1]
+        try:
+            parsed = json.loads(fragment)
+        except json.JSONDecodeError as e:
+            # Try deterministic normalizations first — cheaper than an LLM call.
+            fixed = _try_normalize_json(fragment, is_array=_is_array)
+            if fixed is not None:
+                log.info(
+                    "sector %s: JSON parse error (%s) repaired deterministically.", spec.name, e
+                )
+                parsed = fixed
+            else:
+                log.warning(
+                    "sector %s: JSON parse failed: %s; will attempt repair retry", spec.name, e
+                )
+                return _ParseFailed(raw or "")
 
     # For enriched sectors, enforce the 500-char text cap regardless of model
     # compliance — avoids bloated session JSON and downstream NIM context issues.

@@ -13,8 +13,12 @@ from jeeves.research_sectors import (
     _is_redirect_artifact,
     _is_retryable_network_error,
     _parse_sector_output,
+    _python_repr_to_json,
     _quota_increased,
     _quota_snapshot,
+    _recover_truncated_array,
+    _remove_trailing_commas,
+    _try_normalize_json,
     collect_headlines_from_sector,
     collect_urls_from_sector,
     extract_correspondence_references,
@@ -71,9 +75,19 @@ def test_parse_sector_output_returns_parse_failed_on_no_json():
     assert out.raw == "completely not json"
 
 
-def test_parse_sector_output_returns_parse_failed_on_malformed_json():
-    """Malformed JSON (single-quoted keys, truncated) returns _ParseFailed for repair."""
-    out = _parse_sector_output("{'key': 'value'}", _spec("career"))
+def test_parse_sector_output_repairs_python_repr_deterministically():
+    """Python repr (single quotes, True/False/None) is repaired without LLM retry."""
+    raw = "{'findings': 'job posting found', 'urls': ['https://example.com'], 'deadline': None}"
+    out = _parse_sector_output(raw, _spec("career"))
+    assert isinstance(out, dict)
+    assert out["findings"] == "job posting found"
+    assert out["urls"] == ["https://example.com"]
+    assert out["deadline"] is None
+
+
+def test_parse_sector_output_returns_parse_failed_on_truly_unrecoverable_json():
+    """Garbled output that can't be deterministically repaired returns _ParseFailed."""
+    out = _parse_sector_output("{broken: json: with 'mixed' \"quotes\" and [unclosed", _spec("career"))
     assert isinstance(out, _ParseFailed)
 
 
@@ -534,3 +548,87 @@ def test_deep_fallback_queries_cover_all_deep_sectors():
     assert deep_sectors == set(_DEEP_FALLBACK_QUERIES.keys()), (
         f"missing fallback queries for: {deep_sectors - set(_DEEP_FALLBACK_QUERIES.keys())}"
     )
+
+
+# ---------------------------------------------------------------------------
+# Deterministic JSON normalisation helpers
+# ---------------------------------------------------------------------------
+
+def test_python_repr_to_json_converts_booleans_and_none():
+    assert _python_repr_to_json("True") == "true"
+    assert _python_repr_to_json("False") == "false"
+    assert _python_repr_to_json("None") == "null"
+    assert _python_repr_to_json("{'a': True, 'b': None}") == '{"a": true, "b": null}'
+
+
+def test_python_repr_to_json_converts_single_quotes():
+    result = _python_repr_to_json("{'key': 'value'}")
+    import json
+    assert json.loads(result) == {"key": "value"}
+
+
+def test_remove_trailing_commas_cleans_objects_and_arrays():
+    assert _remove_trailing_commas('{"a": 1,}') == '{"a": 1}'
+    assert _remove_trailing_commas('[1, 2, 3,]') == '[1, 2, 3]'
+    assert _remove_trailing_commas('[{"a": 1}, {"b": 2},]') == '[{"a": 1}, {"b": 2}]'
+
+
+def test_recover_truncated_array_salvages_complete_items():
+    truncated = '[{"title": "A", "url": "https://a"}, {"title": "B", "url": "https://b'
+    result = _recover_truncated_array(truncated)
+    assert result is not None
+    import json
+    parsed = json.loads(result)
+    assert len(parsed) == 1
+    assert parsed[0]["title"] == "A"
+
+
+def test_recover_truncated_array_returns_none_for_non_array():
+    assert _recover_truncated_array('{"key": "val') is None
+
+
+def test_try_normalize_json_fixes_python_repr():
+    result = _try_normalize_json("{'findings': 'test', 'urls': ['https://x']}", is_array=False)
+    assert result == {"findings": "test", "urls": ["https://x"]}
+
+
+def test_try_normalize_json_fixes_trailing_comma():
+    result = _try_normalize_json('[{"a": 1}, {"b": 2},]', is_array=True)
+    assert result == [{"a": 1}, {"b": 2}]
+
+
+def test_try_normalize_json_recovers_truncated_enriched_array():
+    truncated = '[{"title": "Story A", "url": "https://example.com/a", "source": "BBC", "text": "content"}, {"title": "Story B'
+    result = _try_normalize_json(truncated, is_array=True)
+    assert isinstance(result, list)
+    assert len(result) == 1
+    assert result[0]["title"] == "Story A"
+
+
+def test_try_normalize_json_coerces_bare_object_to_array():
+    """A lone dict returned for a list-shape sector is wrapped in an array."""
+    result = _try_normalize_json('{"source": "BBC", "findings": "x", "urls": []}', is_array=True)
+    assert isinstance(result, list)
+    assert result[0]["source"] == "BBC"
+
+
+def test_try_normalize_json_returns_none_for_garbled_input():
+    result = _try_normalize_json("{broken: json 'mixed\" [unclosed", is_array=False)
+    assert result is None
+
+
+def test_parse_sector_output_repairs_trailing_comma():
+    """Trailing comma in array output is fixed deterministically."""
+    raw = '[{"category": "municipal", "source": "MyEdmonds", "findings": "x", "urls": ["https://a"]},]'
+    out = _parse_sector_output(raw, _spec("local_news"))
+    assert isinstance(out, list)
+    assert out[0]["source"] == "MyEdmonds"
+
+
+def test_parse_sector_output_repairs_truncated_enriched_array():
+    """NIM stream-truncated enriched array is salvaged without LLM retry."""
+    raw = '[{"title": "AI chip", "url": "https://example.com/chip", "source": "Wired", "text": "content A"}, {"title": "Robot'
+    out = _parse_sector_output(raw, _spec("enriched_articles"))
+    assert isinstance(out, list)
+    assert len(out) == 1
+    assert out[0]["title"] == "AI chip"
