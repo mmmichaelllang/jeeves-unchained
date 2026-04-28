@@ -6,6 +6,7 @@ import json
 import logging
 import re
 import urllib.request
+import xml.etree.ElementTree as ET
 from html import unescape
 from typing import Any
 
@@ -23,6 +24,7 @@ HEADERS = {
 }
 
 TOC_URL = "https://www.newyorker.com/magazine/talk-of-the-town"
+RSS_URL = "https://www.newyorker.com/feed/tags/department/the-talk-of-the-town"
 ARTICLE_PATH_RE = re.compile(r"/magazine/(\d{4})/(\d{2})/(\d{2})/([a-z0-9-]+)")
 LD_JSON_RE = re.compile(
     r'<script[^>]*type="application/ld\+json"[^>]*>(.*?)</script>',
@@ -47,18 +49,59 @@ def _http_get(url: str, timeout: int = 20) -> str:
         return r.read().decode("utf-8", errors="replace")
 
 
-def _jina_fetch(url: str, timeout: int = 30) -> str:
-    """Fetch article via Jina AI reader (free tier) — returns clean markdown."""
-    req = urllib.request.Request(
-        JINA_BASE + url,
-        headers={
-            "User-Agent": UA,
-            "Accept": "text/plain, text/markdown, */*",
-            "X-Return-Format": "markdown",
-        },
-    )
+def _jina_fetch(url: str, timeout: int = 30, api_key: str = "") -> str:
+    """Fetch article via Jina AI reader — returns clean markdown.
+
+    Passes Authorization header when api_key is provided (removes rate limit).
+    Falls back gracefully to unauthenticated free tier when key is absent.
+    """
+    headers: dict[str, str] = {
+        "User-Agent": UA,
+        "Accept": "text/plain, text/markdown, */*",
+        "X-Return-Format": "markdown",
+    }
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
+    req = urllib.request.Request(JINA_BASE + url, headers=headers)
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read().decode("utf-8", errors="replace")
+
+
+def _discover_from_rss(timeout: int = 15) -> list[tuple[int, str]]:
+    """Discover TOTT article URLs from the RSS feed (stdlib, JS-free).
+
+    Returns list of (date_int, url) sorted newest-first, same shape as
+    _extract_paths(). Falls back to empty list on any failure so callers
+    can chain to the HTML/Jina TOC path.
+    """
+    try:
+        req = urllib.request.Request(
+            RSS_URL,
+            headers={"User-Agent": UA, "Accept": "application/rss+xml, application/xml, */*"},
+        )
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            raw = r.read()
+        root = ET.fromstring(raw)
+    except Exception as e:
+        log.debug("RSS fetch failed: %s", e)
+        return []
+
+    results: dict[str, int] = {}
+    # RSS 2.0: items are under <channel><item>
+    for item in root.iter("item"):
+        link_el = item.find("link")
+        if link_el is None or not link_el.text:
+            continue
+        url = link_el.text.strip()
+        m = ARTICLE_PATH_RE.search(url)
+        if not m:
+            continue
+        y, mo, d, _ = m.groups()
+        norm_url = f"https://www.newyorker.com{m.group(0)}"
+        if norm_url not in results:
+            results[norm_url] = int(y + mo + d)
+
+    return sorted(((dk, u) for u, dk in results.items()), key=lambda kv: kv[0], reverse=True)
 
 
 def _clean_jina_text(text: str) -> str:
@@ -171,7 +214,7 @@ def _fallback_paragraphs(html: str) -> str:
     return "\n\n".join(out)
 
 
-def fetch_talk_of_the_town(covered_urls: set[str]):
+def fetch_talk_of_the_town(covered_urls: set[str], jina_api_key: str = ""):
     """Closure capturing the covered-URL set so the tool takes no args."""
 
     def _run() -> str:
@@ -200,22 +243,28 @@ def fetch_talk_of_the_town(covered_urls: set[str]):
             "source": "The New Yorker",
             "error": None,
         }
-        try:
-            toc_html = _http_get(TOC_URL)
-        except Exception as e:
-            base["error"] = f"toc_fetch_failed: {e}"
-            return _json.dumps(base)
-
-        paths = _extract_paths(toc_html)
-        if not paths:
-            # New Yorker's TOC is often JS-rendered; the raw HTML contains no
-            # article links. Try Jina AI reader which processes client-side JS.
-            log.debug("raw TOC yielded no paths; trying Jina reader for %s", TOC_URL)
+        # Discovery priority:
+        # 1. RSS feed — stdlib XML, JS-free, most reliable.
+        # 2. Raw HTML TOC — fast but often empty (JS-rendered page).
+        # 3. Jina TOC reader — processes JS, but free tier is rate-limited.
+        paths = _discover_from_rss()
+        if paths:
+            log.debug("RSS discovery: %d TOTT URLs found", len(paths))
+        else:
+            log.debug("RSS yielded no paths; falling back to raw TOC HTML")
             try:
-                jina_toc = _jina_fetch(TOC_URL)
-                paths = _extract_paths(jina_toc)
-            except Exception as jina_err:
-                log.debug("Jina TOC fetch failed: %s", jina_err)
+                toc_html = _http_get(TOC_URL)
+                paths = _extract_paths(toc_html)
+            except Exception as e:
+                log.debug("raw TOC fetch failed: %s", e)
+            if not paths:
+                log.debug("raw TOC yielded no paths; trying Jina reader for %s", TOC_URL)
+                try:
+                    jina_toc = _jina_fetch(TOC_URL, api_key=jina_api_key)
+                    paths = _extract_paths(jina_toc)
+                except Exception as jina_err:
+                    log.debug("Jina TOC fetch failed: %s", jina_err)
+
         if not paths:
             base["error"] = "toc_no_paths_found"
             return _json.dumps(base)
@@ -247,7 +296,7 @@ def fetch_talk_of_the_town(covered_urls: set[str]):
 
         # ld+json body absent or too short — try Jina for clean markdown.
         try:
-            raw_jina = _jina_fetch(url)
+            raw_jina = _jina_fetch(url, api_key=jina_api_key)
             jina_text = _clean_jina_text(raw_jina)
             if len(jina_text) > 500:
                 base["text"] = jina_text
