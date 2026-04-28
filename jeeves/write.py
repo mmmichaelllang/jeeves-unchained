@@ -134,13 +134,6 @@ def _trim_session_for_prompt(session: SessionModel) -> dict[str, Any]:
     return payload
 
 
-def build_user_prompt(session: SessionModel) -> str:
-    """Serialize the session JSON into the LLM user message."""
-
-    payload = _trim_session_for_prompt(session)
-    return build_user_prompt_from_payload(payload)
-
-
 def build_user_prompt_from_payload(payload: dict[str, Any]) -> str:
     return (
         "Here is the research session JSON. Render the briefing now in Jeeves's "
