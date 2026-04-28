@@ -10,7 +10,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Current focus
 
-**Phase 2/3/4 — seventh forensic sprint complete (PR #53, 2026-04-28).** Write phase security: `render_mock_briefing` now escapes session fields with `html.escape()`; COVERAGE_LOG JSON embedded in HTML comments now replaces `-->` with `-->` via `_safe_json_for_comment()`. All 156 tests green.
+**Phase 2/3/4 — eighth sprint complete (PR #54, 2026-04-28).** Guaranteed JSON repair for sector output failures: deterministic normalisation layer + LLM repair retry. All 172 tests green.
 
 **Research architecture (as of 2026-04-28, post PRs #43–#46):**
 - Sequential sector execution (`_SECTOR_SEMAPHORE=1`) — NIM free tier can't handle concurrent Kimi agents.
@@ -36,7 +36,8 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - **Gemini daily cap**: `DAILY_HARD_CAPS["gemini_grounded"] = 12` (corrected from 1490 which assumed paid Search Grounding tier; actual free-tier limit is 20 generate_content RPD for gemini-2.5-flash). On a 429 response, `gemini_grounded.py` immediately exhausts the daily counter so subsequent sectors skip Gemini automatically.
 - `family` instruction has 3 explicit mandatory parallel searches with specific query strings.
 - **All search tools return JSON strings (PR #50)**: `serper.py`, `tavily.py`, `exa.py`, `enrichment.py` now return `json.dumps(...)` at all exit points (success and error). This prevents LlamaIndex's `str(dict)` Python-repr conversion from producing single-quoted strings that NIM cannot parse. The empty-query guards already returned plain strings; now SUCCESS paths do too.
-- **156 tests** across `tests/test_write_postprocess.py`, `tests/test_research_sectors.py`, `tests/test_llm_factories.py`, `tests/test_correspondence.py`, `tests/test_quota_ledger.py`, and `tests/test_schema.py` (added in PRs #50–#53).
+- **172 tests** across `tests/test_write_postprocess.py`, `tests/test_research_sectors.py`, `tests/test_llm_factories.py`, `tests/test_correspondence.py`, `tests/test_quota_ledger.py`, and `tests/test_schema.py` (added in PRs #50–#54).
+- **Guaranteed JSON repair (PR #54)**: `_parse_sector_output` returns `_ParseFailed` sentinel (not `spec.default`) on structural failures. Before escalating to LLM: `_try_normalize_json` attempts four deterministic fixes in order — Python repr→JSON (single-quotes, `True`/`False`/`None`), trailing-comma removal, truncation recovery (salvages complete items from NIM stream-dropped arrays), bare-object-to-array coercion. Only truly unrecoverable output reaches `_json_repair_retry` (no-tools agent reformats malformed raw, or synthesises from sector instruction when raw is empty).
 
 **Phase 3 (write) — three-model pipeline: 9 sequential Groq drafts + 9 concurrent NIM quality-editor passes + 1 OpenRouter Gemma 4 final narrative editor.** Per user direction: safety and quality over speed. Wall-clock ~10m 30s (Groq path) or ~9–13m (NIM-fallback path).
 
@@ -55,10 +56,21 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Where we left off (2026-04-28)
 
-- **PRs #43–#52, all merged. PR #53 open** (sprints 6+7: HTML injection, pagination, dead code, quota locking, session truncation, write phase escaping).
-- **All phases live on `main`** (Phases 2, 3, 4 fully wired). Cron: correspondence `0 12`, research `30 12`, write `40 13`.
+- **PRs #43–#54, all merged.** All phases live on `main` (Phases 2, 3, 4 fully wired). Cron: correspondence `0 12`, research `30 12`, write `40 13`.
 - **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run.
-- **154 tests green** as of this sprint.
+- **172 tests green** as of this sprint.
+
+### Eighth sprint (PR #54) — what was fixed
+
+| PR | Problem | Fix |
+|---|---|---|
+| #54 | `career` sector returned Python repr `{'key': 'value'}` (single-quoted) → `JSONDecodeError` → silent empty default | `_python_repr_to_json` normalisation; `_parse_sector_output` calls `_try_normalize_json` before returning `_ParseFailed` |
+| #54 | `enriched_articles` after 429 recovery: all tool calls had `None` id/name → no JSON output → silent empty default | `_ParseFailed` sentinel + `_json_repair_retry` (no-tools agent synthesises JSON from sector instruction when raw is empty) |
+| #54 | NIM stream-dropped arrays (truncated mid-item) parsed as `JSONDecodeError` → silent empty default | `_recover_truncated_array` finds last `}`, closes the bracket, salvages complete items |
+| #54 | Trailing commas on last array/object element (`[...,]`) → `JSONDecodeError` | `_remove_trailing_commas` regex applied before giving up |
+| #54 | Model returns bare `{...}` dict for list/enriched shape → bracket search fails → empty default | Bare-object-to-array coercion wraps in `[...]` (checked first for `is_array=True`) |
+| #54 | `response is None` → silent empty default | Now triggers `_json_repair_retry` with empty `_ParseFailed` instead |
+| #54 | No tests for any of the above | 16 new tests; 172 total |
 
 ### Seventh forensic sprint (PR #53 cont.) — what was fixed
 
@@ -167,6 +179,12 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - **The research quota guard uses provider `used` count delta, not absolute counts.** `_quota_snapshot` is taken before the agent runs; `_quota_increased` checks if any provider's count increased. If a sector's agent calls only the `fetch_new_yorker_talk_of_the_town` tool (not in quota), the guard fires and returns the default. `_NO_QUOTA_CHECK = frozenset({"newyorker"})` exempts that sector. If you add a new sector that uses only non-quota tools, add it to `_NO_QUOTA_CHECK`.
 - **The 65s TPM sleep is conditional, not unconditional.** `_invoke_write_llm` returns `(text, used_groq: bool)`. `generate_briefing` only sleeps 65s before a call if the *previous* call used Groq. Once Groq TPD is exhausted and NIM takes over, the sleep is skipped for every subsequent inter-part gap. If you refactor the loop, preserve the `last_used_groq` flag — without it the pipeline wastes ~9 minutes of sleep on NIM-fallback runs and will breach the 60-min workflow timeout under extreme NIM latency.
 - **Groq TPD (tokens-per-day) limit = input_tokens + max_tokens_requested per call.** The free tier is 100k tokens/day. With max_tokens=8192 × 9 write calls, write alone would need ~110k tokens (input ~37k + output budget ~74k), blowing the daily limit. Default is now max_tokens=4096 per call: each part targets 500–900 words (~700–1200 output tokens), 4096 gives a 3.4× margin and matches NVIDIA NIM's native output cap for meta/llama-3.3-70b-instruct. Total daily write budget: ~73k tokens; plus correspondence Groq call: ~9k; grand total ~82k — within 100k. If you raise max_tokens above ~5000, the production pipeline will fail daily at Part 2 (or fall through to NIM, which has its own throttle).
+
+## Dev branch
+
+- **Current**: `main` (all PRs merged, clean)
+- Prior: `claude/guaranteed-sector-retry-sprint8` (PR #54 merged)
+- Prior: `claude/forensic-fixes-sprint6` (PR #53 merged)
 
 ## Quick nav (file:line pointers)
 
