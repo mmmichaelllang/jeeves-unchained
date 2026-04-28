@@ -7,6 +7,7 @@ import pytest
 from jeeves.research_sectors import (
     SECTOR_SPECS,
     _NO_QUOTA_CHECK,
+    _ParseFailed,
     _build_user_prompt,
     _is_nim_rate_limit,
     _is_redirect_artifact,
@@ -63,9 +64,32 @@ def test_parse_sector_output_deep_no_urls_returns_default():
     assert out == {"findings": "", "urls": []}
 
 
-def test_parse_sector_output_returns_default_on_unparseable():
+def test_parse_sector_output_returns_parse_failed_on_no_json():
+    """No JSON token in output returns _ParseFailed (not the default) so caller can repair."""
     out = _parse_sector_output("completely not json", _spec("local_news"))
-    assert out == []
+    assert isinstance(out, _ParseFailed)
+    assert out.raw == "completely not json"
+
+
+def test_parse_sector_output_returns_parse_failed_on_malformed_json():
+    """Malformed JSON (single-quoted keys, truncated) returns _ParseFailed for repair."""
+    out = _parse_sector_output("{'key': 'value'}", _spec("career"))
+    assert isinstance(out, _ParseFailed)
+
+
+def test_parse_sector_output_parse_failed_preserves_raw_for_repair():
+    """_ParseFailed.raw contains the original raw text so repair retry can reformat it."""
+    raw = "Here is some text but [malformed, json"
+    out = _parse_sector_output(raw, _spec("local_news"))
+    assert isinstance(out, _ParseFailed)
+    assert out.raw == raw
+
+
+def test_parse_sector_output_empty_raw_returns_parse_failed():
+    """Empty output (e.g. all tool calls had None id/name) returns _ParseFailed with empty raw."""
+    out = _parse_sector_output("", _spec("local_news"))
+    assert isinstance(out, _ParseFailed)
+    assert out.raw == ""
 
 
 def test_parse_sector_output_deep_shape():
