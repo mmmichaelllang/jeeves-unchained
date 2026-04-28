@@ -73,6 +73,23 @@ def test_build_handoff_text_orders_by_severity():
     assert no_act_pos > esc_pos
 
 
+def test_build_handoff_text_tolerates_none_sender():
+    """build_handoff_text must not crash when ClassifiedMessage.sender is None."""
+    from jeeves.correspondence import ClassifiedMessage
+
+    msg = ClassifiedMessage(
+        id="m1",
+        classification="no_action",
+        priority_contact=False,
+        priority_contact_label=None,
+        summary="nothing to act on",
+        suggested_action="",
+        sender=None,  # type: ignore[arg-type]  — mimics a runtime None from Gmail API
+    )
+    text = build_handoff_text([msg])
+    assert "nothing to act on" in text or text == ""  # must not raise
+
+
 def test_handoff_json_shape():
     classified = fixture_classified()
     handoff = build_handoff_json(classified, fallback_used=False)

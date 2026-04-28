@@ -246,6 +246,97 @@ def test_covered_headlines_includes_newyorker_title():
     assert "Some headline" in hl
 
 
+# ---------------------------------------------------------------------------
+# vertex_grounded_search must return JSON strings (not dicts) at all exits
+# ---------------------------------------------------------------------------
+
+def test_vertex_grounded_returns_json_string_when_project_not_configured():
+    """vertex_grounded_search must return a JSON string, not a dict, for the
+    early-exit (no GOOGLE_CLOUD_PROJECT) path — same contract as all other tools."""
+    import json as _json
+    from unittest.mock import MagicMock
+
+    from jeeves.tools.vertex_search import make_vertex_grounded
+    from jeeves.tools.quota import QuotaLedger
+    from pathlib import Path
+
+    cfg = MagicMock()
+    cfg.google_cloud_project = ""  # triggers early-exit
+    ledger = QuotaLedger(Path("/tmp/test-quota-vertex.json"))
+
+    fn = make_vertex_grounded(cfg, ledger)
+    result = fn("test question")
+
+    assert isinstance(result, str), f"expected str, got {type(result).__name__}"
+    parsed = _json.loads(result)
+    assert parsed["provider"] == "vertex"
+    assert "error" in parsed
+
+
+def test_vertex_grounded_returns_json_string_when_daily_cap_reached():
+    """vertex_grounded_search daily cap exit must return a JSON string."""
+    import json as _json
+    from unittest.mock import MagicMock, patch
+
+    from jeeves.tools.vertex_search import make_vertex_grounded
+    from jeeves.tools.quota import QuotaExceeded, QuotaLedger
+    from pathlib import Path
+
+    cfg = MagicMock()
+    cfg.google_cloud_project = "my-project"
+    ledger = QuotaLedger(Path("/tmp/test-quota-vertex2.json"))
+
+    with patch.object(ledger, "check_daily_allow", side_effect=QuotaExceeded("cap")):
+        fn = make_vertex_grounded(cfg, ledger)
+        result = fn("test question")
+
+    assert isinstance(result, str), f"expected str, got {type(result).__name__}"
+    parsed = _json.loads(result)
+    assert "daily cap" in parsed.get("error", "")
+
+
+# ---------------------------------------------------------------------------
+# _normalize_tool_kwargs: string validation for additional_kwargs arguments
+# ---------------------------------------------------------------------------
+
+def test_normalize_tool_kwargs_fixes_null_string_in_additional_kwargs():
+    """additional_kwargs tool_calls with function.arguments='null' must become '{}'."""
+    from types import SimpleNamespace
+    from jeeves.llm import _build_kimi_class
+
+    cls = _build_kimi_class()
+
+    def _make_msg(arguments):
+        from llama_index.core.llms import ChatMessage, MessageRole
+        tc = SimpleNamespace(id="c1", function=SimpleNamespace(arguments=arguments))
+        msg = ChatMessage(role=MessageRole.ASSISTANT, content=None)
+        msg.additional_kwargs["tool_calls"] = [tc]
+        return msg, tc
+
+    msg, tc = _make_msg("null")
+    cls._normalize_tool_kwargs([msg])
+    assert tc.function.arguments == "{}"
+
+
+def test_normalize_tool_kwargs_fixes_corrupted_string_in_additional_kwargs():
+    """additional_kwargs tool_calls with function.arguments='{}null' must become '{}'."""
+    from types import SimpleNamespace
+    from jeeves.llm import _build_kimi_class
+
+    cls = _build_kimi_class()
+
+    def _make_msg(arguments):
+        from llama_index.core.llms import ChatMessage, MessageRole
+        tc = SimpleNamespace(id="c1", function=SimpleNamespace(arguments=arguments))
+        msg = ChatMessage(role=MessageRole.ASSISTANT, content=None)
+        msg.additional_kwargs["tool_calls"] = [tc]
+        return msg, tc
+
+    msg, tc = _make_msg("{}null")
+    cls._normalize_tool_kwargs([msg])
+    assert tc.function.arguments == "{}"
+
+
 def test_covered_headlines_no_newyorker_title_when_empty():
     """covered_headlines() must not insert empty string from newyorker.title."""
     from jeeves.dedup import covered_headlines

@@ -741,6 +741,10 @@ async def run_sector(
         )
         return spec.default
 
+    if response is None:
+        log.warning("sector %s: agent.run() returned None; returning default.", spec.name)
+        return spec.default
+
     raw = str(response)
     parsed = _parse_sector_output(raw, spec)
     log.info(

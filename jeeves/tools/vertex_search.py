@@ -60,7 +60,7 @@ def _write_credentials_tempfile(creds_json: str) -> str | None:
 
 
 def make_vertex_grounded(cfg: Config, ledger: QuotaLedger):
-    def vertex_grounded_search(question: str) -> dict[str, Any]:
+    def vertex_grounded_search(question: str) -> str:
         """Vertex AI Gemini with Dynamic Google Search grounding.
 
         Like gemini_grounded_synthesize but uses Vertex AI credentials (service
@@ -71,28 +71,28 @@ def make_vertex_grounded(cfg: Config, ledger: QuotaLedger):
         Hard daily cap: 1,490 grounded searches per UTC day (Google free tier
         is 1,500; we stop 10 below to guarantee we are never charged).
 
-        Returns {provider, question, answer, citations} or {provider, error, ...}.
-        Disabled silently if GOOGLE_CLOUD_PROJECT or credentials are not set.
+        Returns a JSON string so LlamaIndex's _parse_tool_output() produces valid
+        JSON in the NIM context rather than Python repr with single quotes.
         """
         if not cfg.google_cloud_project:
-            return {
+            return json.dumps({
                 "provider": "vertex",
                 "error": "GOOGLE_CLOUD_PROJECT not configured",
                 "answer": "",
                 "citations": [],
-            }
+            })
 
         # --- daily cap check (hard stop) ---
         try:
             ledger.check_daily_allow("vertex_grounded")
         except QuotaExceeded as exc:
             log.warning("vertex_grounded: %s", exc)
-            return {
+            return json.dumps({
                 "provider": "vertex",
                 "error": "daily cap reached — no further calls today",
                 "answer": "",
                 "citations": [],
-            }
+            })
 
         creds_path: str | None = None
         original_creds_env: str | None = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
@@ -142,10 +142,10 @@ def make_vertex_grounded(cfg: Config, ledger: QuotaLedger):
                 "vertex_search: google-cloud-aiplatform not installed. "
                 "Run: uv sync --extra vertex"
             )
-            return {"provider": "vertex", "error": "package not installed", "answer": "", "citations": []}
+            return json.dumps({"provider": "vertex", "error": "package not installed", "answer": "", "citations": []})
         except Exception as exc:
             log.warning("vertex_grounded error: %s", exc)
-            return {"provider": "vertex", "error": str(exc), "answer": "", "citations": []}
+            return json.dumps({"provider": "vertex", "error": str(exc), "answer": "", "citations": []})
         finally:
             # Clean up temp credentials file and restore env.
             if creds_path and os.path.exists(creds_path):
@@ -167,12 +167,12 @@ def make_vertex_grounded(cfg: Config, ledger: QuotaLedger):
             "vertex_grounded: answered (%d chars, %d citations) [daily=%d/1490]",
             len(answer), len(citations), ledger.daily_used("vertex_grounded"),
         )
-        return {
+        return json.dumps({
             "provider": "vertex",
             "question": question,
             "answer": answer,
             "citations": citations,
-        }
+        })
 
     return vertex_grounded_search
 
