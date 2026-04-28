@@ -137,11 +137,11 @@ def test_normalize_tool_kwargs_empty_string_becomes_json_string():
 
 
 def test_normalize_tool_kwargs_fixes_additional_kwargs_none_args():
-    """additional_kwargs tool_calls with function.arguments=None become '{}'."""
+    """additional_kwargs tool_calls with function.arguments=None become '{}' (valid id required)."""
     from jeeves.llm import _build_kimi_class
 
     cls = _build_kimi_class()
-    tc = SimpleNamespace(function=SimpleNamespace(arguments=None))
+    tc = SimpleNamespace(id="c99", function=SimpleNamespace(arguments=None))
     msg = _make_chat_message(tool_calls_in_kwargs=[tc])
     cls._normalize_tool_kwargs([msg])
     assert tc.function.arguments == "{}"
@@ -155,3 +155,29 @@ def test_normalize_tool_kwargs_noop_on_non_tool_messages():
     cls = _build_kimi_class()
     msg = ChatMessage(role=MessageRole.USER, content="Hello")
     cls._normalize_tool_kwargs([msg])  # must not raise
+
+
+def test_normalize_tool_kwargs_strips_none_id_tool_calls():
+    """additional_kwargs tool_calls with id=None are removed from the list."""
+    from jeeves.llm import _build_kimi_class
+
+    cls = _build_kimi_class()
+    tc_bad = SimpleNamespace(id=None, function=SimpleNamespace(arguments="{}"))
+    tc_good = SimpleNamespace(id="c1", function=SimpleNamespace(arguments="{}"))
+    msg = _make_chat_message(tool_calls_in_kwargs=[tc_bad, tc_good])
+    cls._normalize_tool_kwargs([msg])
+    remaining = msg.additional_kwargs["tool_calls"]
+    assert len(remaining) == 1
+    assert remaining[0].id == "c1"
+
+
+def test_normalize_tool_kwargs_all_none_id_yields_empty_list():
+    """If all tool_calls have id=None the list is replaced with []."""
+    from jeeves.llm import _build_kimi_class
+
+    cls = _build_kimi_class()
+    tc1 = SimpleNamespace(id=None, function=SimpleNamespace(arguments=None))
+    tc2 = SimpleNamespace(id=None, function=SimpleNamespace(arguments=None))
+    msg = _make_chat_message(tool_calls_in_kwargs=[tc1, tc2])
+    cls._normalize_tool_kwargs([msg])
+    assert msg.additional_kwargs["tool_calls"] == []

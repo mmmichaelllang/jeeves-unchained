@@ -28,6 +28,15 @@ def _build_kimi_class():
     JSON object) rather than the required JSON string `"{}"`.  NIM rejects
     the malformed request with 400 "Extra data: line 1 column 3 (char 2)".
     Normalizing tool_kwargs → "{}" before every send is the reliable fix.
+
+    Also strips degenerate tool call entries with id=None from
+    `additional_kwargs["tool_calls"]` before each NIM send.  Kimi
+    occasionally emits tool calls where both id and function.name are None.
+    These are already skipped by `get_tool_calls_from_response`, but
+    LlamaIndex still records the raw assistant message (including the
+    id=None entries) in the chat history.  NIM's pydantic validator then
+    rejects the next request with 400 "Input should be a valid string"
+    for ChatCompletionMessageFunctionToolCallParam.id, crashing the sector.
     """
 
     from llama_index.core.llms.llm import ToolSelection
@@ -57,21 +66,32 @@ def _build_kimi_class():
                         block.tool_kwargs = json.dumps(kw)
                 # Belt-and-suspenders: also fix additional_kwargs["tool_calls"]
                 # (used by to_openai_message_dict for the non-ToolCallBlock path).
-                for tc in msg.additional_kwargs.get("tool_calls", []) or []:
-                    fn = getattr(tc, "function", None)
-                    if fn is None:
-                        continue
-                    args = getattr(fn, "arguments", None)
-                    if args is None or args == "":
-                        try:
-                            fn.arguments = "{}"
-                        except Exception:
-                            pass
-                    elif isinstance(args, dict):
-                        try:
-                            fn.arguments = json.dumps(args)
-                        except Exception:
-                            pass
+                # Also strips entries with id=None — NIM's pydantic validator
+                # requires id to be a non-null string; leaving None entries in
+                # the history causes a 400 "Input should be a valid string" crash
+                # on every subsequent NIM call in the sector.
+                raw_tcs = msg.additional_kwargs.get("tool_calls") or []
+                if raw_tcs:
+                    kept = []
+                    for tc in raw_tcs:
+                        if getattr(tc, "id", None) is None:
+                            log.debug("_normalize_tool_kwargs: dropping tool call with id=None from history")
+                            continue
+                        fn = getattr(tc, "function", None)
+                        if fn is not None:
+                            args = getattr(fn, "arguments", None)
+                            if args is None or args == "":
+                                try:
+                                    fn.arguments = "{}"
+                                except Exception:
+                                    pass
+                            elif isinstance(args, dict):
+                                try:
+                                    fn.arguments = json.dumps(args)
+                                except Exception:
+                                    pass
+                        kept.append(tc)
+                    msg.additional_kwargs["tool_calls"] = kept
 
         async def achat_with_tools(self, tools, user_msg=None, chat_history=None, **kwargs):
             if chat_history:
