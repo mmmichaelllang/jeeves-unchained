@@ -10,19 +10,27 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Current focus
 
-**Phase 2 (research) — production-stable after a 6-PR debugging sprint (PRs #37–#42).** Research completes in ~8–12 minutes with all 12 sectors populated and real cited URLs.
+**Phase 2 (research) — second debug sprint complete (PRs #43–#46, 2026-04-28).** Research now survives all known Kimi/NIM failure modes. Expected wall-clock: 8–14 minutes depending on NIM 429 backoff needed for `uap`.
 
-**Research architecture (as of 2026-04-28):**
+**Research architecture (as of 2026-04-28, post PRs #43–#46):**
 - Sequential sector execution (`_SECTOR_SEMAPHORE=1`) — NIM free tier can't handle concurrent Kimi agents.
 - Per-sector `FunctionAgent` (Kimi K2.5 on NIM) with `max_tokens=4096` for deep sectors (triadic_ontology, ai_systems, uap) to prevent NIM streaming drops.
+- `build_kimi_llm` sets `max_retries=0` on the underlying openai client — disables SDK retry amplification. `run_sector` owns all retry decisions.
+- **NIM 429 rate-limit recovery**: `_is_nim_rate_limit()` detects `"429"/"too many requests"` in the exception. Sector sleeps 60s then retries (up to 2 attempts: `[60, 120]`s). NIM network errors use existing `[10, 30, 60]`s retry path.
 - IMMEDIATE FIRST ACTION directives in triadic_ontology and ai_systems force Kimi to call exa_search before generating any reasoning, preventing the "23s reasoning → NIM stream drop" crash.
-- 3 retries with 10s/30s/60s backoff for "peer closed connection" network errors.
 - Quota guard: `_quota_snapshot` / `_quota_increased` reject sectors where no search provider was called (hallucination prevention).
+- **Deep-sector forced retry**: when quota guard fires for `shape=="deep"` sectors (triadic_ontology, ai_systems, uap), `_deep_sector_forced_retry` runs a stripped-down agent with a pre-specified exa_search call. `_DEEP_FALLBACK_QUERIES` provides the query strings.
 - `_REDIRECT_ARTIFACT_HOSTS` filter in `collect_urls_from_sector` strips Gemini grounding API redirect URLs from `covered_urls` and the `enriched_articles` seed.
 - CONTEXT_HEADER enforces mandatory Round 1 (search) → Round 2 (read/extract) research discipline.
 - `intellectual_journals` mandates 3 parallel exa searches targeting separate outlet groups (LRB/Aeon, NYRB/ProPublica, Marginalian/Big Think) with a DIVERSITY RULE requiring ≥3 different publications.
 - `global_news` requires SOURCE DIVERSITY (BBC/Guardian/Al Jazeera must appear) and bans Gemini redirect URLs from the output.
-- `enriched_articles` has an explicit PRIORITY ORDER (global → intellectual → wearable → deep → local news last).
+- `enriched_articles` has an explicit PRIORITY ORDER (global → intellectual → wearable → deep → local news last); Reuters warned as 401 source; failed fetches must be replaced; text field capped at 500 chars in JSON output.
+- **Empty-query guards**: serper, tavily_search, tavily_extract, exa return plain **strings** (not dicts) when called with empty args. LlamaIndex's `_parse_tool_output` calls `str()` on dict returns, producing Python repr with single quotes that NIM's JSON parser rejects with "Unterminated string" 400.
+- **`function.arguments` normalization**: `get_tool_calls_from_response` in `llm.py` now also sets `tool_call.function.arguments = "{}"` when arguments are None/empty, so the raw history entry that LlamaIndex records is a valid JSON string that NIM's pydantic validator accepts.
+- **None id/name skip**: degenerate tool calls with `tool_call.id=None` or `function.name=None` are skipped (logged at WARNING) rather than propagating a pydantic `ToolSelection` crash.
+- **Gemini daily cap**: `DAILY_HARD_CAPS["gemini_grounded"] = 12` (corrected from 1490 which assumed paid Search Grounding tier; actual free-tier limit is 20 generate_content RPD for gemini-2.5-flash). On a 429 response, `gemini_grounded.py` immediately exhausts the daily counter so subsequent sectors skip Gemini automatically.
+- `family` instruction has 3 explicit mandatory parallel searches with specific query strings.
+- **128 tests** across `tests/test_write_postprocess.py` and `tests/test_research_sectors.py`.
 
 **Phase 3 (write) — three-model pipeline: 9 sequential Groq drafts + 9 concurrent NIM quality-editor passes + 1 OpenRouter Gemma 4 final narrative editor.** Per user direction: safety and quality over speed. Wall-clock ~10m 30s (Groq path) or ~9–13m (NIM-fallback path).
 
@@ -38,17 +46,28 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - **Profanity moved to OpenRouter pass.** Drafts (PART1–PART8) write ZERO profane asides. The OpenRouter editor inserts exactly five, thematically placed. `recently_used_asides` is passed so it picks fresh phrases.
 - **Per-section dedup advancement protocols** (PART4 toddler, PART6 triadic+ai_systems, PART7 wearable_ai): identify specific title/model/product → check covered_headlines → one backward-reference clause if already covered → pivot to next uncovered item → if all repeat, one sentence and move on. PART4 toddler: lead with new; repeats get embedded clause only; if all repeat, brief seasonal suggestion flagged as Jeeves's own.
 - `_system_prompt_for_parts` strips both `## HTML scaffold` and `## Briefing structure` blocks (`re.MULTILINE` + `^## ` lookahead).
-- **123 tests** across `tests/test_write_postprocess.py` and `tests/test_research_sectors.py` cover the full write pipeline including refine/fallback behavior, NIM-skips-sleep path, New Yorker injection, narrative editor fallback, all 11 banned transitions, family-shape dedup extraction, NIM 429 detection, sector_url_index coverage, rolling-window + CorrespondenceHandoff features, redirect artifact URL filtering, and intellectual_journals diversity enforcement.
 
 ## Where we left off (2026-04-28)
 
-- **PRs #37–#42, all merged.** Research workflow now stable.
-- **PR #41 merged** — NIM streaming crash fix for triadic_ontology and ai_systems (IMMEDIATE FIRST ACTION, max_tokens=4096 for deep sectors, 3-retry backoff).
-- **PR #42 merged** — comprehensive research quality audit: intellectual_journals source diversity, global_news BBC/Guardian enforcement, Gemini redirect URL filtering, enriched_articles priority ordering, text_max_chars raise (2000→3000), mandatory 2-round research discipline.
+- **PRs #43–#46, all merged.** Research workflow substantially more resilient.
 - **All phases live on `main`** (Phases 2, 3, 4 fully wired). Cron: correspondence `0 12`, research `30 12`, write `40 13`.
 - **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run.
 
-### Research debug sprint (PRs #37–#42) — what was fixed
+### Second research debug sprint (PRs #43–#46) — what was fixed
+
+| PR | Problem | Fix |
+|---|---|---|
+| #43 | `family` 400 crash (serper/tavily/exa called with None args → corrupt NIM context) | Empty-query guards in all 3 tools; family instruction rewritten with 3 explicit parallel searches |
+| #43 | `triadic_ontology` quota guard fires every run (Kimi answers from training data) | `_deep_sector_forced_retry` with forced-first-tool-call system prompt; `_DEEP_FALLBACK_QUERIES` |
+| #43 | Gemini 429 cascade (cap was 1490, actual free tier is 20 RPD) | `DAILY_HARD_CAPS["gemini_grounded"] = 12`; 429 response exhausts daily counter immediately |
+| #43 | `enriched_articles` Reuters 401 slots | Instruction names Reuters as 401 source; failed fetches must be replaced |
+| #44 | NIM 429 cascade after sector 3 (SDK retried 3× with 0.45s backoffs, amplifying rate limit) | `max_retries=0` in `build_kimi_llm`; `_is_nim_rate_limit()` + 60/120s sector-level backoff |
+| #45 | `local_news`/`enriched_articles` NIM 400 "Unterminated string" (empty-query guard returned dict → `str()` → Python repr → NIM parser failure) | Guards now return plain strings; `TextBlock(text=str(dict))` produces single-quote repr, not JSON |
+| #46 | `weather` NIM 400 pydantic validation (`function.arguments=None/dict` in history, NIM requires string) | `get_tool_calls_from_response` normalizes `tool_call.function.arguments = "{}"` on None/empty |
+| #46 | `local_news` pydantic `ToolSelection` crash (Kimi emits `tool_call.id=None, function.name=None`) | Skip degenerate tool calls with None id/name rather than propagating crash |
+| #46 | `enriched_articles` 8-min NIM stream + JSON parse failure (model output full article texts with unescaped chars) | Instruction caps `text` field to 500 chars in JSON output |
+
+### First research debug sprint (PRs #37–#42) — what was fixed
 
 | PR | Problem | Fix |
 |---|---|---|
@@ -61,7 +80,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Dev branch
 
-- **Current**: `claude/fix-jeeves-research-workflow-Jo1u5` (all merged, no outstanding PRs)
+- **Current**: `claude/fix-jeeves-research-workflow-Jo1u5` (PRs #43–#46 all merged, no outstanding PRs)
 - Prior major work: `claude/improve-dedup-triadic-studies-rEgcE` (#34), `claude/never-empty-news-fallbacks-rEgcE` (#33), `claude/forensic-audit-fixes-rEgcE` (#32)
 
 ## Gotchas the README doesn't flag
@@ -78,6 +97,13 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - **Within-run aside dedup lives in code, not the prompt.** `generate_briefing` scans each part's output against `_parse_all_asides()`, accumulates a `used_this_run` list, and injects it into the next part's system prompt via `run_used_asides=`. If you refactor the loop, preserve this — otherwise all 9 parts will independently pick "clusterfuck of biblical proportions" and Jeeves repeats himself.
 - **Dedup is headline-matched, not URL-matched in the write phase.** The write prompt explicitly gets `dedup.covered_headlines` but NOT `covered_urls` (see `_trim_session_for_prompt`). If you see the same Karl-Alber volume appear day after day, it means the research phase isn't adding the item's headline to `covered_headlines` — check there, not in write.
 - **Gemini grounding API returns ephemeral redirect URLs** (`vertexaisearch.cloud.google.com/grounding-api-redirect/...`) as citation sources. These expire within hours and can't be deduped by URL. `collect_urls_from_sector` filters them via `_REDIRECT_ARTIFACT_HOSTS`. The `global_news` sector instruction additionally tells Kimi to look up canonical article URLs via `serper_search` instead of including the redirect directly. Do not add redirect domains back to the URL extraction logic.
+- **Empty-query guards must return strings, not dicts.** LlamaIndex's `FunctionTool._parse_tool_output()` falls through to `TextBlock(text=str(raw_output))` for any return value that isn't a `TextBlock`/`ImageBlock`/`BaseNode`. `str()` on a Python dict produces repr with single quotes (`{'error': '...'}`), which is not valid JSON. NIM receives this as a tool call result and tries to parse it, failing with `"Unterminated string starting at: line 1 column 11 (char 10)"`. All empty-query/empty-input guards in the search tools return plain strings.
+- **`function.arguments` must be a JSON string in history, not None/dict.** Kimi occasionally emits tool calls with `function.arguments=None` or `{}` (dict). `get_tool_calls_from_response` coerces the parsed args to `{}`, but if the RAW `tool_call.function.arguments` is left as None/dict, LlamaIndex records that in the conversation history. On the next NIM call, NIM's pydantic validator rejects it (`Input should be a valid string [type=string_type, input_value={}, input_type=dict]`), returning 400. Fix: also set `tool_call.function.arguments = "{}"` when normalizing.
+- **Kimi emits degenerate tool calls with None id/name.** Occasionally `tool_call.id=None` and `function.name=None` come through. Creating `ToolSelection(tool_id=None, tool_name=None)` raises pydantic ValidationError and kills the sector. `get_tool_calls_from_response` now skips these with a WARNING.
+- **Gemini 2.5 Flash free tier is 20 generate_content RPD, not 1500 grounded-search calls/day.** The original `DAILY_HARD_CAPS["gemini_grounded"] = 1490` assumed the paid Search Grounding quota. The actual free-tier metric is `GenerateRequestsPerDayPerProjectPerModel-FreeTier` with `quotaValue=20`. Cap is now 12. When a 429 arrives, `gemini_grounded.py` immediately sets the counter to the cap so all subsequent sectors skip Gemini without another 429 hit.
+- **NIM 429 rate-limit amplification.** With `max_retries=2` (SDK default), each logical NIM call that 429s becomes 3 actual requests (1 original + 2 retries at 0.45s/0.95s). This burns 3× the rate-limit budget. By sector 4, the limit is saturated and every subsequent sector crashes on its first call. Fix: `max_retries=0` in `build_kimi_llm`; `run_sector` handles all retries with proper 60s backoff.
+- **`triadic_ontology` needs forced-search retry every run.** Kimi consistently answers this obscure topic from training data, triggering the quota guard. `_deep_sector_forced_retry` fires automatically; total overhead ~10s. No further action needed — this is expected behavior.
+- **`uap` occasionally needs a 60s NIM 429 sleep.** This is correct behavior from the rate-limit backoff. If it 429s twice (60s + 120s = 3 min overhead), that's still within the 15-min research window.
 - **Research sector exa_py calls are invisible in httpx logs.** The `exa_py` SDK uses `requests` not `httpx`, so exa searches don't appear in the `httpx INFO HTTP Request:` log lines. When counting tool calls from logs, infer exa was called from: (a) time gaps between NIM calls, (b) quota ledger delta for "exa", (c) the presence of exa.ai URLs in the session JSON.
 - **NIM streaming drop threshold is ~20-25 seconds of continuous output.** Kimi K2.5 uses extended chain-of-thought tokens. If the model generates >~2000 output tokens continuously, NIM drops the streaming connection with "peer closed connection without sending complete message body". Mitigations: `max_tokens=4096` for deep sectors (halves the output budget), IMMEDIATE FIRST ACTION (forces tool call before reasoning), `text_max_chars=3000` (limits exa payload feeding into reasoning). Do NOT raise any of these limits for deep sectors without testing.
 - **`intellectual_journals` must span ≥3 different publications.** The DIVERSITY RULE in the instruction is enforced by the prompt, not code. If you see all results from NYRB + New Yorker again, the 3-parallel exa search instruction wasn't followed — check that Kimi saw all three numbered calls in the instruction and dispatched them.
