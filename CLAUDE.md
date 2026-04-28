@@ -10,7 +10,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Current focus
 
-**Phase 2/3/4 — ninth sprint complete (PR #55, 2026-04-28).** Write prompt hardening against AI-assistant voice + dead code removal. All 172 tests green.
+**Phase 2/3/4 — tenth sprint complete (PR #56, 2026-04-28).** Output quality: CSS scaffold, URL fabrication prevention, COVERAGE_LOG dedup, Jina TOC fallback, Part 9 branch separation. Plus codebase audit fixes: tavily string guard, newyorker repair hint, NewYorker schema byline/date. All 184 tests green.
 
 **Research architecture (as of 2026-04-28, post PRs #43–#46):**
 - Sequential sector execution (`_SECTOR_SEMAPHORE=1`) — NIM free tier can't handle concurrent Kimi agents.
@@ -56,9 +56,22 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Where we left off (2026-04-28)
 
-- **PRs #43–#55, all merged.** All phases live on `main` (Phases 2, 3, 4 fully wired). Cron: correspondence `0 12`, research `30 12`, write `40 13`.
-- **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run.
-- **172 tests green** as of this sprint.
+- **PRs #43–#56, all merged.** All phases live on `main` (Phases 2, 3, 4 fully wired). Cron: correspondence `0 12`, research `30 12`, write `40 13`.
+- **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** if not already done — without it the final narrative editor pass is silently skipped, losing the 5 profane asides, paragraph rhythm surgery, and filler deletion.
+- **184 tests green** as of this sprint.
+
+### Tenth sprint (PR #56) — what was fixed
+
+| PR | Problem | Fix |
+|---|---|---|
+| #56 | Emailed briefing used Arial/sans-serif instead of Georgia | `_system_prompt_for_parts` strips `## HTML scaffold` from `write_system.md` → model had no CSS guidance. Fixed: full CSS scaffold embedded directly in `PART1_INSTRUCTIONS` — copy-exactly with Georgia, `#faf9f6`, 720px, line-height 1.7 |
+| #56 | Only one linked article when `career: {}` — fabricated school/district URLs | Rule 14 in `CONTINUATION_RULES`: `NEVER INVENT URLS` — every href must appear verbatim in the payload. `PART3_INSTRUCTIONS` `EMPTY CAREER FEED — HARD RULE`: one sentence + sentinel when career is empty, no URLs |
+| #56 | Two `COVERAGE_LOG` comments appearing in output | `_ensure_coverage_log` rewritten with strict priority: synthesize from real `<a href>` anchors (ground truth) wins → fall back to model-written log only when no anchors → always consume PLACEHOLDER. All stale model logs stripped before inserting synthesized log |
+| #56 | Talk of the Town `available=False` — TOC page is JS-rendered, direct HTTP returns no article links | `_extract_paths` on raw TOC returns `[]` → Jina AI reader fallback (`r.jina.ai/TOC_URL`) processes JS-rendered page → paths extracted from Jina markdown |
+| #56 | Part 9 wrote both Branch A and Branch B content simultaneously | `PART9_INSTRUCTIONS` rewritten with explicit `BRANCH A` / `BRANCH B` separation and hard guards: "WRITE BRANCH A AND NOTHING ELSE. Do NOT also write Branch B." |
+| #56 | `tavily_extract` silently failed when Kimi passed a bare string URL instead of list | Added `if isinstance(urls, str): urls = [urls]` guard before empty check — string sliced to 10 chars would pass malformed input to Tavily client |
+| #56 | `_REPAIR_SHAPE_HINT["newyorker"]` used generic `{"findings": ..., "urls": [...]}` schema | Corrected to actual newyorker shape: `{available, title, section, dek, byline, date, text, url, source}` — repair agent now produces usable newyorker output |
+| #56 | `NewYorker` pydantic model missing `byline` and `date` as declared fields | Added both as `str = ""` fields — previously stored as extras via `extra="allow"` but not typed or validated |
 
 ### Ninth sprint (PR #55) — what was fixed
 
@@ -193,6 +206,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 ## Dev branch
 
 - **Current**: `main` (all PRs merged, clean)
+- Prior: `claude/write-quality-sprint10` (PR #56 merged)
 - Prior: `claude/guaranteed-sector-retry-sprint8` (PRs #54–#55 merged)
 - Prior: `claude/forensic-fixes-sprint6` (PR #53 merged)
 
