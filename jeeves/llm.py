@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 
 def _build_kimi_class():
-    """Build a NVIDIA subclass with a None-tolerant tool-arg parser.
+    """Build a NVIDIA subclass with a None-tolerant tool-arg parser and pre-send normalizer.
 
     Kimi K2.5 hosted on NIM occasionally emits tool calls where
     `function.arguments` is `None` instead of `"{}"`. The upstream class
@@ -19,12 +19,67 @@ def _build_kimi_class():
     entire FunctionAgent workflow. This override treats None / empty
     strings / unparseable JSON as `{}` and logs a warning so we can
     spot the upstream bug in CI logs.
+
+    Additionally overrides `achat_with_tools` to normalize every
+    `ToolCallBlock.tool_kwargs` in the chat history before each NIM call.
+    When arguments=None, LlamaIndex's `from_openai_message` stores
+    `ToolCallBlock(tool_kwargs={})` — an empty dict.  When re-serialized
+    by `to_openai_message_dict`, that dict becomes `"arguments": {}` (a
+    JSON object) rather than the required JSON string `"{}"`.  NIM rejects
+    the malformed request with 400 "Extra data: line 1 column 3 (char 2)".
+    Normalizing tool_kwargs → "{}" before every send is the reliable fix.
     """
 
     from llama_index.core.llms.llm import ToolSelection
     from llama_index.llms.nvidia import NVIDIA
 
     class KimiNVIDIA(NVIDIA):
+        @staticmethod
+        def _normalize_tool_kwargs(messages):
+            """Ensure ToolCallBlock.tool_kwargs and ChoiceDelta arguments are JSON strings.
+
+            Must be called on the full chat_history list before every NIM call so
+            that any assistant messages carrying tool calls with None/empty-dict
+            arguments are fixed in-place prior to serialization.
+            """
+            from llama_index.core.base.llms.types import ToolCallBlock as _TCB
+
+            for msg in messages:
+                # Fix ToolCallBlock.tool_kwargs (used by to_openai_message_dict
+                # for the ToolCallBlock path — sets "arguments": <value>).
+                for block in getattr(msg, "blocks", []):
+                    if not isinstance(block, _TCB):
+                        continue
+                    kw = block.tool_kwargs
+                    if kw is None or kw == {} or kw == "":
+                        block.tool_kwargs = "{}"
+                    elif isinstance(kw, dict):
+                        block.tool_kwargs = json.dumps(kw)
+                # Belt-and-suspenders: also fix additional_kwargs["tool_calls"]
+                # (used by to_openai_message_dict for the non-ToolCallBlock path).
+                for tc in msg.additional_kwargs.get("tool_calls", []) or []:
+                    fn = getattr(tc, "function", None)
+                    if fn is None:
+                        continue
+                    args = getattr(fn, "arguments", None)
+                    if args is None or args == "":
+                        try:
+                            fn.arguments = "{}"
+                        except Exception:
+                            pass
+                    elif isinstance(args, dict):
+                        try:
+                            fn.arguments = json.dumps(args)
+                        except Exception:
+                            pass
+
+        async def achat_with_tools(self, tools, user_msg=None, chat_history=None, **kwargs):
+            if chat_history:
+                self._normalize_tool_kwargs(chat_history)
+            return await super().achat_with_tools(
+                tools, user_msg=user_msg, chat_history=chat_history, **kwargs
+            )
+
         def get_tool_calls_from_response(
             self, response, error_on_no_tool_call: bool = True
         ):
@@ -57,11 +112,10 @@ def _build_kimi_class():
                         tc_name,
                     )
                     args = {}
-                    # Also normalise the raw field to a valid JSON string so that
-                    # when LlamaIndex records this assistant message in history and
-                    # re-sends it to NIM, NIM's pydantic validator sees a string
-                    # (required) rather than None/dict, avoiding a 400 error on the
-                    # next chat/completions call.
+                    # Also normalise the raw field so that when LlamaIndex records
+                    # this assistant message in history and re-sends it to NIM,
+                    # NIM's pydantic validator sees a string (required) rather than
+                    # None/dict, avoiding a 400 error on the next call.
                     tool_call.function.arguments = "{}"
                 else:
                     try:
