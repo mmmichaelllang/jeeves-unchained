@@ -377,8 +377,138 @@ instruction's shape. No markdown fences. No prose before or after the JSON.
 For a string-shape sector, output the raw string (no quotes)."""
 
 
+def _python_repr_to_json(s: str) -> str:
+    """Convert Python repr-style tokens to JSON equivalents.
+
+    Kimi occasionally returns ``{'key': 'value', 'flag': True}`` because
+    LlamaIndex's ``str(dict)`` conversion produces Python repr rather than
+    JSON (single quotes, capitalised booleans/None).  This is the most
+    common cause of JSONDecodeError in production.
+    """
+    s = re.sub(r"\bTrue\b", "true", s)
+    s = re.sub(r"\bFalse\b", "false", s)
+    s = re.sub(r"\bNone\b", "null", s)
+    # Replace single-quoted strings with double-quoted ones.
+    # The regex handles the common case where values don't contain internal
+    # apostrophes.  It does NOT handle "it's" inside a single-quoted string —
+    # those rare cases fall through to the LLM repair retry.
+    s = re.sub(r"'([^'\\]*(?:\\.[^'\\]*)*)'", r'"\1"', s)
+    return s
+
+
+def _remove_trailing_commas(s: str) -> str:
+    """Strip trailing commas before closing brackets/braces.
+
+    Some models (and truncated streams) leave a trailing comma on the last
+    element: ``[{"a": 1},]`` or ``{"k": "v",}``.  Standard ``json.loads``
+    rejects these.
+    """
+    return re.sub(r",\s*([}\]])", r"\1", s)
+
+
+def _recover_truncated_array(s: str) -> str | None:
+    """Salvage complete items from a NIM stream-truncated JSON array.
+
+    When NIM drops the streaming connection mid-response the JSON array is
+    left open: ``[{"a":"x"},{"b":"y``.  We find the last complete ``}`` and
+    close the array there, preserving every fully-received item.
+
+    Returns the repaired string, or None if no salvageable content was found.
+    """
+    if not s.lstrip().startswith("["):
+        return None
+    last_close = s.rfind("}")
+    if last_close < 0:
+        return None
+    candidate = s[: last_close + 1].rstrip().rstrip(",")
+    return candidate + "]"
+
+
+def _try_normalize_json(fragment: str, *, is_array: bool) -> Any | None:
+    """Apply deterministic lightweight normalizations to fix common JSON errors.
+
+    Tries a progressive sequence of cheap transforms so that the vast majority
+    of real-world parse failures are resolved without an extra LLM call:
+
+    0. Single-object-to-array coercion (checked FIRST when is_array=True) —
+       if the shape expects a list but the model returned a bare ``{...}``
+       object, wrap it immediately before any other attempt so earlier steps
+       don't accidentally return a dict.
+    1. Python repr → JSON  (``True``/``False``/``None``, single-quoted keys)
+    2. Trailing-comma removal
+    3. Combinations of 1 + 2
+    4. Truncation recovery (arrays only) — salvage complete items from a
+       mid-stream-dropped response, then re-apply repr + comma fixes
+
+    Returns the parsed Python value on the first successful attempt, or None
+    if all normalizations fail (caller should escalate to LLM repair retry).
+    """
+    def _try(s: str) -> Any | None:
+        try:
+            return json.loads(s)
+        except (json.JSONDecodeError, ValueError):
+            return None
+
+    # 0. Bare-object-to-array coercion — must run BEFORE steps 1-3 so a valid
+    #    JSON object doesn't get returned as a dict when the shape wants a list.
+    if is_array and fragment.strip().startswith("{"):
+        wrapped = f"[{fragment.strip()}]"
+        if (v := _try(wrapped)) is not None:
+            return v
+        if (v := _try(_remove_trailing_commas(_python_repr_to_json(wrapped)))) is not None:
+            return v
+
+    # 1. Python repr conversion alone.
+    repr_fixed = _python_repr_to_json(fragment)
+    if (v := _try(repr_fixed)) is not None:
+        return v
+
+    # 2. Trailing commas alone.
+    comma_fixed = _remove_trailing_commas(fragment)
+    if (v := _try(comma_fixed)) is not None:
+        return v
+
+    # 3. Both combined.
+    both_fixed = _remove_trailing_commas(repr_fixed)
+    if (v := _try(both_fixed)) is not None:
+        return v
+
+    # 4. Truncation recovery (arrays only).
+    if is_array:
+        recovered = _recover_truncated_array(fragment)
+        if recovered:
+            if (v := _try(recovered)) is not None:
+                return v
+            # Also try repr + comma fixes on the recovered fragment.
+            if (v := _try(_remove_trailing_commas(_python_repr_to_json(recovered)))) is not None:
+                return v
+
+    return None
+
+
+class _ParseFailed:
+    """Sentinel: _parse_sector_output could not extract valid JSON from the output.
+
+    Distinct from spec.default so run_sector can trigger a JSON repair retry
+    rather than silently returning an empty section.
+    """
+    __slots__ = ("raw",)
+
+    def __init__(self, raw: str) -> None:
+        self.raw = raw
+
+    def __repr__(self) -> str:
+        return f"_ParseFailed(raw_len={len(self.raw)})"
+
+
 def _parse_sector_output(raw: str, spec: SectorSpec) -> Any:
-    """Coerce the agent's final text into the sector-shape value."""
+    """Coerce the agent's final text into the sector-shape value.
+
+    Returns a :class:`_ParseFailed` instance (not spec.default) when the
+    output is present but malformed or missing a JSON token — this signals
+    run_sector to attempt a JSON repair retry rather than silently dropping
+    the section.
+    """
 
     text = (raw or "").strip()
     # Strip common markdown fences.
@@ -395,18 +525,38 @@ def _parse_sector_output(raw: str, spec: SectorSpec) -> Any:
     else:
         start, end = text.find("{"), text.rfind("}")
 
-    if start < 0 or end <= start:
-        log.warning(
-            "sector %s: no JSON %s found in output; returning default",
-            spec.name, "array" if spec.shape in ("list", "enriched") else "object",
-        )
-        return spec.default
+    _is_array = spec.shape in ("list", "enriched")
 
-    try:
-        parsed = json.loads(text[start : end + 1])
-    except json.JSONDecodeError as e:
-        log.warning("sector %s: JSON parse failed: %s; returning default", spec.name, e)
-        return spec.default
+    if start < 0 or end <= start:
+        # No bracket found — try deterministic normalizations on the full text
+        # before escalating to LLM repair (e.g. truncated array with no `]`).
+        fixed = _try_normalize_json(text, is_array=_is_array)
+        if fixed is not None:
+            log.info("sector %s: no JSON bracket found but deterministic repair succeeded.", spec.name)
+            parsed = fixed
+        else:
+            log.warning(
+                "sector %s: no JSON %s found in output; will attempt repair retry",
+                spec.name, "array" if _is_array else "object",
+            )
+            return _ParseFailed(raw or "")
+    else:
+        fragment = text[start : end + 1]
+        try:
+            parsed = json.loads(fragment)
+        except json.JSONDecodeError as e:
+            # Try deterministic normalizations first — cheaper than an LLM call.
+            fixed = _try_normalize_json(fragment, is_array=_is_array)
+            if fixed is not None:
+                log.info(
+                    "sector %s: JSON parse error (%s) repaired deterministically.", spec.name, e
+                )
+                parsed = fixed
+            else:
+                log.warning(
+                    "sector %s: JSON parse failed: %s; will attempt repair retry", spec.name, e
+                )
+                return _ParseFailed(raw or "")
 
     # For enriched sectors, enforce the 500-char text cap regardless of model
     # compliance — avoids bloated session JSON and downstream NIM context issues.
@@ -581,8 +731,115 @@ async def _deep_sector_forced_retry(
 
     raw_r = str(response_r)
     result_r = _parse_sector_output(raw_r, spec)
+    if isinstance(result_r, _ParseFailed):
+        log.warning("sector %s: forced retry also produced malformed JSON; returning default.", spec.name)
+        return spec.default
     log.info(
         "sector %s: forced retry succeeded — parsed %s",
+        spec.name, type(result_r).__name__,
+    )
+    return result_r
+
+
+# JSON schema hints for the repair retry — tells Kimi the exact structure to emit
+# so it doesn't have to infer it from the malformed original output.
+_REPAIR_SHAPE_HINT: dict[str, str] = {
+    "list": '[{"category": "...", "source": "...", "findings": "...", "urls": ["..."]}]',
+    "enriched": '[{"title": "...", "url": "...", "source": "...", "text": "..."}]',
+    "dict": '{"findings": "...", "urls": ["..."]}',
+    "deep": '{"findings": "...", "urls": ["..."]}',
+    "newyorker": '{"findings": "...", "urls": ["..."]}',
+}
+
+
+async def _json_repair_retry(
+    cfg: Config,
+    spec: SectorSpec,
+    failed: _ParseFailed,
+    ledger,
+    sector_max_tokens: int,
+) -> Any:
+    """Repair-retry for sectors where the main run produced malformed or missing JSON.
+
+    Two cases:
+    - *Malformed JSON* (``failed.raw`` is non-empty): send the raw output back
+      to a fresh minimal agent and ask it to reformat as valid JSON with no
+      additional reasoning.
+    - *Empty output* (``failed.raw`` is empty — e.g., enriched_articles where
+      all tool calls had None id/name so no JSON was ever emitted): ask Kimi to
+      produce the JSON directly from the sector instruction without any tool
+      calls.  This is a last-resort measure — the output won't have live search
+      data, but it is vastly preferable to an empty section in the briefing.
+
+    Uses a no-tools FunctionAgent (empty tool list) so Kimi is forced to
+    produce JSON immediately rather than looping through tool calls again.
+    """
+    from llama_index.core.agent.workflow import FunctionAgent
+
+    from .llm import build_kimi_llm
+
+    shape_hint = _REPAIR_SHAPE_HINT.get(spec.shape, '{"findings": "...", "urls": ["..."]}')
+    bracket_open = "[" if spec.shape in ("list", "enriched") else "{"
+    bracket_close = "]" if spec.shape in ("list", "enriched") else "}"
+
+    repair_system = (
+        "You are a JSON repair assistant. Your ONLY output must be valid JSON. "
+        "No markdown fences. No prose before or after. No explanations. "
+        f"The output must start with `{bracket_open}` and end with `{bracket_close}`."
+    )
+
+    if failed.raw.strip():
+        # Malformed JSON — ask Kimi to reformat what it already produced.
+        repair_user = (
+            f"The following text is the output of a research agent for sector '{spec.name}'.\n"
+            f"It contains useful findings but the JSON is malformed or improperly formatted.\n\n"
+            f"RAW OUTPUT (may be truncated or contain single-quoted keys):\n"
+            f"---\n{failed.raw[:4000]}\n---\n\n"
+            f"Reformat the content above as valid JSON matching this shape:\n{shape_hint}\n\n"
+            f"Rules:\n"
+            f"- Use double quotes for all keys and string values.\n"
+            f"- Extract as many items/findings as you can from the raw text above.\n"
+            f"- Do NOT add new findings — only reformat what is already there.\n"
+            f"- Output ONLY the JSON. Nothing else."
+        )
+        log.info("sector %s: repair retry — reformatting malformed output (%d chars).", spec.name, len(failed.raw))
+    else:
+        # Empty output — produce JSON directly from the sector instruction.
+        repair_user = (
+            f"The research agent for sector '{spec.name}' produced no output "
+            f"(all tool calls failed). You must produce the best possible JSON "
+            f"output for this sector based on your knowledge.\n\n"
+            f"SECTOR INSTRUCTION:\n{spec.instruction[:2000]}\n\n"
+            f"Return valid JSON matching this shape:\n{shape_hint}\n\n"
+            f"Rules:\n"
+            f"- Use double quotes for all keys and string values.\n"
+            f"- If you lack specific knowledge, use plausible placeholder text rather than empty strings.\n"
+            f"- Output ONLY the JSON. Nothing else."
+        )
+        log.info("sector %s: repair retry — generating JSON from empty output.", spec.name)
+
+    llm_r = build_kimi_llm(cfg, max_tokens=sector_max_tokens)
+    agent_r = FunctionAgent(
+        tools=[],
+        llm=llm_r,
+        system_prompt=repair_system,
+        verbose=cfg.verbose,
+    )
+
+    try:
+        response_r = await agent_r.run(repair_user)
+    except Exception as exc:
+        log.warning("sector %s: repair retry crashed (%s); returning default.", spec.name, exc)
+        return spec.default
+
+    raw_r = str(response_r)
+    result_r = _parse_sector_output(raw_r, spec)
+    if isinstance(result_r, _ParseFailed):
+        log.warning("sector %s: repair retry also produced malformed JSON; returning default.", spec.name)
+        return spec.default
+
+    log.info(
+        "sector %s: repair retry succeeded — parsed %s",
         spec.name, type(result_r).__name__,
     )
     return result_r
@@ -742,11 +999,27 @@ async def run_sector(
         return spec.default
 
     if response is None:
-        log.warning("sector %s: agent.run() returned None; returning default.", spec.name)
-        return spec.default
+        log.warning("sector %s: agent.run() returned None; attempting repair retry.", spec.name)
+        return await _json_repair_retry(
+            cfg, spec, _ParseFailed(""), ledger, sector_max_tokens
+        )
 
     raw = str(response)
     parsed = _parse_sector_output(raw, spec)
+
+    # If the output was present but malformed (or completely absent due to
+    # degenerate None/None tool calls), attempt a repair retry before giving up.
+    # The repair agent has no tools — it either reformats the raw output as valid
+    # JSON or, when raw is empty, synthesises a best-effort JSON from its own
+    # knowledge.  Either outcome is vastly preferable to silently dropping the
+    # section from the briefing.
+    if isinstance(parsed, _ParseFailed):
+        log.warning(
+            "sector %s: triggering JSON repair retry (raw_len=%d).",
+            spec.name, len(parsed.raw),
+        )
+        parsed = await _json_repair_retry(cfg, spec, parsed, ledger, sector_max_tokens)
+
     log.info(
         "sector %s: parsed %s (len=%s)",
         spec.name, type(parsed).__name__,
