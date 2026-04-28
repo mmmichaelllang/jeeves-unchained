@@ -92,6 +92,7 @@ def build_kimi_llm(
         temperature=temperature,
         max_tokens=max_tokens,
         timeout=timeout,
+        max_retries=0,  # let run_sector own all retry logic with proper 60s backoff
     )
 
 

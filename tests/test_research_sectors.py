@@ -8,6 +8,7 @@ from jeeves.research_sectors import (
     SECTOR_SPECS,
     _NO_QUOTA_CHECK,
     _build_user_prompt,
+    _is_nim_rate_limit,
     _is_redirect_artifact,
     _is_retryable_network_error,
     _parse_sector_output,
@@ -376,6 +377,15 @@ def test_is_retryable_network_error_matches_known_phrases():
     assert _is_retryable_network_error(Exception("connection reset by peer"))
     assert not _is_retryable_network_error(Exception("json decode error"))
     assert not _is_retryable_network_error(Exception("422 Unprocessable Entity"))
+
+
+def test_is_nim_rate_limit_matches_429_strings():
+    assert _is_nim_rate_limit(Exception("Error code: 429 - {'status': 429, 'title': 'Too Many Requests'}"))
+    assert _is_nim_rate_limit(Exception("429 Too Many Requests"))
+    assert _is_nim_rate_limit(Exception("too many requests"))
+    assert not _is_nim_rate_limit(Exception("peer closed connection"))
+    assert not _is_nim_rate_limit(Exception("400 Bad Request"))
+    assert not _is_nim_rate_limit(Exception("RESOURCE_EXHAUSTED"))  # gemini, not NIM
 
 
 def test_family_instruction_has_mandatory_parallel_searches():
