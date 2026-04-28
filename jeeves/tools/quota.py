@@ -76,10 +76,9 @@ class QuotaLedger:
         return daily
 
     def save(self) -> None:
-        self.path.write_text(
-            json.dumps(self._state, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
+        with self._lock:
+            serialized = json.dumps(self._state, ensure_ascii=False, indent=2)
+        self.path.write_text(serialized, encoding="utf-8")
 
     def remaining_free(self, provider: str) -> int:
         p = self._state["providers"].get(provider)
@@ -143,4 +142,5 @@ class QuotaLedger:
         return candidates[0][0]
 
     def snapshot(self) -> dict:
-        return json.loads(json.dumps(self._state))
+        with self._lock:
+            return json.loads(json.dumps(self._state))

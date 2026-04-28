@@ -10,7 +10,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Current focus
 
-**Phase 2/4 — fifth forensic sprint complete (PR #53, 2026-04-28).** Security + correctness cleanup: HTML injection fix in `render_mock_correspondence`, pagination fix in `list_message_ids`, dead code removal (`parse_rfc2822_date`). All 150 tests green.
+**Phase 2/4 — sixth forensic sprint complete (PR #54, 2026-04-28).** Quota ledger locking + session_io truncation guard: `save()` and `snapshot()` now hold `_lock` while serialising state; `load_session_by_date` raises `FileNotFoundError` (not `JSONDecodeError`) on empty/truncated files. All 154 tests green.
 
 **Research architecture (as of 2026-04-28, post PRs #43–#46):**
 - Sequential sector execution (`_SECTOR_SEMAPHORE=1`) — NIM free tier can't handle concurrent Kimi agents.
@@ -36,7 +36,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - **Gemini daily cap**: `DAILY_HARD_CAPS["gemini_grounded"] = 12` (corrected from 1490 which assumed paid Search Grounding tier; actual free-tier limit is 20 generate_content RPD for gemini-2.5-flash). On a 429 response, `gemini_grounded.py` immediately exhausts the daily counter so subsequent sectors skip Gemini automatically.
 - `family` instruction has 3 explicit mandatory parallel searches with specific query strings.
 - **All search tools return JSON strings (PR #50)**: `serper.py`, `tavily.py`, `exa.py`, `enrichment.py` now return `json.dumps(...)` at all exit points (success and error). This prevents LlamaIndex's `str(dict)` Python-repr conversion from producing single-quoted strings that NIM cannot parse. The empty-query guards already returned plain strings; now SUCCESS paths do too.
-- **150 tests** across `tests/test_write_postprocess.py`, `tests/test_research_sectors.py`, `tests/test_llm_factories.py`, and `tests/test_correspondence.py` (added in PRs #50–#53).
+- **154 tests** across `tests/test_write_postprocess.py`, `tests/test_research_sectors.py`, `tests/test_llm_factories.py`, `tests/test_correspondence.py`, `tests/test_quota_ledger.py`, and `tests/test_schema.py` (added in PRs #50–#54).
 
 **Phase 3 (write) — three-model pipeline: 9 sequential Groq drafts + 9 concurrent NIM quality-editor passes + 1 OpenRouter Gemma 4 final narrative editor.** Per user direction: safety and quality over speed. Wall-clock ~10m 30s (Groq path) or ~9–13m (NIM-fallback path).
 
@@ -55,10 +55,19 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Where we left off (2026-04-28)
 
-- **PRs #43–#52, all merged. PR #53 open** (fifth forensic sprint: HTML injection fix, pagination fix, dead code removal).
+- **PRs #43–#53, all merged. PR #54 open** (sixth forensic sprint: quota ledger locking + session truncation guard).
 - **All phases live on `main`** (Phases 2, 3, 4 fully wired). Cron: correspondence `0 12`, research `30 12`, write `40 13`.
 - **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run.
-- **150 tests green** as of this sprint.
+- **154 tests green** as of this sprint.
+
+### Sixth forensic sprint (PR #54) — what was fixed
+
+| PR | Problem | Fix |
+|---|---|---|
+| #54 | `QuotaLedger.save()` serialised `_state` without holding `_lock` — a concurrent `record()` call could produce a corrupted quota file | Serialise inside `with self._lock:` block; write outside lock |
+| #54 | `QuotaLedger.snapshot()` read `_state` without `_lock` — snapshot could be inconsistent under concurrent mutation | `json.dumps`/`json.loads` copy now inside `with self._lock:` |
+| #54 | `load_session_by_date` called `json.loads` with no error guard — a zero-byte or truncated session file raised `JSONDecodeError` instead of the graceful `FileNotFoundError` expected by callers | Wrapped in `try/except (JSONDecodeError, ValueError)` → re-raises `FileNotFoundError("empty or corrupted")` |
+| #54 | No regression tests for the above | Added `test_snapshot_is_deep_copy`, `test_save_roundtrip_is_consistent`, `test_load_session_raises_on_empty_file`, `test_load_session_raises_on_truncated_json` |
 
 ### Fifth forensic sprint (PR #53) — what was fixed
 
@@ -115,7 +124,8 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Dev branch
 
-- **Current**: `claude/forensic-fixes-sprint6` (PR #53 open — HTML injection fix, pagination fix, dead code removal)
+- **Current**: `claude/forensic-fixes-sprint6` (PR #54 open — quota ledger locking, session truncation guard)
+- Prior sprint: `claude/forensic-fixes-sprint6` (PR #53 merged — HTML injection fix, pagination fix, dead code removal)
 - Prior sprint: `claude/fix-gemini-json-return-sprint5` (PRs #50–#52 all merged)
 - Prior sprint: `claude/fix-jeeves-research-workflow-Jo1u5` (PRs #43–#49 all merged)
 - Prior major work: `claude/improve-dedup-triadic-studies-rEgcE` (#34), `claude/never-empty-news-fallbacks-rEgcE` (#33), `claude/forensic-audit-fixes-rEgcE` (#32)

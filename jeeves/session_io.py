@@ -140,4 +140,10 @@ def load_session_by_date(cfg: Config, d: date) -> SessionModel:
             path = fallback
         else:
             raise FileNotFoundError(path)
-    return SessionModel.model_validate(json.loads(path.read_text(encoding="utf-8")))
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, ValueError) as e:
+        raise FileNotFoundError(
+            f"Session file {path} is empty or corrupted ({e})"
+        ) from e
+    return SessionModel.model_validate(raw)
