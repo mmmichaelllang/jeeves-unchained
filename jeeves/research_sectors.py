@@ -162,6 +162,18 @@ SECTOR_SPECS: list[SectorSpec] = [
             "After ranking your top 4-8 stories, call tavily_extract on those article URLs "
             "that exa did NOT already return full text for (batch up to 5 per call) to read "
             "actual content before writing findings. Never summarise from a headline alone. "
+            "\nSOURCE DIVERSITY — your final output MUST include at least one item whose "
+            "source is BBC, The Guardian, Al Jazeera, NPR, or AP. If the initial searches "
+            "return only Reuters or only Gemini-synthesised results, run a follow-up: "
+            "exa_search(query='BBC Guardian Al Jazeera news today', search_type='fast', "
+            "num_results=4, text_max_chars=3000) and incorporate the best result.\n"
+            "\nGEMINI REDIRECT URLS — gemini_grounded_synthesize returns "
+            "vertexaisearch.cloud.google.com citation URLs that expire within hours. "
+            "Do NOT put these in the urls array. For each Gemini-sourced finding, "
+            "find the real article URL with: serper_search(query='[headline] site:bbc.com "
+            "OR site:theguardian.com OR site:reuters.com OR site:apnews.com', tbs='qdr:d') "
+            "and use that canonical URL instead. If no real URL is found, omit the item "
+            "from your output rather than citing an ephemeral redirect.\n"
             "Return a JSON array of {category, source, findings, urls}. "
             "\nNEVER RETURN AN EMPTY ARRAY. If the primary searches all return thin or "
             "empty results, work through this fallback chain:\n"
@@ -186,10 +198,19 @@ SECTOR_SPECS: list[SectorSpec] = [
         instruction=(
             "Long-form intellectual journals: NYRB, New Yorker (NOT Talk of the Town), "
             "Aeon, Marginalian, Kottke, ProPublica, The Intercept, Scientific American, "
-            "LRB, Arts & Letters Daily, Big Think, Jacobin, OpenSecrets. Prefer exa_search "
-            "with search_type='auto' or 'deep-lite' — it returns full article text. "
-            "Read the actual article body before writing findings; exa text_max_chars=20000 "
-            "gives you up to ~3000 words. Do not summarise from the title or dek alone. "
+            "LRB, Arts & Letters Daily, Big Think, Jacobin, OpenSecrets.\n\n"
+            "MANDATORY FIRST STEP — dispatch ALL THREE in parallel right now:\n"
+            "1. exa_search(query='LRB London Review of Books Aeon essay 2026', "
+            "search_type='auto', num_results=3, text_max_chars=4000)\n"
+            "2. exa_search(query='NYRB New York Review of Books ProPublica Intercept "
+            "long read 2026', search_type='auto', num_results=3, text_max_chars=4000)\n"
+            "3. exa_search(query='Marginalian Big Think Scientific American Jacobin "
+            "essay 2026', search_type='auto', num_results=2, text_max_chars=4000)\n\n"
+            "From the results, select 4-5 articles. DIVERSITY RULE: at least 3 different "
+            "source publications must appear in your final output — do not return all items "
+            "from the same journal. Prioritise articles not in prior_urls.\n"
+            "Read the full text returned by exa for each chosen article — do not summarise "
+            "from the title or dek alone. Write findings from the body.\n"
             "Return a JSON array of {source, findings, urls}."
         ),
         default=[],
@@ -217,10 +238,10 @@ SECTOR_SPECS: list[SectorSpec] = [
             "non-linear triadic dynamics, trinitarianism in contemporary metaphysics. "
             "IMMEDIATE FIRST ACTION — call this tool right now, before any reasoning:\n"
             "  exa_search(query='triadic ontology relational metaphysics 2025 2026', "
-            "search_type='auto', num_results=3, text_max_chars=2000)\n"
+            "search_type='auto', num_results=3, text_max_chars=3000)\n"
             "Then call a second search if needed:\n"
             "  exa_search(query='quantum perichoresis trinitarian philosophy new paper', "
-            "search_type='auto', num_results=2, text_max_chars=2000)\n"
+            "search_type='auto', num_results=2, text_max_chars=3000)\n"
             "IMPORTANT: the same series (e.g. Karl-Alber 'Studies on Triadic "
             "Ontology') may appear in prior coverage. Prefer to find the NEXT uncovered "
             "volume, paper, or author — check prior_urls and avoid repeating what is there. "
@@ -239,10 +260,10 @@ SECTOR_SPECS: list[SectorSpec] = [
             "research pipelines, prompt-engineering advances. "
             "IMMEDIATE FIRST ACTION — call this tool right now, before any reasoning:\n"
             "  exa_search(query='multi-agent AI research systems autonomous pipeline 2026', "
-            "search_type='auto', num_results=3, text_max_chars=2000)\n"
+            "search_type='auto', num_results=3, text_max_chars=3000)\n"
             "Then optionally:\n"
             "  exa_search(query='reasoning model prompt engineering advances 2025 2026', "
-            "search_type='auto', num_results=2, text_max_chars=2000)\n"
+            "search_type='auto', num_results=2, text_max_chars=3000)\n"
             "CRITICAL: 'findings' MUST be a single prose string (500-1000 chars), NOT an "
             "array or list. Return exactly: {\"findings\": \"<prose string>\", \"urls\": [...]}. "
             "Do not put an array in the findings field."
@@ -275,9 +296,15 @@ SECTOR_SPECS: list[SectorSpec] = [
         name="enriched_articles",
         shape="enriched",
         instruction=(
-            "You'll receive a list of candidate URLs that appeared in prior sectors. "
-            "Pick the ~5 most novel and important, then call tavily_extract to fetch "
-            "their full text. Fall back to fetch_article_text for any Tavily refuses. "
+            "You'll receive a list of candidate URLs from today's sectors. "
+            "Pick the 5 most novel and globally significant — PRIORITY ORDER:\n"
+            "  1. Global/international news (Reuters, BBC, Guardian, AP, etc.)\n"
+            "  2. Long-form intellectual journal articles (NYRB, Aeon, LRB, etc.)\n"
+            "  3. Wearable AI / tech product pages\n"
+            "  4. UAP / triadic ontology / AI systems sources\n"
+            "  5. Edmonds local news (lowest priority — already well-covered)\n"
+            "Call tavily_extract on your 5 chosen URLs in ONE batch call. "
+            "Fall back to fetch_article_text for any Tavily refuses. "
             "Return a JSON array of {url, source, title, fetch_failed, text} — one entry "
             "per extracted URL."
         ),
@@ -316,8 +343,14 @@ you plan to include in your output:
 - fetch_article_text is a fallback for URLs tavily_extract cannot reach.
 Write findings only from content you have actually read, not guessed.
 
-Tool budget for this sector: 10-15 tool calls is plenty. Dispatch in parallel
-when possible, then stop calling tools and output the JSON result.
+Research discipline — complete at least TWO rounds before writing your output:
+  Round 1 (search): dispatch 2-4 search tools in parallel.
+  Round 2 (read): call tavily_extract on top results that exa did NOT already
+  return full text for (batch up to 5 URLs per call); OR run a second targeted
+  search to fill coverage gaps.
+Only after Round 2 should you write the final JSON. A single search round
+followed immediately by output is shallow research and produces a thin
+briefing. Aim for 6-10 total tool calls. Do NOT stop early.
 {quota_summary}
 SECTOR: {sector_name}
 INSTRUCTION: {instruction}
@@ -566,8 +599,30 @@ async def run_sector(
     return parsed
 
 
+# Domains that produce ephemeral redirect URLs (Google grounding API, Vertex AI
+# search) rather than canonical article URLs.  These must be excluded from the
+# covered_urls dedup set and from the enriched_articles seed — they expire
+# quickly, yield 404s on re-visit, and pollute the rolling prior-URL window.
+_REDIRECT_ARTIFACT_HOSTS = frozenset({
+    "vertexaisearch.cloud.google.com",
+    "search.app.goo.gl",
+})
+
+
+def _is_redirect_artifact(url: str) -> bool:
+    try:
+        from urllib.parse import urlparse
+        return urlparse(url).netloc in _REDIRECT_ARTIFACT_HOSTS
+    except Exception:
+        return False
+
+
 def collect_urls_from_sector(value: Any) -> list[str]:
-    """Best-effort URL extraction for dedup accumulation + enriched_articles seeding."""
+    """Best-effort URL extraction for dedup accumulation + enriched_articles seeding.
+
+    Redirect-artifact URLs (Gemini grounding API, Vertex search) are excluded
+    so they never pollute the rolling covered_urls window.
+    """
 
     out: list[str] = []
     if value is None:
@@ -580,8 +635,11 @@ def collect_urls_from_sector(value: Any) -> list[str]:
     elif isinstance(value, dict):
         for k, v in value.items():
             if k == "urls" and isinstance(v, list):
-                out.extend(str(u) for u in v if u)
-            elif k == "url" and isinstance(v, str) and v:
+                out.extend(
+                    str(u) for u in v
+                    if u and not _is_redirect_artifact(str(u))
+                )
+            elif k == "url" and isinstance(v, str) and v and not _is_redirect_artifact(v):
                 out.append(v)
             else:
                 out.extend(collect_urls_from_sector(v))
