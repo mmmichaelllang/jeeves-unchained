@@ -482,7 +482,7 @@ def _quota_increased(before: dict[str, int], ledger) -> bool:
 
 
 def _is_retryable_network_error(exc: Exception) -> bool:
-    """True for transient NIM/HTTP errors that are worth retrying once."""
+    """True for transient NIM streaming errors (peer drop, timeout, reset)."""
     msg = str(exc).lower()
     return any(phrase in msg for phrase in (
         "peer closed connection",
@@ -491,6 +491,12 @@ def _is_retryable_network_error(exc: Exception) -> bool:
         "read timeout",
         "server disconnected",
     ))
+
+
+def _is_nim_rate_limit(exc: Exception) -> bool:
+    """True when NIM responded 429 Too Many Requests."""
+    msg = str(exc).lower()
+    return "429" in msg or "too many requests" in msg
 
 
 # Sectors whose agents call non-quota tools (fetch_new_yorker_talk_of_the_town
@@ -630,22 +636,21 @@ async def run_sector(
 
     log.info("sector %s: agent starting.", spec.name)
     response = None
-    _retry_delays = [10, 30, 60]  # seconds between successive attempts
+    # Two separate retry budgets:
+    #   - Network drops (peer closed, timeout): 3 retries at 10/30/60s
+    #   - NIM 429 rate limit: 2 retries at 60/120s (longer window to clear quota)
+    _net_delays = [10, 30, 60]
+    _ratelimit_delays = [60, 120]
+    net_attempts = 0
+    rl_attempts = 0
     last_exc: Exception | None = None
-    for attempt in range(1 + len(_retry_delays)):
+    for _loop_guard in range(20):  # hard cap prevents infinite loop
         try:
-            if attempt == 0:
+            if response is None and net_attempts == 0 and rl_attempts == 0:
                 response = await agent.run(user_msg)
             else:
-                delay = _retry_delays[attempt - 1]
-                log.warning(
-                    "sector %s: transient network error on attempt %d (%s) — "
-                    "retrying in %ds.",
-                    spec.name, attempt, last_exc, delay,
-                )
-                await asyncio.sleep(delay)
-                # Rebuild agent with fresh tool instances for each retry so
-                # no stale streaming state from the crashed connection leaks.
+                # Rebuild agent with fresh instances for every retry so no
+                # stale streaming state leaks from the previous crashed connection.
                 tools_r = all_search_tools(cfg, ledger, set(prior_urls_sample))
                 llm_r = build_kimi_llm(cfg, max_tokens=sector_max_tokens)
                 agent_r = FunctionAgent(
@@ -654,18 +659,46 @@ async def run_sector(
                     verbose=cfg.verbose,
                 )
                 response = await agent_r.run(user_msg)
-            break  # success
+            break  # success — exit retry loop
         except Exception as e:
             last_exc = e
-            if not _is_retryable_network_error(e):
+            if _is_nim_rate_limit(e):
+                if rl_attempts >= len(_ratelimit_delays):
+                    log.warning(
+                        "sector %s: NIM 429 on all %d rate-limit retries (%s); "
+                        "returning default.",
+                        spec.name, rl_attempts + 1, e,
+                    )
+                    return spec.default
+                delay = _ratelimit_delays[rl_attempts]
+                log.warning(
+                    "sector %s: NIM 429 rate-limit (attempt %d) — sleeping %ds.",
+                    spec.name, rl_attempts + 1, delay,
+                )
+                await asyncio.sleep(delay)
+                rl_attempts += 1
+            elif _is_retryable_network_error(e):
+                if net_attempts >= len(_net_delays):
+                    log.warning(
+                        "sector %s: network error on all %d retries (%s); "
+                        "returning default.",
+                        spec.name, net_attempts + 1, e,
+                    )
+                    return spec.default
+                delay = _net_delays[net_attempts]
+                log.warning(
+                    "sector %s: transient network error (attempt %d, %s) — "
+                    "retrying in %ds.",
+                    spec.name, net_attempts + 1, e, delay,
+                )
+                await asyncio.sleep(delay)
+                net_attempts += 1
+            else:
                 log.warning("sector %s: agent crashed (%s); returning default", spec.name, e)
                 return spec.default
-            if attempt == len(_retry_delays):
-                log.warning(
-                    "sector %s: agent crashed on all %d attempts (%s); returning default",
-                    spec.name, attempt + 1, e,
-                )
-                return spec.default
+    else:
+        log.warning("sector %s: retry loop guard triggered; returning default.", spec.name)
+        return spec.default
 
     # Guard: if no search-provider quota moved, Kimi answered entirely from
     # training data without calling any external tools.  For deep sectors, try
