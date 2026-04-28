@@ -245,7 +245,7 @@ def build_handoff_text(classified: list[ClassifiedMessage]) -> str:
 
     lines: list[str] = []
     for c in ordered:
-        label = c.priority_contact_label or c.sender.split("<")[0].strip() or "unknown"
+        label = c.priority_contact_label or (c.sender or "").split("<")[0].strip() or "unknown"
         tag = c.classification.replace("_", " ")
         lines.append(f"- [{tag}] {label}: {c.summary}")
         if len("\n".join(lines)) > 1200:

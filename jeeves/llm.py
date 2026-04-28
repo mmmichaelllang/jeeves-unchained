@@ -100,6 +100,18 @@ def _build_kimi_class():
                                     fn.arguments = json.dumps(args)
                                 except Exception:
                                     pass
+                            elif isinstance(args, str):
+                                # Validate the string — "null" or invalid/corrupted
+                                # JSON (e.g. "{}null") must become "{}".
+                                try:
+                                    parsed = json.loads(args)
+                                    if parsed is None:
+                                        fn.arguments = "{}"
+                                except (TypeError, json.JSONDecodeError):
+                                    try:
+                                        fn.arguments = "{}"
+                                    except Exception:
+                                        pass
                         kept.append(tc)
                     msg.additional_kwargs["tool_calls"] = kept
 
