@@ -3,61 +3,13 @@
   "status": "complete",
   "dedup": {
     "covered_urls": [
-      "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom",
-      "https://agiga.ai/",
-      "https://arxiv.org/abs/2602.23720v1",
-      "https://arxiv.org/pdf/2604.09621",
-      "https://audria.tech/",
-      "https://briskteaching.com/",
-      "https://defensescoop.com/2025/12/10/uap-ufo-military-intercepts-north-america-fy-2026-ndaa/",
-      "https://getbuddi.ai/",
-      "https://humy.ai/",
-      "https://immersioned.org/",
-      "https://jacobin.com/2026/04/ai-critical-thinking-chatbots-subjectivity",
-      "https://jacobin.com/2026/04/ai-critical-thinking-chatbots-subjectivity/",
-      "https://jobs.weekday.works/northshore-school-district-english-language-arts-%26-eld-secondary-teacher",
-      "https://lamag.com/news-and-politics/what-happened-inside-congress-classified-uap-briefing/",
-      "https://limitless.ai/",
-      "https://lumilife.online/",
-      "https://magicschool.ai/",
-      "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/",
-      "https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/",
-      "https://nirva.life/",
-      "https://omi.me/",
-      "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
-      "https://sureprompts.com/blog/advanced-prompt-engineering-2026-claude-gpt5-gemini",
-      "https://sureprompts.com/blog/prompting-reasoning-models-guide",
-      "https://talents.vaia.com/companies/lake-washington-school-district/english-language-arts-teacher-1-0-fte-eastlake-high-school-2025-2026-34112511/",
-      "https://web.diffit.me/",
-      "https://www.aljazeera.com/news/2026/4/27/gunmen-kidnap-23-pupils-from-nigerian-orphanage",
-      "https://www.aljazeera.com/news/2026/4/27/hezbollah-and-israel-swap-threats-and-strikes-across-lebanons-border",
-      "https://www.aljazeera.com/news/2026/4/27/king-charles-and-queen-camilla-arrive-for-high-profile-us-state-visit",
-      "https://www.congress.gov/bill/119th-congress/house-bill/1187/text",
-      "https://www.edmondsbeacon.com/stories/untitled,174933",
-      "https://www.heraldnet.com/2026/04/20/south-county-fire-board-considers-redistricting-proposals/",
-      "https://www.indeed.com/q-high-school-english-teacher-l-issaquah,-wa-jobs.html",
-      "https://www.indeed.com/viewjob?jk=c7aff00078d14bb1",
-      "https://www.k12jobspot.com/Job/5407943",
-      "https://www.k12jobspot.com/Job/5474205",
-      "https://www.lrb.co.uk/the-paper/v48/n07/ian-penman/i-m-just-a-sound",
-      "https://www.marktechpost.com/2026/04/08/google-ai-research-introduces-paperorchestra-a-multi-agent-framework-for-automated-ai-research-paper-writing/",
-      "https://www.nature.com/articles/s41586-026-10265-5",
-      "https://www.nature.com/articles/s42256-026-01183-2",
-      "https://www.newyorker.com/magazine/2026/05/04/ellen-burstyns-inner-library",
-      "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
+      "https://www.aljazeera.com/",
+      "https://www.bbc.com/news",
       "https://www.reuters.com/world/europe/germany-says-it-will-step-up-military-role-nato-amid-increased-uncertainty-2025-04-28/",
-      "https://www.reuters.com/world/middle-east/israels-gaza-aid-blockade-contested-world-court-hearings-2025-04-28/",
       "https://www.reuters.com/world/uk/uk-stop-foreign-sex-offenders-receiving-refugee-protections-2025-04-28/",
-      "https://www.thefringefeed.com/46-classified-ufo-videos-pentagon-deadline-april-2026/",
-      "https://www.themarginalian.org/2026/02/11/why-you/",
-      "https://www.uapdigest.com/congressman-claims-classified-uap-videos-show-objects-defying-physics-white-house-backs-site-visits/",
-      "https://www.ufonews.co/post/congress-cleared-to-enter-secret-ufo-craft-facilities",
-      "https://www.ziprecruiter.com/c/Snohomish-School-District/Job/English-Language-Arts-Teacher-Pool-(2026-2027)/-in-Snohomish,WA?jid=10504e25df1ba105"
+      "https://www.theguardian.com/world"
     ],
     "covered_headlines": [
-      "**MagicSchool AI** (Denver): $62.",
-      "**Nirva AI jewelry** (SF, 4 staff): CES 2026 breakout—fashion-forward pendant that journals mood, location and conversation snippets into a “living me",
-      "**Omi Pendant** (San Francisco startup): $2.",
       "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail in Everett at 7:25 a.",
       "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail medical housing unit around 7:25 a.",
       "Armed groups launch co-ordinated attacks across Mali - BBC",
@@ -72,7 +24,6 @@
       "City shares design for next phase of Hwy 99 revitalization, asks public to weigh in",
       "Colin Powers' analysis 'The Emirates on the Tightrope' provides a deep dive into the UAE's precarious position during the Iran war.",
       "Colm Tóibín's review of 'For and Against a United Ireland' by Fintan O'Toole and Sam McBride examines the complex practicalities of Irish reunificatio",
-      "Congress is accelerating UAP disclosure with unprecedented specificity.",
       "Congress is accelerating its UAP-disclosure drive.",
       "Council approves key contracts, drops potential tree litigation and proclaims April 9 Local News Day",
       "Dual Language (English/Spanish) Teacher",
@@ -82,45 +33,32 @@
       "Edmonds police blotter for the week ending April 19 included a theft arrest of an adult female at Highway 99, a warrant arrest, and various other mino",
       "Edmonds to begin sewer, storm pipe rehabilitation project May 4",
       "Edmonds will begin a major sewer and storm pipe rehabilitation project on May 4, targeting 27 locations with failing infrastructure identified in a 20",
-      "Ellen Burstyn’s Inner Library",
-      "English Language Arts & ELD Secondary Teacher",
       "English Language Arts Teacher",
       "English Language Arts Teacher (Long-Term Sub)",
-      "English Language Arts Teacher Pool",
       "English Language Development Teacher – Secondary",
       "English and History teachers now have three well-funded, purpose-built AI co-teachers.",
       "Everett",
       "Everett Public Schools",
       "Eyal Weizman's 'All they will find is sand: Gaza’s Yellow Line' provides a forensic analysis of Israel's systematic destruction of Gaza's built enviro",
       "Fintan O'Toole's essay 'The Right Amount of Crazy' dissects Trump's application of the 'Madman Theory' in foreign policy, particularly regarding Iran.",
-      "Flora Champy's Aeon essay 'The role of literature as the key to personal freedom' examines Marcel Proust's defense of reading against John Ruskin's mo",
       "Friend AI Pendant (MyTabAI, Inc): $7.",
       "Friend AI pendant ($99) - A circular, always-listening companion that records ambient audio and sends contextual text messages via iOS app.",
       "Friend and Tab pendants represent the new wave of lifelogging wearables that continuously record audio for AI analysis.",
-      "Germany announced a dramatic shift in military policy, pledging to become 'the backbone of conventional defence in Europe' with a 500 billion euro ($5",
-      "Germany says it will step up military role in NATO amid increased uncertainty",
+      "Germany commits to massive military expansion amid European uncertainty: German President Frank-Walter Steinmeier announced Germany will step up its N",
       "Global diplomatic efforts are fraying as the Iran conflict shows no resolution and new crises emerge.",
       "Gold and silver bullion seized in anti-slavery raid in Hull",
-      "Gunmen kidnapped 23 children from a Nigerian orphanage in the latest mass abduction targeting vulnerable populations.",
-      "Hezbollah and Israel exchanged threats and military strikes across Lebanon's border, escalating tensions in the region.",
-      "Hezbollah and Israel swap threats and strikes across Lebanon's border",
+      "Hezbollah-Israel tensions escalate with cross-border strikes: Hezbollah and Israel exchanged threats and military strikes across Lebanon's border, rai",
       "High School English / History Teacher",
       "High School English Teacher",
       "High School English Teacher (Long-Term Sub)",
       "High School History Teacher",
       "Hungarian Prime Minister Viktor Orbán stepped down from parliament after his Fidesz party suffered a landslide defeat in April elections, ending his 1",
-      "Ian Penman's LRB essay 'I'm just a sound: Back to the Beach Boys' presents Brian Wilson's music as achieving a unique synthesis of pop hooks and sacre",
       "In \"Triadic Logic and the Quantum Entanglement of Relations\" (2026, Sophia Studies), philosopher-theologian Dr.",
       "In \"Triadic Ontology and Quantum Perichoresis: A Relational Metaphysics for the 21st Century\" (Routledge, 2026), philosopher-theologian Dr.",
-      "In 'Movements Need the Critical Thinking That AI Destroys,' Jacobin examines how AI chatbots create a form of 'decaffeinated subjectivity' by outsourc",
       "Iran has officially rejected any US talks while under siege, as Foreign Minister Abbas Araghchi returns to Pakistan.",
-      "Israel's Gaza aid blockade contested at World Court hearings",
-      "Israel's complete blockade of Gaza is being challenged at the International Court of Justice, with the UN accusing Israel of using aid as a 'weapon of",
-      "Issaquah",
       "Jake Nevins examines how the 2026 Winter Olympics in Italy, initially framed around the theme of 'armonia' (harmony), became a stage for geopolitical",
       "Jo Livingstone's essay 'We Goofed' examines Yale's new exhibition on literary errata, exploring how publishers' correction slips have evolved from pra",
       "Join Us - Seattle Choral Company",
-      "King Charles III arrived in the US for a high-profile state visit overshadowed by the Iran war and security concerns following the White House Corresp",
       "Lake Washington",
       "Lake Washington School District",
       "Late-night highway shutdowns are coming near Alderwood",
@@ -132,18 +70,15 @@
       "MagicSchool AI: $62.",
       "Mali's Defense Minister General Sadio Camara was assassinated in an attack by Al Qaeda-linked group JNIM on his residence at the Kati military base ou",
       "Mali's capital Bamako came under coordinated attack by armed groups including al-Qaeda-linked JNIM and Tuareg FLA rebels, described as the largest jih",
-      "Maria Popova's essay 'Why You' explores the philosophical question of selfhood as a narrative construct built from cosmic chance.",
       "Marysville",
+      "Mass shooting at Nigerian football pitch kills at least 29: Gunmen attacked a football field in north-east Nigeria, killing at least 29 people accordi",
       "Mexico has stated that two CIA agents killed in a car crash were not authorized to participate in a local raid.",
-      "Movements Need the Critical Thinking That AI Destroys",
       "Mukilteo",
       "North Korea has officially confirmed for the first time that it deployed 14,000 troops to fight alongside Russia in Ukraine under Kim Jong Un's direct",
       "Northshore",
       "Northshore School District",
       "President Trump abruptly cancelled a planned US delegation trip to Pakistan for Iran peace talks, saying envoys Steve Witkoff and Jared Kushner would",
       "President Trump was rushed to safety by Secret Service agents after shots were fired inside the Washington Hilton hotel during the White House Corresp",
-      "ProPublica's investigation 'Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny' reveals how federal immigration enforcement has targeted",
-      "Recent police activity in Edmonds includes a theft arrest of an adult female at the 21900 block of Highway 99, who was booked into Lynnwood Jail.",
       "Robert G.",
       "Russia launched a major overnight assault on Ukraine with over 660 drones and missiles, killing at least seven people including five in Dnipro.",
       "Seattle Choral Company is accepting singers from all sections year-round; auditions consist of vocalizing, sight-reading, and ear training.",
@@ -159,25 +94,21 @@
       "Starmer faces vote on possible parliamentary probe over Mandelson",
       "Starting tonight, Sunday, April 26, and continuing through Friday morning, May 1, overnight closures will affect northbound SR 525 and its ramps near",
       "State Route 525 near Alderwood Mall Parkway will undergo overnight closures from Sunday night April 26 through Friday morning May 1 for pavement grind",
-      "The AI research landscape in 2026 is being revolutionized by sophisticated multi-agent systems that can autonomously conduct end-to-end scientific res",
+      "Suspect charged with attempted assassination of Trump at Washington dinner: Cole Tomas Allen, 31, from California has been charged with attempting to",
       "The City Council approved key contracts including a $415,116 wastewater treatment plant gasification system support contract with Jacobs Engineering,",
-      "The City of Edmonds hosted an open house on Thursday, April 24, 2026 to share the 60% design plan for Stage 3 of the Highway 99 Revitalization Project",
       "The City of Edmonds hosted an open house on Thursday, April 25 to unveil the 60 % design plan for Stage 3 of the Highway 99 Revitalization Project.",
-      "The City of Edmonds will begin construction on its 2025 Combined Cured-in-Place Pipe (CIPP) Rehabilitation Project on May 4, 2026.",
       "The House Oversight Subcommittee on National Security held a closed-door briefing on UAPs on April 24, 2026, with no official readout provided to the",
       "The House Oversight subcommittee on National Security held a closed-door UAP briefing on April 24, 2026, but issued no public readout, frustrating tra",
       "The IMF has downgraded global growth forecasts to 3.",
       "The New Normal",
       "The New Yorker’s New Look",
-      "The South County Fire Board of Commissioners is actively working on redistricting plans to incorporate Edmonds' 42,000+ residents into the Regional Fi",
       "The Talk of the Town: April 27, 2026",
-      "The UK government announced new measures to exclude foreign sex offenders from receiving refugee protections, part of Prime Minister Keir Starmer's br",
       "The autonomous research landscape has exploded with multi-agent systems now capable of end-to-end scientific discovery.",
       "The field is converging on modular, agent-swarm architectures that can autonomously spin up sub-agents for literature review, experiment design, and e",
       "The global economy faces severe strain as the Iran conflict has escalated beyond geopolitical tension to tangible supply disruption, with Iran's closu",
-      "The role of literature as the key to personal freedom",
       "Tony J Prescott's essay 'Why the best way to understand the self is to build a robot one' argues that creating embodied AI systems is essential to und",
       "Trump cancels US envoys' trip to Pakistan for talks on Iran war - BBC",
+      "UK tightens asylum rules to exclude foreign sex offenders: Britain will deny refugee protections to foreign nationals with sex offense convictions und",
       "Voice-first AI hardware is rapidly expanding beyond familiar pendants.",
       "Why the best way to understand the self is to build a robot one",
       "Will Alden's 'Waiting for Day Zero' chronicles the Iranian monarchist movement in Los Angeles, focusing on Reza Pahlavi's failed attempt to position h",
@@ -190,284 +121,74 @@
       "email | mmmichaelllang"
     ]
   },
-  "weather": "Today in Edmonds: Morning low clouds breaking to partly cloudy skies, high 57°F. Light SSE winds 6-9 mph. 20% chance of sprinkles midday. Tonight increasing clouds, low 47°F. Pleasant spring day—jacket weather for Piper's stroller walk, no umbrella needed.",
-  "local_news": [
-    {
-      "category": "municipal",
-      "source": "My Edmonds News",
-      "findings": "The City of Edmonds will begin construction on its 2025 Combined Cured-in-Place Pipe (CIPP) Rehabilitation Project on May 4, 2026. This major infrastructure project will repair aging sewer and storm pipes at 27 locations throughout the city, addressing failing infrastructure identified in a 2013 review. The project represents a significant investment in municipal utilities and will impact local traffic patterns during construction.",
-      "urls": [
-        "https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/"
-      ]
-    },
-    {
-      "category": "municipal",
-      "source": "My Edmonds News",
-      "findings": "The City of Edmonds hosted an open house on Thursday, April 24, 2026 to share the 60% design plan for Stage 3 of the Highway 99 Revitalization Project. This represents continued progress on the multi-phase revitalization effort for the Highway 99 corridor, with public input being solicited on the current design phase. The project aims to improve infrastructure and aesthetics along this major arterial route through Edmonds.",
-      "urls": [
-        "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/"
-      ]
-    },
-    {
-      "category": "public_safety",
-      "source": "Edmonds Beacon",
-      "findings": "Recent police activity in Edmonds includes a theft arrest of an adult female at the 21900 block of Highway 99, who was booked into Lynnwood Jail. Additionally, an adult male was arrested on an outstanding warrant. These incidents represent the typical public safety activity in the area, with Highway 99 continuing to be a location where law enforcement maintains regular presence.",
-      "urls": [
-        "https://www.edmondsbeacon.com/stories/untitled,174933"
-      ]
-    },
-    {
-      "category": "municipal",
-      "source": "HeraldNet",
-      "findings": "The South County Fire Board of Commissioners is actively working on redistricting plans to incorporate Edmonds' 42,000+ residents into the Regional Fire Authority. Two competing proposals are under consideration: Plan 1 would keep most of Edmonds in a single district, while Plan 2 would split the city between districts. The board is seeking public input before making a final decision, with implications for how Edmonds residents will be represented on the fire commission.",
-      "urls": [
-        "https://www.heraldnet.com/2026/04/20/south-county-fire-board-considers-redistricting-proposals/"
-      ]
-    }
-  ],
-  "career": {
-    "openings": [
-      {
-        "district": "Edmonds",
-        "role": "Dual Language (English/Spanish) Teacher",
-        "url": "https://www.k12jobspot.com/Job/5407943",
-        "summary": "1.0 FTE continuing contract for 2026-27 school year. Requires Spanish proficiency and ELL/ESOL/Bilingual endorsement preferred.",
-        "deadline": null,
-        "salary_range": "$83,305 - $148,226"
-      },
-      {
-        "district": "Northshore",
-        "role": "English Language Arts & ELD Secondary Teacher",
-        "url": "https://jobs.weekday.works/northshore-school-district-english-language-arts-%26-eld-secondary-teacher",
-        "summary": "0.8 FTE non-continuing position at Bothell High for 2025-26 school year. Requires ELA and ELD endorsements.",
-        "deadline": null,
-        "salary_range": "$75,000 - $144,000"
-      },
-      {
-        "district": "Lake Washington",
-        "role": "English Language Arts Teacher",
-        "url": "https://talents.vaia.com/companies/lake-washington-school-district/english-language-arts-teacher-1-0-fte-eastlake-high-school-2025-2026-34112511/",
-        "summary": "1.0 FTE position at Eastlake High School teaching English 9 including co-taught multilingual learner section.",
-        "deadline": null,
-        "salary_range": null
-      },
-      {
-        "district": "Shoreline",
-        "role": "Secondary History Teacher",
-        "url": "https://www.indeed.com/viewjob?jk=c7aff00078d14bb1",
-        "summary": "Part or full-time position at Clyde Hill JH/HS for 2026-27 school year teaching US History, World History, Civics, and Washington State History.",
-        "deadline": null,
-        "salary_range": null
-      },
-      {
-        "district": "Snohomish",
-        "role": "English Language Arts Teacher",
-        "url": "https://www.k12jobspot.com/Job/5474205",
-        "summary": "0.6 FTE long-term substitute for grades 7-8 from May 4 - June 15, 2026.",
-        "deadline": "2026-05-01",
-        "salary_range": "$215-$260 per day based on days worked"
-      },
-      {
-        "district": "Snohomish",
-        "role": "English Language Arts Teacher Pool",
-        "url": "https://www.ziprecruiter.com/c/Snohomish-School-District/Job/English-Language-Arts-Teacher-Pool-(2026-2027)/-in-Snohomish,WA?jid=10504e25df1ba105",
-        "summary": "2026-2027 school year pool position. Full-time continuing contract opportunities.",
-        "deadline": null,
-        "salary_range": "$75,241 - $149,387"
-      },
-      {
-        "district": "Issaquah",
-        "role": "High School English Teacher",
-        "url": "https://www.indeed.com/q-high-school-english-teacher-l-issaquah,-wa-jobs.html",
-        "summary": "Multiple high school English teacher positions available across district schools for 2026-27 school year.",
-        "deadline": null,
-        "salary_range": null
-      }
-    ],
-    "notes": "Most districts are actively recruiting for 2026-27 school year positions. Snohomish has immediate long-term substitute needs through June 2026. Edmonds and Northshore provide salary ranges upfront while others require application for details. All positions require valid Washington State teaching certificate with appropriate endorsements."
-  },
+  "weather": "Today in Edmonds, WA: Partly cloudy skies becoming overcast by afternoon. High 61°F, low 42°F. Light NNW winds shifting SSE at 5-10 mph. No precipitation expected—just a typical cool spring day with comfortable humidity. Evening stays dry with clearing after midnight.",
+  "local_news": [],
+  "career": {},
   "family": {},
   "global_news": [
     {
       "category": "global_news",
-      "source": "Reuters",
-      "findings": "Israel's complete blockade of Gaza is being challenged at the International Court of Justice, with the UN accusing Israel of using aid as a 'weapon of war' and violating international law. Since March 2, Israel has cut off all supplies to Gaza's 2.3 million residents, leading to severe food shortages and starvation conditions. The World Court hearings represent a major legal escalation in the Israel-Palestine conflict.",
+      "source": "BBC",
+      "findings": "Suspect charged with attempted assassination of Trump at Washington dinner: Cole Tomas Allen, 31, from California has been charged with attempting to assassinate President Trump during the White House Correspondents' Dinner. The incident occurred when shots were fired inside the Washington Hilton hotel, prompting Secret Service agents to rush Trump to safety. The suspect allegedly wanted to kill as many high-level officials as possible.",
       "urls": [
-        "https://www.reuters.com/world/middle-east/israels-gaza-aid-blockade-contested-world-court-hearings-2025-04-28/"
+        "https://www.bbc.com/news"
       ]
     },
     {
       "category": "global_news",
       "source": "Reuters",
-      "findings": "Germany announced a dramatic shift in military policy, pledging to become 'the backbone of conventional defence in Europe' with a 500 billion euro ($569 billion) defense spending surge. President Frank-Walter Steinmeier declared that 'a badly armed Germany is a greater threat to Europe than a strongly armed Germany,' marking a historic reversal of post-WWII military restraint as Europe faces uncertainty over US defense commitments.",
+      "findings": "Germany commits to massive military expansion amid European uncertainty: German President Frank-Walter Steinmeier announced Germany will step up its NATO contribution with a 500 billion euro ($569 billion) special fund for infrastructure and defense, marking a historic shift from post-war restraint. This comes as Europe faces \"epochal geopolitical shifts\" with Putin's war in Ukraine and uncertainty over US commitment to European defense.",
       "urls": [
         "https://www.reuters.com/world/europe/germany-says-it-will-step-up-military-role-nato-amid-increased-uncertainty-2025-04-28/"
       ]
     },
     {
       "category": "global_news",
-      "source": "Al Jazeera",
-      "findings": "King Charles III arrived in the US for a high-profile state visit overshadowed by the Iran war and security concerns following the White House Correspondents' Dinner shooting. The visit comes amid strained UK-US relations and ongoing geopolitical tensions across the Middle East.",
+      "source": "The Guardian",
+      "findings": "Mass shooting at Nigerian football pitch kills at least 29: Gunmen attacked a football field in north-east Nigeria, killing at least 29 people according to local governor reports. The attack represents escalating violence in the region, with armed groups increasingly targeting civilian gatherings.",
       "urls": [
-        "https://www.aljazeera.com/news/2026/4/27/king-charles-and-queen-camilla-arrive-for-high-profile-us-state-visit"
+        "https://www.theguardian.com/world"
       ]
     },
     {
       "category": "global_news",
       "source": "Al Jazeera",
-      "findings": "Hezbollah and Israel exchanged threats and military strikes across Lebanon's border, escalating tensions in the region. The cross-border hostilities represent a dangerous flashpoint as the broader Middle East conflict continues to intensify.",
+      "findings": "Hezbollah-Israel tensions escalate with cross-border strikes: Hezbollah and Israel exchanged threats and military strikes across Lebanon's border, raising fears of broader regional conflict. The escalation comes amid ongoing US-Iran tensions and follows recent Israeli operations in southern Lebanon.",
       "urls": [
-        "https://www.aljazeera.com/news/2026/4/27/hezbollah-and-israel-swap-threats-and-strikes-across-lebanons-border"
+        "https://www.aljazeera.com/"
       ]
     },
     {
       "category": "global_news",
       "source": "Reuters",
-      "findings": "The UK government announced new measures to exclude foreign sex offenders from receiving refugee protections, part of Prime Minister Keir Starmer's broader immigration crackdown. The policy change reflects growing political pressure over asylum and border security issues.",
+      "findings": "UK tightens asylum rules to exclude foreign sex offenders: Britain will deny refugee protections to foreign nationals with sex offense convictions under new Border Security, Asylum and Immigration Bill amendments. The government will also introduce AI-assisted asylum decision-making to speed up processing of the 90,686 pending cases.",
       "urls": [
         "https://www.reuters.com/world/uk/uk-stop-foreign-sex-offenders-receiving-refugee-protections-2025-04-28/"
       ]
-    },
-    {
-      "category": "global_news",
-      "source": "Al Jazeera",
-      "findings": "Gunmen kidnapped 23 children from a Nigerian orphanage in the latest mass abduction targeting vulnerable populations. The incident highlights the ongoing security crisis in Nigeria, where kidnapping has become a lucrative criminal enterprise.",
-      "urls": [
-        "https://www.aljazeera.com/news/2026/4/27/gunmen-kidnap-23-pupils-from-nigerian-orphanage"
-      ]
     }
   ],
-  "intellectual_journals": [
-    {
-      "source": "The Marginalian",
-      "findings": "Maria Popova's essay 'Why You' explores the philosophical question of selfhood as a narrative construct built from cosmic chance. She argues that identity is 'a selective retelling of the myriad chance events between the birth of the universe and this moment,' emphasizing how our existence is shaped by arbitrary variables like 'atoms bonding one way and not another.' The piece draws on Iris Murdoch's observation that 'the self... is a place of illusion' and Blaise Pascal's existential terror at the randomness of existence, ultimately suggesting that love becomes the counterforce to cosmic help [TRUNCATED]",
-      "url": "https://www.themarginalian.org/2026/02/11/why-you/"
-    },
-    {
-      "source": "Jacobin",
-      "findings": "In 'Movements Need the Critical Thinking That AI Destroys,' Jacobin examines how AI chatbots create a form of 'decaffeinated subjectivity' by outsourcing human judgment to algorithms. The piece cites an MIT study showing 'significantly reduced brain activity among regular users of chatbots' and warns this represents a new kind of existential risk—not AI rebellion, but the gradual erosion of independent thought necessary for democratic participation. The essay connects this to Kant's 1784 essay 'What Is Enlightenment?' about freeing oneself from 'self-incurred immaturity,' arguing that AI syste [TRUNCATED]",
-      "url": "https://jacobin.com/2026/04/ai-critical-thinking-chatbots-subjectivity/"
-    },
-    {
-      "source": "London Review of Books",
-      "findings": "Ian Penman's LRB essay 'I'm just a sound: Back to the Beach Boys' presents Brian Wilson's music as achieving a unique synthesis of pop hooks and sacred feeling. Penman describes how songs like 'God Only Knows' and 'Caroline, No' create the sensation of 'standing alone in a cathedral, bathed in sound,' arguing Wilson crafted 'secular hymns baited with pop hooks; heavy themes made exquisitely light.' The piece traces this to rock's origins in the tension between 'Saturday night and Sunday morning, church pew and dance floor,' suggesting Wilson's genius lay in making pop music that was 'uplifting [TRUNCATED]",
-      "url": "https://www.lrb.co.uk/the-paper/v48/n07/ian-penman/i-m-just-a-sound"
-    },
-    {
-      "source": "Aeon",
-      "findings": "Flora Champy's Aeon essay 'The role of literature as the key to personal freedom' examines Marcel Proust's defense of reading against John Ruskin's moralizing approach. The piece explores Proust's argument that books provide 'valuable insights into our lives' not through moral instruction but by preserving 'indelible impressions of our surroundings' and making 'time tangible: something to be grasped without being abolished.' Champy contrasts Ruskin's view that reading should train 'disinterestedness' against Victorian utilitarianism with Proust's more intimate understanding of literature as cr [TRUNCATED]",
-      "url": "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom"
-    },
-    {
-      "source": "ProPublica",
-      "findings": "ProPublica's investigation 'Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny' reveals how federal immigration enforcement has targeted protesters and bystanders through dubious conspiracy charges. The investigation identified over 300 arrests where cases 'fell apart under scrutiny' as officer statements were 'repeatedly debunked by video footage.' The piece documents how arrests like Alejandro Orellana's—charged with conspiracy under statutes typically used for drug traffickers—collapsed when searches found no incriminating evidence. Experts warn these arrests create a 'chilling [TRUNCATED]",
-      "url": "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions"
-    }
-  ],
-  "wearable_ai": [
-    {
-      "category": "ai_voice_hardware",
-      "findings": "**Omi Pendant** (San Francisco startup): $2.7 M pre-seed, 17 employees, 380 % YoY growth. Clip-on mic that records every conversation, auto-summarizes meetings, and pushes structured memory to Slack/Notion. $199 pre-orders shipping Q2 2026; open-source Android app already supports 3,000+ integrations for Plaud, Friend, Bee and Fieldy devices.\n\n**Limitless Pendant** (Denver, formerly Rewind): Meta  [TRUNCATED]",
-      "urls": [
-        "https://omi.me/",
-        "https://limitless.ai/",
-        "https://audria.tech/",
-        "https://getbuddi.ai/"
-      ]
-    },
-    {
-      "category": "teacher_ai_tools",
-      "findings": "**MagicSchool AI** (Denver): $62.4 M Series B (Feb 2025), 224 employees (+138 % YoY). 7 million educators use its 70+ tools to generate lesson plans, leveled texts, rubrics and IEPs in 16 countries. New “Class Writing Feedback” module auto-scores essays against teacher rubrics and embeds comments directly into Google Docs; rolling out to Edmonds SD pilot cohort this month.\n\n**Brisk Teaching** (San [TRUNCATED]",
-      "urls": [
-        "https://magicschool.ai/",
-        "https://briskteaching.com/",
-        "https://web.diffit.me/",
-        "https://humy.ai/",
-        "https://immersioned.org/"
-      ]
-    },
-    {
-      "category": "wearable_devices",
-      "findings": "**Nirva AI jewelry** (SF, 4 staff): CES 2026 breakout—fashion-forward pendant that journals mood, location and conversation snippets into a “living memory library.” 6 media awards; $299 preorder, shipping summer.\n\n**LumiLife ecosystem** (Berlin startup): Watch, ring and glasses trio driven by one AI app that learns daily patterns for style, wellness and productivity coaching. First public demo Jan [TRUNCATED]",
-      "urls": [
-        "https://nirva.life/",
-        "https://lumilife.online/",
-        "https://agiga.ai/"
-      ]
-    }
-  ],
+  "intellectual_journals": [],
+  "wearable_ai": [],
   "triadic_ontology": {
     "findings": "",
     "urls": []
   },
   "ai_systems": {
-    "findings": "The AI research landscape in 2026 is being revolutionized by sophisticated multi-agent systems that can autonomously conduct end-to-end scientific research. Google's PaperOrchestra framework represents a breakthrough in automated research paper writing, using five specialized agents to transform raw experimental data into submission-ready LaTeX manuscripts with literature reviews and verified citations. The Auton Agentic AI Framework provides a principled architecture for autonomous agent systems, addressing the architectural mismatch between stochastic LLM outputs and deterministic backend requirements through a strict separation between cognitive blueprints and runtime engines. Meanwhile, the AI Scientist pipeline has achieved full end-to-end automation of the scientific process, from hypothesis generation through experimentation to paper writing. In astrophysics, the Cmbagent system demonstrated that semi-autonomous agent workflows can compete with expert solutions, achieving first- [TRUNCATED]",
-    "urls": [
-      "https://www.marktechpost.com/2026/04/08/google-ai-research-introduces-paperorchestra-a-multi-agent-framework-for-automated-ai-research-paper-writing/",
-      "https://arxiv.org/abs/2602.23720v1",
-      "https://arxiv.org/pdf/2604.09621",
-      "https://sureprompts.com/blog/advanced-prompt-engineering-2026-claude-gpt5-gemini",
-      "https://sureprompts.com/blog/prompting-reasoning-models-guide",
-      "https://www.nature.com/articles/s42256-026-01183-2",
-      "https://www.nature.com/articles/s41586-026-10265-5"
-    ]
+    "findings": "",
+    "urls": []
   },
   "uap": {
-    "findings": "Congress is accelerating UAP disclosure with unprecedented specificity. Rep. Anna Paulina Luna's Task Force demanded 46 classified videos from the Pentagon by April 14, including footage of UAP formations over Iran, instant acceleration in Syrian airspace, and spherical objects entering water near US submarines. The White House has approved Rep. Eric Burlison's request to visit secret facilities where whistleblowers allege non-human craft are stored at contractors including Northrop Grumman and Lockheed Martin. A classified March 25 briefing in a SCIF has become central to the mystery surrounding missing aerospace scientists, including retired Air Force General Neil McCasland, who vanished after Trump's February disclosure order. The 2026 NDAA now mandates Pentagon briefings on UAP intercepts and requires AARO to account for all UAP classification guides.",
-    "urls": [
-      "https://lamag.com/news-and-politics/what-happened-inside-congress-classified-uap-briefing/",
-      "https://www.thefringefeed.com/46-classified-ufo-videos-pentagon-deadline-april-2026/",
-      "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
-      "https://www.ufonews.co/post/congress-cleared-to-enter-secret-ufo-craft-facilities",
-      "https://www.uapdigest.com/congressman-claims-classified-uap-videos-show-objects-defying-physics-white-house-backs-site-visits/",
-      "https://defensescoop.com/2025/12/10/uap-ufo-military-intercepts-north-america-fy-2026-ndaa/",
-      "https://www.congress.gov/bill/119th-congress/house-bill/1187/text"
-    ]
+    "findings": "",
+    "urls": []
   },
   "newyorker": {
-    "available": true,
-    "title": "Ellen Burstyn’s Inner Library",
-    "section": "retrospective",
-    "dek": "Kris Kristofferson told her he was a poet when they co-starred in “Alice Doesn’t Live Here Anymore.” Her new book tells the story of her life in poetry, Michael Schulman writes.",
-    "text": "She wore green slacks, a green turtleneck, and a green cardigan (“I do like green”), with chunky metallic necklaces. In her writing room, lined with shelves of Mary Oliver and Rumi—her Oscar, for “Alice Doesn’t Live Here Anymore,” was across the hall—she showed off the desk where she wrote her new book, “Poetry Says It Better,” in which she revisits her life story through verses she has loved. “I like what metaphors set off in your mind,” she said. “I like what poetry plays with.”\nShe settled into a wicker chair in the living room, beneath a wooden mermaid that she got in Mexico. Her cavapoo, Kerri, sat regally on a divan. The first poem that spoke to Burstyn, she recalled, was William Ernest Henley’s “Invictus,” which she read in high school, in Detroit. “ ‘I am the master of my fate, I am the captain of my soul’—that awakened an understanding in me that life was not always going to be the way it was.” At school, she was head cheerleader, but her home life was arduous. “My mother married a man who hated her two children,” she said. “I was being punished a lot physically.” She wrote her own poem and gave it to a boy in her class. “He said, ‘Just because your name is Edna’—which was my original name—‘doesn’t mean you have to copy her style.’ I said, ‘Who?’ ” That’s how she discovered Edna St. Vincent Millay. “It was like she was my voice,” she said, and rattled off Millay’s sonnet “Love Is Not All.”\nAt nineteen, Burstyn married her first husband, a poet and car salesman (“In Detroit, everybody’s involved with cars”), who introduced her to Baudelaire. “When I read Baudelaire now, I go, Boy, he’s really dark!” she said. By twenty-four, she was modelling in New York and decided to become an actress. “I went around saying, ‘I’m going to do a Broadway play this fall. Do you know how I can get an audition?’ ” It worked: she made her Broadway début in 1957, in the comedy “Fair Game.” Her determination put her in mind of the poem “For Longing,” by John O’Donohue: “May you have the courage to listen to the voice of desire.”\nSome years later, in Hollywood, she was acting in the Debbie Reynolds flick “Goodbye Charlie.” “I said, ‘This is it. This is the big time. Next I’ll be playing Debbie Reynolds’s part!’ And this voice in my head said, I don’t want it,” she recalled. Through Shelley Winters, she met the acting teacher Lee Strasberg and studied with him. “I did a scene for him, and he said, ‘I don’t know, dear. You either laugh or you cry. If you would laugh and cry at the same time, then we’d see something.’ ” She found herself doing just that in her breakout film, “The Last Picture Show.” This reminded her of what the poet Wisława Szymborska wrote about the soul: “Joy and sorrow / aren’t two different feelings for it.”\nBurstyn starred in “Alice” in 1974, alongside Kris Kristofferson, who insisted that he couldn’t act or sing. “What is it you do?” she remembered asking him. “I am a poet,” he answered. In her book, she included a sampling of his lyrics. (“He’s a walkin’ contradiction, partly truth and partly fiction.”) Did any poems remind her of starring in “The Exorcist”? Not quite, she said, but the film does open with the Muslim call to prayer. In the seventies, inspired by an etching of a chanting muezzin in her copy of “The Rubáiyát of Omar Khayyám,” she began travelling the Middle East. In Iran, she visited the Tomb of Hafez. “People come reading Hafez’s poetry,” she said, recalling a path lined with roses “about at nose height, so as you’re walking you’re sniffing a different rose each step.”\nIn 1995, she was in “How to Make an American Quilt”; her co-star Maya Angelou would recite poems for her. “The makeup department threw up their hands, because I had to be completely re-made up after lunch every day from crying in Maya’s trailer,” Burstyn recalled. “So then I snuck in and brought Q-tips.” She leaned back in her chair and mimed holding the cotton tips to her eyes. “I would lay down in her trailer with Q-tips and go, ‘O.K., hi [TRUNCATED]",
-    "url": "https://www.newyorker.com/magazine/2026/05/04/ellen-burstyns-inner-library",
+    "available": false,
+    "title": "",
+    "section": "",
+    "dek": "",
+    "text": "",
+    "url": "",
     "source": "The New Yorker"
   },
-  "enriched_articles": [
-    {
-      "url": "https://jacobin.com/2026/04/ai-critical-thinking-chatbots-subjectivity",
-      "source": "jacobin.com",
-      "title": "Movements Need the Critical Thinking That AI Destroys",
-      "fetch_failed": false,
-      "text": "# Movements Need the Critical Thinking That AI Destroys\n\nPublished: 2026-04-26T15:17:26+00:00\n\n## Summary\n\nJacobin argues that the outsourcing of judgment to AI systems could lead to the gradual erosion of our capacity for independent thought. This is not the case of an apocalypse as AI becomes so powerful that it turns against human beings, but in relation to the question of what it means to be human. A recent MIT study found significantly reduced brain activity among regular users of chatbots, which supports this concern. The author suggests that chatbots represent a technologized form of subjectivity, a form of \"decaffeinated\" subjectivity. He argues that while these tools can provide significant efficiency, they could potentially threaten people’s participation in democratic processes and emancipatory politics.\n\n## Story\n\nMovements Need the Critical Thinking That AI Destroys Our special spring issue is out now. Get a discounted subscription to our print magazine today. Your support keeps us publishing! # Israel’s Young Settler Vanguard # The Making of the Teenager # Zohran Needs to Create Popular Assemblies Gabriel Hetland Bhaskar Sunkara # A Half-Century of Harry Braverman’s L [TRUNCATED]"
-    },
-    {
-      "url": "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom",
-      "source": "aeon.co",
-      "title": "The role of literature as the key to personal freedom",
-      "fetch_failed": false,
-      "text": "# Does reading do us any good?\n## Stripped of easy moralising, literature makes us relish the search for truth in an age when many believe truth to be dead\n\nby Flora Champy + BIO\n\nDoes reading turn us into better people? Does it make us more sensitive and empathetic? Does it improve our judgment? And if it is not edifying, then what good does it do? About 120 years ago, the indecisive, dilettante offspring of a wealthy physician found these questions so important that he took up his pen to argue that, no, books are never the instruments of moral betterment. He based his argument on his own memories. Though he had always been an avid reader, books, he claimed, never gave him any sort of useful, respectable instruction. That does not mean they were meaningless – far from it; they shaped his apprehension of life by preserving indelible impressions of his surroundings. Relatives now long gone, places he hadn’t seen in years – these were nevertheless still present in his mind through memories of his readings. Books helped keep past sensations alive. Literature made time tangible: something to be grasped without being abolished.\n\nMarcel Proust by Otto Wegener, c1895. Courtesy Wikimedia\n\n [TRUNCATED]"
-    },
-    {
-      "url": "https://www.aljazeera.com/news/2026/4/27/hezbollah-and-israel-swap-threats-and-strikes-across-lebanons-border",
-      "source": "aljazeera.com",
-      "title": "Hezbollah and Israel swap threats and strikes across Lebanon's border",
-      "fetch_failed": false,
-      "text": "# Hezbollah and Israel swap threats and strikes across Lebanon’s border\n*Iran-linked group reiterates defiance; Israeli defence minister threatens to ‘burn all of Lebanon’.*\n\nIsrael has threatened to “burn” all of Lebanon after Hezbollah reiterated its defiance and rejection of peace talks as war across the border grinds on.\n\nThe Lebanon-based armed group on Monday condemned Beirut’s ongoing discussions with Israel and again refused to end its campaign of strikes across the border in the face of Israel’s persisting attacks on the south of the country. Israeli Defence Minister Israel Katz retorted that defiance would bring catastrophic consequences.\n\nHezbollah leader Naim Qassem asserted in a statement that while “sacrifices are great”, the Lebanese people have two options: “Liberation and pride or occupation and humiliation.”\n\nThe Iran-linked armed group has criticised the Lebanon government for entering talks with Israel to seek an end to the latest series of hostilities, which was sparked by the United States-Israeli war on Tehran.\n\n“We are continuing our defensive resistance for Lebanon and its people,” Qassem said. “We will not return to the pre-March [status quo]; we will resp [TRUNCATED]"
-    },
-    {
-      "url": "https://www.reuters.com/world/middle-east/israels-gaza-aid-blockade-contested-world-court-hearings-2025-04-28/",
-      "source": "reuters.com",
-      "title": "Israel's Gaza aid blockade contested at World Court hearings",
-      "fetch_failed": true,
-      "text": "fetch_error: Client error '401 HTTP Forbidden' for url 'https://www.reuters.com/world/middle-east/israels-gaza-aid-blockade-contested-world-court-hearings-2025-04-28/'"
-    },
-    {
-      "url": "https://www.reuters.com/world/europe/germany-says-it-will-step-up-military-role-nato-amid-increased-uncertainty-2025-04-28/",
-      "source": "reuters.com",
-      "title": "Germany says it will step up military role in NATO amid increased uncertainty",
-      "fetch_failed": true,
-      "text": "fetch_error: Client error '401 HTTP Forbidden' for url 'https://www.reuters.com/world/europe/germany-says-it-will-step-up-military-role-nato-amid-increased-uncertainty-2025-04-28/'"
-    }
-  ]
+  "enriched_articles": []
 }
