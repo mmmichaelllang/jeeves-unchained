@@ -14,7 +14,6 @@ import base64
 import json
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime
 from typing import Any
 
 log = logging.getLogger(__name__)
@@ -80,7 +79,7 @@ def list_message_ids(service, query: str, max_results: int = 150) -> list[dict[s
         out.extend(batch)
         fetched += len(batch)
         next_page = resp.get("nextPageToken")
-        if not next_page or not batch:
+        if not next_page:
             break
     return out
 
@@ -198,12 +197,3 @@ def previews_to_classifier_input(previews: list[MessagePreview]) -> list[dict[st
     ]
 
 
-def parse_rfc2822_date(value: str) -> datetime | None:
-    """Parse Gmail's RFC2822 Date header, tolerating lots of variation."""
-
-    from email.utils import parsedate_to_datetime
-
-    try:
-        return parsedate_to_datetime(value)
-    except Exception:
-        return None

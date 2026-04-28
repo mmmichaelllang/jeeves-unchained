@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import html as _html
 import json
 import logging
 import re
@@ -1970,7 +1971,7 @@ def _ensure_coverage_log(
 
     # No valid log — synthesize from anchor tags present in the body.
     synthesized = _synthesize_coverage_log(html, session)
-    comment = f"<!-- COVERAGE_LOG: {json.dumps(synthesized, ensure_ascii=False)} -->"
+    comment = f"<!-- COVERAGE_LOG: {_safe_json_for_comment(synthesized)} -->"
     if "<!-- COVERAGE_LOG_PLACEHOLDER -->" in html:
         html = html.replace("<!-- COVERAGE_LOG_PLACEHOLDER -->", comment)
     elif "</body>" in html:
@@ -2041,6 +2042,16 @@ def _sector_url_index(session: SessionModel) -> dict[str, str]:
     return idx
 
 
+def _safe_json_for_comment(data: Any) -> str:
+    """Serialise data to JSON safe for embedding inside an HTML comment.
+
+    `-->` inside a JSON string value would prematurely close the comment and
+    expose the remaining JSON as raw HTML.  Replacing it with the JSON unicode
+    escape `--\\u003e` keeps the JSON valid while preventing comment breakage.
+    """
+    return json.dumps(data, ensure_ascii=False).replace("-->", "--\\u003e")
+
+
 def _strip_tags(html: str) -> str:
     no_scripts = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", html, flags=re.DOTALL)
     no_comments = re.sub(r"<!--.*?-->", " ", no_scripts, flags=re.DOTALL)
@@ -2054,7 +2065,7 @@ def render_mock_briefing(session: SessionModel) -> str:
     sectors = [
         (
             "Sector 1 — The Domestic Sphere",
-            f"Good morning, Sir. The weather: {session.weather or 'unremarkable'}. "
+            f"Good morning, Sir. The weather: {_html.escape(session.weather or 'unremarkable')}. "
             f"I note {len(session.local_news)} local items of interest. "
             "This is a clusterfuck of biblical proportions, Sir — I do beg your pardon, "
             "I meant to say the morning commute is crowded.",
@@ -2082,7 +2093,8 @@ def render_mock_briefing(session: SessionModel) -> str:
         sectors.append(
             (
                 "Sector 7 — Talk of the Town",
-                f"{session.newyorker.text[:2000]} ...<a href=\"{session.newyorker.url}\">[Read at The New Yorker]</a>",
+                f"{_html.escape(session.newyorker.text[:2000])} ..."
+                f"<a href=\"{_html.escape(session.newyorker.url, quote=True)}\">[Read at The New Yorker]</a>",
             )
         )
 
@@ -2112,7 +2124,7 @@ def render_mock_briefing(session: SessionModel) -> str:
   <h1>📜 Daily Intelligence from Jeeves — DRY RUN</h1>
   {body_html}
   <div class="signoff"><p>Your reluctantly faithful Butler,<br/>Jeeves</p></div>
-  <!-- COVERAGE_LOG: {json.dumps(coverage, ensure_ascii=False)} -->
+  <!-- COVERAGE_LOG: {_safe_json_for_comment(coverage)} -->
 </div>
 </body>
 </html>"""

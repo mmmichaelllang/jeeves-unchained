@@ -118,6 +118,25 @@ def test_mock_correspondence_passes_postprocess():
     assert not bt
 
 
+def test_render_mock_correspondence_escapes_html_in_user_fields():
+    """render_mock_correspondence must html.escape sender and summary to prevent injection."""
+    from jeeves.correspondence import ClassifiedMessage
+
+    msg = ClassifiedMessage(
+        id="m1",
+        classification="reply_needed",
+        priority_contact=False,
+        priority_contact_label=None,
+        summary='Test" onclick="alert(1)',
+        suggested_action="",
+        sender='Attacker <evil@x.com>" onload="alert(xss)',
+    )
+    html = render_mock_correspondence("2026-04-23", [msg])
+    assert 'onclick="alert' not in html
+    assert 'onload="alert' not in html
+    assert "&quot;" in html or "&#x27;" in html or "onclick" not in html
+
+
 def test_classify_with_kimi_batches_previews(monkeypatch):
     from llama_index.core.base.llms.types import ChatMessage
 

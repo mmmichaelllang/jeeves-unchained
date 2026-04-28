@@ -12,6 +12,7 @@ Flow:
 
 from __future__ import annotations
 
+import html as html_lib
 import json
 import logging
 import re
@@ -470,7 +471,8 @@ def render_mock_correspondence(run_date_iso: str, classified: list[ClassifiedMes
     """Dry-run placeholder HTML that exercises post-processing."""
 
     items_html = "".join(
-        f"<li><strong>{c.classification}</strong> — {c.sender}: {c.summary}</li>"
+        f"<li><strong>{html_lib.escape(c.classification)}</strong>"
+        f" — {html_lib.escape(c.sender or '')}: {html_lib.escape(c.summary or '')}</li>"
         for c in classified
     )
     return f"""<!DOCTYPE html>

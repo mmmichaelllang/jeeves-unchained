@@ -10,6 +10,7 @@ from jeeves.write import (
     PART1_SECTORS,
     PART2_SECTORS,
     PART3_SECTORS,
+    _safe_json_for_comment,
     _session_subset,
     _stitch_parts,
     _system_prompt_for_parts,
@@ -727,3 +728,37 @@ def test_part4_instructions_contain_newyorker_overlap_check():
     assert "newyorker_hint" in PART4_INSTRUCTIONS, (
         "PART4_INSTRUCTIONS should reference newyorker_hint for the overlap check"
     )
+
+
+def test_safe_json_for_comment_escapes_html_comment_close():
+    """_safe_json_for_comment must prevent --> from closing an HTML comment."""
+    data = [{"headline": "FDA ruling-->key decision", "url": "https://example.com"}]
+    result = _safe_json_for_comment(data)
+    assert "-->" not in result
+    assert "--\\u003e" in result
+    # Must still be valid JSON after the replacement.
+    import json
+    parsed = json.loads(result)
+    assert parsed[0]["headline"] == "FDA ruling-->key decision"
+
+
+def test_render_mock_briefing_escapes_html_in_session_fields():
+    """render_mock_briefing must html.escape weather and newyorker text/url."""
+    session = _session()
+    # Inject HTML-dangerous content into session fields.
+    object.__setattr__(session, "weather", '<script>alert("xss")</script>')
+    ny = session.newyorker
+    object.__setattr__(ny, "text", 'Article text with </p><b>bold</b> and "quotes"')
+    object.__setattr__(ny, "url", 'https://example.com?a=1&b=2"onload=evil()')
+    object.__setattr__(ny, "available", True)
+    object.__setattr__(session, "newyorker", ny)
+
+    html = render_mock_briefing(session)
+    # Raw executable HTML tags must not appear outside of HTML comments/attributes.
+    assert '<script>' not in html          # script tag must be escaped
+    assert '</p><b>' not in html           # tag injection in body text must be escaped
+    # The href attribute must escape " so it cannot break out of the attribute context.
+    assert '&quot;onload=evil' in html or 'onload=evil' not in html.split('href=')[0]
+    # Escaped forms must appear (proves escaping ran, not just omission).
+    assert '&lt;script&gt;' in html
+    assert '&lt;/p&gt;' in html or '&lt;b&gt;' in html
