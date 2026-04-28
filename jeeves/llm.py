@@ -38,13 +38,31 @@ def _build_kimi_class():
 
             out = []
             for tool_call in tool_calls:
+                # Skip tool calls with None id or name — Kimi occasionally emits
+                # degenerate tool call entries. Creating ToolSelection with None
+                # fields raises a pydantic ValidationError that kills the sector.
+                tc_id = getattr(tool_call, "id", None)
+                tc_name = getattr(tool_call.function, "name", None)
+                if tc_id is None or tc_name is None:
+                    log.warning(
+                        "kimi emitted tool call with None id/name (%r/%r); skipping.",
+                        tc_id, tc_name,
+                    )
+                    continue
+
                 raw = tool_call.function.arguments
                 if raw is None or raw == "":
                     log.warning(
                         "kimi tool call %s returned None/empty arguments; coercing to {}",
-                        tool_call.function.name,
+                        tc_name,
                     )
                     args = {}
+                    # Also normalise the raw field to a valid JSON string so that
+                    # when LlamaIndex records this assistant message in history and
+                    # re-sends it to NIM, NIM's pydantic validator sees a string
+                    # (required) rather than None/dict, avoiding a 400 error on the
+                    # next chat/completions call.
+                    tool_call.function.arguments = "{}"
                 else:
                     try:
                         args = json.loads(raw)
@@ -55,13 +73,13 @@ def _build_kimi_class():
                         # signal at WARNING.
                         log.debug(
                             "kimi tool call %s arguments not valid JSON (%r); coercing to {}",
-                            tool_call.function.name, raw,
+                            tc_name, raw,
                         )
                         args = {}
                 out.append(
                     ToolSelection(
-                        tool_id=tool_call.id,
-                        tool_name=tool_call.function.name,
+                        tool_id=tc_id,
+                        tool_name=tc_name,
                         tool_kwargs=args,
                     )
                 )
