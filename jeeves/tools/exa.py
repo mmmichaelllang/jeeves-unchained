@@ -39,8 +39,11 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
         call on Exa hits.
         """
         if not (query or "").strip():
-            log.warning("exa_search called with empty query — returning error dict")
-            return {"provider": "exa", "error": "query is required — provide a non-empty search string", "results": []}
+            log.warning("exa_search called with empty query — returning error string")
+            return (
+                "ERROR: exa_search requires a non-empty 'query' argument. "
+                "Example: exa_search(query='triadic ontology 2026', search_type='auto', num_results=3)"
+            )
         try:
             from exa_py import Exa  # type: ignore
 

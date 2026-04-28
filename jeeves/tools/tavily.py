@@ -25,8 +25,11 @@ def make_tavily_search(cfg: Config, ledger: QuotaLedger):
             depth: 'basic' (1 credit) or 'advanced' (2 credits).
         """
         if not (query or "").strip():
-            log.warning("tavily_search called with empty query — returning error dict")
-            return {"provider": "tavily", "error": "query is required — provide a non-empty search string", "results": []}
+            log.warning("tavily_search called with empty query — returning error string")
+            return (
+                "ERROR: tavily_search requires a non-empty 'query' argument. "
+                "Example: tavily_search(query='Edmonds WA local news today')"
+            )
         try:
             from tavily import TavilyClient  # type: ignore
 
@@ -65,14 +68,17 @@ def make_tavily_search(cfg: Config, ledger: QuotaLedger):
 
 
 def make_tavily_extract(cfg: Config, ledger: QuotaLedger):
-    def tavily_extract(urls: list[str]) -> dict[str, Any]:
+    def tavily_extract(urls: list[str]) -> Any:
         """Extract clean article text for up to 10 URLs via Tavily.
 
         Each result's `text` is capped at 2500 chars so the FunctionAgent's
         context window doesn't fill from a single extraction turn.
         """
         if not urls:
-            return {"provider": "tavily", "error": "urls empty", "results": []}
+            return (
+                "ERROR: tavily_extract requires a non-empty 'urls' list. "
+                "Example: tavily_extract(urls=['https://example.com/article'])"
+            )
         urls = urls[:10]
         try:
             from tavily import TavilyClient  # type: ignore
