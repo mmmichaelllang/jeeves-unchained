@@ -16,14 +16,17 @@ ENDPOINT = "https://google.serper.dev/search"
 
 
 def make_serper_search(cfg: Config, ledger: QuotaLedger):
-    def serper_search(query: str, num: int = 10, tbs: str | None = None) -> dict[str, Any]:
+    def serper_search(query: str = "", num: int = 10, tbs: str | None = None) -> dict[str, Any]:
         """Google SERP via Serper.dev.
 
         Args:
-            query: search query.
+            query: search query (required — must be a non-empty string).
             num: number of organic results to return (max ~100).
             tbs: Google TBS filter, e.g. 'qdr:d' (last day), 'qdr:w' (last week).
         """
+        if not (query or "").strip():
+            log.warning("serper_search called with empty query — returning error dict")
+            return {"provider": "serper", "error": "query is required — provide a non-empty search string", "results": []}
         headers = {"X-API-KEY": cfg.serper_api_key, "Content-Type": "application/json"}
         payload: dict[str, Any] = {"q": query, "num": num}
         if tbs:

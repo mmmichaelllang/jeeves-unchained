@@ -26,10 +26,15 @@ DEFAULT_STATE = {
 }
 
 # Hard daily limits for providers billed on a per-day free tier.
-# Set 10 below the actual free-tier ceiling so a burst never crosses the line.
+# gemini_grounded uses gemini-2.5-flash whose free tier allows 20
+# generate_content requests per day (GenerateRequestsPerDayPerProjectPerModel-
+# FreeTier). We stop at 12 — well below 20 — to leave headroom for
+# correspondence and any pre-run calls made earlier in the UTC day.
+# When the API returns 429, gemini_grounded.py sets the counter to this cap
+# so all subsequent sectors skip Gemini automatically.
 DAILY_HARD_CAPS: dict[str, int] = {
-    "gemini_grounded": 1490,   # Google Search Grounding: 1,500/day free
-    "vertex_grounded": 1490,   # Same product, Vertex AI path
+    "gemini_grounded": 12,     # Gemini 2.5 Flash: 20 RPD free tier; we cap at 12
+    "vertex_grounded": 12,     # Same underlying quota
 }
 
 

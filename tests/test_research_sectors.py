@@ -376,3 +376,36 @@ def test_is_retryable_network_error_matches_known_phrases():
     assert _is_retryable_network_error(Exception("connection reset by peer"))
     assert not _is_retryable_network_error(Exception("json decode error"))
     assert not _is_retryable_network_error(Exception("422 Unprocessable Entity"))
+
+
+def test_family_instruction_has_mandatory_parallel_searches():
+    """family sector must specify 3 explicit parallel searches to prevent None-arg crashes."""
+    spec = _spec("family")
+    assert "serper_search(query=" in spec.instruction
+    assert "exa_search(query=" in spec.instruction
+    assert spec.instruction.count("serper_search(") >= 2
+    assert "Seattle" in spec.instruction and "Edmonds" in spec.instruction
+
+
+def test_enriched_articles_instruction_skips_failed_fetches():
+    """enriched_articles must instruct Kimi to replace 401/403 URLs rather than include them."""
+    spec = _spec("enriched_articles")
+    assert "401" in spec.instruction or "fetch_failed" in spec.instruction
+    assert "replace" in spec.instruction.lower() or "skip" in spec.instruction.lower()
+
+
+def test_enriched_articles_instruction_warns_about_reuters():
+    """enriched_articles must warn that Reuters blocks with 401 so Kimi picks alternatives."""
+    spec = _spec("enriched_articles")
+    assert "Reuters" in spec.instruction
+    assert "401" in spec.instruction
+
+
+def test_deep_fallback_queries_cover_all_deep_sectors():
+    """Every deep-shaped sector must have a fallback query for forced-search retry."""
+    from jeeves.research_sectors import _DEEP_FALLBACK_QUERIES
+
+    deep_sectors = {s.name for s in SECTOR_SPECS if s.shape == "deep"}
+    assert deep_sectors == set(_DEEP_FALLBACK_QUERIES.keys()), (
+        f"missing fallback queries for: {deep_sectors - set(_DEEP_FALLBACK_QUERIES.keys())}"
+    )
