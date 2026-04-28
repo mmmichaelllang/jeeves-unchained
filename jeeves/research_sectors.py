@@ -748,7 +748,7 @@ _REPAIR_SHAPE_HINT: dict[str, str] = {
     "enriched": '[{"title": "...", "url": "...", "source": "...", "text": "..."}]',
     "dict": '{"findings": "...", "urls": ["..."]}',
     "deep": '{"findings": "...", "urls": ["..."]}',
-    "newyorker": '{"findings": "...", "urls": ["..."]}',
+    "newyorker": '{"available": true, "title": "...", "section": "...", "dek": "...", "byline": "...", "date": "...", "text": "...", "url": "...", "source": "The New Yorker"}',
 }
 
 

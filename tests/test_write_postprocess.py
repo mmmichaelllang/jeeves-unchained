@@ -68,16 +68,69 @@ def test_postprocess_builds_coverage_log_from_anchors():
     assert "https://www.nybooks.com/mock" in urls
 
 
-def test_postprocess_preserves_existing_coverage_log():
+def test_postprocess_falls_back_to_model_log_when_no_anchors():
+    """When the HTML has no <a href> anchors, the model-written COVERAGE_LOG is used."""
     session = _session()
     raw = (
-        "<!DOCTYPE html><html><body><p>content</p>"
+        "<!DOCTYPE html><html><body><p>content (no anchors here)</p>"
         '<!-- COVERAGE_LOG: [{"headline":"h","url":"https://x.example.com","sector":"Sector 3"}] -->'
         "</body></html>"
     )
     result = postprocess_html(raw, session)
     assert len(result.coverage_log) == 1
     assert result.coverage_log[0]["url"] == "https://x.example.com"
+    # Exactly one COVERAGE_LOG comment in output.
+    assert result.html.count("COVERAGE_LOG:") == 1
+
+
+def test_postprocess_synthesized_log_wins_over_model_log():
+    """When <a href> anchors exist, synthesis wins over any model-written COVERAGE_LOG."""
+    session = _session()
+    raw = (
+        "<!DOCTYPE html><html><body>"
+        "<p><a href=\"https://real.example.com/article\">Real article</a></p>"
+        '<!-- COVERAGE_LOG: [{"headline":"model","url":"https://fabricated.example.com","sector":"S1"}] -->'
+        "<!-- COVERAGE_LOG_PLACEHOLDER -->"
+        "</body></html>"
+    )
+    result = postprocess_html(raw, session)
+    urls = {e["url"] for e in result.coverage_log}
+    assert "https://real.example.com/article" in urls
+    # Model-written fabricated URL discarded in favour of synthesis.
+    assert "https://fabricated.example.com" not in urls
+    # Exactly one COVERAGE_LOG comment in output.
+    assert result.html.count("COVERAGE_LOG:") == 1
+    assert "<!-- COVERAGE_LOG_PLACEHOLDER -->" not in result.html
+
+
+def test_postprocess_two_model_coverage_logs_collapsed_to_one():
+    """When the model writes two COVERAGE_LOG comments, exactly one survives."""
+    session = _session()
+    raw = (
+        "<!DOCTYPE html><html><body>"
+        "<p><a href=\"https://article.example.com/story\">Story</a></p>"
+        '<!-- COVERAGE_LOG: [{"headline":"partial","url":"https://partial.example.com","sector":"S5"}] -->'
+        '<!-- COVERAGE_LOG: [{"headline":"also","url":"https://also.example.com","sector":"S7"}] -->'
+        "</body></html>"
+    )
+    result = postprocess_html(raw, session)
+    # Synthesized from the real anchor wins; both model logs discarded.
+    assert result.html.count("COVERAGE_LOG:") == 1
+    urls = {e["url"] for e in result.coverage_log}
+    assert "https://article.example.com/story" in urls
+
+
+def test_postprocess_coverage_log_placeholder_never_survives():
+    """COVERAGE_LOG_PLACEHOLDER must always be consumed (replaced or removed)."""
+    session = _session()
+    raw = (
+        "<!DOCTYPE html><html><body><p>hi</p>"
+        "<!-- COVERAGE_LOG_PLACEHOLDER -->"
+        "</body></html>"
+    )
+    result = postprocess_html(raw, session)
+    assert "<!-- COVERAGE_LOG_PLACEHOLDER -->" not in result.html
+    assert "COVERAGE_LOG:" in result.html
 
 
 def test_postprocess_flags_banned_words():
@@ -519,6 +572,39 @@ def test_system_prompt_for_part9_strips_asides_pool():
     assert "DRAFT ZERO" in part2
 
 
+def test_part1_instructions_embed_css_scaffold():
+    """PART1_INSTRUCTIONS must carry the Georgian CSS since _system_prompt_for_parts strips the scaffold block."""
+    from jeeves.write import PART1_INSTRUCTIONS
+    assert "Georgia, serif" in PART1_INSTRUCTIONS
+    assert "background: #faf9f6" in PART1_INSTRUCTIONS
+    assert "max-width: 720px" in PART1_INSTRUCTIONS
+    # Scaffold is fully self-contained — no dependency on write_system.md CSS.
+    assert "font-family: Georgia" in PART1_INSTRUCTIONS
+
+
+def test_continuation_rules_forbid_fabricated_urls():
+    """CONTINUATION_RULES must include rule 14: NEVER INVENT URLS."""
+    from jeeves.write import CONTINUATION_RULES
+    assert "NEVER INVENT URLS" in CONTINUATION_RULES
+
+
+def test_part3_instructions_have_empty_career_rule():
+    """PART3_INSTRUCTIONS must have a hard empty-career sentinel rule."""
+    from jeeves.write import PART3_INSTRUCTIONS
+    assert "EMPTY CAREER FEED" in PART3_INSTRUCTIONS
+    # Ensure the exact fallback sentence is prescribed.
+    assert "quiet this morning" in PART3_INSTRUCTIONS
+
+
+def test_part9_instructions_have_strict_branch_separation():
+    """PART9_INSTRUCTIONS must use explicit BRANCH A / BRANCH B language."""
+    from jeeves.write import PART9_INSTRUCTIONS
+    assert "BRANCH A" in PART9_INSTRUCTIONS
+    assert "BRANCH B" in PART9_INSTRUCTIONS
+    assert "WRITE BRANCH A AND NOTHING ELSE" in PART9_INSTRUCTIONS
+    assert "WRITE BRANCH B AND NOTHING ELSE" in PART9_INSTRUCTIONS
+
+
 def test_parse_all_asides_returns_full_original_pool():
     from jeeves.write import _parse_all_asides
 
@@ -762,3 +848,28 @@ def test_render_mock_briefing_escapes_html_in_session_fields():
     # Escaped forms must appear (proves escaping ran, not just omission).
     assert '&lt;script&gt;' in html
     assert '&lt;/p&gt;' in html or '&lt;b&gt;' in html
+
+
+def test_newyorker_schema_declares_byline_and_date():
+    """NewYorker model must have byline and date as declared fields (not extras)."""
+    from jeeves.schema import NewYorker
+
+    ny = NewYorker(available=True, title="Test", byline="By Jane Doe", date="2026-04-28")
+    assert ny.byline == "By Jane Doe"
+    assert ny.date == "2026-04-28"
+    # Defaults to empty string when absent.
+    ny2 = NewYorker(available=False)
+    assert ny2.byline == ""
+    assert ny2.date == ""
+
+
+def test_newyorker_schema_byline_and_date_in_model_dump():
+    """model_dump() must include byline and date (not silently dropped)."""
+    from jeeves.schema import NewYorker
+
+    ny = NewYorker(available=True, title="T", byline="By X", date="2026-01-01")
+    d = ny.model_dump()
+    assert "byline" in d
+    assert "date" in d
+    assert d["byline"] == "By X"
+    assert d["date"] == "2026-01-01"

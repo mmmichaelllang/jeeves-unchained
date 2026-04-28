@@ -10,7 +10,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Current focus
 
-**Phase 2/3/4 — eighth sprint complete (PR #54, 2026-04-28).** Guaranteed JSON repair for sector output failures: deterministic normalisation layer + LLM repair retry. All 172 tests green.
+**Phase 2/3/4 — ninth sprint complete (PR #55, 2026-04-28).** Write prompt hardening against AI-assistant voice + dead code removal. All 172 tests green.
 
 **Research architecture (as of 2026-04-28, post PRs #43–#46):**
 - Sequential sector execution (`_SECTOR_SEMAPHORE=1`) — NIM free tier can't handle concurrent Kimi agents.
@@ -56,9 +56,19 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Where we left off (2026-04-28)
 
-- **PRs #43–#54, all merged.** All phases live on `main` (Phases 2, 3, 4 fully wired). Cron: correspondence `0 12`, research `30 12`, write `40 13`.
+- **PRs #43–#55, all merged.** All phases live on `main` (Phases 2, 3, 4 fully wired). Cron: correspondence `0 12`, research `30 12`, write `40 13`.
 - **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run.
 - **172 tests green** as of this sprint.
+
+### Ninth sprint (PR #55) — what was fixed
+
+| PR | Problem | Fix |
+|---|---|---|
+| #55 | Groq drafts produced generic AI-assistant opener: "Your loyal butler shall guide you through the day's intelligence briefing, covering a wide range of topics…" | `PART1_INSTRUCTIONS`: mandatory opening-greeting quality standard with good/bad examples; Jeeves begins serving, not announcing the menu |
+| #55 | 18 AI-voice filler phrases throughout drafts ("In synthesizing these findings", "Upon reviewing", "Regarding [topic],", "it becomes apparent", "it is vital to continue monitoring", etc.) survived NIM refine pass undetected | Added 18 new banned phrases to `CONTINUATION_RULES` rule 13 + `_REFINE_SYSTEM` + OpenRouter A1 |
+| #55 | UAP section broke fourth wall: "With a mere 250 words allocated to this sub-section, we must be concise, Mister Lang" | `CONTINUATION_RULES` rule 12: NO FOURTH-WALL BREAKS — any sentence describing one's own word budget or structure is banned |
+| #55 | `build_user_prompt()` in `write.py` defined but never called (dead since nine-part split) | Removed |
+| #55 | Root cause: `OPENROUTER_API_KEY` missing from secrets → OpenRouter narrative editor silently skipped → draft shipped without the 5 profane asides, paragraph rhythm, and filler surgery | Noted in PR description; add key to GitHub Secrets |
 
 ### Eighth sprint (PR #54) — what was fixed
 
@@ -183,7 +193,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 ## Dev branch
 
 - **Current**: `main` (all PRs merged, clean)
-- Prior: `claude/guaranteed-sector-retry-sprint8` (PR #54 merged)
+- Prior: `claude/guaranteed-sector-retry-sprint8` (PRs #54–#55 merged)
 - Prior: `claude/forensic-fixes-sprint6` (PR #53 merged)
 
 ## Quick nav (file:line pointers)

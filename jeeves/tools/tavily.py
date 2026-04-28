@@ -81,6 +81,8 @@ def make_tavily_extract(cfg: Config, ledger: QuotaLedger):
         Returns a JSON string so LlamaIndex's _parse_tool_output() produces valid
         JSON in the NIM context rather than Python repr with single quotes.
         """
+        if isinstance(urls, str):
+            urls = [urls]
         if not urls:
             return (
                 "ERROR: tavily_extract requires a non-empty 'urls' list. "
