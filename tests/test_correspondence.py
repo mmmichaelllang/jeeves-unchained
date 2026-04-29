@@ -113,7 +113,7 @@ def test_mock_correspondence_passes_postprocess():
     html_raw = render_mock_correspondence("2026-04-23", classified)
     html, wc, profane, bw, bt = postprocess_html(html_raw)
     assert html.startswith("<!DOCTYPE html>")
-    assert profane >= 5
+    assert profane == 0  # correspondence has no profane asides
     assert not bw
     assert not bt
 

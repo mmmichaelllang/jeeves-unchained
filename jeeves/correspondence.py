@@ -481,11 +481,11 @@ def render_mock_correspondence(run_date_iso: str, classified: list[ClassifiedMes
 <body>
 <h1>📫 Correspondence — {run_date_iso} (DRY RUN)</h1>
 <h2>Today's Action Summary</h2>
-<p>A clusterfuck of biblical proportions, Sir — I do beg your pardon, a busy morning. A total and utter shitshow of priorities. An absolute fuckfest of incompetence at the district office, pardon me. Do excuse the language; it has been a steaming pile of horse-shit of a commute.</p>
+<p>A thoroughly eventful morning, Sir, if one may say so. The inbox presents several matters warranting your attention before the afternoon post arrives.</p>
 <h2>Priority Correspondence</h2>
-<p>A note from your dear wife, Sir. Your brother has written. A colossal goddamn mess, pardon me. Fucking disaster-class, I'm afraid — ahem.</p>
+<p>A note from your dear wife, Sir. Your brother has written. The scheduling matter from Northshore requires a prompt reply at your earliest convenience.</p>
 <h2>Electronic Mail (Gmail)</h2>
 <ul>{items_html}</ul>
-<p class="closing">Your reluctantly faithful Butler,<br>Jeeves</p>
+<p class="closing">Your faithful Butler,<br>Jeeves</p>
 </body>
 </html>"""

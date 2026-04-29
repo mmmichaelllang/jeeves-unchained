@@ -136,6 +136,8 @@ def main(argv: list[str] | None = None) -> int:
         log.warning("BANNED WORD HITS: %s", result.banned_word_hits)
     if result.banned_transition_hits:
         log.warning("BANNED TRANSITION HITS: %s", result.banned_transition_hits)
+    if result.profane_aside_count > 0:
+        log.warning("PROFANITY LEAKAGE in correspondence: %d occurrence(s)", result.profane_aside_count)
     if result.word_count < 1500 and not args.dry_run:
         log.warning("briefing is under 1500 words (%d).", result.word_count)
     if result.profane_aside_count < 5 and not args.dry_run:

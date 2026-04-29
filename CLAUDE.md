@@ -175,8 +175,8 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 ## Gotchas the README doesn't flag
 
 - **`--dry-run` vs `--use-fixture` on `scripts/correspondence.py`** — both checkboxes exist in `workflow_dispatch`. `--dry-run` short-circuits to a static HTML template (no Kimi, no Groq, no Gmail); `--use-fixture` uses a canned inbox but still calls the real models. If both are ticked, dry-run wins (`scripts/correspondence.py:63`). To smoke-test the real model path from the UI: tick **only** `use_fixture` + `skip_send`.
-- **Profane butler asides are intentional.** The Groq system prompt (`jeeves/prompts/correspondence_write.md:18-22`) mandates ≥5 slips per briefing from a pre-approved list ("clusterfuck of biblical proportions, Sir", "fucking disaster-class", etc.). Do not sanitize these — post-processing counts them and warns if the briefing has fewer than 5.
-- **`(DRY RUN)` in the `<h1>` is a tell.** Only `render_mock_correspondence()` (`jeeves/correspondence.py:396-416`) hardcodes that suffix. If you see it in the artifact, the run took the dry-run branch regardless of what you thought you clicked.
+- **Correspondence has NO profane asides.** Removed 2026-04-28 — too many repeats, wrong tone for a mail brief. `correspondence_write.md` contains no slip list; `scripts/correspondence.py` warns at WARNING level if `profane_aside_count > 0` (leakage detection, not a target). The write briefing (Phase 3) still uses profane asides via the OpenRouter narrative editor pass.
+- **`(DRY RUN)` in the `<h1>` is a tell.** Only `render_mock_correspondence()` (`jeeves/correspondence.py:470`) hardcodes that suffix. If you see it in the artifact, the run took the dry-run branch regardless of what you thought you clicked.
 - **Artifact naming convention.** `sessions/*.local.json` and `*.local.html` are gitignored dry-run artifacts. `sessions/session-*.json`, `sessions/correspondence-*.json`, `sessions/briefing-*.html` are the real ones that the workflows commit back to the repo.
 - **The Phase 4 handoff JSON is consumed by Phase 2.** `correspondence.yml` runs first in the daily chain (cron `0 12 * * *`), committing `sessions/correspondence-<date>.json`. `research.yml` (`30 12 * * *`) picks it up into `session.correspondence`. Don't break the file name / schema contract without updating both sides.
 - **Phase 3 write is a THREE-MODEL pipeline.** (1) Groq drafts sequentially with conditional 65s sleeps. (2) NIM refine runs concurrently in background threads. (3) After stitching + New Yorker injection, OpenRouter Gemma 4 runs once on the full document. Expected logs: 9 `invoking Groq ... [partN]` + 9 `NIM refine [partN]` + 1 `OpenRouter narrative edit`. If the Gemma line is absent, `OPENROUTER_API_KEY` is missing — the briefing still ships without it. If NIM refine lines are absent, `NVIDIA_API_KEY` is missing.
@@ -212,9 +212,9 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 - `scripts/correspondence.py:59` — `_run` mode dispatch (dry-run / use-fixture / real Gmail)
 - `scripts/correspondence.py:97` — `main` + flag parsing + artifact writes
-- `jeeves/correspondence.py:396` — `render_mock_correspondence` (the dry-run template)
+- `jeeves/correspondence.py:470` — `render_mock_correspondence` (the dry-run template)
 - `jeeves/correspondence.py` — `classify_with_kimi`, `render_with_groq`, `postprocess_html`, `build_handoff_json`
-- `jeeves/prompts/correspondence_write.md` — Groq system prompt (persona, slip list, HTML scaffold, banned words)
+- `jeeves/prompts/correspondence_write.md` — Groq system prompt (persona, HTML scaffold, banned words)
 - `scripts/gmail_auth.py` — one-shot OAuth flow that mints `GMAIL_OAUTH_TOKEN_JSON`
 - `jeeves/gmail.py:41` — `build_gmail_service` (consumes the token JSON, auto-refreshes)
 - `.github/workflows/daily.yml` — **primary cron entry point** (cron `0 12`); sequential jobs: correspondence → research → write
