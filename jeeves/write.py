@@ -51,6 +51,12 @@ BANNED_TRANSITIONS = [
     "Meanwhile,",
     "Sir, you may wish to know,",
     "I note with interest,",
+    "stark reminder of ongoing instability",
+    "significant implications for the region",
+    "significant implications for the Prime Minister",
+    "significant escalation of the conflict",
+    "will be important to monitor",
+    "worth watching in the coming",
 ]
 # Lower-cased fragments drawn from the pre-approved aside list. Used to count asides.
 PROFANE_FRAGMENTS = [
@@ -377,6 +383,16 @@ CONTINUATION_RULES = """
     - "it remains to be seen whether"
     - "these developments are noteworthy"
     - "This level of activity suggests [X] is undergoing significant"
+    - "significant implications for the region and the global community"
+    - "significant implications for [X]'s leadership"
+    - "significant escalation of the conflict"
+    - "stark reminder of ongoing instability"
+    - "will be important to monitor [X] in the coming"
+    - "it is essential to stay informed"
+    - "I hope this briefing has been informative"
+    - "this briefing has covered"
+    - "this concludes" / "this completes"
+    - Any sentence beginning "Mister Lang, this briefing" (meta-closing)
     - Any sentence that could be copy-pasted unchanged into a briefing about
       a completely different topic. Zero topic-specific nouns = delete it.
 14. NEVER INVENT URLS. This is a hard production rule — violations cause
@@ -911,6 +927,18 @@ based on `newyorker.available`, (b) the sign-off block, (c) the coverage-log
 placeholder, and (d) the outer closing tags. DO NOT re-cover any earlier
 sector or topic. DO NOT greet Mister Lang. DO NOT summarise the day.
 
+**NO CLOSING META-SUMMARY.** You are forbidden from writing a paragraph that
+summarises the briefing's contents, flags topics to watch, expresses hope
+that the briefing was informative, or bids Mister Lang a productive day.
+These are the voice of an AI assistant summarising its own output, not Jeeves.
+Jeeves does not recap. After Branch A or B, go directly to the sign-off block.
+BANNED patterns for Part 9:
+- Any paragraph beginning with "Mister Lang, this briefing has covered…"
+- "I hope this briefing has been informative"
+- "The situation in [X], developments in [Y], and…are all areas worth watching"
+- "If you have any questions or require further clarification"
+- Any sentence listing topics from earlier parts as "areas to monitor"
+
 ---
 
 ### BRANCH A — if `newyorker.available` is `true`
@@ -1128,6 +1156,15 @@ present, then output the corrected HTML. Do NOT add new content.
    - "covering a wide range of topics"
    - "With a mere [N] words allocated to" (fourth-wall break — delete sentence)
    - "This level of activity suggests [X] is undergoing significant changes"
+   - "significant implications for the region" (delete the sentence)
+   - "significant implications for [X]'s leadership" (delete)
+   - "significant escalation of the conflict" (delete)
+   - "stark reminder of ongoing instability" (delete)
+   - "it will be important to monitor [X] in the coming months" (delete)
+   - "this briefing has covered" (delete entire paragraph)
+   - "I hope this briefing has been informative" (delete entire paragraph)
+   - "If you have any questions or require further clarification" (delete)
+   - "Mister Lang, this briefing" as paragraph opener (delete entire paragraph)
    - Any sentence containing no topic-specific nouns that could be
      copy-pasted unchanged into a completely different briefing section.
 
@@ -1143,6 +1180,17 @@ present, then output the corrected HTML. Do NOT add new content.
    - "These pieces demonstrate the importance of thoughtful analysis"
    If removing the paragraph leaves the section ending on a specific claim or
    fact, that is correct — remove the paragraph entirely, keep the fact.
+
+8. **Weather re-appearing after Part 1**: If the HTML fragment you are editing
+   contains a paragraph describing current Edmonds weather conditions
+   (temperature, wind, marine layer, humidity) and the fragment does NOT
+   contain `<!-- PART1 END -->`, delete that weather paragraph entirely.
+   Weather is Part 1 only.
+
+9. **Profane asides in draft**: The profane asides (phrases like "clusterfuck",
+   "fuck-bucket", "cock-womble") are inserted by the final OpenRouter pass only.
+   If you see a profane aside in this fragment, REMOVE the aside and close the
+   sentence cleanly. Do NOT leave an orphaned parenthetical or mid-sentence fragment.
 
 ## Hard rules
 
@@ -2033,6 +2081,11 @@ def postprocess_html(raw: str, session: SessionModel) -> BriefingResult:
 
     banned_word_hits = [w for w in BANNED_WORDS if w.lower() in body_text.lower()]
     banned_transition_hits = [t for t in BANNED_TRANSITIONS if t.lower() in body_text.lower()]
+
+    if "yours faithfully" in body_text.lower():
+        log.warning("WRONG SIGNOFF: 'Yours faithfully' found — replacing with correct sign-off")
+        html = html.replace("Yours faithfully,", "Your reluctantly faithful Butler,")
+        html = html.replace("Yours faithfully", "Your reluctantly faithful Butler,")
 
     return BriefingResult(
         html=html,

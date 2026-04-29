@@ -873,3 +873,38 @@ def test_newyorker_schema_byline_and_date_in_model_dump():
     assert "date" in d
     assert d["byline"] == "By X"
     assert d["date"] == "2026-01-01"
+
+
+def test_postprocess_replaces_wrong_signoff() -> None:
+    """postprocess_html replaces 'Yours faithfully' with the correct sign-off."""
+    session = _session()
+    html = (
+        "<!DOCTYPE html><html><body>"
+        "<p>Some content.</p>"
+        "<div class='signoff'><p>Yours faithfully,<br/>Jeeves</p></div>"
+        "<!-- COVERAGE_LOG: [] -->"
+        "</body></html>"
+    )
+    result = postprocess_html(html, session)
+    assert "Yours faithfully" not in result.html
+    assert "Your reluctantly faithful Butler" in result.html
+
+
+def test_banned_transitions_catches_turning_to_space() -> None:
+    """postprocess_html flags 'Turning to Mali' as a banned transition."""
+    session = _session()
+    html = (
+        "<!DOCTYPE html><html><body>"
+        "<p>Turning to Mali, armed groups have escalated operations.</p>"
+        "<!-- COVERAGE_LOG: [] -->"
+        "</body></html>"
+    )
+    result = postprocess_html(html, session)
+    assert any("turning to" in hit.lower() for hit in result.banned_transition_hits)
+
+
+def test_refine_system_strips_significant_implications() -> None:
+    """'significant implications for the region' must be in _REFINE_SYSTEM banned list."""
+    from jeeves.write import _REFINE_SYSTEM
+
+    assert "significant implications for the region" in _REFINE_SYSTEM
