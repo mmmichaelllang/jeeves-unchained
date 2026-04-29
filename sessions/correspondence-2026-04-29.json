@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] mmmichaelllang: GitHub Actions workflow failure notification for the Jeeves — Research Phase job in the jeeves-memory repository.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure notification for the Jeeves — Research Phase job in the jeeves-unchained repository.\n- [escalation] Google: Google security alert indicating that the app Opal was granted access to the Google account.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure notification for the Jeeves — Research Phase job in the jeeves-unchained repository.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure notification for the Jeeves — Research Phase job in the jeeves-memory repository.\n- [escalation] Google: Google security alert about Claude for Google Drive access.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Research Phase workflow failed.\n- [escalation] \"Tithe.ly\": Tithe.ly notification that automated giving failed.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Research Phase workflow failed again.\n- [reply needed] Dean Ferguson: Dean Ferguson is requesting a letter of recommendation.\n- [reply needed] Greg Gorsuch: Greg Gorsuch sent a message titled \"changes 1\" with his phone number.",
+  "counts": {
+    "reply_needed": 2,
+    "decision_required": 0,
+    "scheduling": 0,
+    "follow_up": 0,
+    "escalation": 9,
+    "no_action": 38
+  }
+}
