@@ -1325,6 +1325,22 @@ def _invoke_write_llm(
         raise
 
 
+_NY_INTRO_MARKER = "reading from this week's Talk of the Town"
+_NY_SIGNOFF_MARKERS = ('<div class="signoff">', "<!-- COVERAGE_LOG")
+
+
+def _build_newyorker_block(text: str, url: str) -> str:
+    """Return formatted NEWYORKER_START…END block plus the Read link paragraph."""
+    paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
+    read_link = f'\n<p><a href="{url}">Read at The New Yorker</a></p>' if url else ""
+    return (
+        "<!-- NEWYORKER_START -->\n"
+        + "\n".join(f"<p>{p}</p>" for p in paragraphs)
+        + "\n<!-- NEWYORKER_END -->"
+        + read_link
+    )
+
+
 def _inject_newyorker_verbatim(html: str, session: SessionModel) -> str:
     """Replace Part 9's <!-- NEWYORKER_CONTENT_PLACEHOLDER --> with actual article text.
 
@@ -1334,42 +1350,170 @@ def _inject_newyorker_verbatim(html: str, session: SessionModel) -> str:
 
     The injected content is wrapped in <!-- NEWYORKER_START --> / <!-- NEWYORKER_END -->
     sentinel comments so the downstream narrative editor knows not to touch it.
+
+    Fallback behaviour when the placeholder is absent (Part 9 hallucinated content):
+    - Find the intro paragraph ("reading from this week's Talk of the Town")
+    - Find the sign-off anchor (<div class="signoff"> or <!-- COVERAGE_LOG)
+    - REPLACE everything between them with the real article block
+      (this surgically excises any hallucinated content and [TRUNCATED] artefacts)
     """
-    if "<!-- NEWYORKER_CONTENT_PLACEHOLDER -->" not in html:
-        if session.newyorker.available and session.newyorker.text:
-            log.warning(
-                "NEWYORKER_CONTENT_PLACEHOLDER missing from Part 9 output — "
-                "attempting fallback injection after Talk of the Town intro sentence."
-            )
-            # Fallback: inject verbatim text immediately after the intro paragraph.
-            intro_marker = "reading from this week's Talk of the Town"
-            if intro_marker in html:
-                idx = html.find(intro_marker)
-                close_p = html.find("</p>", idx)
-                if close_p != -1:
-                    paragraphs = [p.strip() for p in session.newyorker.text.split("\n\n") if p.strip()]
-                    formatted = (
-                        "\n<!-- NEWYORKER_START -->\n"
-                        + "\n".join(f"<p>{p}</p>" for p in paragraphs)
-                        + "\n<!-- NEWYORKER_END -->"
-                    )
-                    return html[: close_p + 4] + formatted + html[close_p + 4:]
-            log.warning(
-                "Talk of the Town intro sentence also missing — "
-                "verbatim article text will not appear in this briefing."
-            )
+    ny_text = session.newyorker.text if (session.newyorker.available and session.newyorker.text) else ""
+    ny_url = session.newyorker.url or ""
+
+    # Happy path: placeholder present.
+    if "<!-- NEWYORKER_CONTENT_PLACEHOLDER -->" in html:
+        if not ny_text:
+            return html.replace("<!-- NEWYORKER_CONTENT_PLACEHOLDER -->", "")
+        block = _build_newyorker_block(ny_text, ny_url)
+        return html.replace("<!-- NEWYORKER_CONTENT_PLACEHOLDER -->", block)
+
+    # Fallback: placeholder absent (model hallucinated content instead).
+    if not ny_text:
         return html
 
-    if not session.newyorker.available or not session.newyorker.text:
-        return html.replace("<!-- NEWYORKER_CONTENT_PLACEHOLDER -->", "")
-
-    paragraphs = [p.strip() for p in session.newyorker.text.split("\n\n") if p.strip()]
-    formatted = (
-        "<!-- NEWYORKER_START -->\n"
-        + "\n".join(f"<p>{p}</p>" for p in paragraphs)
-        + "\n<!-- NEWYORKER_END -->"
+    log.warning(
+        "NEWYORKER_CONTENT_PLACEHOLDER missing from Part 9 output — "
+        "excising hallucinated content and injecting verbatim article text."
     )
-    return html.replace("<!-- NEWYORKER_CONTENT_PLACEHOLDER -->", formatted)
+
+    # Find the intro sentence end.
+    if _NY_INTRO_MARKER not in html:
+        log.warning(
+            "Talk of the Town intro sentence also missing — "
+            "verbatim article text will not appear in this briefing."
+        )
+        return html
+
+    idx = html.find(_NY_INTRO_MARKER)
+    close_p = html.find("</p>", idx)
+    if close_p == -1:
+        log.warning("Could not find </p> after TOTT intro — skipping injection.")
+        return html
+    intro_end = close_p + 4  # position just after </p>
+
+    # Find the sign-off anchor — everything between intro_end and here gets replaced.
+    signoff_idx = -1
+    for marker in _NY_SIGNOFF_MARKERS:
+        pos = html.find(marker, intro_end)
+        if pos != -1:
+            if signoff_idx == -1 or pos < signoff_idx:
+                signoff_idx = pos
+
+    if signoff_idx == -1:
+        # No sign-off found — just insert after intro, leave rest intact.
+        log.warning("Could not find sign-off anchor; inserting after intro only.")
+        block = "\n" + _build_newyorker_block(ny_text, ny_url) + "\n"
+        return html[:intro_end] + block + html[intro_end:]
+
+    # Splice: intro_end … signoff_idx is the hallucinated zone — replace entirely.
+    block = "\n" + _build_newyorker_block(ny_text, ny_url) + "\n"
+    return html[:intro_end] + block + html[signoff_idx:]
+
+
+def _build_source_url_map(session: SessionModel) -> dict[str, str]:
+    """Build {source_name: canonical_url} from all structured session sectors.
+
+    Uses the `source` field (populated by Kimi during research) matched to
+    the first URL in the sector item's urls list. The map drives
+    _inject_source_links — which injects <a href> anchors deterministically
+    after the model generates prose.
+    """
+    mapping: dict[str, str] = {}
+
+    def _add(name: str | None, url: str | None) -> None:
+        if name and url and name not in mapping:
+            mapping[name] = url
+
+    for item in session.local_news or []:
+        urls = item.get("urls") if isinstance(item, dict) else getattr(item, "urls", [])
+        src = item.get("source") if isinstance(item, dict) else getattr(item, "source", None)
+        if urls:
+            _add(src, urls[0])
+
+    for item in session.global_news or []:
+        urls = item.get("urls") if isinstance(item, dict) else getattr(item, "urls", [])
+        src = item.get("source") if isinstance(item, dict) else getattr(item, "source", None)
+        if urls:
+            _add(src, urls[0])
+
+    for item in session.intellectual_journals or []:
+        url = item.get("url") if isinstance(item, dict) else getattr(item, "url", None)
+        src = item.get("source") if isinstance(item, dict) else getattr(item, "source", None)
+        _add(src, url)
+
+    for item in session.wearable_ai or []:
+        urls = item.get("urls") if isinstance(item, dict) else getattr(item, "urls", [])
+        src = item.get("source") if isinstance(item, dict) else getattr(item, "source", None)
+        if urls:
+            _add(src, urls[0])
+
+    for item in session.enriched_articles or []:
+        url = item.get("url") if isinstance(item, dict) else getattr(item, "url", None)
+        src = item.get("source") if isinstance(item, dict) else getattr(item, "source", None)
+        _add(src, url)
+
+    # Scalar sector URL fields.
+    to_urls = getattr(session.triadic_ontology, "urls", None) or []
+    if to_urls:
+        _add("Academia.edu", to_urls[0])
+    ai_urls = getattr(session.ai_systems, "urls", None) or []
+    if ai_urls:
+        _add("arXiv", ai_urls[0])
+    uap_urls = getattr(session.uap, "urls", None) or []
+    if uap_urls:
+        _add("House Oversight Committee", uap_urls[0])
+
+    return mapping
+
+
+def _inject_source_links(html: str, source_url_map: dict[str, str]) -> str:
+    """Deterministically inject <a href> anchors for known source names.
+
+    For each (source_name, url) pair, finds the FIRST occurrence of source_name
+    in the HTML that is NOT already inside an <a> tag, and wraps it in an anchor.
+    Operates on the raw HTML string using a split-on-anchors approach so existing
+    links are never disturbed.
+
+    Only the first occurrence per source is linked (enough to satisfy rule 8
+    without cluttering prose with repeated anchors to the same URL).
+    """
+    if not source_url_map:
+        return html
+
+    # Split HTML into alternating [outside_anchor, inside_anchor, ...] segments.
+    # We only modify segments that are NOT inside <a>…</a> tags.
+    # Pattern: everything up to an <a …>, the anchor content, the </a>, repeat.
+    _A_SPLIT = re.compile(r"(<a\b[^>]*>.*?</a>)", re.IGNORECASE | re.DOTALL)
+
+    for source_name, url in source_url_map.items():
+        if not source_name or not url:
+            continue
+        # Skip if already linked anywhere in the document.
+        if url in html:
+            continue
+        # Escape for use in a word-boundary regex.
+        escaped = re.escape(source_name)
+        pattern = re.compile(r"(?<![a-zA-Z0-9\-])" + escaped + r"(?![a-zA-Z0-9\-])")
+
+        segments = _A_SPLIT.split(html)
+        replaced = False
+        for i, seg in enumerate(segments):
+            if replaced:
+                break
+            # Even-indexed segments are outside anchors.
+            if i % 2 == 0 and pattern.search(seg):
+                new_seg, count = pattern.subn(
+                    lambda m, _url=url: f'<a href="{_url}">{m.group(0)}</a>',
+                    seg,
+                    count=1,
+                )
+                if count:
+                    segments[i] = new_seg
+                    replaced = True
+        if replaced:
+            html = "".join(segments)
+
+    return html
 
 
 _NARRATIVE_EDIT_SYSTEM_BASE = """
@@ -2057,7 +2201,14 @@ def generate_briefing(
     )
 
     # Inject the verbatim New Yorker article text (Part 9 uses a placeholder).
+    # Fallback excises any hallucinated TOTT content before the sign-off.
     stitched = _inject_newyorker_verbatim(stitched, session)
+
+    # Deterministically inject <a href> anchors for known source URLs.
+    # Runs after TOTT injection so the New Yorker block itself is also covered.
+    source_map = _build_source_url_map(session)
+    stitched = _inject_source_links(stitched, source_map)
+    log.info("source link injection: %d source→url pairs applied", len(source_map))
 
     # Final narrative quality + profane-asides pass via OpenRouter.
     # Pass the day-over-day recently-used list so OpenRouter picks fresh phrases.

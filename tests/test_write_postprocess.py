@@ -426,13 +426,56 @@ def test_inject_newyorker_verbatim_replaces_placeholder():
     assert first_para in result
 
 
-def test_inject_newyorker_verbatim_noop_when_no_placeholder():
-    """_inject_newyorker_verbatim returns html unchanged when placeholder is absent."""
+def test_inject_newyorker_verbatim_noop_when_no_placeholder_and_no_intro():
+    """_inject_newyorker_verbatim returns html unchanged when neither placeholder
+    nor intro sentence is present (no hallucinated TOTT to excise)."""
     from jeeves.write import _inject_newyorker_verbatim
 
     session = _session()
     html = "<p>no placeholder here</p>"
     assert _inject_newyorker_verbatim(html, session) == html
+
+
+def test_inject_newyorker_verbatim_excises_hallucinated_content():
+    """When placeholder is absent but intro sentence is present, the fallback
+    replaces everything between the intro </p> and the sign-off with real text,
+    removing any hallucinated TOTT content (including [TRUNCATED] artefacts)."""
+    from jeeves.write import _inject_newyorker_verbatim
+
+    session = _session()
+    hallucinated = (
+        "<p>And now, Sir, I take the liberty of reading from this week's "
+        "Talk of the Town in The New Yorker.</p>\n"
+        "<p>The White House Correspondents Dinner was absolutely tragic "
+        "publi [TRUNCATED]</p>\n"
+        '<div class="signoff"><p>Your reluctantly faithful Butler,<br/>Jeeves</p></div>\n'
+        "<!-- COVERAGE_LOG: [] -->\n</div></body></html>"
+    )
+    result = _inject_newyorker_verbatim(hallucinated, session)
+
+    assert "[TRUNCATED]" not in result
+    assert "White House Correspondents" not in result
+    assert "<!-- NEWYORKER_START -->" in result
+    assert "<!-- NEWYORKER_END -->" in result
+    assert "Your reluctantly faithful Butler" in result
+    first_para = session.newyorker.text.split("\n\n")[0].strip()
+    assert first_para in result
+
+
+def test_inject_newyorker_verbatim_fallback_includes_read_link():
+    """Fallback injection includes the Read at The New Yorker link."""
+    from jeeves.write import _inject_newyorker_verbatim
+
+    session = _session()
+    hallucinated = (
+        "<p>And now, Sir, I take the liberty of reading from this week's "
+        "Talk of the Town in The New Yorker.</p>\n"
+        "<p>Hallucinated content here.</p>\n"
+        '<div class="signoff"><p>Jeeves</p></div>'
+    )
+    result = _inject_newyorker_verbatim(hallucinated, session)
+    assert "Read at The New Yorker" in result
+    assert session.newyorker.url in result
 
 
 def test_inject_newyorker_verbatim_removes_placeholder_when_unavailable():
@@ -446,6 +489,66 @@ def test_inject_newyorker_verbatim_removes_placeholder_when_unavailable():
     result = _inject_newyorker_verbatim(html, session)
     assert "<!-- NEWYORKER_CONTENT_PLACEHOLDER -->" not in result
     assert "<!-- NEWYORKER_START -->" not in result
+
+
+def test_build_source_url_map_extracts_sector_sources():
+    """_build_source_url_map returns source→url pairs from all session sectors."""
+    from jeeves.write import _build_source_url_map
+
+    session = _session()
+    m = _build_source_url_map(session)
+
+    # local_news source
+    assert "myedmondsnews.com" in m
+    assert m["myedmondsnews.com"] == "https://myedmondsnews.com/council-parking"
+    # global_news source
+    assert "BBC" in m
+    assert m["BBC"] == "https://www.bbc.com/news/mock"
+
+
+def test_inject_source_links_wraps_first_unlinked_occurrence():
+    """_inject_source_links anchors the first unlinked mention of a source name."""
+    from jeeves.write import _inject_source_links
+
+    html = "<p>The BBC reports something. The BBC also noted this.</p>"
+    result = _inject_source_links(html, {"BBC": "https://bbc.example/mock"})
+
+    assert '<a href="https://bbc.example/mock">BBC</a>' in result
+    # Only the first occurrence is linked.
+    assert result.count('<a href="https://bbc.example/mock">') == 1
+    # Second occurrence is plain text.
+    assert "The BBC also noted" in result
+
+
+def test_inject_source_links_skips_already_linked_url():
+    """_inject_source_links skips a source whose URL is already present in the HTML."""
+    from jeeves.write import _inject_source_links
+
+    html = '<p>The <a href="https://bbc.example/mock">BBC</a> reports. BBC again.</p>'
+    result = _inject_source_links(html, {"BBC": "https://bbc.example/mock"})
+
+    # URL already present → no additional injection.
+    assert result.count('<a href="https://bbc.example/mock">') == 1
+    assert result == html
+
+
+def test_inject_source_links_does_not_nest_anchors():
+    """_inject_source_links never injects inside an existing <a> tag."""
+    from jeeves.write import _inject_source_links
+
+    html = '<p><a href="https://other.example">BBC latest</a> and BBC.</p>'
+    result = _inject_source_links(html, {"BBC": "https://bbc.example/mock"})
+
+    # "BBC latest" is inside an anchor — must not be wrapped.
+    assert '<a href="https://other.example">BBC latest</a>' in result
+
+
+def test_inject_source_links_noop_on_empty_map():
+    """_inject_source_links returns html unchanged when source_url_map is empty."""
+    from jeeves.write import _inject_source_links
+
+    html = "<p>The BBC reports. Reuters confirms.</p>"
+    assert _inject_source_links(html, {}) == html
 
 
 def test_narrative_edit_skipped_when_no_key(monkeypatch):
