@@ -2084,8 +2084,11 @@ def postprocess_html(raw: str, session: SessionModel) -> BriefingResult:
 
     if "yours faithfully" in body_text.lower():
         log.warning("WRONG SIGNOFF: 'Yours faithfully' found — replacing with correct sign-off")
-        html = html.replace("Yours faithfully,", "Your reluctantly faithful Butler,")
-        html = html.replace("Yours faithfully", "Your reluctantly faithful Butler,")
+        html = re.sub(
+            r"[Yy]ours faithfully,?",
+            "Your reluctantly faithful Butler,",
+            html,
+        )
 
     return BriefingResult(
         html=html,

@@ -1,10 +1,8 @@
 name: Jeeves — Write Phase
 
-# 70 minutes after research begins. Briefing reaches Gmail around 7:30 AM PDT.
-# 6:40 AM PDT (UTC-7) / 7:40 AM PST (UTC-8)
+# Manual dispatch only — daily automated runs go through daily.yml which
+# chains correspondence → research → write in sequence.
 on:
-  schedule:
-    - cron: '40 13 * * *'
   workflow_dispatch:
     inputs:
       date:

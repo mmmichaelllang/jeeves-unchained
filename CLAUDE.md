@@ -10,7 +10,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Current focus
 
-**Phase 2/3/4 — tenth sprint complete (PR #56, 2026-04-28).** Output quality: CSS scaffold, URL fabrication prevention, COVERAGE_LOG dedup, Jina TOC fallback, Part 9 branch separation. Plus codebase audit fixes: tavily string guard, newyorker repair hint, NewYorker schema byline/date. All 184 tests green.
+**Phase 2/3/4 — eleventh sprint complete (2026-04-28).** Workflow automation + production hardening. All 187 tests green.
 
 **Research architecture (as of 2026-04-28, post PRs #43–#46):**
 - Sequential sector execution (`_SECTOR_SEMAPHORE=1`) — NIM free tier can't handle concurrent Kimi agents.
@@ -56,22 +56,22 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Where we left off (2026-04-28)
 
-- **PRs #43–#56, all merged.** All phases live on `main` (Phases 2, 3, 4 fully wired). Cron: correspondence `0 12`, research `30 12`, write `40 13`.
-- **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** if not already done — without it the final narrative editor pass is silently skipped, losing the 5 profane asides, paragraph rhythm surgery, and filler deletion.
-- **184 tests green** as of this sprint.
+- **Sprint 11 complete (no PR — direct to main).** Workflow unification + production hardening.
+- **Pipeline entry point is now `daily.yml`** (cron `0 12`). Runs correspondence → research → write as sequential jobs. `correspondence.yml`, `research.yml`, `write.yml` are manual-dispatch only (no crons).
+- **187 tests green** as of this sprint.
+- `OPENROUTER_API_KEY` added to GitHub Secrets ✓. `JINA_API_KEY` added ✓ and now wired into `_jina_fetch()` in `talk_of_the_town.py`.
 
-### Tenth sprint (PR #56) — what was fixed
+### Eleventh sprint (2026-04-28) — what was fixed
 
-| PR | Problem | Fix |
+| File | Problem | Fix |
 |---|---|---|
-| #56 | Emailed briefing used Arial/sans-serif instead of Georgia | `_system_prompt_for_parts` strips `## HTML scaffold` from `write_system.md` → model had no CSS guidance. Fixed: full CSS scaffold embedded directly in `PART1_INSTRUCTIONS` — copy-exactly with Georgia, `#faf9f6`, 720px, line-height 1.7 |
-| #56 | Only one linked article when `career: {}` — fabricated school/district URLs | Rule 14 in `CONTINUATION_RULES`: `NEVER INVENT URLS` — every href must appear verbatim in the payload. `PART3_INSTRUCTIONS` `EMPTY CAREER FEED — HARD RULE`: one sentence + sentinel when career is empty, no URLs |
-| #56 | Two `COVERAGE_LOG` comments appearing in output | `_ensure_coverage_log` rewritten with strict priority: synthesize from real `<a href>` anchors (ground truth) wins → fall back to model-written log only when no anchors → always consume PLACEHOLDER. All stale model logs stripped before inserting synthesized log |
-| #56 | Talk of the Town `available=False` — TOC page is JS-rendered, direct HTTP returns no article links | `_extract_paths` on raw TOC returns `[]` → Jina AI reader fallback (`r.jina.ai/TOC_URL`) processes JS-rendered page → paths extracted from Jina markdown |
-| #56 | Part 9 wrote both Branch A and Branch B content simultaneously | `PART9_INSTRUCTIONS` rewritten with explicit `BRANCH A` / `BRANCH B` separation and hard guards: "WRITE BRANCH A AND NOTHING ELSE. Do NOT also write Branch B." |
-| #56 | `tavily_extract` silently failed when Kimi passed a bare string URL instead of list | Added `if isinstance(urls, str): urls = [urls]` guard before empty check — string sliced to 10 chars would pass malformed input to Tavily client |
-| #56 | `_REPAIR_SHAPE_HINT["newyorker"]` used generic `{"findings": ..., "urls": [...]}` schema | Corrected to actual newyorker shape: `{available, title, section, dek, byline, date, text, url, source}` — repair agent now produces usable newyorker output |
-| #56 | `NewYorker` pydantic model missing `byline` and `date` as declared fields | Added both as `str = ""` fields — previously stored as extras via `extra="allow"` but not typed or validated |
+| workflows | `correspondence.yml` chained to `research.yml` only on `workflow_dispatch` — scheduled runs each fired independently, no cascade | Created `daily.yml` (sequential jobs: correspondence → research → write); stripped crons from all three individual workflows |
+| `write.py` | `re.sub` signoff fix — `"yours faithfully"` check was case-insensitive but `str.replace()` was case-sensitive; missed lowercase model output | Replaced with `re.sub(r"[Yy]ours faithfully,?", ...)` |
+| `tools/enrichment.py` | `httpx.get()` opened a new TCP connection per article fetch — costly for enriched_articles sector which fetches many URLs | Module-level `httpx.Client` with connection reuse |
+| `tools/serper.py` | Same issue — new httpx client per search call | Module-level `httpx.Client` with connection reuse |
+| `gmail.py` | `req.execute()` had no retry on transient 5xx / 429 from Gmail API | Added `num_retries=3` to both `list_message_ids` and `fetch_message` execute calls |
+| `tools/talk_of_the_town.py` | `JINA_API_KEY` in GitHub Secrets but not used — Jina API runs unauthenticated (lower rate limits) | `_jina_fetch()` reads `JINA_API_KEY` from env and adds `Authorization: Bearer` header when present |
+| `daily.yml` / `research.yml` | `JINA_API_KEY` not passed through workflow env | Added to both workflow env blocks |
 
 ### Ninth sprint (PR #55) — what was fixed
 
@@ -167,11 +167,10 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Dev branch
 
-- **Current**: `claude/forensic-fixes-sprint6` (PR #53 open — quota ledger locking, session truncation guard)
-- Prior sprint: `claude/forensic-fixes-sprint6` (PR #53 merged — HTML injection fix, pagination fix, dead code removal)
-- Prior sprint: `claude/fix-gemini-json-return-sprint5` (PRs #50–#52 all merged)
-- Prior sprint: `claude/fix-jeeves-research-workflow-Jo1u5` (PRs #43–#49 all merged)
-- Prior major work: `claude/improve-dedup-triadic-studies-rEgcE` (#34), `claude/never-empty-news-fallbacks-rEgcE` (#33), `claude/forensic-audit-fixes-rEgcE` (#32)
+- **Current**: `main` (sprint 11 pushed directly — workflow unification + production hardening, 187 tests green)
+- Prior: `main` (PRs #56–#60 merged — Sprint 10: dedup overhaul, TOTT RSS-first, daily.yml, OpenRouter Kimi fallback, write quality fixes)
+- Prior: `claude/guaranteed-sector-retry-sprint8` (PRs #54–#55 merged)
+- Prior: `claude/forensic-fixes-sprint6` (PR #53 merged)
 
 ## Gotchas the README doesn't flag
 
@@ -205,10 +204,9 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Dev branch
 
-- **Current**: `main` (all PRs merged, clean)
-- Prior: `claude/write-quality-sprint10` (PR #56 merged)
+- **Current**: `main` (sprint 11 pushed directly — all clean, 187 tests green)
+- Prior: `main` (PRs #56–#60 merged — Sprint 10)
 - Prior: `claude/guaranteed-sector-retry-sprint8` (PRs #54–#55 merged)
-- Prior: `claude/forensic-fixes-sprint6` (PR #53 merged)
 
 ## Quick nav (file:line pointers)
 
@@ -219,7 +217,8 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - `jeeves/prompts/correspondence_write.md` — Groq system prompt (persona, slip list, HTML scaffold, banned words)
 - `scripts/gmail_auth.py` — one-shot OAuth flow that mints `GMAIL_OAUTH_TOKEN_JSON`
 - `jeeves/gmail.py:41` — `build_gmail_service` (consumes the token JSON, auto-refreshes)
-- `.github/workflows/correspondence.yml` — cron + `workflow_dispatch` inputs (`date`, `skip_send`, `use_fixture`, `dry_run`)
+- `.github/workflows/daily.yml` — **primary cron entry point** (cron `0 12`); sequential jobs: correspondence → research → write
+- `.github/workflows/correspondence.yml` — manual-dispatch only (`date`, `skip_send`, `use_fixture`, `dry_run`)
 - `jeeves/config.py` — `Config.from_env()`, `MissingSecret`
 - `jeeves/schema.py` — `SessionModel` + `FIELD_CAPS`
 

@@ -1,11 +1,8 @@
 name: Jeeves — Correspondence Phase
 
-# Runs first in the daily chain so the research phase can pick up today's
-# sessions/correspondence-<date>.json before it assembles the session.
-# 5:00 AM PDT (UTC-7) / 6:00 AM PST (UTC-8)
+# Manual dispatch only — daily automated runs go through daily.yml which
+# chains correspondence → research → write in sequence.
 on:
-  schedule:
-    - cron: '0 12 * * *'
   workflow_dispatch:
     inputs:
       date:
