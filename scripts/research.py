@@ -38,7 +38,7 @@ from jeeves.research_sectors import (  # noqa: E402
     run_sector,
 )
 from jeeves.schema import CorrespondenceHandoff  # noqa: E402
-from jeeves.session_io import load_prior_sessions, load_previous_session, save_session  # noqa: E402
+from jeeves.session_io import load_prior_sessions, save_session  # noqa: E402
 from jeeves.tools.emit_session import ResearchContext  # noqa: E402
 from jeeves.tools.quota import QuotaLedger  # noqa: E402
 
@@ -163,7 +163,7 @@ def _load_prior_coverage_urls(cfg: Config) -> set[str]:
 async def _run_sector_loop(
     cfg: Config,
     ctx: ResearchContext,
-    prior_urls: set[str],
+    prior_urls_ordered: list[str],
     prior_headlines: set[str],
     ledger: QuotaLedger,
     *,
@@ -172,47 +172,65 @@ async def _run_sector_loop(
     quota_summary: str = "",
     story_continuity: str = "",
 ) -> None:
-    """Run SECTOR_SPECS with up to _SECTOR_SEMAPHORE concurrent agents.
+    """Run SECTOR_SPECS sequentially, updating the dedup context after each sector.
 
-    Non-enriched sectors run in parallel (max 3 at a time). The special
-    `enriched_articles` sector always runs last, seeded with URLs discovered
-    across all earlier sectors.
+    `enriched_articles` always runs last, seeded with all URLs discovered
+    across earlier sectors today.
 
-    Prior-session headlines are carried forward in dedup.covered_headlines so
-    the write phase can synthesize across days rather than treating every story
-    as new.
+    Key design decisions:
+    - Sequential (not asyncio.gather): semaphore=1 made gather sequential anyway,
+      but gather still dispatched all closures simultaneously — each captured the
+      SAME frozen prior_sample from before any sector ran. Fix: explicit for-loop
+      so we can grow prior_sample after every sector.
+    - prior_sample grows progressively: after each sector we append its discovered
+      URLs so the NEXT sector sees full within-session context (not just yesterday).
+    - prior_urls_ordered is newest-first: caller builds it by walking prior sessions
+      newest→oldest, then COVERAGE_LOG. A 150-URL cap keeps the prompt size bounded
+      while guaranteeing yesterday's URLs always appear first.
+    - Today's discovered headlines go to the HEAD of covered_headlines; prior-session
+      headlines go to the tail. Write phase [:80] then always captures fresh content.
     """
 
-    prior_sample = sorted(prior_urls)[:50]
+    # Start with the most recent 150 prior URLs (recency-ordered by caller).
+    prior_sample: list[str] = list(prior_urls_ordered[:150])
+    # Keep a set for O(1) membership checks when growing prior_sample.
+    prior_sample_set: set[str] = set(prior_sample)
+
     session: dict[str, Any] = {
         "date": cfg.run_date.isoformat(),
         "status": "complete",
-        "dedup": {"covered_urls": [], "covered_headlines": sorted(prior_headlines)},
+        "dedup": {"covered_urls": [], "covered_headlines": []},
     }
     discovered_urls: list[str] = []
-    discovered_headlines: list[str] = sorted(prior_headlines)
+    discovered_headlines: list[str] = []
 
     specs = _filter_specs(SECTOR_SPECS, sector_whitelist, limit)
     non_enriched = [s for s in specs if s.name != "enriched_articles"]
     enriched_spec = next((s for s in specs if s.name == "enriched_articles"), None)
 
-    sem = asyncio.Semaphore(_SECTOR_SEMAPHORE)
-
-    async def _run_one(spec):
-        async with sem:
-            return spec.name, await run_sector(
-                cfg, spec, prior_sample, ledger,
-                quota_summary=quota_summary,
-                story_continuity=story_continuity,
-            )
-
-    log.info("running %d non-enriched sectors (max %d concurrent)…", len(non_enriched), _SECTOR_SEMAPHORE)
-    results = await asyncio.gather(*[_run_one(spec) for spec in non_enriched])
-
-    for name, value in results:
+    log.info("running %d non-enriched sectors sequentially…", len(non_enriched))
+    for spec in non_enriched:
+        name, value = spec.name, await run_sector(
+            cfg, spec, prior_sample, ledger,
+            quota_summary=quota_summary,
+            story_continuity=story_continuity,
+        )
         session[name] = value
-        discovered_urls.extend(collect_urls_from_sector(value))
+
+        new_urls = collect_urls_from_sector(value)
+        discovered_urls.extend(new_urls)
         discovered_headlines.extend(collect_headlines_from_sector(value))
+
+        # Grow prior_sample so the NEXT sector sees today's findings.
+        for u in new_urls:
+            if u not in prior_sample_set:
+                prior_sample.append(u)
+                prior_sample_set.add(u)
+
+        log.debug(
+            "sector %s done — prior_sample now %d URLs, %d today's headlines",
+            name, len(prior_sample), len(discovered_headlines),
+        )
 
     if enriched_spec is not None:
         seed = "\n".join(discovered_urls[:25]) or "(no candidate URLs from prior sectors)"
@@ -233,7 +251,11 @@ async def _run_sector_loop(
         session.setdefault(spec.name, spec.default)
 
     session["dedup"]["covered_urls"] = sorted(set(discovered_urls))
-    session["dedup"]["covered_headlines"] = sorted(set(discovered_headlines))
+    # Today's discoveries first so write-phase [:80] always captures fresh content;
+    # prior-session headlines at the tail for cross-day context.
+    today_hl = list(dict.fromkeys(discovered_headlines))  # dedupe, preserve order
+    prior_hl_list = sorted(prior_headlines - set(today_hl))
+    session["dedup"]["covered_headlines"] = today_hl + prior_hl_list
     ctx.session = session
 
 
@@ -332,19 +354,29 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     # Rolling 7-day window: merge covered URLs and headlines from all recent sessions.
+    # Build prior_urls_ordered newest-first so the 150-URL cap in _run_sector_loop
+    # always includes yesterday's URLs rather than an alphabetical mix of 7 days.
     prior_sessions = load_prior_sessions(cfg, days=7)
-    prior_urls: set[str] = set()
+    prior_urls_ordered: list[str] = []
+    prior_urls_seen: set[str] = set()
     prior_hl: set[str] = set()
-    for sess in prior_sessions:
-        prior_urls |= covered_urls(sess)
+    for sess in prior_sessions:  # load_prior_sessions returns newest-first
+        for u in covered_urls(sess):
+            if u not in prior_urls_seen:
+                prior_urls_ordered.append(u)
+                prior_urls_seen.add(u)
         prior_hl |= get_covered_headlines(sess)
 
-    # COVERAGE_LOG feedback: URLs that Jeeves actually cited in recent briefings.
-    prior_urls |= _load_prior_coverage_urls(cfg)
+    # COVERAGE_LOG feedback: URLs Jeeves actually cited in prose go first —
+    # they are the highest-confidence already-covered signal.
+    for u in _load_prior_coverage_urls(cfg):
+        if u not in prior_urls_seen:
+            prior_urls_ordered.insert(0, u)
+            prior_urls_seen.add(u)
 
     log.info(
-        "%d prior sessions loaded: %d URLs, %d headlines in rolling dedup set.",
-        len(prior_sessions), len(prior_urls), len(prior_hl),
+        "%d prior sessions loaded: %d URLs (ordered), %d headlines in rolling dedup set.",
+        len(prior_sessions), len(prior_urls_ordered), len(prior_hl),
     )
 
     ledger = QuotaLedger(cfg.quota_state_path)
@@ -362,7 +394,7 @@ def main(argv: list[str] | None = None) -> int:
             _run_sector_loop(
                 cfg,
                 ctx,
-                prior_urls,
+                prior_urls_ordered,
                 prior_hl,
                 ledger,
                 sector_whitelist=sector_whitelist,
@@ -377,7 +409,7 @@ def main(argv: list[str] | None = None) -> int:
     _merge_correspondence_handoff(cfg, ctx)
 
     if not ctx.has_session:
-        log.error("agent halted without calling emit_session — writing degraded payload.")
+        log.error("sector loop produced no session data — writing degraded payload.")
         session = _force_fallback_session(cfg, "no_emit_session_call")
     else:
         session = ctx.session

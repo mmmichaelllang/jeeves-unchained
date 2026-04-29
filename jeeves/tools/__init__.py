@@ -102,7 +102,7 @@ def all_search_tools(
             ),
         ),
         FunctionTool.from_defaults(
-            fn=fetch_talk_of_the_town(prior_urls),
+            fn=fetch_talk_of_the_town(prior_urls, jina_api_key=cfg.jina_api_key),
             name="fetch_new_yorker_talk_of_the_town",
             description=(
                 "Fetch the latest New Yorker 'Talk of the Town' article not already "
