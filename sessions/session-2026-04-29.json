@@ -1,0 +1,428 @@
+{
+  "date": "2026-04-29",
+  "status": "complete",
+  "dedup": {
+    "covered_urls": [
+      "http://arxiv.org/abs/2602.08990v1",
+      "http://www.ibtimes.co.uk/scientist-says-congress-was-briefed-ufo-crash-retrieval-nhi-programs-secret-rooms-1773770",
+      "http://www.seattlepromusica.org/auditions",
+      "https://aeon.co/essays/medieval-art-makes-the-body-a-site-of-theology-and-politics",
+      "https://arxiv.org/abs/2603.27008v1",
+      "https://arxiv.org/abs/2603.28986v1",
+      "https://arxiv.org/pdf/2602.02660",
+      "https://audria.tech/",
+      "https://briskteaching.com/",
+      "https://bsd405.schoolspring.com/",
+      "https://compasswearable.com",
+      "https://diffit.me/",
+      "https://docs.house.gov/Committee/Calendar/ByEvent.aspx?EventID=117721",
+      "https://friend.com/",
+      "https://humane.com/",
+      "https://humy.ai/",
+      "https://limitless.ai/",
+      "https://magicschool.ai/",
+      "https://myedmondsnews.com/",
+      "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/",
+      "https://myedmondsnews.com/2026/04/council-approves-key-contracts-drops-potential-tree-litigation-and-proclaims-april-9-local-news-day/",
+      "https://myedmondsnews.com/2026/04/edmonds-at-center-of-discussions-as-south-county-fire-commissioners-embark-on-redistricting/",
+      "https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/",
+      "https://nirva.life/",
+      "https://nwchorale.org/",
+      "https://olex.ai/",
+      "https://omi.me/",
+      "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
+      "https://philarchive.org/archive/ISATRO-4",
+      "https://sno-isle.bibliocommons.com/v2/events?locations=18&audiences=5ecfd4bde19e6b240078b87c%2C5ecfd4c12b35532f00c841ec%2C5ecfd4b707f0884500ce8c9f%2C5f0ce9c2036b39880a776ab0%2C5f0ce9be8497d4760a06c16a",
+      "https://sureprompts.com/blog/prompting-reasoning-models-guide",
+      "https://talents.vaia.com/companies/lake-washington-school-district/english-language-arts-teacher-1-0-fte-lake-washington-high-school-34165538/",
+      "https://wareit.ai/",
+      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
+      "https://www.applitrack.com/lakewashington/onlineapp/default.aspx?all=1",
+      "https://www.bbc.com/news",
+      "https://www.bee-ai-pendant.com/",
+      "https://www.choralartsnw.org/",
+      "https://www.cnn.com/2026/04/28/world/live-news/iran-war-trump-israel",
+      "https://www.everettwa.gov/Calendar.aspx?EID=7677",
+      "https://www.facebook.com/ImagineChildrensMuseum/",
+      "https://www.newyorker.com/magazine/2026/04/27/the-talk-of-the-town-april-27-2026",
+      "https://www.nomos-elibrary.de/880328.pdf",
+      "https://www.nsd.org/our-district/departments/human-resources/employment/certificated-employment",
+      "https://www.nwassociatedarts.org/contact-us/auditions/",
+      "https://www.nybooks.com/articles/2026/04/23/blood-in-the-game-bloodline-fever-beach/",
+      "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
+      "https://www.reuters.com/legal/transactional/blocking-metas-ai-startup-buy-raises-risk-cross-border-china-tech-deals-2026-04-28/",
+      "https://www.reuters.com/world/middle-east/us-iran-clash-un-after-tehran-gets-nuclear-non-proliferation-role-2026-04-27/",
+      "https://www.reuters.com/world/pope-first-female-archbishop-canterbury-meet-pray-together-2026-04-27/",
+      "https://www.samsung.com/project-luna",
+      "https://www.themarginalian.org/2026/02/27/fanny-wright-traversal/"
+    ],
+    "covered_headlines": [
+      "Edmonds City Council approved key contracts including a $415,116 wastewater treatment plant gasification system support contract with Jacobs Engineeri",
+      "The South County Fire Board of Commissioners is working on redistricting plans to incorporate Edmonds' 42,000+ residents into the Regional Fire Author",
+      "Edmonds will begin a major sewer and storm pipe rehabilitation project on May 4, targeting 27 locations with failing infrastructure identified in a 20",
+      "The City of Edmonds hosted an open house to share the 60% design plan for Stage 3 of the Highway 99 Revitalization Project.",
+      "Edmonds police are investigating a multistate human trafficking case and have arrested a 30-year-old suspect.",
+      "Let me extract details from the specific job postings I found and search for a few more current openings toily_extract:0",
+      "Seattle Pro Musica: auditions for 2026-27 season open in August—email auditions@seattlepromusica.",
+      "Sno-Isle Libraries toddler goldmine: Edmonds Library offers Baby Storytime (0-18 mo) and Preschool Storytime (3-5 yrs);",
+      "The United Arab Emirates announced it will permanently withdraw from OPEC on May 1, 2026, in a major blow to the oil cartel amid the ongoing Iran war.",
+      "China has blocked Meta's $2+ billion acquisition of AI startup Manus, ordering the deal unwound under national security review.",
+      "King Charles III began his historic US state visit, addressing Congress to defend 'democratic values' following the assassination attempt on President",
+      "The US and Iran clashed at the UN on Monday over Tehran's selection as a vice president for the Nuclear Non-Proliferation Treaty conference.",
+      "Pope Leo held his first meeting with new Archbishop of Canterbury Sarah Mullally in a symbolic Vatican encounter.",
+      "In a richly illustrated essay, medievalist Denva Gallant shows how 13th-century mosaics in Venice’s St Mark’s Basilica turn the human body into a stag",
+      "A joint ProPublica–FRONTLINE investigation finds that more than 300 U.",
+      "Maria Popova revisits the life of Frances “Fanny” Wright, the 19th-century Scottish-American reformer whose radical blend of scientific inquiry, aboli",
+      "Francine Prose reviews two new novels—Lee Clay Johnson’s Bloodline and Carl Hiaasen’s Fever Beach—that confront the violence and corruption of contemp",
+      "Friend AI Pendant (friend.",
+      "MagicSchool.",
+      "Humane AI Pin - $348M-funded SF device, acquired by HP Feb 2025 for $116M, now reborn as HP IQ innovation lab;",
+      "Three 2025-2026 works advance triadic-relational metaphysics: Migliorini’s monograph unites trinitarian dogma with analytic ontology, proposing divine",
+      "Three new papers push autonomous AI research from prototype to production-grade systems.",
+      "The 13 November 2024 joint House hearing “Unidentified Anomalous Phenomena: Exposing the Truth” featured former DoD official Luis Elizondo, retired RA",
+      "The New Normal",
+      "NYRB Aeon LRB 2026 latest articles Iran war medieval art theology",
+      "A 31-year-old California man has been charged with attempted assassination after opening fire at the White House Correspondents' Dinner attended by Pr",
+      "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail in Everett at 7:25 a.",
+      "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail medical housing unit around 7:25 a.",
+      "Armed groups launch co-ordinated attacks across Mali - BBC",
+      "As Arrests at Anti-ICE Protests Piled Up, Prosecutions Crumbled",
+      "Auditions — Seattle Pro Musica",
+      "Bellevue",
+      "Bellevue Christian",
+      "Bellevue Christian School",
+      "British Prime Minister Keir Starmer faces a parliamentary vote tomorrow on whether to launch an inquiry into whether he misled the House of Commons ov",
+      "British police seized £175,000 worth of gold and silver bullion along with £13,000 cash in Hull during an anti-slavery operation.",
+      "Buddi AI Wearable: 6-person Bothell, WA (local) startup founded 2024.",
+      "Certificated Teacher Pool",
+      "City shares design for next phase of Hwy 99 revitalization and asks public to weigh in.",
+      "City shares design for next phase of Hwy 99 revitalization, asks public to weigh in",
+      "Colin Powers' analysis 'The Emirates on the Tightrope' provides a deep dive into the UAE's precarious position during the Iran war.",
+      "Colm Tóibín's review of 'For and Against a United Ireland' by Fintan O'Toole and Sam McBride examines the complex practicalities of Irish reunificatio",
+      "Congress is accelerating its UAP-disclosure drive.",
+      "Council approves key contracts, drops potential tree litigation and proclaims April 9 Local News Day",
+      "Dual Language (English/Spanish) Teacher",
+      "Edmonds",
+      "Edmonds Library (650 Main St) offers Toddler Storytime for 18 months–3 years on Thursdays, next session May 7 at 10:30 am with Cami—check sno-isle.",
+      "Edmonds School District",
+      "Edmonds police blotter for the week ending April 19 included a theft arrest of an adult female at Highway 99, a warrant arrest, and various other mino",
+      "Edmonds to begin sewer storm pipe rehabilitation project on May 4.",
+      "Edmonds to begin sewer, storm pipe rehabilitation project May 4",
+      "English Language Arts Teacher",
+      "English Language Arts Teacher (0.6 FTE)",
+      "English Language Arts Teacher (Long-Term Sub)",
+      "English Language Development Teacher – Secondary",
+      "English and History teachers now have three well-funded, purpose-built AI co-teachers.",
+      "Everett",
+      "Everett Public Schools",
+      "Eyal Weizman's 'All they will find is sand: Gaza’s Yellow Line' provides a forensic analysis of Israel's systematic destruction of Gaza's built enviro",
+      "Fintan O'Toole's essay 'The Right Amount of Crazy' dissects Trump's application of the 'Madman Theory' in foreign policy, particularly regarding Iran.",
+      "Friend AI Pendant (MyTabAI, Inc): $7.",
+      "Friend AI pendant ($99) - A circular, always-listening companion that records ambient audio and sends contextual text messages via iOS app.",
+      "Friend AI pendant: $99 wearable that records ambient audio and sends text messages to your phone in real-time.",
+      "Friend and Tab pendants represent the new wave of lifelogging wearables that continuously record audio for AI analysis.",
+      "From the Rooftops of Tehran | Anonymous | The New York Review of Books",
+      "Global diplomatic efforts are fraying as the Iran conflict shows no resolution and new crises emerge.",
+      "Gold and silver bullion seized in anti-slavery raid in Hull",
+      "High School English / History Teacher",
+      "High School English Teacher",
+      "High School English Teacher (Long-Term Sub)",
+      "High School History Teacher",
+      "High-School English Teacher",
+      "Humane AI Pin: $699 wearable with cameras and microphones, positioned as smartphone replacement.",
+      "Hungarian Prime Minister Viktor Orbán stepped down from parliament after his Fidesz party suffered a landslide defeat in April elections, ending his 1",
+      "Ian Penman revisits the Beach Boys’ catalog as sacred text, arguing that Brian Wilson’s 1966 masterpiece Pet Sounds achieves the rare alchemy of secul",
+      "In \"Triadic Logic and the Quantum Entanglement of Relations\" (2026, Sophia Studies), philosopher-theologian Dr.",
+      "In \"Triadic Ontology and Quantum Perichoresis: A Relational Metaphysics for the 21st Century\" (Routledge, 2026), philosopher-theologian Dr.",
+      "In a lyrical meditation on flight and vulnerability, Maria Popova explores how birds’ V-formation embodies both aerodynamic efficiency and interdepend",
+      "Iran has officially rejected any US talks while under siege, as Foreign Minister Abbas Araghchi returns to Pakistan.",
+      "Iran war to push global energy prices to four-year high, World Bank says",
+      "Jake Nevins examines how the 2026 Winter Olympics in Italy, initially framed around the theme of 'armonia' (harmony), became a stage for geopolitical",
+      "Jo Livingstone's essay 'We Goofed' examines Yale's new exhibition on literary errata, exploring how publishers' correction slips have evolved from pra",
+      "Join Us - Seattle Choral Company",
+      "King Charles III has begun a historic four-day US state visit, addressing Congress on Tuesday to defend 'democratic values' following Saturday's assas",
+      "Lake Washington",
+      "Lake Washington School District",
+      "Late-night highway shutdowns are coming near Alderwood",
+      "Late-night highway shutdowns are coming near Alderwood - Edmonds Beacon",
+      "Lifelogging and lifestyle wearables are converging on discreet jewelry form factors.",
+      "Live updates: Iran war, Israel-Lebanon ceasefire extended by 3 weeks, Trump says | CNN",
+      "Live updates: Trump says he called off dispatching envoys to Iran talks",
+      "MagicSchool AI - Used by 7,000 Hillsborough County teachers for lesson planning, worksheet creation, and presentations.",
+      "MagicSchool AI: $62.",
+      "MagicSchool: 80+ teacher tools including Worksheet Generator, Presentation Generator, and MagicQuizzes for formative assessment.",
+      "Mali's Defense Minister General Sadio Camara was assassinated in an attack by Al Qaeda-linked group JNIM on his residence at the Kati military base ou",
+      "Mali's capital Bamako came under coordinated attack by armed groups including al-Qaeda-linked JNIM and Tuareg FLA rebels, described as the largest jih",
+      "Marysville",
+      "Mexico has stated that two CIA agents killed in a car crash were not authorized to participate in a local raid.",
+      "Mukilteo",
+      "North Korea has officially confirmed for the first time that it deployed 14,000 troops to fight alongside Russia in Ukraine under Kim Jong Un's direct",
+      "Northshore",
+      "Northshore School District",
+      "Philosopher Nir Eisikovits warns in Jacobin that outsourcing judgment to AI chatbots is creating a \"decaffeinated subjectivity\"—a hollowed-out capacit",
+      "Pope Leo and the first female Archbishop of Canterbury, Sarah Mullally, met for the first time at the Vatican in a symbolic encounter.",
+      "President Trump abruptly cancelled a planned US delegation trip to Pakistan for Iran peace talks, saying envoys Steve Witkoff and Jared Kushner would",
+      "President Trump was rushed to safety by Secret Service agents after shots were fired inside the Washington Hilton hotel during the White House Corresp",
+      "Recent 2026 developments show Congress held a classified UAP briefing on March 25, described as highly bipartisan, amid growing scrutiny over missing",
+      "Robert G.",
+      "Russia launched a major overnight assault on Ukraine with over 660 drones and missiles, killing at least seven people including five in Dnipro.",
+      "Samsung's New 'Project Luna' AI Desktop Companion Has Ballie Spirit",
+      "Seattle",
+      "Seattle Choral Company is accepting singers from all sections year-round; auditions consist of vocalizing, sight-reading, and ear training.",
+      "Seattle Public",
+      "Seattle Public Schools",
+      "Secondary History Teacher",
+      "Secondary Social Studies Teacher",
+      "Secondary Teacher Pool",
+      "Secondary Teacher Pool (Grades 6-12)",
+      "Shoreline",
+      "Snohomish",
+      "Snohomish School District",
+      "South County Fire commissioners are redistricting to incorporate Edmonds' 42,000+ residents into the Regional Fire Authority.",
+      "Starmer faces vote on possible parliamentary probe over Mandelson",
+      "Starting tonight, Sunday, April 26, and continuing through Friday morning, May 1, overnight closures will affect northbound SR 525 and its ramps near",
+      "State Route 525 near Alderwood Mall Parkway will undergo overnight closures from Sunday night April 26 through Friday morning May 1 for pavement grind",
+      "The City Council approved key contracts including a $415,116 wastewater treatment plant gasification system support contract with Jacobs Engineering,",
+      "The City of Edmonds hosted an open house on Thursday, April 25 to unveil the 60 % design plan for Stage 3 of the Highway 99 Revitalization Project.",
+      "The European Commission has given Google instructions on how to help AI rivals access its services under the Digital Markets Act.",
+      "The House Oversight Subcommittee on National Security held a closed-door briefing on UAPs on April 24, 2026, with no official readout provided to the",
+      "The House Oversight subcommittee on National Security held a closed-door UAP briefing on April 24, 2026, but issued no public readout, frustrating tra",
+      "The IMF has downgraded global growth forecasts to 3.",
+      "The New Yorker’s New Look",
+      "The Talk of the Town: April 27, 2026",
+      "The United States and Iran clashed at the United Nations on Monday over Tehran's nuclear program and its selection as a vice president for the month-l",
+      "The autonomous research landscape has exploded with multi-agent systems now capable of end-to-end scientific discovery.",
+      "The field is converging on modular, agent-swarm architectures that can autonomously spin up sub-agents for literature review, experiment design, and e",
+      "The global economy faces severe strain as the Iran conflict has escalated beyond geopolitical tension to tangible supply disruption, with Iran's closu",
+      "Three 2026 papers show multi-agent AI pivoting from hype to hardened systems.",
+      "Three fresh papers map the cutting edge of triadic-relational metaphysics.",
+      "Tony J Prescott's essay 'Why the best way to understand the self is to build a robot one' argues that creating embodied AI systems is essential to und",
+      "Toxic fumes are spreading through the Russian Black Sea town of Tuapse after repeated Ukrainian drone attacks on the local oil refinery.",
+      "Trump cancels US envoys' trip to Pakistan for talks on Iran war - BBC",
+      "Upper School History Teacher – Long-Term Sub",
+      "Voice-first AI hardware is rapidly expanding beyond familiar pendants.",
+      "Waiting for Day Zero | Will Alden | The New York Review of Books",
+      "Washington state sues Albertsons over deceptive buy-one-get-one promotions.",
+      "Why the best way to understand the self is to build a robot one",
+      "Will Alden profiles the Iranian exile community in Los Angeles as they wait for what they call \"Day Zero\"—the moment they believe former crown prince",
+      "Will Alden's 'Waiting for Day Zero' chronicles the Iranian monarchist movement in Los Angeles, focusing on Reza Pahlavi's failed attempt to position h",
+      "Woman, 58, died in her cell at Snohomish County Jail",
+      "Woman, 58, died in her cell at Snohomish County Jail | HeraldNet.com",
+      "email | \"Anthropic, PBC\"",
+      "email | \"Tithe.ly\"",
+      "email | Dean Ferguson",
+      "email | Google",
+      "email | Mrs. Lang",
+      "email | mmmichaelllang"
+    ]
+  },
+  "weather": "Mostly sunny today in Edmonds, with a high of 61°F. Light north-northwest breeze 5-10 mph keeps it comfortable. Evening turns clear and cool, dropping to 46°F—perfect for a stroll or a quick patio sit-down. No rain expected, so the stroller stays dry.",
+  "local_news": [
+    {
+      "category": "municipal",
+      "source": "My Edmonds News",
+      "findings": "Edmonds City Council approved key contracts including a $415,116 wastewater treatment plant gasification system support contract with Jacobs Engineering. The council also approved personnel reclassifications, budget amendments, and a $419,000 sewer rehabilitation project covering 27 locations. Additionally, the council declined to pursue a counterpetition in the Redelfs tree litigation matter, reducing a $102,245 fine to $20,000 for removing a 33-inch landmark tree without a permit.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/council-approves-key-contracts-drops-potential-tree-litigation-and-proclaims-april-9-local-news-day/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "My Edmonds News",
+      "findings": "The South County Fire Board of Commissioners is working on redistricting plans to incorporate Edmonds' 42,000+ residents into the Regional Fire Authority. Two alternative plans are under consideration: Plan 1 would place almost all of Edmonds into a single district, while Plan 2 would split the city along Pine Street between two districts. The board is seeking public input before finalizing the redistricting plan.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/edmonds-at-center-of-discussions-as-south-county-fire-commissioners-embark-on-redistricting/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "My Edmonds News",
+      "findings": "Edmonds will begin a major sewer and storm pipe rehabilitation project on May 4, targeting 27 locations with failing infrastructure identified in a 2013 review. The Combined Cured-in-Place Pipe (CIPP) Rehabilitation Project will repair aging sewer and storm pipes throughout the city.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "My Edmonds News",
+      "findings": "The City of Edmonds hosted an open house to share the 60% design plan for Stage 3 of the Highway 99 Revitalization Project. The design includes new sidewalks, landscaping, lighting, and pedestrian improvements along Highway 99. Public feedback is being sought on the proposed design elements.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/"
+      ]
+    },
+    {
+      "category": "public_safety",
+      "source": "My Edmonds News",
+      "findings": "Edmonds police are investigating a multistate human trafficking case and have arrested a 30-year-old suspect. Additionally, a man accused of assaulting two massage therapists at an Edmonds spa has been charged with attempted murder. New body camera video was also released regarding the arrest of an Edmonds man who allegedly impersonated a Bremerton police officer.",
+      "urls": [
+        "https://myedmondsnews.com/"
+      ]
+    }
+  ],
+  "career": {
+    "findings": "Let me extract details from the specific job postings I found and search for a few more current openings toily_extract:0",
+    "urls": [
+      "https://www.applitrack.com/lakewashington/onlineapp/default.aspx?all=1",
+      "https://talents.vaia.com/companies/lake-washington-school-district/english-language-arts-teacher-1-0-fte-lake-washington-high-school-34165538/",
+      "https://www.nsd.org/our-district/departments/human-resources/employment/certificated-employment",
+      "https://bsd405.schoolspring.com/"
+    ]
+  },
+  "family": {
+    "choir": "Seattle Pro Musica: auditions for 2026-27 season open in August—email auditions@seattlepromusica.org to join the mailing list. Rehearsals are Tuesday evenings 6:30-9:30 pm at Epiphany Parish Seattle (1805 38th Ave). Dues $75/yr, scholarships available. Northwest Chorale: free to sing, $125 annual dues; auditions held March 15 at First United Methodist Church (Queen Anne) and weekly rehearsals at Plymouth Congregational Church. Choral Arts NW: rehearses Sundays 7 pm at Plymouth Congregational Church, acclaimed ensemble with national recognition. Northwest Associated Arts: $125 annual dues, auditions via online form, includes small ensembles VocalSounds NW and Smamblettes.",
+    "toddler": "Sno-Isle Libraries toddler goldmine: Edmonds Library offers Baby Storytime (0-18 mo) and Preschool Storytime (3-5 yrs); Lynnwood Library runs Toddler Storytime with Nathalie for 18 mo-3 yrs every Monday 9:30-10:00 am starting May 4. Imagine Children’s Museum (Everett) has toddler space crafts May 6 (moon painting & rockets, ages 3-5) and bee/butterfly headbands plus flower mural May 9. All library events free; museum activities included with admission. Check sno-isle.bibliocommons.com/events for real-time schedules and capacity alerts—doors close when full.",
+    "urls": [
+      "http://www.seattlepromusica.org/auditions",
+      "https://nwchorale.org/",
+      "https://www.choralartsnw.org/",
+      "https://www.nwassociatedarts.org/contact-us/auditions/",
+      "https://sno-isle.bibliocommons.com/v2/events?locations=18&audiences=5ecfd4bde19e6b240078b87c%2C5ecfd4c12b35532f00c841ec%2C5ecfd4b707f0884500ce8c9f%2C5f0ce9c2036b39880a776ab0%2C5f0ce9be8497d4760a06c16a",
+      "https://www.everettwa.gov/Calendar.aspx?EID=7677",
+      "https://www.facebook.com/ImagineChildrensMuseum/"
+    ]
+  },
+  "global_news": [
+    {
+      "category": "global_news",
+      "source": "CNN",
+      "findings": "The United Arab Emirates announced it will permanently withdraw from OPEC on May 1, 2026, in a major blow to the oil cartel amid the ongoing Iran war. UAE Energy Minister Suhail Al Mazrouie said the decision aligns with the country's long-term strategic vision and will allow it to accelerate domestic energy production without OPEC's production restrictions. The move comes as the Strait of Hormuz remains closed, limiting immediate market impact, but could prompt other producers like Kazakhstan to follow suit.",
+      "urls": [
+        "https://www.cnn.com/2026/04/28/world/live-news/iran-war-trump-israel"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "Reuters",
+      "findings": "China has blocked Meta's $2+ billion acquisition of AI startup Manus, ordering the deal unwound under national security review. The National Development and Reform Commission cited concerns over Chinese AI talent and technology transfers to American companies. Manus, founded by Chinese engineers and relocated to Singapore, had its co-founders barred from leaving China. The move signals Beijing's intent to prevent Chinese AI assets from falling under US control ahead of a Trump-Xi summit in May.",
+      "urls": [
+        "https://www.reuters.com/legal/transactional/blocking-metas-ai-startup-buy-raises-risk-cross-border-china-tech-deals-2026-04-28/"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "BBC",
+      "findings": "King Charles III began his historic US state visit, addressing Congress to defend 'democratic values' following the assassination attempt on President Trump. The King emphasized the enduring US-UK alliance during 'times of great uncertainty' while Trump hosted him at the White House. The visit comes as the US grapples with political violence and international crises including the Iran conflict.",
+      "urls": [
+        "https://www.bbc.com/news"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "Reuters",
+      "findings": "The US and Iran clashed at the UN on Monday over Tehran's selection as a vice president for the Nuclear Non-Proliferation Treaty conference. US Assistant Secretary Christopher Yeaw called Iran's selection an 'affront' and 'beyond shameful,' while Iranian envoy Reza Najafi rejected the criticism as 'baseless.' The confrontation highlights ongoing tensions as Iran proposes delaying nuclear talks until the war is resolved.",
+      "urls": [
+        "https://www.reuters.com/world/middle-east/us-iran-clash-un-after-tehran-gets-nuclear-non-proliferation-role-2026-04-27/"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "Reuters",
+      "findings": "Pope Leo held his first meeting with new Archbishop of Canterbury Sarah Mullally in a symbolic Vatican encounter. The leaders prayed together in a 17th-century chapel, with Mullally thanking the Pope for his 'forceful communication' against war and despotism. The meeting represents warming relations between the Catholic Church and Church of England since their 1534 split, though challenges remain over issues like women's ordination.",
+      "urls": [
+        "https://www.reuters.com/world/pope-first-female-archbishop-canterbury-meet-pray-together-2026-04-27/"
+      ]
+    }
+  ],
+  "intellectual_journals": [
+    {
+      "source": "Aeon",
+      "findings": "In a richly illustrated essay, medievalist Denva Gallant shows how 13th-century mosaics in Venice’s St Mark’s Basilica turn the human body into a stage for theology and politics.  The Zen Chapel vault depicts the life of St Mark dragged through the streets: the saint’s face remains impassive while his tormentors grimace and strain.  Medieval artists, Gallant argues, used bodily stillness not to deny pain but to display spiritual mastery—silence becomes a visual proof that faith can govern flesh.  Repeated across the cycle, the contrast between the saint’s composure and the executioners’ exerti [TRUNCATED]",
+      "url": "https://aeon.co/essays/medieval-art-makes-the-body-a-site-of-theology-and-politics"
+    },
+    {
+      "source": "ProPublica",
+      "findings": "A joint ProPublica–FRONTLINE investigation finds that more than 300 U.S. citizens were arrested during recent immigration sweeps on charges such as assaulting federal officers, yet over one-third of those cases have already collapsed.  Video evidence repeatedly contradicts officer statements; prosecutors quietly dismiss charges or lose at trial.  The pattern, documented through court files and body-cam footage, suggests the arrests are designed less to secure convictions than to chill dissent—protesters describe lasting trauma even when charges are dropped.  The report warns that the systemati [TRUNCATED]",
+      "url": "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions"
+    },
+    {
+      "source": "The Marginalian",
+      "findings": "Maria Popova revisits the life of Frances “Fanny” Wright, the 19th-century Scottish-American reformer whose radical blend of scientific inquiry, abolitionism and free-love advocacy once captivated young Walt Whitman.  Raised on Enlightenment philosophy and orphaned early, Wright crossed the Atlantic to investigate—and then publicly expose—the mechanics of American slavery.  Her experimental commune at Nashoba, Tennessee, sought to prove that emancipation and interracial equality were compatible with rational economic planning; its failure only sharpened her critique of religious and patriarcha [TRUNCATED]",
+      "url": "https://www.themarginalian.org/2026/02/27/fanny-wright-traversal/"
+    },
+    {
+      "source": "New York Review of Books",
+      "findings": "Francine Prose reviews two new novels—Lee Clay Johnson’s Bloodline and Carl Hiaasen’s Fever Beach—that confront the violence and corruption of contemporary America while refusing to surrender the pleasures of fiction.  Johnson’s protagonist, a former used-car salesman named Wins-a-ton Alcorn, amputates his own hand in an insurance scam he believes will restore his Confederate birthright; Hiaasen’s South Florida satire tracks eco-vigilantes battling toxic real-estate schemes.  Both writers, Prose argues, use dark comedy and regional detail to expose how historical myth and environmental plunder [TRUNCATED]",
+      "url": "https://www.nybooks.com/articles/2026/04/23/blood-in-the-game-bloodline-fever-beach/"
+    }
+  ],
+  "wearable_ai": [
+    {
+      "category": "ai_voice_hardware",
+      "findings": "Friend AI Pendant (friend.com) - San Francisco startup MyTabAI raised $7.9M across two seed rounds in 2024, now shipping a $99 pendant that listens 24/7 and sends proactive text messages like a companion. Limitless Pendant (limitless.ai) - Denver-based, $399 bundle, HIPAA-grade privacy, records conversations and surfaces contextual memory. Audria (audria.tech) - new 2025 Delaware startup, voice-fi [TRUNCATED]",
+      "urls": [
+        "https://friend.com/",
+        "https://limitless.ai/",
+        "https://audria.tech/",
+        "https://omi.me/",
+        "https://wareit.ai/"
+      ]
+    },
+    {
+      "category": "teacher_ai_tools",
+      "findings": "MagicSchool.ai - 45 single-click tools for English/History teachers to auto-generate lesson plans, worksheets, rubrics and quizzes; integrates with Google Classroom and saves 10+ hours weekly. Diffit (diffit.me) - Berkeley startup, 20 employees, lets teachers type a topic and grade level to instantly get leveled texts, comprehension questions and differentiation; used by 300k+ educators. Brisk Tea [TRUNCATED]",
+      "urls": [
+        "https://magicschool.ai/",
+        "https://diffit.me/",
+        "https://briskteaching.com/",
+        "https://humy.ai/",
+        "https://olex.ai/"
+      ]
+    },
+    {
+      "category": "wearable_devices",
+      "findings": "Humane AI Pin - $348M-funded SF device, acquired by HP Feb 2025 for $116M, now reborn as HP IQ innovation lab; Cosmos OS gives instant knowledge via voice. Bee AI Pendant - CES 2026 debut, jewelry-grade lifelogging with 24/7 emotional coaching. Nirva AI Jewelry (nirva.life) - SF startup, 4 employees, \"living library\" pendant that journals your life and builds personal memory layer. Samsung Project [TRUNCATED]",
+      "urls": [
+        "https://humane.com/",
+        "https://www.bee-ai-pendant.com/",
+        "https://nirva.life/",
+        "https://www.samsung.com/project-luna",
+        "https://compasswearable.com"
+      ]
+    }
+  ],
+  "triadic_ontology": {
+    "findings": "Three 2025-2026 works advance triadic-relational metaphysics: Migliorini’s monograph unites trinitarian dogma with analytic ontology, proposing divine relationality as a speculative key beyond substance metaphysics; Isabelle’s Triadic Relational Ontology argues that emergence and intelligibility require an irreducible third “relational field” sustained by tension between poles; and the new Karl Alber volume “Trinitarian Ontologies” inaugurates a series bridging analytic and continental traditions, tracing triadic models from late-antique theology to contemporary anthropology and politics.",
+    "urls": [
+      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
+      "https://philarchive.org/archive/ISATRO-4",
+      "https://www.nomos-elibrary.de/880328.pdf"
+    ]
+  },
+  "ai_systems": {
+    "findings": "Three new papers push autonomous AI research from prototype to production-grade systems. MARS (Google Cloud AI Research) introduces a budget-aware Monte-Carlo tree search that explicitly trades model-training cost against expected performance gains; on MLE-Bench it now sits near the top of the global leaderboard while logging “Aha!” cross-branch insights 63 % of the time. InternAgent-1.5 (Shanghai AI Lab) unifies generation, verification and evolution subsystems so a single agentic loop can span months-long wet-lab and compute experiments; it leads on GAIA, HLE and FrontierScience benchmarks and has already autonomously discovered competitive ML algorithms. Mimosa (Berkeley/LBNL) attacks the brittleness of fixed workflows: a meta-orchestrator uses the Model Context Protocol to discover new tools on the fly, then rewrites its own topology after every experiment; ScienceAgentBench scores jump to 43.1 % with DeepSeek-V3.2, beating both single-agent and static multi-agent baselines. On the [TRUNCATED]",
+    "urls": [
+      "https://arxiv.org/pdf/2602.02660",
+      "http://arxiv.org/abs/2602.08990v1",
+      "https://arxiv.org/abs/2603.28986v1",
+      "https://arxiv.org/abs/2603.27008v1",
+      "https://sureprompts.com/blog/prompting-reasoning-models-guide"
+    ]
+  },
+  "uap": {
+    "findings": "The 13 November 2024 joint House hearing “Unidentified Anomalous Phenomena: Exposing the Truth” featured former DoD official Luis Elizondo, retired RADM Tim Gallaudet, ex-NASA UAP study member Michael Gold and journalist Michael Shellenberger. In 2025-26 the Oversight Committee’s Task Force on Declassification, led by Rep. Anna Paulina Luna, continues probing withheld UAP videos and AARO transparency, while astrophysicist Dr. Eric Davis asserts he has already briefed multiple congressional committees in secure rooms about UFO crash-retrieval and Non-Human Intelligence programs—material that remains classified pending presidential waiver.",
+    "urls": [
+      "https://docs.house.gov/Committee/Calendar/ByEvent.aspx?EventID=117721",
+      "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
+      "http://www.ibtimes.co.uk/scientist-says-congress-was-briefed-ufo-crash-retrieval-nhi-programs-secret-rooms-1773770"
+    ]
+  },
+  "newyorker": {
+    "available": true,
+    "title": "The New Normal",
+    "section": "The Talk of the Town",
+    "dek": "In the wake of the White House Correspondents' Dinner shooting, Washington's social scene recalibrates.",
+    "byline": "By Katy Waldman",
+    "date": "2026-04-27",
+    "text": "The White House Correspondents' Dinner has always been a strange beast: journalists in black-tie, politicians pretending to be comedians, celebrities orbiting the gravitational pull of power. But this year's dinner, held last Saturday at the Washington Hilton, will be remembered not for the jokes or the gowns but for the moment when a thirty-one-year-old man from California opened fire in the ballroom's upper tier, sending nine hundred guests diving under tables and transforming the capital's most self-congratulatory night into a scene of terror and heroism.\n\nThe shooter, identified as James Patrick McElroy, was tackled by Secret Service agents after firing seven rounds from a concealed handgun. No one was killed, though two guests sustained minor injuries in the stampede that followed. President Trump, who had just finished his comedic set (\"I told my staff this year we'd try something new—I'd write my own jokes. They said, 'Sir, that's what we're afraid of'\"), was rushed offstage by his protective detail. The entire incident lasted ninety seconds, but the aftermath has stretched far longer.\n\nIn the week since, Washington has been engaged in a collective processing that feels both familiar and unprecedented. The city that weathered 9/11 and January 6th now adds \"the Dinner\" to its lexicon of shared trauma. At Thursday's Gridiron Club dinner—another journalistic ritual, this one off the record and featuring musical skits—attendees arrived to find magnetometers and bag checks that hadn't existed the previous year. The Marine Corps band played \"Hail to the Chief,\" but the usual levity was replaced by something more subdued, more watchful.\n\n\"It's like we've all agreed to pretend we're not scared,\" one veteran correspondent told me, nursing a glass of chardonnay in the Hay-Adams hotel lobby. \"But the pretending is the point. The show must go on, or the terrorists win, or whatever we're calling them now.\" The correspondent, who covered the Pentagon after 9/11, noted that this felt different: \"That was external. This feels internal, like the violence has finally come home to roost in our own rituals.\"\n\nThe White House has responded with characteristic Trumpian bravado. The President appeared at a rally in Michigan two days later, telling supporters that \"the fake news media wanted to cancel the dinner, but I said no—we're not canceling anything. We're doubling down.\" Indeed, plans are already underway for next year's dinner, with organizers discussing everything from bulletproof glass partitions to drone surveillance. One prominent anchor joked that they might as well hold it in the Capitol Visitor Center, \"since that's apparently where all the action is these days.\"\n\nBut beneath the gallows humor runs a deeper current of anxiety. The shooting has crystallized something that Washington has been reluctant to acknowledge: that the performative aspects of political journalism—the roasts, the skits, the elbow-rubbing with power—now carry a physical risk. The correspondents' dinner was always a target for criticism, accused of embodying the cozy relationship between press and politicians. Now it's literally a target.\n\nAt Thursday's Gridiron Club dinner, the traditional musical skits included a number about the shooting itself, set to the tune of \"Hello, Dolly!\" (\"Well, hello, folly...\"). Some guests laughed; others shifted uncomfortably. The club's president, in his closing remarks, noted that \"we gather tonight not despite what happened, but because of what happened.\" The line received sustained applause, though it was hard to tell whether the clapping was genuine or performative—another layer of Washington theater.\n\nThe shooting has also prompted soul-searching about security culture. The Secret Service, already stretched thin by multiple ongoing threats, has requested additional funding for social event protection. Some journalists have privately questioned whether the dinners are worth the risk, though few are willing to say so publi [TRUNCATED]",
+    "url": "https://www.newyorker.com/magazine/2026/04/27/the-talk-of-the-town-april-27-2026",
+    "source": "The New Yorker"
+  },
+  "enriched_articles": [
+    {
+      "title": "NYRB Aeon LRB 2026 latest articles Iran war medieval art theology",
+      "url": "",
+      "source": "NYRB Aeon LRB",
+      "text": "Now let me search for long-form intellectual articles from sources like NYRB, Aeon, and LRB"
+    }
+  ]
+}
