@@ -15,3 +15,6 @@ sessions/*.local.html
 
 # trace output from verbose runs
 /tmp/jeeves-*.log
+
+# Claude Code worktrees — nested git repos that git marks dirty
+.claude/worktrees/
