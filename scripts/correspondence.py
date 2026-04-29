@@ -128,9 +128,8 @@ def main(argv: list[str] | None = None) -> int:
     result = _run(cfg, args)
 
     log.info(
-        "correspondence: %d classified, %d words, %d profane asides, handoff_found=%s",
-        len(result.classified), result.word_count, result.profane_aside_count,
-        result.handoff["found"],
+        "correspondence: %d classified, %d words, handoff_found=%s",
+        len(result.classified), result.word_count, result.handoff["found"],
     )
     if result.banned_word_hits:
         log.warning("BANNED WORD HITS: %s", result.banned_word_hits)
@@ -138,8 +137,6 @@ def main(argv: list[str] | None = None) -> int:
         log.warning("BANNED TRANSITION HITS: %s", result.banned_transition_hits)
     if result.word_count < 1500 and not args.dry_run:
         log.warning("briefing is under 1500 words (%d).", result.word_count)
-    if result.profane_aside_count < 5 and not args.dry_run:
-        log.warning("fewer than 5 profane asides (%d).", result.profane_aside_count)
 
     # Persist artifacts: handoff JSON + HTML body.
     json_path = cfg.correspondence_json_path()
