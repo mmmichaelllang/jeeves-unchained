@@ -1445,17 +1445,28 @@ def _build_source_url_map(session: SessionModel) -> dict[str, str]:
         urls = item.get("urls") if isinstance(item, dict) else getattr(item, "urls", [])
         src = item.get("source") if isinstance(item, dict) else getattr(item, "source", None)
         if urls:
-            _add(src, urls[0])
+            # Use editorial source name if present; fall back to domain extracted
+            # from the first URL so product sites (friend.com, magicschool.ai etc.)
+            # can still be linked when the model writes their domain as prose.
+            if src:
+                _add(src, urls[0])
+            else:
+                from urllib.parse import urlparse as _urlparse
+                domain = _urlparse(urls[0]).netloc.lstrip("www.")
+                if domain:
+                    _add(domain, urls[0])
 
     for item in session.enriched_articles or []:
         url = item.get("url") if isinstance(item, dict) else getattr(item, "url", None)
         src = item.get("source") if isinstance(item, dict) else getattr(item, "source", None)
         _add(src, url)
 
-    # Scalar sector URL fields.
+    # Scalar sector URL fields — map known editorial names to each URL position.
     to_urls = getattr(session.triadic_ontology, "urls", None) or []
-    if to_urls:
-        _add("Academia.edu", to_urls[0])
+    _TO_NAMES = ["Academia.edu", "PhilArchive", "Nomos-elibrary"]
+    for name, url in zip(_TO_NAMES, to_urls):
+        _add(name, url)
+
     ai_urls = getattr(session.ai_systems, "urls", None) or []
     if ai_urls:
         _add("arXiv", ai_urls[0])
@@ -1492,8 +1503,13 @@ def _inject_source_links(html: str, source_url_map: dict[str, str]) -> str:
         if url in html:
             continue
         # Escape for use in a word-boundary regex.
+        # IGNORECASE so domain-extracted names (magicschool.ai) match prose
+        # capitalisation (MagicSchool.ai). m.group(0) preserves original case.
         escaped = re.escape(source_name)
-        pattern = re.compile(r"(?<![a-zA-Z0-9\-])" + escaped + r"(?![a-zA-Z0-9\-])")
+        pattern = re.compile(
+            r"(?<![a-zA-Z0-9\-])" + escaped + r"(?![a-zA-Z0-9\-])",
+            re.IGNORECASE,
+        )
 
         segments = _A_SPLIT.split(html)
         replaced = False
