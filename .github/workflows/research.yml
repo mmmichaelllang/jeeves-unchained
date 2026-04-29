@@ -1,11 +1,8 @@
 name: Jeeves — Research Phase
 
-# 30 minutes after correspondence so its draft can be imported.
-# Write phase fires 70 minutes after this, so research must complete in <65 min.
-# 5:30 AM PDT (UTC-7) / 6:30 AM PST (UTC-8)
+# Manual dispatch only — daily automated runs go through daily.yml which
+# chains correspondence → research → write in sequence.
 on:
-  schedule:
-    - cron: '30 12 * * *'
   workflow_dispatch:
     inputs:
       limit:
@@ -48,6 +45,7 @@ jobs:
           GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
           GOOGLE_CLOUD_REGION: ${{ secrets.GOOGLE_CLOUD_REGION || 'us-central1' }}
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+          JINA_API_KEY: ${{ secrets.JINA_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF_NAME: ${{ github.ref_name }}

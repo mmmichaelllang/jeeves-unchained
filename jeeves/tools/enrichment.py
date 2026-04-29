@@ -15,6 +15,14 @@ UA = (
     "(KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
 )
 
+# Module-level client reuses connections across the many article fetches in the
+# enriched_articles sector instead of creating a new TCP handshake per URL.
+_HTTP_CLIENT = httpx.Client(
+    headers={"User-Agent": UA},
+    timeout=25.0,
+    follow_redirects=True,
+)
+
 
 def fetch_article_text(url: str) -> str:
     """Fetch a URL and extract clean article text via trafilatura.
@@ -35,7 +43,7 @@ def fetch_article_text(url: str) -> str:
     if not url:
         return json.dumps(base)
     try:
-        r = httpx.get(url, headers={"User-Agent": UA}, timeout=25.0, follow_redirects=True)
+        r = _HTTP_CLIENT.get(url)
         r.raise_for_status()
         html = r.text
     except Exception as e:

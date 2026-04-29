@@ -15,6 +15,10 @@ log = logging.getLogger(__name__)
 
 ENDPOINT = "https://google.serper.dev/search"
 
+# Module-level client reuses the TCP connection across sectors instead of
+# opening a new handshake for every serper_search tool call.
+_HTTP_CLIENT = httpx.Client(timeout=20.0)
+
 
 def make_serper_search(cfg: Config, ledger: QuotaLedger):
     def serper_search(query: str = "", num: int = 10, tbs: str | None = None) -> str:
@@ -40,7 +44,7 @@ def make_serper_search(cfg: Config, ledger: QuotaLedger):
             payload["tbs"] = tbs
 
         try:
-            r = httpx.post(ENDPOINT, json=payload, headers=headers, timeout=20.0)
+            r = _HTTP_CLIENT.post(ENDPOINT, json=payload, headers=headers)
             r.raise_for_status()
             data = r.json()
         except Exception as e:

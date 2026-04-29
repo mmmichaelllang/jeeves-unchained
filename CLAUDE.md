@@ -10,7 +10,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Current focus
 
-**Phase 2/3/4 — ninth sprint complete (PR #55, 2026-04-28).** Write prompt hardening against AI-assistant voice + dead code removal. All 172 tests green.
+**Phase 2/3/4 — eleventh sprint complete (2026-04-28).** Workflow automation + production hardening. All 187 tests green.
 
 **Research architecture (as of 2026-04-28, post PRs #43–#46):**
 - Sequential sector execution (`_SECTOR_SEMAPHORE=1`) — NIM free tier can't handle concurrent Kimi agents.
@@ -56,9 +56,22 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Where we left off (2026-04-28)
 
-- **PRs #43–#55, all merged.** All phases live on `main` (Phases 2, 3, 4 fully wired). Cron: correspondence `0 12`, research `30 12`, write `40 13`.
-- **Action required: add `OPENROUTER_API_KEY` to GitHub Secrets** before the next write run.
-- **172 tests green** as of this sprint.
+- **Sprint 11 complete (no PR — direct to main).** Workflow unification + production hardening.
+- **Pipeline entry point is now `daily.yml`** (cron `0 12`). Runs correspondence → research → write as sequential jobs. `correspondence.yml`, `research.yml`, `write.yml` are manual-dispatch only (no crons).
+- **187 tests green** as of this sprint.
+- `OPENROUTER_API_KEY` added to GitHub Secrets ✓. `JINA_API_KEY` added ✓ and now wired into `_jina_fetch()` in `talk_of_the_town.py`.
+
+### Eleventh sprint (2026-04-28) — what was fixed
+
+| File | Problem | Fix |
+|---|---|---|
+| workflows | `correspondence.yml` chained to `research.yml` only on `workflow_dispatch` — scheduled runs each fired independently, no cascade | Created `daily.yml` (sequential jobs: correspondence → research → write); stripped crons from all three individual workflows |
+| `write.py` | `re.sub` signoff fix — `"yours faithfully"` check was case-insensitive but `str.replace()` was case-sensitive; missed lowercase model output | Replaced with `re.sub(r"[Yy]ours faithfully,?", ...)` |
+| `tools/enrichment.py` | `httpx.get()` opened a new TCP connection per article fetch — costly for enriched_articles sector which fetches many URLs | Module-level `httpx.Client` with connection reuse |
+| `tools/serper.py` | Same issue — new httpx client per search call | Module-level `httpx.Client` with connection reuse |
+| `gmail.py` | `req.execute()` had no retry on transient 5xx / 429 from Gmail API | Added `num_retries=3` to both `list_message_ids` and `fetch_message` execute calls |
+| `tools/talk_of_the_town.py` | `JINA_API_KEY` in GitHub Secrets but not used — Jina API runs unauthenticated (lower rate limits) | `_jina_fetch()` reads `JINA_API_KEY` from env and adds `Authorization: Bearer` header when present |
+| `daily.yml` / `research.yml` | `JINA_API_KEY` not passed through workflow env | Added to both workflow env blocks |
 
 ### Ninth sprint (PR #55) — what was fixed
 
@@ -154,11 +167,10 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Dev branch
 
-- **Current**: `claude/forensic-fixes-sprint6` (PR #53 open — quota ledger locking, session truncation guard)
-- Prior sprint: `claude/forensic-fixes-sprint6` (PR #53 merged — HTML injection fix, pagination fix, dead code removal)
-- Prior sprint: `claude/fix-gemini-json-return-sprint5` (PRs #50–#52 all merged)
-- Prior sprint: `claude/fix-jeeves-research-workflow-Jo1u5` (PRs #43–#49 all merged)
-- Prior major work: `claude/improve-dedup-triadic-studies-rEgcE` (#34), `claude/never-empty-news-fallbacks-rEgcE` (#33), `claude/forensic-audit-fixes-rEgcE` (#32)
+- **Current**: `main` (sprint 11 pushed directly — workflow unification + production hardening, 187 tests green)
+- Prior: `main` (PRs #56–#60 merged — Sprint 10: dedup overhaul, TOTT RSS-first, daily.yml, OpenRouter Kimi fallback, write quality fixes)
+- Prior: `claude/guaranteed-sector-retry-sprint8` (PRs #54–#55 merged)
+- Prior: `claude/forensic-fixes-sprint6` (PR #53 merged)
 
 ## Gotchas the README doesn't flag
 
@@ -192,9 +204,9 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Dev branch
 
-- **Current**: `main` (all PRs merged, clean)
+- **Current**: `main` (sprint 11 pushed directly — all clean, 187 tests green)
+- Prior: `main` (PRs #56–#60 merged — Sprint 10)
 - Prior: `claude/guaranteed-sector-retry-sprint8` (PRs #54–#55 merged)
-- Prior: `claude/forensic-fixes-sprint6` (PR #53 merged)
 
 ## Quick nav (file:line pointers)
 
@@ -205,7 +217,8 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 - `jeeves/prompts/correspondence_write.md` — Groq system prompt (persona, slip list, HTML scaffold, banned words)
 - `scripts/gmail_auth.py` — one-shot OAuth flow that mints `GMAIL_OAUTH_TOKEN_JSON`
 - `jeeves/gmail.py:41` — `build_gmail_service` (consumes the token JSON, auto-refreshes)
-- `.github/workflows/correspondence.yml` — cron + `workflow_dispatch` inputs (`date`, `skip_send`, `use_fixture`, `dry_run`)
+- `.github/workflows/daily.yml` — **primary cron entry point** (cron `0 12`); sequential jobs: correspondence → research → write
+- `.github/workflows/correspondence.yml` — manual-dispatch only (`date`, `skip_send`, `use_fixture`, `dry_run`)
 - `jeeves/config.py` — `Config.from_env()`, `MissingSecret`
 - `jeeves/schema.py` — `SessionModel` + `FIELD_CAPS`
 

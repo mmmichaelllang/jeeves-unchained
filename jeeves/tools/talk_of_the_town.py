@@ -48,15 +48,23 @@ def _http_get(url: str, timeout: int = 20) -> str:
 
 
 def _jina_fetch(url: str, timeout: int = 30) -> str:
-    """Fetch article via Jina AI reader (free tier) — returns clean markdown."""
-    req = urllib.request.Request(
-        JINA_BASE + url,
-        headers={
-            "User-Agent": UA,
-            "Accept": "text/plain, text/markdown, */*",
-            "X-Return-Format": "markdown",
-        },
-    )
+    """Fetch article via Jina AI reader — returns clean markdown.
+
+    Uses JINA_API_KEY if present for higher rate limits (authenticated tier).
+    Falls back to the free unauthenticated tier when the key is absent.
+    """
+    import os
+
+    headers: dict[str, str] = {
+        "User-Agent": UA,
+        "Accept": "text/plain, text/markdown, */*",
+        "X-Return-Format": "markdown",
+    }
+    api_key = os.environ.get("JINA_API_KEY", "").strip()
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
+
+    req = urllib.request.Request(JINA_BASE + url, headers=headers)
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read().decode("utf-8", errors="replace")
 

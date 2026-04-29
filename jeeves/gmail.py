@@ -74,7 +74,7 @@ def list_message_ids(service, query: str, max_results: int = 150) -> list[dict[s
             maxResults=min(100, max_results - fetched),
             pageToken=next_page,
         )
-        resp = req.execute()
+        resp = req.execute(num_retries=3)
         batch = resp.get("messages", []) or []
         out.extend(batch)
         fetched += len(batch)
@@ -89,7 +89,7 @@ def fetch_message(service, message_id: str) -> MessagePreview:
 
     msg = service.users().messages().get(
         userId="me", id=message_id, format="full",
-    ).execute()
+    ).execute(num_retries=3)
 
     headers = {h["name"].lower(): h["value"] for h in msg.get("payload", {}).get("headers", [])}
     body = _extract_body_text(msg.get("payload", {}))
