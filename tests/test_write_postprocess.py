@@ -504,6 +504,12 @@ def test_build_source_url_map_extracts_sector_sources():
     # global_news source
     assert "BBC" in m
     assert m["BBC"] == "https://www.bbc.com/news/mock"
+    # intellectual_journals — previously broken (read item.url instead of urls[0])
+    assert "NYRB" in m
+    assert m["NYRB"] == "https://www.nybooks.com/mock"
+    # enriched_articles: title mapping
+    assert "Council passes parking ordinance" in m
+    assert m["Council passes parking ordinance"] == "https://myedmondsnews.com/council-parking"
 
 
 def test_inject_source_links_wraps_first_unlinked_occurrence():
@@ -549,6 +555,19 @@ def test_inject_source_links_noop_on_empty_map():
 
     html = "<p>The BBC reports. Reuters confirms.</p>"
     assert _inject_source_links(html, {}) == html
+
+
+def test_session_subset_includes_uap_has_new():
+    """_session_subset passes uap_has_new to part7 payload, defaulting True."""
+    from jeeves.write import _session_subset
+
+    payload_with_flag = {"date": "2026-04-29", "uap_has_new": False, "uap": {}}
+    subset = _session_subset(payload_with_flag, ["uap", "uap_has_new"])
+    assert subset["uap_has_new"] is False
+
+    payload_no_flag = {"date": "2026-04-29", "uap": {}}
+    subset2 = _session_subset(payload_no_flag, ["uap", "uap_has_new"])
+    assert subset2["uap_has_new"] is True  # default for old sessions
 
 
 def test_narrative_edit_skipped_when_no_key(monkeypatch):
@@ -685,10 +704,11 @@ def test_part1_instructions_embed_css_scaffold():
     assert "font-family: Georgia" in PART1_INSTRUCTIONS
 
 
-def test_continuation_rules_forbid_fabricated_urls():
-    """CONTINUATION_RULES must include rule 14: NEVER INVENT URLS."""
+def test_continuation_rules_mandate_linking_and_ban_fabrication():
+    """CONTINUATION_RULES rule 14 must mandate proactive linking and ban URL fabrication."""
     from jeeves.write import CONTINUATION_RULES
-    assert "NEVER INVENT URLS" in CONTINUATION_RULES
+    assert "LINKING IS MANDATORY" in CONTINUATION_RULES
+    assert "Never invent a URL" in CONTINUATION_RULES
 
 
 def test_part3_instructions_have_empty_career_rule():

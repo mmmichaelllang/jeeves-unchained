@@ -179,7 +179,7 @@ PART_PLAN: list[tuple[str, list[str]]] = [
     ("part4", ["family", "global_news", "newyorker_hint"]),
     ("part5", ["intellectual_journals", "enriched_articles"]),
     ("part6", ["triadic_ontology", "ai_systems"]),
-    ("part7", ["uap", "wearable_ai", "newyorker_hint"]),
+    ("part7", ["uap", "uap_has_new", "wearable_ai", "newyorker_hint", "literary_pick"]),
     ("part8", ["vault_insight"]),
     ("part9", ["newyorker"]),
 ]
@@ -395,15 +395,21 @@ CONTINUATION_RULES = """
     - Any sentence beginning "Mister Lang, this briefing" (meta-closing)
     - Any sentence that could be copy-pasted unchanged into a briefing about
       a completely different topic. Zero topic-specific nouns = delete it.
-14. NEVER INVENT URLS. This is a hard production rule — violations cause
-    broken links and damage trust. Verify every `<a href="...">` you write:
-    the URL inside must appear verbatim in the session JSON payload you
-    received in this specific call. If the URL is not in your payload, do
-    NOT write the `<a href>` — write the text without a link instead.
-    This applies to job-posting links, article links, school-district pages,
-    publication home pages, and every other URL. An unlinked reference is
-    always better than a fabricated link. When `career` is empty (`{}`),
-    there are NO job-posting URLs to use — do not invent any.
+14. LINKING IS MANDATORY WHEN A URL EXISTS IN YOUR PAYLOAD. Every sector
+    item in your payload has a `urls` array (or a `url` field). When you
+    write about that item, you MUST embed the URL as an anchor. Skipping
+    a link when the URL is sitting right there in your payload is a failure.
+    HOW: For a `global_news` item `{source:"BBC", urls:["https://bbc.com/..."]}`,
+    write: `<a href="https://bbc.com/...">BBC</a> reports that…`
+    For an `intellectual_journals` item, link the publication name or the
+    article title with `urls[0]`. For `wearable_ai`, link the product name
+    or site name. For `career`, link each job posting title to its `url`.
+    ANTI-PATTERN: writing "The Guardian reports…" with no anchor when
+    `urls[0]` from the Guardian item is in your payload = violation.
+    HARD LIMIT: Never invent a URL — every href must appear verbatim in
+    your payload. If genuinely no URL is provided for a source, write
+    unlinked text. But "no URL" does not mean "the urls array is non-empty
+    but I didn't use it" — that IS a URL, use it.
 """
 
 
@@ -822,16 +828,40 @@ analysis) about any product that is simultaneously the subject of Talk of the
 Town. The New Yorker section is the full treatment — duplicating it here
 deflates its impact and pads the briefing with repetition.
 
-**UAP — strict rules (CRITICAL):**
+**UAP — ROUTING DECISION (CRITICAL, READ FIRST):**
 
-1. **Dedup first**: if the primary UAP disclosure item is already covered,
-   pivot to the next distinct development. Cover that one.
-2. **Word cap: 250 words maximum for the entire UAP sub-section.** Count your
+Check `uap_has_new` in your payload:
+
+**ROUTE A — `uap_has_new` is `false` (or absent/null):**
+Skip the UAP Disclosure sub-section entirely. Do not mention UAP at all.
+Write instead about `literary_pick`:
+
+  - Open with a brief Jeeves aside that today's UAP front is quiet, and he
+    has instead been turning pages — something like: *"The disclosure front
+    is silent today, Sir, so I have been consulting the library rather than
+    the congressional record."* (vary the phrasing; never copy verbatim).
+  - Then present `literary_pick.title` by `literary_pick.author`
+    (`literary_pick.year`) in Jeeves's voice, ~150–200 words. Cover: what
+    the book is about, why critics and readers consider it a potential or
+    confirmed literary classic, why it might interest Mister Lang given his
+    taste as a teacher-philosopher. One wry Jeeves observation.
+  - If `literary_pick.url` is non-empty, link the title:
+    `<a href="[literary_pick.url]">[title]</a>`.
+  - If `literary_pick.available` is `false` as well, write ONE dry sentence:
+    *"The disclosure front is quiet today, Sir, and I'm afraid the library
+    has nothing fresh to offer either."*
+
+**ROUTE B — `uap_has_new` is `true`:**
+Write the UAP sub-section per the strict rules below.
+
+**UAP strict rules (ROUTE B only, CRITICAL):**
+
+1. **Word cap: 250 words maximum for the entire UAP sub-section.** Count your
    words. Stop at 250. Do not exceed this under any circumstances.
-3. **Anti-repetition**: every sentence must introduce a fact, date, name, or
+2. **Anti-repetition**: every sentence must introduce a fact, date, name, or
    claim not already stated in this sub-section. If you find yourself
    rephrasing a point already made, DELETE the new sentence and stop.
-4. **Banned UAP filler phrases** — never write:
+3. **Banned UAP filler phrases** — never write:
    - "it is essential to approach the topic with a critical and nuanced perspective"
    - "it is crucial to remain informed and up-to-date"
    - "As we consider the implications of" / "Considering the implications of"
@@ -842,7 +872,7 @@ deflates its impact and pads the briefing with repetition.
    - Any sentence that could be copy-pasted unchanged into a briefing on a
      completely different topic. If a sentence has no UAP-specific nouns,
      delete it.
-5. **No "As we await further developments"** — if there is nothing new, say
+4. **No "As we await further developments"** — if there is nothing new, say
    so in one sentence and stop.
 
 **Wearable AI — dedup with advancement:**
@@ -1026,6 +1056,9 @@ def _session_subset(payload: dict[str, Any], fields: list[str]) -> dict[str, Any
                 "available": ny.get("available", False),
                 "title": ny.get("title", ""),
             }
+        elif f == "uap_has_new":
+            # Default True so sessions that pre-date this field still cover UAP.
+            base["uap_has_new"] = payload.get("uap_has_new", True)
         elif f in payload:
             base[f] = payload[f]
     return base
@@ -1437,9 +1470,10 @@ def _build_source_url_map(session: SessionModel) -> dict[str, str]:
             _add(src, urls[0])
 
     for item in session.intellectual_journals or []:
-        url = item.get("url") if isinstance(item, dict) else getattr(item, "url", None)
+        urls = item.get("urls") if isinstance(item, dict) else getattr(item, "urls", [])
         src = item.get("source") if isinstance(item, dict) else getattr(item, "source", None)
-        _add(src, url)
+        if urls:
+            _add(src, urls[0])
 
     for item in session.wearable_ai or []:
         urls = item.get("urls") if isinstance(item, dict) else getattr(item, "urls", [])
@@ -1459,7 +1493,10 @@ def _build_source_url_map(session: SessionModel) -> dict[str, str]:
     for item in session.enriched_articles or []:
         url = item.get("url") if isinstance(item, dict) else getattr(item, "url", None)
         src = item.get("source") if isinstance(item, dict) else getattr(item, "source", None)
+        title = item.get("title") if isinstance(item, dict) else getattr(item, "title", None)
         _add(src, url)
+        # Map article title → url so inline title mentions get linked.
+        _add(title, url)
 
     # Scalar sector URL fields — map known editorial names to each URL position.
     to_urls = getattr(session.triadic_ontology, "urls", None) or []

@@ -61,6 +61,19 @@ Full list is longer than shown; assume any prominent URL you've seen cited in th
 9. **newyorker** (object) — call `fetch_new_yorker_talk_of_the_town()` exactly once and drop the result here.
 10. **enriched_articles** (array of `{url, source, title, fetch_failed, text}`) — pick the ~5 most important/novel articles surfaced above and call `tavily_extract` on them. Fall back to `fetch_article_text` for anything Tavily refuses.
 
+10. **literary_pick** (object) — Always research one book to use as a UAP fallback:
+    - Published between 2004 and 2024.
+    - Considered by many critics and readers to be either a current classic or a plausible future canonical work of literary fiction or non-fiction.
+    - Use `exa_search(query="literary fiction nonfiction 2004 2024 future classic canonical critically acclaimed")` to find a strong candidate.
+    - Do NOT pick a book already in `dedup.covered_headlines`. Vary the selection day-over-day.
+    - Return: `{available: true, title: "...", author: "...", year: NNNN, summary: "...", url: "..."}`.
+    - If no suitable result is found, return `{available: false}`.
+
+11. **uap_has_new** (bool, top-level field) — After completing UAP research:
+    - Set `true` if `uap.urls` contains at least one URL **not** present in the prior-coverage sample above.
+    - Set `false` if UAP findings are empty, or all UAP URLs are already in prior coverage.
+    - This flag routes the write phase: `false` replaces the UAP sub-section with `literary_pick`.
+
 Also populate:
 
 - **dedup**: `{covered_urls: [...], covered_headlines: [...]}` — every URL and headline you cite so tomorrow's agent can skip them.
@@ -73,7 +86,7 @@ Also populate:
 - tavily_search: max 4
 - tavily_extract: max 5 URLs total (20 hits max)
 - gemini_grounded_synthesize: max 3
-- exa_search: max 6
+- exa_search: max 7 (one call reserved for literary_pick)
 - serper_search: max 20
 - fetch_new_yorker_talk_of_the_town: max 1
 - emit_session: exactly 1

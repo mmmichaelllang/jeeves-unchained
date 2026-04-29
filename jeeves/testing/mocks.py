@@ -92,6 +92,19 @@ def canned_session(run_date: date) -> dict[str, Any]:
             "findings": "Congressional subcommittee scheduled a May hearing.",
             "urls": ["https://www.congress.gov/mock"],
         },
+        "uap_has_new": True,
+        "literary_pick": {
+            "available": True,
+            "title": "The Buried Giant",
+            "author": "Kazuo Ishiguro",
+            "year": 2015,
+            "summary": (
+                "A post-Arthurian fable about memory, forgetting, and the fragile peace "
+                "that collective amnesia can sustain. Widely regarded as one of Ishiguro's "
+                "most philosophically ambitious works."
+            ),
+            "url": "https://www.faber.co.uk/product/9780571315048-the-buried-giant/",
+        },
         "newyorker": {
             "available": True,
             "title": "Mock Talk of the Town",

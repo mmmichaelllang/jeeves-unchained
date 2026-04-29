@@ -69,6 +69,18 @@ class VaultInsight(BaseModel):
     note_path: str = ""
 
 
+class LiteraryPick(BaseModel):
+    """A book from the last 20 years considered a current or future literary classic."""
+
+    model_config = ConfigDict(extra="allow")
+    available: bool = False
+    title: str = ""
+    author: str = ""
+    year: int | None = None
+    summary: str = ""
+    url: str = ""
+
+
 class EnrichedArticle(BaseModel):
     model_config = ConfigDict(extra="allow")
     url: str
@@ -107,9 +119,11 @@ class SessionModel(BaseModel):
     triadic_ontology: DeepResearch = Field(default_factory=DeepResearch)
     ai_systems: DeepResearch = Field(default_factory=DeepResearch)
     uap: DeepResearch = Field(default_factory=DeepResearch)
+    uap_has_new: bool = True  # False signals write phase to substitute literary_pick
     newyorker: NewYorker = Field(default_factory=NewYorker)
     vault_insight: VaultInsight = Field(default_factory=VaultInsight)
     enriched_articles: list[EnrichedArticle] = Field(default_factory=list)
+    literary_pick: LiteraryPick = Field(default_factory=LiteraryPick)
 
 
 # Per-field char caps applied before serialization. Mirrors jeeves-memory.
@@ -128,6 +142,7 @@ FIELD_CAPS: dict[str, int] = {
     "vault_insight.insight": 1000,
     "newyorker.text": 4000,
     "enriched_articles.text": 1200,
+    "literary_pick.summary": 600,
 }
 
 
@@ -182,6 +197,10 @@ def apply_field_caps(session: dict[str, Any]) -> dict[str, Any]:
     for art in session.get("enriched_articles", []) or []:
         if isinstance(art, dict) and "text" in art:
             art["text"] = _cap(art["text"], FIELD_CAPS["enriched_articles.text"])
+
+    lp = session.get("literary_pick") or {}
+    if isinstance(lp, dict) and "summary" in lp:
+        lp["summary"] = _cap(lp["summary"], FIELD_CAPS["literary_pick.summary"])
 
     for key in ("career", "family"):
         block = session.get(key) or {}

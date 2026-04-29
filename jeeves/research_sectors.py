@@ -327,6 +327,23 @@ SECTOR_SPECS: list[SectorSpec] = [
         ),
         default=[],
     ),
+    SectorSpec(
+        name="literary_pick",
+        shape="literary_pick",
+        instruction=(
+            "Research one book published between 2004 and 2024 that is considered by many "
+            "critics and readers to be a current classic or a plausible future canonical work "
+            "of literary fiction or non-fiction. "
+            "Use exa_search with a query like: "
+            "\"literary fiction nonfiction 2004 2024 future classic canonical critically acclaimed\". "
+            "Do NOT pick a title already in dedup.covered_headlines. Vary the selection day-over-day. "
+            "Return: {\"available\": true, \"title\": \"...\", \"author\": \"...\", "
+            "\"year\": NNNN, \"summary\": \"...\", \"url\": \"...\"}. "
+            "If no suitable result is found, return {\"available\": false}."
+        ),
+        default={"available": False, "title": "", "author": "", "year": None,
+                 "summary": "", "url": ""},
+    ),
 ]
 
 

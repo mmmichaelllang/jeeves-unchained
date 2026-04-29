@@ -199,7 +199,12 @@ def test_sector_specs_cover_every_researched_session_field():
     # are researched by the agent.
     from jeeves.schema import SessionModel
 
-    excluded = {"date", "status", "dedup", "correspondence", "vault_insight", "schema_version"}
+    excluded = {
+        "date", "status", "dedup", "correspondence", "vault_insight", "schema_version",
+        # uap_has_new is a flag set inline by the agent alongside the uap sector,
+        # not a separate FunctionAgent sector call.
+        "uap_has_new",
+    }
     researched = set(SessionModel.model_fields.keys()) - excluded
     spec_names = {s.name for s in SECTOR_SPECS}
     assert researched == spec_names, (
