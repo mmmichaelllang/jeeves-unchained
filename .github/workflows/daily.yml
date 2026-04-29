@@ -134,6 +134,10 @@ jobs:
             git config user.email "jeeves-bot@users.noreply.github.com"
             git add .quota-state.json
             git commit -m "quota: update counters $(date -u +%Y-%m-%d)"
+            # The research script commits session-*.json to GitHub via the Contents API,
+            # leaving untracked copies in the working tree. Remove them before rebase so
+            # git-pull --rebase can checkout the remote's session commit without aborting.
+            git clean -fd sessions/ 2>/dev/null || true
             git pull --rebase --autostash origin "${{ github.ref_name }}" || true
             git push
           fi
