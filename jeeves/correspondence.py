@@ -61,6 +61,7 @@ class CorrespondenceResult:
     profane_aside_count: int
     banned_word_hits: list[str] = field(default_factory=list)
     banned_transition_hits: list[str] = field(default_factory=list)
+    banned_filler_hits: list[str] = field(default_factory=list)
 
 
 def load_priority_contacts() -> dict[str, Any]:
@@ -281,6 +282,29 @@ def _counts_by_classification(classified: list[ClassifiedMessage]) -> dict[str, 
 
 BANNED_WORDS = ["in a vacuum", "tapestry"]
 BANNED_TRANSITIONS = ["Moving on,", "Next,", "Turning to,", "In other news,"]
+# AI-filler phrases logged as warnings so violations are visible in CI/Actions.
+BANNED_FILLER = [
+    "I shall ensure to keep you informed",
+    "I shall be here to assist you in any way I can",
+    "navigate the complexities",
+    "it is essential to",
+    "as we delve into",
+    "a fresh set of challenges and opportunities",
+    "let us proceed with the correspondence, shall we",
+    "I trust you slept well",
+    "And, as always,",
+    "In conclusion,",
+    "In summary,",
+    "Upon reviewing",
+    "It is worth noting that",
+    "It goes without saying",
+    "no priority contacts that require",
+    "no messages from your family",
+    "there are no messages from",
+    "We have several escalations",
+    "we have a few reply-needed",
+    "we also have a plethora",
+]
 PROFANE_FRAGMENTS = [
     "clusterfuck", "shitshow", "fuckfest", "horse-shit", "fucked", "goddamn",
     "fuck-ton", "thundercunt", "shittery", "omnishambles", "shit-storm",
@@ -294,8 +318,8 @@ PROFANE_FRAGMENTS = [
 ]
 
 
-def postprocess_html(raw: str) -> tuple[str, int, int, list[str], list[str]]:
-    """Clean model output; return (html, word_count, profane_count, banned_words, banned_transitions)."""
+def postprocess_html(raw: str) -> tuple[str, int, int, list[str], list[str], list[str]]:
+    """Clean model output; return (html, word_count, profane_count, banned_words, banned_transitions, banned_filler)."""
 
     html = _strip_markdown_fences(raw.strip())
     html = _ensure_doctype(html)
@@ -304,7 +328,10 @@ def postprocess_html(raw: str) -> tuple[str, int, int, list[str], list[str]]:
     profane_count = sum(body_text.lower().count(frag) for frag in PROFANE_FRAGMENTS)
     banned_words = [w for w in BANNED_WORDS if w.lower() in body_text.lower()]
     banned_transitions = [t for t in BANNED_TRANSITIONS if t.lower() in body_text.lower()]
-    return html, word_count, profane_count, banned_words, banned_transitions
+    banned_filler = [f for f in BANNED_FILLER if f.lower() in body_text.lower()]
+    if banned_filler:
+        log.warning("correspondence: banned filler detected: %s", banned_filler)
+    return html, word_count, profane_count, banned_words, banned_transitions, banned_filler
 
 
 def _strip_markdown_fences(s: str) -> str:
