@@ -102,7 +102,7 @@ def test_handoff_json_shape():
 
 def test_postprocess_strips_fences_and_detects_flags():
     fenced = "```html\n<!DOCTYPE html><html><body><p>Moving on, Sir. in a vacuum.</p></body></html>\n```"
-    html, word_count, profane, banned_words, banned_trans = postprocess_html(fenced)
+    html, word_count, profane, banned_words, banned_trans, banned_filler = postprocess_html(fenced)
     assert html.startswith("<!DOCTYPE html>")
     assert "in a vacuum" in banned_words
     assert "Moving on," in banned_trans
@@ -111,7 +111,7 @@ def test_postprocess_strips_fences_and_detects_flags():
 def test_mock_correspondence_passes_postprocess():
     classified = fixture_classified()
     html_raw = render_mock_correspondence("2026-04-23", classified)
-    html, wc, profane, bw, bt = postprocess_html(html_raw)
+    html, wc, profane, bw, bt, bf = postprocess_html(html_raw)
     assert html.startswith("<!DOCTYPE html>")
     assert profane == 0  # correspondence has no profane asides
     assert not bw
