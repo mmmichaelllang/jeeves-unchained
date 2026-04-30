@@ -80,7 +80,7 @@ def _run(cfg: Config, args: argparse.Namespace) -> CorrespondenceResult:
         classified = classify_with_kimi(cfg, previews, contacts)
         html_raw = render_with_groq(cfg, classified, contacts, run_date_iso=cfg.run_date.isoformat())
 
-    html, word_count, profane_count, banned_words, banned_transitions = postprocess_html(html_raw)
+    html, word_count, profane_count, banned_words, banned_transitions, banned_filler = postprocess_html(html_raw)
     handoff = build_handoff_json(classified, fallback_used=fallback_used)
 
     return CorrespondenceResult(
@@ -91,6 +91,7 @@ def _run(cfg: Config, args: argparse.Namespace) -> CorrespondenceResult:
         profane_aside_count=profane_count,
         banned_word_hits=banned_words,
         banned_transition_hits=banned_transitions,
+        banned_filler_hits=banned_filler,
     )
 
 
