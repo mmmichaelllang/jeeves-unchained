@@ -1,0 +1,524 @@
+{
+  "date": "2026-04-30",
+  "status": "complete",
+  "dedup": {
+    "covered_urls": [
+      "http://arxiv.org/abs/2602.08990v1",
+      "http://www.seattlepromusica.org/auditions",
+      "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom",
+      "https://arxiv.org/abs/2602.05726",
+      "https://arxiv.org/abs/2602.22808v1",
+      "https://arxiv.org/abs/2603.27008v1",
+      "https://arxiv.org/pdf/2602.02660",
+      "https://audria.tech/",
+      "https://briskteaching.com/",
+      "https://flyleafbooks.com/nyt-100-21stcentury",
+      "https://friend.com/",
+      "https://hp-iq.com/",
+      "https://humane.com/",
+      "https://humy.ai/",
+      "https://limitless.ai/",
+      "https://link.springer.com/article/10.1007/s40509-026-00390-1",
+      "https://magicschool.ai/",
+      "https://mukilteo.tedk12.com/hire/index.aspx",
+      "https://myedmondsnews.com/2026/04/council-approves-key-contracts-drops-potential-tree-litigation-and-proclaims-april-9-local-news-day/",
+      "https://myedmondsnews.com/2026/04/edmonds-at-center-of-discussions-as-south-county-fire-commissioners-embark-on-redistricting/",
+      "https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/",
+      "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/",
+      "https://nirva.life/",
+      "https://northshore.tedk12.com/hire/index.aspx",
+      "https://omi.me/",
+      "https://philarchive.org/archive/ISATRO-4",
+      "https://sno-isle.bibliocommons.com/v2/events?types=5f0ce972da1b731c0af31864",
+      "https://sureprompts.com/blog/prompting-reasoning-models-guide",
+      "https://teachmateai.com/",
+      "https://twee.com/",
+      "https://wareit.ai/",
+      "https://web.diffit.me/",
+      "https://www.applitrack.com/everettsd/onlineapp/default.aspx?AppliTrackJobID=8263",
+      "https://www.applitrack.com/lakewashington/onlineapp/default.aspx?all=1",
+      "https://www.bbc.co.uk/news/articles/cqjplqgd1r2o",
+      "https://www.bbc.com/news",
+      "https://www.bellevuechristian.org/employment/",
+      "https://www.cnn.com/2026/04/30/world/live-news/iran-war-news",
+      "https://www.edjoblist.com/employment/social-studies-history-teacher-pool-2026-2027-listing-203525.aspx",
+      "https://www.edmondswa.gov/news/what_s_new/we_want_to_hear_from_you_-_h_w_y_99_project_survey",
+      "https://www.newyorker.com/magazine/2026/05/04/ellen-burstyns-inner-library",
+      "https://www.nomos-elibrary.de/880328.pdf",
+      "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
+      "https://www.propublica.org/article/trump-midterm-elections-takeover",
+      "https://www.reuters.com/world/europe/trump-says-king-charles-does-not-want-iran-have-nuclear-weapon-2026-04-29/",
+      "https://www.reuters.com/world/middle-east/us-iran-clash-un-after-tehran-gets-nuclear-non-proliferation-role-2026-04-27/",
+      "https://www.sno-isle.org/locations/edmonds/",
+      "https://www.sno-isle.org/locations/lynnwood/",
+      "https://www.themarginalian.org/2026/02/27/fanny-wright-traversal",
+      "https://www.ziprecruiter.com/c/Edmonds-School-District/Job/Dual-Language-(English-Spanish)-Teacher,-1.0-FTE/-in-Lynnwood,WA?jid=7be781a69db851dd",
+      "https://www2.nwrdc.wa-k12.net/scripts/cgiip.exe/WService=wshorels71/rapplmnu03.w"
+    ],
+    "covered_headlines": [
+      "Edmonds City Council approved key contracts and dropped potential tree litigation during its April 7 business meeting.",
+      "The City of Edmonds will begin construction on its 2025 sewer and storm pipe rehabilitation project starting May 4.",
+      "The City of Edmonds has reached the 60% design level for the Highway 99 Revitalization Project - Stage 3 and is seeking public input through an Urban",
+      "South County Fire Board of Commissioners is actively working on redistricting proposals to incorporate Edmonds' 42,000+ residents into the Regional Fi",
+      "Public safety and environmental issues dominated the April 28 Edmonds City Council meeting, with councilmembers receiving annual reports from organiza",
+      "Edmonds",
+      "Dual Language (English/Spanish) Teacher",
+      "Everett",
+      "Secondary Teacher Pool (Grades 6-12)",
+      "Shoreline",
+      "High School English or History Teacher",
+      "Northshore",
+      "Secondary Social Studies Teacher",
+      "Lake Washington",
+      "High School English Teacher",
+      "Bellevue Christian",
+      "Secondary History Teacher",
+      "Snohomish",
+      "Social Studies/History Teacher Pool",
+      "Mukilteo",
+      "Seattle Pro Musica has concluded their 2025-26 season auditions, but auditions for the 2026-27 season will be held next August.",
+      "Sno-Isle Libraries offers weekly Toddler Storytimes perfect for 2-year-olds in May.",
+      "Oil prices surged to a new wartime high above $126 per barrel Thursday as President Trump considers extending the naval blockade of Iranian ports.",
+      "President Trump stated at a White House state dinner for King Charles that Britain's monarch agrees Iran should never have nuclear weapons.",
+      "Ukraine has accused Israel of receiving grain shipments that were \"stolen\" by Russia from occupied Ukrainian territory.",
+      "The United States and Iran clashed at the United Nations over Tehran's selection as a vice president for the Nuclear Non-Proliferation Treaty conferen",
+      "King Charles III and Queen Camilla began their historic four-day US state visit with a military welcome, as the monarch prepares to address Congress o",
+      "A sweeping ProPublica/FRONTLINE investigation reveals that more than 300 U.",
+      "Flora Champy argues that literature’s value lies not in moral improvement but in its capacity to keep past sensations alive.",
+      "Maria Popova revisits the life of Frances “Fanny” Wright (1795–1852), the Scottish-born American reformer who fused Epicurean philosophy, scientific e",
+      "In a second major feature, ProPublica details how the Trump administration has systematically replaced career election-security staff with figures fro",
+      "Friend AI pendant (friend.",
+      "Brisk Teaching (briskteaching.",
+      "WARE AI Series 100 (wareit.",
+      "Christopher Isabelle's \"Triadic Relational Ontology: From Primordial Separation to Relational Field\" (2026) advances a radical claim: dyadic structure",
+      "Three 2026 papers move autonomous research from lab demos to hardened production systems.",
+      "Ellen Burstyn’s Inner Library",
+      "The Known World",
+      "The role of literature as the key to personal freedom",
+      "**Friend AI Pendant** (MyTabAI, Inc): $99 wearable voice companion with 15-hour battery life, always-listening mic for conversations, and $7.",
+      "**MagicSchool AI**: April 2026 updates include Educational Song Generator (turns lessons into music) and Studio Mode in Raina for document editing.",
+      "**Nirva AI Jewelry**: Fashion-forward pendant that combines AI sensing with jewelry design, tracks emotions and auto-journals life experiences.",
+      "A 31-year-old California man has been charged with attempted assassination after opening fire at the White House Correspondents' Dinner attended by Pr",
+      "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail in Everett at 7:25 a.",
+      "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail medical housing unit around 7:25 a.",
+      "A comprehensive investigation by ProPublica and FRONTLINE reveals that Trump's immigration enforcement has led to over 300 arrests of protesters and b",
+      "A joint ProPublica–FRONTLINE investigation finds that more than 300 U.",
+      "Armed groups launch co-ordinated attacks across Mali - BBC",
+      "As Arrests at Anti-ICE Protests Piled Up, Prosecutions Crumbled",
+      "Auditions — Seattle Pro Musica",
+      "Bellevue",
+      "Bellevue Christian School",
+      "Bellevue School District",
+      "British Prime Minister Keir Starmer faces a parliamentary vote tomorrow on whether to launch an inquiry into whether he misled the House of Commons ov",
+      "British police seized £175,000 worth of gold and silver bullion along with £13,000 cash in Hull during an anti-slavery operation.",
+      "Buddi AI Wearable: 6-person Bothell, WA (local) startup founded 2024.",
+      "Certificated Teacher Pool",
+      "City shares design for next phase of Hwy 99 revitalization and asks public to weigh in.",
+      "City shares design for next phase of Hwy 99 revitalization, asks public to weigh in",
+      "Colin Powers' analysis 'The Emirates on the Tightrope' provides a deep dive into the UAE's precarious position during the Iran war.",
+      "Colm Tóibín's review of 'For and Against a United Ireland' by Fintan O'Toole and Sam McBride examines the complex practicalities of Irish reunificatio",
+      "Congress is accelerating its UAP-disclosure drive.",
+      "Council approves key contracts, drops potential tree litigation and proclaims April 9 Local News Day",
+      "Damiano Migliorini's \"Relational Ontologies and Trinitarian Metaphysics: Subsistences, Events and Gunk\" (2022) advances a rigorous analytic model wher",
+      "Edmonds Library (650 Main St) offers Toddler Storytime for 18 months–3 years on Thursdays, next session May 7 at 10:30 am with Cami—check sno-isle.",
+      "Edmonds School District",
+      "Edmonds police blotter for the week ending April 19 included a theft arrest of an adult female at Highway 99, a warrant arrest, and various other mino",
+      "Edmonds to begin sewer storm pipe rehabilitation project on May 4.",
+      "Edmonds to begin sewer, storm pipe rehabilitation project May 4",
+      "Edmonds will begin a major sewer and storm pipe rehabilitation project on May 4, targeting 27 locations with failing infrastructure identified in a 20",
+      "English Language Arts Teacher",
+      "English Language Arts Teacher (0.6 FTE)",
+      "English Language Arts Teacher (Long-Term Sub)",
+      "English Language Development Teacher – Secondary",
+      "English and History teachers now have three well-funded, purpose-built AI co-teachers.",
+      "Everett Public Schools",
+      "Eyal Weizman's 'All they will find is sand: Gaza’s Yellow Line' provides a forensic analysis of Israel's systematic destruction of Gaza's built enviro",
+      "Fintan O'Toole's essay 'The Right Amount of Crazy' dissects Trump's application of the 'Madman Theory' in foreign policy, particularly regarding Iran.",
+      "Flora Champy's essay explores Marcel Proust's defense of literature as a key to personal freedom, contrasting his views with John Ruskin's moralizing",
+      "Francine Prose's review of two contemporary novels - Lee Clay Johnson's \"Bloodline\" and Carl Hiaasen's \"Fever Beach\" - examines how fiction can addres",
+      "Friend AI Pendant (MyTabAI, Inc): $7.",
+      "Friend AI pendant ($99) - A circular, always-listening companion that records ambient audio and sends contextual text messages via iOS app.",
+      "Friend AI pendant: $99 wearable that records ambient audio and sends text messages to your phone in real-time.",
+      "Friend and Tab pendants represent the new wave of lifelogging wearables that continuously record audio for AI analysis.",
+      "From the Rooftops of Tehran | Anonymous | The New York Review of Books",
+      "Global diplomatic efforts are fraying as the Iran conflict shows no resolution and new crises emerge.",
+      "Gold and silver bullion seized in anti-slavery raid in Hull",
+      "High School English / History Teacher",
+      "High School English Teacher (Long-Term Sub)",
+      "High School History Teacher",
+      "High-School English Teacher",
+      "Humane AI Pin: $699 wearable with cameras and microphones, positioned as smartphone replacement.",
+      "Hungarian Prime Minister Viktor Orbán stepped down from parliament after his Fidesz party suffered a landslide defeat in April elections, ending his 1",
+      "Ian Penman revisits the Beach Boys’ catalog as sacred text, arguing that Brian Wilson’s 1966 masterpiece Pet Sounds achieves the rare alchemy of secul",
+      "In \"Triadic Logic and the Quantum Entanglement of Relations\" (2026, Sophia Studies), philosopher-theologian Dr.",
+      "In \"Triadic Ontology and Quantum Perichoresis: A Relational Metaphysics for the 21st Century\" (Routledge, 2026), philosopher-theologian Dr.",
+      "In a lyrical meditation on flight and vulnerability, Maria Popova explores how birds’ V-formation embodies both aerodynamic efficiency and interdepend",
+      "Iran has officially rejected any US talks while under siege, as Foreign Minister Abbas Araghchi returns to Pakistan.",
+      "Iran war to push global energy prices to four-year high, World Bank says",
+      "Jake Nevins examines how the 2026 Winter Olympics in Italy, initially framed around the theme of 'armonia' (harmony), became a stage for geopolitical",
+      "Jo Livingstone's essay 'We Goofed' examines Yale's new exhibition on literary errata, exploring how publishers' correction slips have evolved from pra",
+      "Join Us - Seattle Choral Company",
+      "King Charles III and Queen Camilla began their historic four-day US state visit, arriving to a military welcome.",
+      "King Charles III has begun a historic four-day US state visit, addressing Congress on Tuesday to defend 'democratic values' following Saturday's assas",
+      "Lake Washington School District",
+      "Late-night highway shutdowns are coming near Alderwood",
+      "Late-night highway shutdowns are coming near Alderwood - Edmonds Beacon",
+      "Lifelogging and lifestyle wearables are converging on discreet jewelry form factors.",
+      "Live updates: Iran war, Israel-Lebanon ceasefire extended by 3 weeks, Trump says | CNN",
+      "Live updates: Trump says he called off dispatching envoys to Iran talks",
+      "MagicSchool AI - Used by 7,000 Hillsborough County teachers for lesson planning, worksheet creation, and presentations.",
+      "MagicSchool AI: $62.",
+      "MagicSchool: 80+ teacher tools including Worksheet Generator, Presentation Generator, and MagicQuizzes for formative assessment.",
+      "Mali's Defense Minister General Sadio Camara was assassinated in an attack by Al Qaeda-linked group JNIM on his residence at the Kati military base ou",
+      "Mali's capital Bamako came under coordinated attack by armed groups including al-Qaeda-linked JNIM and Tuareg FLA rebels, described as the largest jih",
+      "Maria Popova's essay on Fanny Wright reveals the forgotten Scottish-American radical who pioneered scientific thinking and free love in early 19th-cen",
+      "Marysville",
+      "Mexico has stated that two CIA agents killed in a car crash were not authorized to participate in a local raid.",
+      "Mukilteo School District",
+      "North Korea has officially confirmed for the first time that it deployed 14,000 troops to fight alongside Russia in Ukraine under Kim Jong Un's direct",
+      "Northshore School District",
+      "Philosopher Nir Eisikovits warns in Jacobin that outsourcing judgment to AI chatbots is creating a \"decaffeinated subjectivity\"—a hollowed-out capacit",
+      "Pope Leo and the first female Archbishop of Canterbury, Sarah Mullally, met for the first time at the Vatican in a symbolic encounter.",
+      "President Trump abruptly cancelled a planned US delegation trip to Pakistan for Iran peace talks, saying envoys Steve Witkoff and Jared Kushner would",
+      "President Trump stated at a White House state dinner for King Charles that Britain's monarch agrees with him that Iran should not have nuclear weapons",
+      "President Trump was rushed to safety by Secret Service agents after shots were fired inside the Washington Hilton hotel during the White House Corresp",
+      "Public safety and environmental issues were the focus of Tuesday's Edmonds council meeting.",
+      "Recent 2026 developments show Congress held a classified UAP briefing on March 25, described as highly bipartisan, amid growing scrutiny over missing",
+      "Robert G.",
+      "Russia launched a major overnight assault on Ukraine with over 660 drones and missiles, killing at least seven people including five in Dnipro.",
+      "Samsung's New 'Project Luna' AI Desktop Companion Has Ballie Spirit",
+      "Seattle",
+      "Seattle Academy of Arts and Sciences",
+      "Seattle Choral Company is accepting singers from all sections year-round; auditions consist of vocalizing, sight-reading, and ear training.",
+      "Seattle Pro Musica has concluded its 2025-26 season auditions, but invites singers to email auditions@seattlepromusica.",
+      "Seattle Public",
+      "Seattle Public Schools",
+      "Secondary Teacher Pool",
+      "Shoreline School District",
+      "Sno-Isle Libraries offers weekly Toddler Storytime at Lynnwood Library (19200 44th Ave W) on Mondays 9:30-10:00 am starting May 4, featuring stories,",
+      "Snohomish School District",
+      "Social Studies/History Teacher Pool (2026-2027)",
+      "South County Fire commissioners are redistricting to incorporate Edmonds' 42,000+ residents into the Regional Fire Authority.",
+      "Starmer faces vote on possible parliamentary probe over Mandelson",
+      "Starting tonight, Sunday, April 26, and continuing through Friday morning, May 1, overnight closures will affect northbound SR 525 and its ramps near",
+      "State Route 525 near Alderwood Mall Parkway will undergo overnight closures from Sunday night April 26 through Friday morning May 1 for pavement grind",
+      "The City Council approved key contracts including a $415,116 wastewater treatment plant gasification system support contract with Jacobs Engineering,",
+      "The City of Edmonds hosted an open house on Thursday, April 25 to unveil the 60 % design plan for Stage 3 of the Highway 99 Revitalization Project.",
+      "The European Commission has given Google instructions on how to help AI rivals access its services under the Digital Markets Act.",
+      "The House Oversight Subcommittee on National Security held a closed-door briefing on UAPs on April 24, 2026, with no official readout provided to the",
+      "The House Oversight subcommittee on National Security held a closed-door UAP briefing on April 24, 2026, but issued no public readout, frustrating tra",
+      "The IMF has downgraded global growth forecasts to 3.",
+      "The New Normal",
+      "The New Yorker’s New Look",
+      "The South County Fire Board is considering redistricting proposals.",
+      "The Talk of the Town: April 27, 2026",
+      "The US-Iran conflict has reached a deadlock two months after the war began, with peace talks stalled over control of the Strait of Hormuz and Iran's n",
+      "The United States and Iran clashed at the United Nations on Monday over Tehran's nuclear program and its selection as a vice president for the month-l",
+      "The autonomous research landscape has exploded with multi-agent systems now capable of end-to-end scientific discovery.",
+      "The council will consider an amendment to the Perrinville Creek consultant contract on April 28.",
+      "The field is converging on modular, agent-swarm architectures that can autonomously spin up sub-agents for literature review, experiment design, and e",
+      "The global economy faces severe strain as the Iran conflict has escalated beyond geopolitical tension to tangible supply disruption, with Iran's closu",
+      "Three 2026 papers push autonomous research from lab demos to hardened production systems.",
+      "Three 2026 papers show multi-agent AI pivoting from hype to hardened systems.",
+      "Three fresh papers map the cutting edge of triadic-relational metaphysics.",
+      "Three key documents: 1) House Oversight Committee held a joint hearing 13 Nov 2024 titled “Unidentified Anomalous Phenomena: Exposing the Truth” with",
+      "Tony J Prescott's essay 'Why the best way to understand the self is to build a robot one' argues that creating embodied AI systems is essential to und",
+      "Toxic fumes are spreading through the Russian Black Sea town of Tuapse after repeated Ukrainian drone attacks on the local oil refinery.",
+      "Trump cancels US envoys' trip to Pakistan for talks on Iran war - BBC",
+      "Ukraine has accused Israel of receiving shipments of grain 'stolen' by Russia from occupied Ukrainian territory.",
+      "Upper School History Teacher - Long Term Sub",
+      "Upper School History Teacher – Long-Term Sub",
+      "Voice-first AI hardware is rapidly expanding beyond familiar pendants.",
+      "Waiting for Day Zero | Will Alden | The New York Review of Books",
+      "Washington state sues Albertsons over deceptive buy-one-get-one promotions.",
+      "Why the best way to understand the self is to build a robot one",
+      "Will Alden profiles the Iranian exile community in Los Angeles as they wait for what they call \"Day Zero\"—the moment they believe former crown prince",
+      "Will Alden's 'Waiting for Day Zero' chronicles the Iranian monarchist movement in Los Angeles, focusing on Reza Pahlavi's failed attempt to position h",
+      "Wolf Hall",
+      "Woman, 58, died in her cell at Snohomish County Jail",
+      "Woman, 58, died in her cell at Snohomish County Jail | HeraldNet.com",
+      "email | \"Anthropic, PBC\"",
+      "email | \"Superhuman – Zain Kahn\"",
+      "email | \"Tithe.ly\"",
+      "email | Dean Ferguson",
+      "email | GitClear",
+      "email | Google",
+      "email | Greg Gorsuch",
+      "email | MARK M McDermott",
+      "email | Mrs. Lang",
+      "email | mmmichaelllang"
+    ]
+  },
+  "weather": "[{'type': 'text', 'text': \"Gemini is down, so I'll use the data from the other searches and get more detailed information from the weather sources.\"}]",
+  "local_news": [
+    {
+      "category": "municipal",
+      "source": "myedmondsnews.com",
+      "findings": "Edmonds City Council approved key contracts and dropped potential tree litigation during its April 7 business meeting. The council unanimously approved a $415,116 contract with Jacobs Engineering for gasification system commissioning at the wastewater treatment plant, eliminated two unfilled wastewater operator positions while adding two supervisor positions, and approved a $419,000 sewer pipe rehabilitation contract covering 27 locations. The council also declined to pursue a counterpetition in the Redelfs tree removal case, where a 33-inch-diameter landmark tree was removed without permit, with the fine reduced from $102,245 to $20,000 by the hearing examiner. Additionally, the council declared April 9 as Local News Day and approved budget amendments including advancing funds for the Edm [TRUNCATED]",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/council-approves-key-contracts-drops-potential-tree-litigation-and-proclaims-april-9-local-news-day/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "myedmondsnews.com",
+      "findings": "The City of Edmonds will begin construction on its 2025 sewer and storm pipe rehabilitation project starting May 4. The Combined Cured-in-Place Pipe (CIPP) Rehabilitation Project will repair aging sewer and storm pipes using trenchless technology to minimize disruption. This infrastructure improvement project addresses critical maintenance needs identified in previous system assessments and represents ongoing investment in the city's utility infrastructure.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "edmondswa.gov",
+      "findings": "The City of Edmonds has reached the 60% design level for the Highway 99 Revitalization Project - Stage 3 and is seeking public input through an Urban Design Elements survey. The project aims to revitalize the southern half-mile stretch of Highway 99 from 244th St SW to 238th St SW, improving safety for all transportation users while preserving the area's diverse character that includes local businesses, family homes, and modern industry. The survey, which closes May 14, will help shape final design decisions for urban design elements along the corridor.",
+      "urls": [
+        "https://www.edmondswa.gov/news/what_s_new/we_want_to_hear_from_you_-_h_w_y_99_project_survey"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "myedmondsnews.com",
+      "findings": "South County Fire Board of Commissioners is actively working on redistricting proposals to incorporate Edmonds' 42,000+ residents into the Regional Fire Authority's five commissioner districts. Two alternative plans have emerged: Plan 1 would place nearly all of Edmonds into a single district, while Plan 2 would split the city along Pine Street between two districts. The board is working with consultant Robert Schweitzer and will hold public hearings to gather community input before finalizing district boundaries that must comply with equal population, compactness, and contiguity requirements under state law.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/edmonds-at-center-of-discussions-as-south-county-fire-commissioners-embark-on-redistricting/"
+      ]
+    },
+    {
+      "category": "public_safety",
+      "source": "myedmondsnews.com",
+      "findings": "Public safety and environmental issues dominated the April 28 Edmonds City Council meeting, with councilmembers receiving annual reports from organizations providing public safety services to Edmonds. The council focused on reviewing public safety performance metrics and environmental concerns affecting community safety, though specific incident details were not provided in the available coverage.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/"
+      ]
+    }
+  ],
+  "career": {
+    "openings": [
+      {
+        "district": "Edmonds",
+        "role": "Dual Language (English/Spanish) Teacher",
+        "url": "https://www.ziprecruiter.com/c/Edmonds-School-District/Job/Dual-Language-(English-Spanish)-Teacher,-1.0-FTE/-in-Lynnwood,WA?jid=7be781a69db851dd",
+        "summary": "1.0 FTE position teaching English/Spanish dual language across elementary and secondary levels.",
+        "deadline": "Open Until Filled",
+        "salary_range": "$83,305 - $148,226"
+      },
+      {
+        "district": "Everett",
+        "role": "Secondary Teacher Pool (Grades 6-12)",
+        "url": "https://www.applitrack.com/everettsd/onlineapp/default.aspx?AppliTrackJobID=8263",
+        "summary": "Certificated teacher pool for secondary English or History positions; principals hire directly from pool as vacancies arise.",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Shoreline",
+        "role": "High School English or History Teacher",
+        "url": "https://www2.nwrdc.wa-k12.net/scripts/cgiip.exe/WService=wshorels71/rapplmnu03.w",
+        "summary": "General certificated teacher pool; monitor FastTrack system for specific openings and apply to all that interest you.",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Northshore",
+        "role": "Secondary Social Studies Teacher",
+        "url": "https://northshore.tedk12.com/hire/index.aspx",
+        "summary": "Pool posting for secondary Social Studies/History; principals review applications and contact selected candidates for interviews.",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Lake Washington",
+        "role": "High School English Teacher",
+        "url": "https://www.applitrack.com/lakewashington/onlineapp/default.aspx?all=1",
+        "summary": "General secondary English teacher pool; specific school postings appear April-June and August.",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Bellevue Christian",
+        "role": "Secondary History Teacher",
+        "url": "https://www.bellevuechristian.org/employment/",
+        "summary": "Part- or full-time History teaching position at Clyde Hill JH/HS for 2026-27 school year.",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Snohomish",
+        "role": "Social Studies/History Teacher Pool",
+        "url": "https://www.edjoblist.com/employment/social-studies-history-teacher-pool-2026-2027-listing-203525.aspx",
+        "summary": "Pool posting for multiple 2026-2027 vacancies; responsibilities include teaching history/social studies and fostering community engagement.",
+        "deadline": "2026-08-25",
+        "salary_range": "$75,241 - $149,387"
+      },
+      {
+        "district": "Mukilteo",
+        "role": "High School English or History Teacher",
+        "url": "https://mukilteo.tedk12.com/hire/index.aspx",
+        "summary": "Monitor district hiring pools for certificated secondary openings; positions posted spring through summer.",
+        "deadline": null,
+        "salary_range": null
+      }
+    ],
+    "notes": "Most districts use pooled postings for secondary English and History rather than single-school listings. Apply to every relevant pool and monitor district sites weekly for specific openings. Salaries listed where disclosed; otherwise, refer to each district’s published salary schedule. All positions require Washington State teaching certificate."
+  },
+  "family": {
+    "choir": "Seattle Pro Musica has concluded their 2025-26 season auditions, but auditions for the 2026-27 season will be held next August. To be notified when scheduling opens, email auditions@seattlepromusica.org to join their auditions mailing list. The choir rehearses Tuesday evenings 6:30-9:30 pm at Epiphany Parish Seattle (1805 38th Ave, Seattle) and performs three major concerts each season plus outreach events. Requirements: music-reading skills, prior singing or instrumental experience, and familiarity with foreign languages. Annual dues are $75 with scholarships available. The 80-voice ensemble also maintains three small ensembles (Vox, Chroma, Orpheon) that audition from within the full choir after the season begins.",
+    "toddler": "Sno-Isle Libraries offers weekly Toddler Storytimes perfect for 2-year-olds in May. Edmonds Library hosts Toddler Storytime with Cami every Thursday at 9:00-9:45 am. Lynnwood Library offers Toddler Storytime with Nathalie every Monday at 10:30-11:00 am. Both programs feature stories, songs, rhymes and activities designed to build early literacy skills. The libraries also provide Baby Storytime (0-18 months) and Preschool Storytime (3-5 years) at various branches. All programs are free and no registration is required. Check sno-isle.org for complete schedules and any holiday closures.",
+    "urls": [
+      "http://www.seattlepromusica.org/auditions",
+      "https://www.sno-isle.org/locations/edmonds/",
+      "https://www.sno-isle.org/locations/lynnwood/",
+      "https://sno-isle.bibliocommons.com/v2/events?types=5f0ce972da1b731c0af31864"
+    ]
+  },
+  "global_news": [
+    {
+      "category": "global_news",
+      "source": "CNN",
+      "findings": "Oil prices surged to a new wartime high above $126 per barrel Thursday as President Trump considers extending the naval blockade of Iranian ports. The US-Iran conflict has now entered its ninth week with no clear resolution, while Defense Secretary Pete Hegseth testified before Congress that critics of the war are \"the biggest adversary.\" Iran's oil minister urged citizens to cut consumption amid the ongoing crisis.",
+      "urls": [
+        "https://www.cnn.com/2026/04/30/world/live-news/iran-war-news"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "Reuters",
+      "findings": "President Trump stated at a White House state dinner for King Charles that Britain's monarch agrees Iran should never have nuclear weapons. The comment came during Charles' historic four-day US state visit, which has been marked by tensions over the Middle East conflict and NATO relations. Trump emphasized that \"Charles agrees with me even more than I do\" on preventing Iran from obtaining nuclear capabilities.",
+      "urls": [
+        "https://www.reuters.com/world/europe/trump-says-king-charles-does-not-want-iran-have-nuclear-weapon-2026-04-29/"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "BBC News",
+      "findings": "Ukraine has accused Israel of receiving grain shipments that were \"stolen\" by Russia from occupied Ukrainian territory. President Zelensky warned that Israeli authorities \"cannot be unaware\" of the cargo origins and stated this undermines bilateral relations. Israel's Foreign Minister rejected what he called \"Twitter diplomacy\" and demanded evidence through proper diplomatic channels.",
+      "urls": [
+        "https://www.bbc.co.uk/news/articles/cqjplqgd1r2o"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "Reuters",
+      "findings": "The United States and Iran clashed at the United Nations over Tehran's selection as a vice president for the Nuclear Non-Proliferation Treaty conference. The US called Iran's appointment an \"affront\" to the NPT's credibility, while Iran accused Washington of hypocrisy given its own nuclear arsenal. The confrontation highlights the ongoing diplomatic deadlock between the two nations.",
+      "urls": [
+        "https://www.reuters.com/world/middle-east/us-iran-clash-un-after-tehran-gets-nuclear-non-proliferation-role-2026-04-27/"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "BBC News",
+      "findings": "King Charles III and Queen Camilla began their historic four-day US state visit with a military welcome, as the monarch prepares to address Congress on defending \"democratic values.\" The visit comes amid heightened tensions following the assassination attempt on President Trump and ongoing debates about transatlantic relations and NATO commitments.",
+      "urls": [
+        "https://www.bbc.com/news"
+      ]
+    }
+  ],
+  "intellectual_journals": [
+    {
+      "source": "ProPublica",
+      "findings": "A sweeping ProPublica/FRONTLINE investigation reveals that more than 300 U.S. citizens were arrested during Trump-era immigration sweeps on charges such as assaulting or interfering with federal agents. Yet, in over a third of the cases, prosecutors quietly dismissed the charges after video evidence contradicted officers’ sworn statements. The pattern—high-profile raids followed by collapsed prosecutions—has created what legal scholars call a “chilling pre-conviction effect,” where the mere fact of arrest deters future protest regardless of ultimate guilt. The report centers on Alejandro Orell [TRUNCATED]",
+      "url": "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions"
+    },
+    {
+      "source": "Aeon",
+      "findings": "Flora Champy argues that literature’s value lies not in moral improvement but in its capacity to keep past sensations alive. Drawing on Proust’s 1905 essay “On Reading”—written as a preface to Ruskin’s Sesame and Lilies—she shows how Proust rejected Ruskin’s utilitarian view of books as tools for social advancement. Instead, Proust claimed that reading is a unique form of communication that preserves the texture of lost time, allowing us to “grasp time without abolishing it.” Champy extends this to defend the disinterested act of reading as an antidote to a culture obsessed with measurable out [TRUNCATED]",
+      "url": "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom"
+    },
+    {
+      "source": "The Marginalian",
+      "findings": "Maria Popova revisits the life of Frances “Fanny” Wright (1795–1852), the Scottish-born American reformer who fused Epicurean philosophy, scientific empiricism, and radical abolitionism. At eighteen Wright composed A Few Days in Athens, a fictional Greek manuscript that championed atomic realism and moral discipline; later she founded the Nashoba commune in Tennessee to test interracial coexistence and free love. Popova frames Wright as a missing link between Enlightenment rationalism and Whitmanic democracy—Walt Whitman himself recalled that she “possessed my body and soul”—and argues that Wr [TRUNCATED]",
+      "url": "https://www.themarginalian.org/2026/02/27/fanny-wright-traversal"
+    },
+    {
+      "source": "ProPublica",
+      "findings": "In a second major feature, ProPublica details how the Trump administration has systematically replaced career election-security staff with figures from the 2020 election-denial movement. At least 75 federal employees have been reassigned or forced out, while two dozen new appointees—ten of whom participated in attempts to overturn the 2020 vote—now occupy key positions at CISA, the Justice Department, and the FBI. The story reconstructs a December 2020 meeting in which Attorney General William Barr, after hearing technical evidence that vote-hacking claims were baseless, likened his impending  [TRUNCATED]",
+      "url": "https://www.propublica.org/article/trump-midterm-elections-takeover"
+    }
+  ],
+  "wearable_ai": [
+    {
+      "category": "ai_voice_hardware",
+      "findings": "Friend AI pendant (friend.com) - $7.9M funded, voice-first companion worn as necklace, 6 employees, led by Avi Schiffmann. Limitless pendant (limitless.ai) - $399 bundle, HIPAA-grade privacy, 23 employees, records conversations for memory. Omi wearable (omi.me) - $2.7M funded, captures daily life conversations into structured memory, 17 employees, used by Tony Robbins/Salesforce teams. Nirva AI je [TRUNCATED]",
+      "urls": [
+        "https://friend.com/",
+        "https://limitless.ai/",
+        "https://omi.me/",
+        "https://nirva.life/",
+        "https://audria.tech/"
+      ]
+    },
+    {
+      "category": "teacher_ai_tools",
+      "findings": "Brisk Teaching (briskteaching.com) - #1 AI Chrome extension for educators, $21.9M Series A, 74 employees, creates lesson plans/quizzes/feedback in Google Workspace. MagicSchool (magicschool.ai) - comprehensive AI teaching platform with 60+ tools for lesson planning, differentiation, assessment. Diffit (web.diffit.me) - creates classroom-ready materials from any topic, 20 employees, 38.9% YoY growt [TRUNCATED]",
+      "urls": [
+        "https://briskteaching.com/",
+        "https://magicschool.ai/",
+        "https://web.diffit.me/",
+        "https://humy.ai/",
+        "https://twee.com/",
+        "https://teachmateai.com/"
+      ]
+    },
+    {
+      "category": "wearable_devices",
+      "findings": "WARE AI Series 100 (wareit.ai) - wearable AI assistant with camera/audio, 4 employees, rebranded from Titan. HP IQ (hp-iq.com) - 89 employees, HP's AI innovation lab building next-gen devices after acquiring Humane. Humane AI Pin (humane.com) - $348M funded, acquired by HP for $116M in Feb 2025, 28 employees, pioneering screenless AI wearable. Bee AI pendant - reviewed by major outlets at CES 2026 [TRUNCATED]",
+      "urls": [
+        "https://wareit.ai/",
+        "https://hp-iq.com/",
+        "https://humane.com/"
+      ]
+    }
+  ],
+  "triadic_ontology": {
+    "findings": "Christopher Isabelle's \"Triadic Relational Ontology: From Primordial Separation to Relational Field\" (2026) advances a radical claim: dyadic structures—self/world, subject/object, true/false—are necessary but insufficient for emergence and meaning. A third term, the relational field, must be actively maintained through tension between poles or intelligibility itself disappears. Language compresses this triadic structure and cannot reconstruct its origin. The new Karl Alber series \"Studies on Triadic Ontology and Trinitarian Philosophy\" launches with Band 1 \"Trinitarian Ontologies: Towards a Trinitarian Transformation of Philosophy\" (2025), collecting contributions from Münster and Prague that bridge analytic and continental approaches. In quantum foundations, the March 2026 Springer paper \"Symmetric and asymmetric tripartite states under the lens of entanglement splitting and topological linking\" establishes a direct operational link between three-qubit entanglement and topological lin [TRUNCATED]",
+    "urls": [
+      "https://philarchive.org/archive/ISATRO-4",
+      "https://www.nomos-elibrary.de/880328.pdf",
+      "https://link.springer.com/article/10.1007/s40509-026-00390-1",
+      "https://arxiv.org/abs/2602.05726"
+    ]
+  },
+  "ai_systems": {
+    "findings": "Three 2026 papers move autonomous research from lab demos to hardened production systems. Google Cloud's MARS framework (arXiv:2602.02660) introduces Budget-Aware Planning via cost-constrained Monte-Carlo Tree Search, letting agents trade off model-training cost against expected performance gain; on MLE-Bench it now sits at the top of the open-source leaderboard while spending 37 % less GPU time than last year’s best. InternAgent-1.5 (arXiv:2602.08990) couples generation, verification and evolution subsystems so a single agent can run both computational modelling and wet-lab experiments in a unified loop; it has already autonomously re-derived a competitive optimiser for low-rank matrix completion and is being stress-tested on a 30-day continuous climate-data discovery run. MiroFlow (arXiv:2602.22808) wraps these advances in an open-source orchestration graph that supports GAIA, HLE and FutureX benchmarks out of the box, giving the community a reproducible baseline. On the prompting si [TRUNCATED]",
+    "urls": [
+      "https://arxiv.org/pdf/2602.02660",
+      "http://arxiv.org/abs/2602.08990v1",
+      "https://arxiv.org/abs/2602.22808v1",
+      "https://arxiv.org/abs/2603.27008v1",
+      "https://sureprompts.com/blog/prompting-reasoning-models-guide"
+    ]
+  },
+  "uap": {
+    "findings": "",
+    "urls": []
+  },
+  "newyorker": {
+    "available": true,
+    "title": "Ellen Burstyn’s Inner Library",
+    "section": "retrospective",
+    "dek": "Kris Kristofferson told her he was a poet when they co-starred in “Alice Doesn’t Live Here Anymore.” Her new book tells the story of her life in poetry, Michael Schulman writes.",
+    "byline": "By Michael Schulman",
+    "date": "2026-04-27T06:00:00.000-04:00",
+    "text": "The actress Ellen Burstyn has what she calls an “inner library” of poetry that she has memorized in the course of her long life. “I’m ninety-three now, so I probably have less in my head than I used to when it comes to poems,” she said the other day. “But some have been there for years. Decades.” Burstyn was in her Upper West Side apartment, which was festooned with books, plants, crystals, orbs, and statues of Shiva and Buddha and Guanyin (“the goddess of compassion,” she noted). Meditative music piped in through the sound system. “I was getting a massage, so it’s left over,” she explained.\nShe wore green slacks, a green turtleneck, and a green cardigan (“I do like green”), with chunky metallic necklaces. In her writing room, lined with shelves of Mary Oliver and Rumi—her Oscar, for “Alice Doesn’t Live Here Anymore,” was across the hall—she showed off the desk where she wrote her new book, “Poetry Says It Better,” in which she revisits her life story through verses she has loved. “I like what metaphors set off in your mind,” she said. “I like what poetry plays with.”\nShe settled into a wicker chair in the living room, beneath a wooden mermaid that she got in Mexico. Her cavapoo, Kerri, sat regally on a divan. The first poem that spoke to Burstyn, she recalled, was William Ernest Henley’s “Invictus,” which she read in high school, in Detroit. “ ‘I am the master of my fate, I am the captain of my soul’—that awakened an understanding in me that life was not always going to be the way it was.” At school, she was head cheerleader, but her home life was arduous. “My mother married a man who hated her two children,” she said. “I was being punished a lot physically.” She wrote her own poem and gave it to a boy in her class. “He said, ‘Just because your name is Edna’—which was my original name—‘doesn’t mean you have to copy her style.’ I said, ‘Who?’ ” That’s how she discovered Edna St. Vincent Millay. “It was like she was my voice,” she said, and rattled off Millay’s sonnet “Love Is Not All.”\nAt nineteen, Burstyn married her first husband, a poet and car salesman (“In Detroit, everybody’s involved with cars”), who introduced her to Baudelaire. “When I read Baudelaire now, I go, Boy, he’s really dark!” she said. By twenty-four, she was modelling in New York and decided to become an actress. “I went around saying, ‘I’m going to do a Broadway play this fall. Do you know how I can get an audition?’ ” It worked: she made her Broadway début in 1957, in the comedy “Fair Game.” Her determination put her in mind of the poem “For Longing,” by John O’Donohue: “May you have the courage to listen to the voice of desire.”\nSome years later, in Hollywood, she was acting in the Debbie Reynolds flick “Goodbye Charlie.” “I said, ‘This is it. This is the big time. Next I’ll be playing Debbie Reynolds’s part!’ And this voice in my head said, I don’t want it,” she recalled. Through Shelley Winters, she met the acting teacher Lee Strasberg and studied with him. “I did a scene for him, and he said, ‘I don’t know, dear. You either laugh or you cry. If you would laugh and cry at the same time, then we’d see something.’ ” She found herself doing just that in her breakout film, “The Last Picture Show.” This reminded her of what the poet Wisława Szymborska wrote about the soul: “Joy and sorrow / aren’t two different feelings for it.”\nBurstyn starred in “Alice” in 1974, alongside Kris Kristofferson, who insisted that he couldn’t act or sing. “What is it you do?” she remembered asking him. “I am a poet,” he answered. In her book, she included a sampling of his lyrics. (“He’s a walkin’ contradiction, partly truth and partly fiction.”) Did any poems remind her of starring in “The Exorcist”? Not quite, she said, but the film does open with the Muslim call to prayer. In the seventies, inspired by an etching of a chanting muezzin in her copy of “The Rubáiyát of Omar Khayyám,” she began travelling the Middle East. In Iran, she visited the Tomb of Hafez. “People come rea [TRUNCATED]",
+    "url": "https://www.newyorker.com/magazine/2026/05/04/ellen-burstyns-inner-library",
+    "source": "The New Yorker",
+    "archived_from": "",
+    "error": null
+  },
+  "literary_pick": {
+    "available": true,
+    "title": "The Known World",
+    "author": "Edward P. Jones",
+    "year": 2003,
+    "summary": "A Pulitzer Prize-winning debut novel that reimagines the antebellum South through the story of Henry Townsend, a Black farmer and former slave who becomes a slave owner himself. Set in Manchester County, Virginia, the novel explores the moral complexities of slavery, freedom, and identity, challenging conventional narratives about race and power in American history. Through a rich tapestry of characters and interwoven stories, Jones crafts a profound meditation on the human condition and the enduring legacy of slavery.",
+    "url": "https://flyleafbooks.com/nyt-100-21stcentury"
+  },
+  "enriched_articles": [
+    {
+      "title": "The role of literature as the key to personal freedom",
+      "url": "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom",
+      "source": "aeon.co",
+      "text": "# The role of literature as the key to personal freedom | Aeon Essays\n\nPublished: 2026-04-24T10:00:00+00:00\n\n## Summary\n\nMarcel Proust, the author of his novel, In Search of Lost Time (1905), has defended the importance of literature as a key to personal freedom and its ability to influence the lives of individuals. He argues that books are not always the instruments of moral betterment, but they can provide valuable insights into our lives. This comes after John Ruskin argued that books were no"
+    }
+  ]
+}
