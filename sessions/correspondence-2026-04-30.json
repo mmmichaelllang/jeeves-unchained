@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Google: Google security alert about Opal gaining access to Google Account data.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves — Research Phase workflow failed in jeeves-unchained repo.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves — Research Phase workflow failed in jeeves-memory repo.\n- [reply needed] Dean Ferguson: Dean Ferguson requesting a letter of recommendation.\n- [reply needed] Greg Gorsuch: Greg Gorsuch sending document titled \"changes 1\" with contact info.\n- [no action] \"Anthropic, PBC\": Receipt from Anthropic for transaction #2952-3265-0045.\n- [no action] \"Anthropic, PBC\": Receipt from Anthropic for transaction #2648-0133-8872.\n- [no action] \"Anthropic, PBC\": Receipt from Anthropic for transaction #2760-7487-1515.\n- [no action] GoodRx: Welcome email from GoodRx with coupon instructions.\n- [no action] \"Anthropic, PBC\": Receipt from Anthropic for transaction #2056-8305-4046.\n- [no action] GoodRx: GoodRx coupon email for Amphetamine Salt Combo at Safeway.\n- [no action] \"Anthropic, PBC\": Receipt from Anthropic for transaction #2470-9983-3015.\n- [no action] lang.mc@gmail.com: Daily intelligence briefing from Jeeves for Monday, April 27, 2026.",
+  "counts": {
+    "reply_needed": 2,
+    "decision_required": 0,
+    "scheduling": 0,
+    "follow_up": 0,
+    "escalation": 3,
+    "no_action": 15
+  }
+}
