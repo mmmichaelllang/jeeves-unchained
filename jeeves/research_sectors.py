@@ -874,6 +874,36 @@ async def run_sector(
 ) -> Any:
     """Run one sector's agent and return the parsed sector-shape value."""
 
+    # Fast path: newyorker bypasses the LLM agent entirely.
+    # fetch_talk_of_the_town is pure Python — no LLM needed or wanted.
+    # Routing it through Kimi introduces three hallucination vectors:
+    #   1. Kimi can skip the tool call and answer from training data
+    #      (quota guard doesn't fire — newyorker is in _NO_QUOTA_CHECK).
+    #   2. _json_repair_retry "empty output" path explicitly tells Kimi to
+    #      synthesise JSON from its own knowledge.
+    #   3. Kimi may call search tools instead of the TOTT tool and fabricate content.
+    # Calling the function directly guarantees real fetched content or available=false.
+    if spec.name == "newyorker":
+        from .tools.talk_of_the_town import fetch_talk_of_the_town
+
+        log.info("sector newyorker: direct Python fetch (no agent).")
+        try:
+            raw = fetch_talk_of_the_town(
+                set(prior_urls_sample), jina_api_key=cfg.jina_api_key
+            )()
+        except Exception as exc:
+            log.warning("sector newyorker: fetch crashed (%s); returning default.", exc)
+            return spec.default
+        parsed = _parse_sector_output(raw, spec)
+        if isinstance(parsed, _ParseFailed):
+            log.warning("sector newyorker: JSON parse failed; returning default.")
+            return spec.default
+        log.info(
+            "sector newyorker: direct fetch done (available=%s).",
+            parsed.get("available") if isinstance(parsed, dict) else "?",
+        )
+        return parsed
+
     from llama_index.core.agent.workflow import FunctionAgent
 
     from .llm import build_kimi_llm
