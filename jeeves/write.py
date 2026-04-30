@@ -198,9 +198,9 @@ PART1_INSTRUCTIONS = """
 
 You are writing PART 1 of a nine-part briefing. Output the full HTML opening
 starting with the DOCTYPE and including the EXACT stylesheet below — then the
-`<h1>` with today's full weekday date, then:
+masthead structure with today's full weekday date filled in, then:
 
-**MANDATORY HTML OPENING — copy this exactly:**
+**MANDATORY HTML OPENING — copy this exactly, filling in only the date:**
 
 ```html
 <!DOCTYPE html>
@@ -209,28 +209,48 @@ starting with the DOCTYPE and including the EXACT stylesheet below — then the
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Georgia, serif; background: #faf9f6; color: #1a1a1a; margin: 0; padding: 20px; }
-    .container { max-width: 720px; margin: 0 auto; line-height: 1.7; }
-    h1 { font-size: 1.6em; border-bottom: 1px solid #ccc; padding-bottom: 8px; }
-    h2 { font-size: 1.3em; margin-top: 2em; }
-    h3 { font-size: 1.1em; }
-    a { color: #1a5276; text-decoration: underline; }
-    .signoff { font-style: italic; margin-top: 2em; }
+    * { box-sizing: border-box; }
+    body { font-family: Georgia, 'Times New Roman', serif; background: #0a0a0a; color: #1a1714; margin: 0; padding: 48px 16px 80px; font-size: 17px; }
+    .container { max-width: 660px; margin: 0 auto; background: #fdfaf5; border: 1px solid #bfb090; line-height: 1.88; }
+    .banner { display: block; width: 100%; margin: 0; padding: 0; border: 0; }
+    .mh-date { background-color: #0c1015; color: #8899aa; margin: 0; padding: 36px 56px 48px; font-size: 0.72em; font-style: italic; text-align: center; letter-spacing: 0.08em; border-bottom: 3px solid #c8902a; }
+    h2 { background-color: #0c1015; color: #c8902a; margin: 3.2em 0 0; padding: 24px 56px; font-size: 0.55em; font-weight: normal; text-transform: uppercase; letter-spacing: 0.6em; border-top: 3px solid #c8902a; }
+    h3 { font-size: 1.1em; font-weight: bold; font-style: italic; color: #18375a; margin: 2em 40px 0.5em; padding: 0 0 0 20px; border-left: 4px solid #c8902a; line-height: 1.4; }
+    p { margin: 0 56px 1.5em; padding: 0; }
+    .mh-date + p { margin-top: 2.6em; }
+    h2 + p { margin-top: 1.4em; }
+    a { color: #18375a; text-decoration: none; border-bottom: 1px solid #88a8c8; }
+    .dc { float: left; font-size: 5em; line-height: 0.68; padding-right: 8px; padding-top: 5px; color: #c8902a; font-weight: bold; }
+    .ny-header { font-size: 0.58em; text-transform: uppercase; letter-spacing: 0.45em; color: #c8902a; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid #c8a040; }
+    .newyorker { background-color: #f0e8d2; border-top: 3px solid #c8902a; border-bottom: 3px solid #c8902a; margin: 3em 0; padding: 32px 56px 36px; }
+    .newyorker p { margin: 0 0 1.2em; padding: 0; }
+    .newyorker p:last-child { margin-bottom: 0; }
+    .signoff { border-top: 3px solid #c8902a; padding: 36px 56px 62px; font-style: italic; text-align: right; color: #5a4828; margin-top: 2em; }
+    .signoff p { margin: 0; padding: 0; line-height: 1.9; }
   </style>
 </head>
 <body>
 <div class="container">
-  <h1>📜 Daily Intelligence from Jeeves — [FULL WEEKDAY DATE e.g. Tuesday, 29 April 2026]</h1>
+<img class="banner" src="https://i.imgur.com/15Kv9Z9.png" alt="">
+<div class="mh-date">[FULL WEEKDAY DATE e.g. Tuesday, 29 April 2026]</div>
 ```
 
 Do NOT alter these styles. Do NOT add extra CSS. Do NOT use Arial, sans-serif,
-or any other font. The body font is Georgia. The container is max-width 720px.
+or any other font. The body font is Georgia. The container is max-width 660px.
 
 Then write the sector 1 content:
 
 - Sector 1 opening material: the formal butler greeting to Mister Lang, the
   correspondence summary (if `correspondence.found=true`), and the weather
   forecast from `weather`.
+
+**DROP CAP — MANDATORY:** The opening greeting paragraph must begin with a
+drop cap on the first letter, like this:
+
+`<p><span class="dc">G</span>ood morning, Mister Lang. ...`
+
+Use exactly `<span class="dc">` around the first letter only. No other
+paragraph uses this class.
 
 **OPENING GREETING — MANDATORY QUALITY STANDARD:**
 The first sentence Mister Lang reads must have specific Wodehousian character.
@@ -1072,13 +1092,15 @@ def _strip_fences(s: str) -> str:
 
 
 def _strip_continuation_wrapper(s: str) -> str:
-    """Remove DOCTYPE/head/body/h1 that a continuation part leaked despite instructions."""
+    """Remove DOCTYPE/head/body/h1/masthead divs that a continuation part leaked."""
     import re as _re
     s = _re.sub(r"^<!DOCTYPE[^>]*>", "", s, flags=_re.IGNORECASE).strip()
     s = _re.sub(r"<html[^>]*>", "", s, flags=_re.IGNORECASE)
     s = _re.sub(r"<head>.*?</head>", "", s, flags=_re.IGNORECASE | _re.DOTALL)
     s = _re.sub(r"<body[^>]*>", "", s, flags=_re.IGNORECASE)
     s = _re.sub(r"<h1[^>]*>.*?</h1>", "", s, flags=_re.IGNORECASE | _re.DOTALL)
+    # Strip masthead divs (mh-label, mh-date) if a continuation part leaks them.
+    s = _re.sub(r'<div[^>]*class="mh-(?:label|date)"[^>]*>.*?</div>', "", s, flags=_re.IGNORECASE | _re.DOTALL)
     return s.strip()
 
 
@@ -1368,7 +1390,10 @@ def _build_newyorker_block(text: str, url: str) -> str:
     read_link = f'\n<p><a href="{url}">Read at The New Yorker</a></p>' if url else ""
     return (
         "<!-- NEWYORKER_START -->\n"
+        + '<div class="newyorker">\n'
+        + '<div class="ny-header">The New Yorker &middot; Talk of the Town</div>\n'
         + "\n".join(f"<p>{p}</p>" for p in paragraphs)
+        + "\n</div>"
         + "\n<!-- NEWYORKER_END -->"
         + read_link
     )
@@ -2533,13 +2558,30 @@ def render_mock_briefing(session: SessionModel) -> str:
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {{ font-family: Georgia, serif; background: #faf9f6; color: #1a1a1a; margin: 0; padding: 20px; }}
-    .container {{ max-width: 720px; margin: 0 auto; line-height: 1.7; }}
+    * {{ box-sizing: border-box; }}
+    body {{ font-family: Georgia, 'Times New Roman', serif; background: #0a0a0a; color: #1a1714; margin: 0; padding: 48px 16px 80px; font-size: 17px; }}
+    .container {{ max-width: 660px; margin: 0 auto; background: #fdfaf5; border: 1px solid #bfb090; line-height: 1.88; }}
+    .banner {{ display: block; width: 100%; margin: 0; padding: 0; border: 0; }}
+    .mh-date {{ background-color: #0c1015; color: #8899aa; margin: 0; padding: 36px 56px 48px; font-size: 0.72em; font-style: italic; text-align: center; letter-spacing: 0.08em; border-bottom: 3px solid #c8902a; }}
+    h2 {{ background-color: #0c1015; color: #c8902a; margin: 3.2em 0 0; padding: 24px 56px; font-size: 0.55em; font-weight: normal; text-transform: uppercase; letter-spacing: 0.6em; border-top: 3px solid #c8902a; }}
+    h3 {{ font-size: 1.1em; font-weight: bold; font-style: italic; color: #18375a; margin: 2em 40px 0.5em; padding: 0 0 0 20px; border-left: 4px solid #c8902a; line-height: 1.4; }}
+    p {{ margin: 0 56px 1.5em; padding: 0; }}
+    .mh-date + p {{ margin-top: 2.6em; }}
+    h2 + p {{ margin-top: 1.4em; }}
+    a {{ color: #18375a; text-decoration: none; border-bottom: 1px solid #88a8c8; }}
+    .dc {{ float: left; font-size: 5em; line-height: 0.68; padding-right: 8px; padding-top: 5px; color: #c8902a; font-weight: bold; }}
+    .ny-header {{ font-size: 0.58em; text-transform: uppercase; letter-spacing: 0.45em; color: #c8902a; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid #c8a040; }}
+    .newyorker {{ background-color: #f0e8d2; border-top: 3px solid #c8902a; border-bottom: 3px solid #c8902a; margin: 3em 0; padding: 32px 56px 36px; }}
+    .newyorker p {{ margin: 0 0 1.2em; padding: 0; }}
+    .newyorker p:last-child {{ margin-bottom: 0; }}
+    .signoff {{ border-top: 3px solid #c8902a; padding: 36px 56px 62px; font-style: italic; text-align: right; color: #5a4828; margin-top: 2em; }}
+    .signoff p {{ margin: 0; padding: 0; line-height: 1.9; }}
   </style>
 </head>
 <body>
 <div class="container">
-  <h1>📜 Daily Intelligence from Jeeves — DRY RUN</h1>
+  <img class="banner" src="https://i.imgur.com/15Kv9Z9.png" alt="">
+  <div class="mh-date">DRY RUN</div>
   {body_html}
   <div class="signoff"><p>Your reluctantly faithful Butler,<br/>Jeeves</p></div>
   <!-- COVERAGE_LOG: {_safe_json_for_comment(coverage)} -->
