@@ -88,18 +88,29 @@ Use exactly this structure. All CSS lives in `<head>`. No external stylesheets.
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Georgia, serif; background: #faf9f6; color: #1a1a1a; margin: 0; padding: 20px; }
-    .container { max-width: 720px; margin: 0 auto; line-height: 1.7; }
-    h1 { font-size: 1.6em; border-bottom: 1px solid #ccc; padding-bottom: 8px; }
-    h2 { font-size: 1.3em; margin-top: 2em; }
-    h3 { font-size: 1.1em; }
-    a { color: #1a5276; text-decoration: underline; }
-    .signoff { font-style: italic; margin-top: 2em; }
+    * { box-sizing: border-box; }
+    body { font-family: Georgia, 'Times New Roman', serif; background: #0a0a0a; color: #1a1714; margin: 0; padding: 48px 16px 80px; font-size: 17px; }
+    .container { max-width: 660px; margin: 0 auto; background: #fdfaf5; border: 1px solid #bfb090; line-height: 1.88; }
+    .banner { display: block; width: 100%; margin: 0; padding: 0; border: 0; }
+    .mh-date { background-color: #0c1015; color: #8899aa; margin: 0; padding: 36px 56px 48px; font-size: 0.72em; font-style: italic; text-align: center; letter-spacing: 0.08em; border-bottom: 3px solid #c8902a; }
+    h2 { background-color: #0c1015; color: #c8902a; margin: 3.2em 0 0; padding: 24px 56px; font-size: 0.55em; font-weight: normal; text-transform: uppercase; letter-spacing: 0.6em; border-top: 3px solid #c8902a; }
+    h3 { font-size: 1.1em; font-weight: bold; font-style: italic; color: #18375a; margin: 2em 40px 0.5em; padding: 0 0 0 20px; border-left: 4px solid #c8902a; line-height: 1.4; }
+    p { margin: 0 56px 1.5em; padding: 0; }
+    .mh-date + p { margin-top: 2.6em; }
+    h2 + p { margin-top: 1.4em; }
+    a { color: #18375a; text-decoration: none; border-bottom: 1px solid #88a8c8; }
+    .dc { float: left; font-size: 5em; line-height: 0.68; padding-right: 8px; padding-top: 5px; color: #c8902a; font-weight: bold; }
+    .ny-header { font-size: 0.58em; text-transform: uppercase; letter-spacing: 0.45em; color: #c8902a; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid #c8a040; }
+    .newyorker { background-color: #f0e8d2; border-top: 3px solid #c8902a; border-bottom: 3px solid #c8902a; margin: 3em 0; padding: 32px 56px 36px; }
+    .newyorker p { margin: 0 0 1.2em; padding: 0; }
+    .newyorker p:last-child { margin-bottom: 0; }
+    .signoff { border-top: 3px solid #c8902a; padding: 36px 56px 62px; font-style: italic; text-align: right; color: #5a4828; margin-top: 2em; }
+    .signoff p { margin: 0; padding: 0; line-height: 1.9; }
   </style>
 </head>
 <body>
 <div class="container">
-  <h1>📜 Daily Intelligence from Jeeves</h1>
+<img class="banner" src="https://i.imgur.com/15Kv9Z9.png" alt="">
 
   [SECTOR 1 CONTENT]
   [SECTOR 2 CONTENT]
