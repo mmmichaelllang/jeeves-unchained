@@ -56,6 +56,12 @@ LD_JSON_RE = re.compile(
     r'<script[^>]*type="application/ld\+json"[^>]*>(.*?)</script>',
     re.DOTALL,
 )
+# The New Yorker omits the drop-cap lead paragraph from ld+json articleBody.
+# It lives in a <p class="... has-dropcap ..."> element in the raw HTML.
+DROPCAP_RE = re.compile(
+    r'<p[^>]*class="[^"]*has-dropcap[^"]*"[^>]*>(.*?)</p>',
+    re.DOTALL | re.IGNORECASE,
+)
 JINA_BASE = "https://r.jina.ai/"
 
 _WAYBACK_CDX_URL = "https://web.archive.org/cdx/search/cdx"
@@ -233,6 +239,29 @@ def _extract_byline(author: Any) -> str:
     return f"By {name_str}" if name_str else ""
 
 
+def _extract_dropcap(html: str) -> str:
+    """Return the drop-cap lead paragraph text, or '' if not found.
+
+    The New Yorker excludes the drop-cap paragraph from ld+json articleBody.
+    It is present in the raw HTML as <p class="... has-dropcap ...">...</p>.
+    """
+    m = DROPCAP_RE.search(html)
+    if not m:
+        return ""
+    return unescape(re.sub(r"<[^>]+>", "", m.group(1))).strip()
+
+
+def _prepend_dropcap(html: str, body: str) -> str:
+    """Prepend the drop-cap paragraph to body if it isn't already there."""
+    lead = _extract_dropcap(html)
+    if not lead:
+        return body
+    # Avoid duplication: skip if first 80 chars of lead already appear in body.
+    if lead[:80] in body:
+        return body
+    return lead + "\n" + body
+
+
 def _fallback_paragraphs(html: str) -> str:
     body = re.search(r"<article[^>]*>(.*?)</article>", html, re.DOTALL)
     chunk = body.group(1) if body else html
@@ -369,7 +398,7 @@ def _try_direct(url: str, jina_api_key: str, base: dict) -> bool:
     if article:
         body = article.get("articleBody", "") or ""
         if len(body) > 500:
-            base["text"] = body
+            base["text"] = _prepend_dropcap(html, body)
             base["available"] = True
             base["archived_from"] = ""
             return True
