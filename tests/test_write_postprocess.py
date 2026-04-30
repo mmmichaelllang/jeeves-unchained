@@ -695,13 +695,12 @@ def test_system_prompt_for_part9_strips_asides_pool():
 
 
 def test_part1_instructions_embed_css_scaffold():
-    """PART1_INSTRUCTIONS must carry the Georgian CSS since _system_prompt_for_parts strips the scaffold block."""
+    """PART1_INSTRUCTIONS must carry the CSS scaffold since _system_prompt_for_parts strips the scaffold block."""
     from jeeves.write import PART1_INSTRUCTIONS
-    assert "Georgia, serif" in PART1_INSTRUCTIONS
-    assert "background: #faf9f6" in PART1_INSTRUCTIONS
-    assert "max-width: 720px" in PART1_INSTRUCTIONS
     # Scaffold is fully self-contained — no dependency on write_system.md CSS.
     assert "font-family: Georgia" in PART1_INSTRUCTIONS
+    assert "background: #fdfaf5" in PART1_INSTRUCTIONS
+    assert "max-width: 660px" in PART1_INSTRUCTIONS
 
 
 def test_continuation_rules_mandate_linking_and_ban_fabrication():
