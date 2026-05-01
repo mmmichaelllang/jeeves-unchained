@@ -173,7 +173,7 @@ def test_classify_with_kimi_batches_previews(monkeypatch):
 
     out = classify_with_kimi(cfg=None, previews=previews, contacts={"household": []})
 
-    assert calls == [30, 30, 15]
+    assert calls == [15, 15, 15, 15, 15]
     assert len(out) == 75
     assert {c.id for c in out} == {f"m{i}" for i in range(75)}
 

@@ -16,6 +16,7 @@ import html as html_lib
 import json
 import logging
 import re
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -68,7 +69,7 @@ def load_priority_contacts() -> dict[str, Any]:
     return json.loads(CONTACTS_PATH.read_text(encoding="utf-8"))
 
 
-CLASSIFY_BATCH_SIZE = 30
+CLASSIFY_BATCH_SIZE = 15
 
 
 def classify_with_kimi(
@@ -101,17 +102,29 @@ def classify_with_kimi(
             "contacts": contacts,
         }
         user = json.dumps(user_json, ensure_ascii=False)
-        log.info(
-            "classify batch %d/%d (%d msgs)",
-            i // batch_size + 1, n_batches, len(batch),
-        )
-        resp = llm.chat(
-            [
-                ChatMessage(role=MessageRole.SYSTEM, content=system),
-                ChatMessage(role=MessageRole.USER, content=user),
-            ]
-        )
-        raw = str(resp.message.content or "").strip()
+        batch_num = i // batch_size + 1
+        log.info("classify batch %d/%d (%d msgs)", batch_num, n_batches, len(batch))
+        messages = [
+            ChatMessage(role=MessageRole.SYSTEM, content=system),
+            ChatMessage(role=MessageRole.USER, content=user),
+        ]
+        raw = ""
+        for attempt in range(3):
+            try:
+                resp = llm.chat(messages)
+                raw = str(resp.message.content or "").strip()
+                break
+            except Exception as exc:
+                exc_str = str(exc).lower()
+                if attempt < 2 and ("timeout" in exc_str or "timed out" in exc_str):
+                    sleep_s = 30 * (attempt + 1)
+                    log.warning(
+                        "classify batch %d/%d timeout (attempt %d/3) — sleeping %ds: %s",
+                        batch_num, n_batches, attempt + 1, sleep_s, exc,
+                    )
+                    time.sleep(sleep_s)
+                    continue
+                raise
         rows = _parse_json_array(raw)
 
         for row in rows:
