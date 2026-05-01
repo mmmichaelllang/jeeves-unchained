@@ -231,7 +231,7 @@ masthead structure with today's full weekday date filled in, then:
 </head>
 <body>
 <div class="container">
-<img class="banner" src="https://i.imgur.com/15Kv9Z9.png" alt="">
+<img class="banner" src="https://i.imgur.com/UqSFELh.png" alt="">
 <div class="mh-date">[FULL WEEKDAY DATE e.g. Tuesday, 29 April 2026]</div>
 ```
 
@@ -1507,6 +1507,45 @@ def _inject_newyorker_verbatim(html: str, session: SessionModel) -> str:
     return html[:intro_end] + block + html[signoff_idx:]
 
 
+_DOMAIN_NICE_NAMES: dict[str, list[str]] = {
+    # domain fragment → list of prose names the model uses
+    "aeon.co": ["Aeon"],
+    "propublica.org": ["ProPublica"],
+    "nybooks.com": ["NYRB", "New York Review of Books", "New York Review"],
+    "themarginalian.org": ["The Marginalian", "Marginalian"],
+    "theguardian.com": ["The Guardian", "Guardian"],
+    "bbc.co.uk": ["BBC", "BBC News"],
+    "bbc.com": ["BBC", "BBC News"],
+    "reuters.com": ["Reuters"],
+    "nytimes.com": ["The New York Times", "New York Times", "NYT"],
+    "washingtonpost.com": ["The Washington Post", "Washington Post"],
+    "lrb.co.uk": ["LRB", "London Review of Books"],
+    "economist.com": ["The Economist", "Economist"],
+    "ft.com": ["Financial Times", "FT"],
+    "newyorker.com": ["The New Yorker", "New Yorker"],
+    "euronews.com": ["Euronews"],
+    "aljazeera.com": ["Al Jazeera"],
+    "apnews.com": ["AP", "Associated Press"],
+    "axios.com": ["Axios"],
+    "politico.com": ["Politico"],
+    "theatlantic.com": ["The Atlantic", "Atlantic"],
+    "wired.com": ["Wired"],
+    "techcrunch.com": ["TechCrunch"],
+    "newsweek.com": ["Newsweek"],
+    "bigthink.com": ["Big Think"],
+    "frontline": ["FRONTLINE", "Frontline"],
+}
+
+# Prose aliases that may differ from how Kimi names the source in session JSON.
+_SOURCE_ALIASES: dict[str, list[str]] = {
+    "BBC": ["BBC News", "the BBC"],
+    "Reuters": ["Reuters news agency"],
+    "ProPublica": ["ProPublica", "ProPublica and FRONTLINE"],
+    "NYRB": ["New York Review of Books"],
+    "Marginalian": ["The Marginalian"],
+}
+
+
 def _build_source_url_map(session: SessionModel) -> dict[str, str]:
     """Build {source_name: canonical_url} from all structured session sectors.
 
@@ -1514,8 +1553,28 @@ def _build_source_url_map(session: SessionModel) -> dict[str, str]:
     the first URL in the sector item's urls list. The map drives
     _inject_source_links — which injects <a href> anchors deterministically
     after the model generates prose.
+
+    Also expands domain-style source names (e.g. "aeon.co") to the prose names
+    the model actually uses ("Aeon") so _inject_source_links can find matches.
     """
     mapping: dict[str, str] = {}
+
+    def _add_with_aliases(name: str | None, url: str | None) -> None:
+        if not name or not url:
+            return
+        _add(name, url)
+        # Expand domain-style sources to nice prose names.
+        for domain_frag, nice_names in _DOMAIN_NICE_NAMES.items():
+            if domain_frag in name.lower():
+                for nice in nice_names:
+                    _add(nice, url)
+                return
+        # Expand known prose aliases.
+        for canonical, aliases in _SOURCE_ALIASES.items():
+            if name == canonical:
+                for alias in aliases:
+                    _add(alias, url)
+                return
 
     def _add(name: str | None, url: str | None) -> None:
         if name and url and name not in mapping:
@@ -1525,19 +1584,19 @@ def _build_source_url_map(session: SessionModel) -> dict[str, str]:
         urls = item.get("urls") if isinstance(item, dict) else getattr(item, "urls", [])
         src = item.get("source") if isinstance(item, dict) else getattr(item, "source", None)
         if urls:
-            _add(src, urls[0])
+            _add_with_aliases(src, urls[0])
 
     for item in session.global_news or []:
         urls = item.get("urls") if isinstance(item, dict) else getattr(item, "urls", [])
         src = item.get("source") if isinstance(item, dict) else getattr(item, "source", None)
         if urls:
-            _add(src, urls[0])
+            _add_with_aliases(src, urls[0])
 
     for item in session.intellectual_journals or []:
         urls = item.get("urls") if isinstance(item, dict) else getattr(item, "urls", [])
         src = item.get("source") if isinstance(item, dict) else getattr(item, "source", None)
         if urls:
-            _add(src, urls[0])
+            _add_with_aliases(src, urls[0])
 
     for item in session.wearable_ai or []:
         urls = item.get("urls") if isinstance(item, dict) else getattr(item, "urls", [])
@@ -1547,7 +1606,7 @@ def _build_source_url_map(session: SessionModel) -> dict[str, str]:
             # from the first URL so product sites (friend.com, magicschool.ai etc.)
             # can still be linked when the model writes their domain as prose.
             if src:
-                _add(src, urls[0])
+                _add_with_aliases(src, urls[0])
             else:
                 from urllib.parse import urlparse as _urlparse
                 domain = _urlparse(urls[0]).netloc.lstrip("www.")
@@ -2619,7 +2678,7 @@ def render_mock_briefing(session: SessionModel) -> str:
 </head>
 <body>
 <div class="container">
-  <img class="banner" src="https://i.imgur.com/15Kv9Z9.png" alt="">
+  <img class="banner" src="https://i.imgur.com/UqSFELh.png" alt="">
   <div class="mh-date">DRY RUN</div>
   {body_html}
   <div class="signoff"><p>Your reluctantly faithful Butler,<br/>Jeeves</p></div>
