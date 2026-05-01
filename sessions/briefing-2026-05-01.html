@@ -4,78 +4,272 @@
 <meta charset="UTF-8"> 
 <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
 <style> 
-* { box-sizing: border-box; } 
-body { font-family: Georgia, 'Times New Roman', serif; background: #0a0a0a; color: #1a1714; margin: 0; padding: 48px 16px 80px; font-size: 17px; } 
-.container { max-width: 660px; margin: 0 auto; background: #fdfaf5; border: 1px solid #bfb090; line-height: 1.88; } 
-.banner { display: block; width: 100%; margin: 0; padding: 0; border: 0; } 
-.mh-date { background-color: #0c1015; color: #8899aa; margin: 0; padding: 36px 56px 48px; font-size: 0.72em; font-style: italic; text-align: center; letter-spacing: 0.08em; border-bottom: 3px solid #c8902a; } 
-h2 { background-color: #0c1015; color: #c8902a; margin: 3.2em 0 0; padding: 24px 56px; font-size: 0.55em; font-weight: normal; text-transform: uppercase; letter-spacing: 0.6em; border-top: 3px solid #c8902a; } 
-h3 { font-size: 1.1em; font-weight: bold; font-style: italic; color: #18375a; margin: 2em 40px 0.5em; padding: 0 0 0 20px; border-left: 4px solid #c8902a; line-height: 1.4; } 
-p { margin: 0 56px 1.5em; padding: 0; } 
-.mh-date + p { margin-top: 2.6em; } 
-h2 + p { margin-top: 1.4em; } 
-a { color: #18375a; text-decoration: none; border-bottom: 1px solid #88a8c8; } 
-.dc { float: left; font-size: 5em; line-height: 0.68; padding-right: 8px; padding-top: 5px; color: #c8902a; font-weight: bold; } 
-.ny-header { font-size: 0.58em; text-transform: uppercase; letter-spacing: 0.45em; color: #c8902a; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid #c8a040; } 
-.newyorker { background-color: #f0e8d2; border-top: 3px solid #c8902a; border-bottom: 3px solid #c8902a; margin: 3em 0; padding: 32px 56px 36px; } 
-.newyorker p { margin: 0 0 1.2em; padding: 0; } 
-.newyorker p:last-child { margin-bottom: 0; } 
-.signoff { border-top: 3px solid #c8902a; padding: 36px 56px 62px; font-style: italic; text-align: right; color: #5a4828; margin-top: 2em; } 
-.signoff p { margin: 0; padding: 0; line-height: 1.9; } 
+* { 
+  box-sizing: border-box; 
+} 
+body { 
+  font-family: Georgia, 'Times New Roman', serif; 
+  background: #0a0a0a; 
+  color: #1a1714; 
+  margin: 0; 
+  padding: 48px 16px 80px; 
+  font-size: 17px; 
+} 
+.container { 
+  max-width: 660px; 
+  margin: 0 auto; 
+  background: #fdfaf5; 
+  border: 1px solid #bfb090; 
+  line-height: 1.88; 
+} 
+.banner { 
+  display: block; 
+  width: 100%; 
+  margin: 0; 
+  padding: 0; 
+  border: 0; 
+} 
+.mh-date { 
+  background-color: #0c1015; 
+  color: #8899aa; 
+  margin: 0; 
+  padding: 36px 56px 48px; 
+  font-size: 0.72em; 
+  font-style: italic; 
+  text-align: center; 
+  letter-spacing: 0.08em; 
+  border-bottom: 3px solid #c8902a; 
+} 
+h2 { 
+  background-color: #0c1015; 
+  color: #c8902a; 
+  margin: 3.2em 0 0; 
+  padding: 24px 56px; 
+  font-size: 0.55em; 
+  font-weight: normal; 
+  text-transform: uppercase; 
+  letter-spacing: 0.6em; 
+  border-top: 3px solid #c8902a; 
+} 
+h3 { 
+  font-size: 1.1em; 
+  font-weight: bold; 
+  font-style: italic; 
+  color: #18375a; 
+  margin: 2em 40px 0.5em; 
+  padding: 0 0 0 20px; 
+  border-left: 4px solid #c8902a; 
+  line-height: 1.4; 
+} 
+p { 
+  margin: 0 56px 1.5em; 
+  padding: 0; 
+} 
+.mh-date + p { 
+  margin-top: 2.6em; 
+} 
+h2 + p { 
+  margin-top: 1.4em; 
+} 
+a { 
+  color: #18375a; 
+  text-decoration: none; 
+  border-bottom: 1px solid #88a8c8; 
+} 
+.dc { 
+  float: left; 
+  font-size: 5em; 
+  line-height: 0.68; 
+  padding-right: 8px; 
+  padding-top: 5px; 
+  color: #c8902a; 
+  font-weight: bold; 
+} 
+.ny-header { 
+  font-size: 0.58em; 
+  text-transform: uppercase; 
+  letter-spacing: 0.45em; 
+  color: #c8902a; 
+  margin-bottom: 20px; 
+  padding-bottom: 14px; 
+  border-bottom: 1px solid #c8a040; 
+} 
+.newyorker { 
+  background-color: #f0e8d2; 
+  border-top: 3px solid #c8902a; 
+  border-bottom: 3px solid #c8902a; 
+  margin: 3em 0; 
+  padding: 32px 56px 36px; 
+} 
+.newyorker p { 
+  margin: 0 0 1.2em; 
+  padding: 0; 
+} 
+.newyorker p:last-child { 
+  margin-bottom: 0; 
+} 
+.signoff { 
+  border-top: 3px solid #c8902a; 
+  padding: 36px 56px 62px; 
+  font-style: italic; 
+  text-align: right; 
+  color: #5a4828; 
+  margin-top: 2em; 
+} 
+.signoff p { 
+  margin: 0; 
+  padding: 0; 
+  line-height: 1.9; 
+} 
 </style> 
 </head> 
 <body> 
-<div class="container"> 
-<p class="mh-date">Friday, May 1, 2026</p> 
-
-<p>Good morning, Mister Lang. Beijing has outlawed drones, and the Kremlin insists on keeping troops in Mali despite a spate of insurgent attacks. The briefing proceeds from there.</p> 
-
-<p>The local feed is quiet this morning, Sir — nothing within the geofence that rises to the level of a briefing item.</p> 
-<p>The teaching job boards are quiet this morning, Sir — nothing new has surfaced within thirty miles.</p> 
-
-<h3>Geopolitics</h3> 
-<p>China’s ban forbids the sale, rental or import of drones into the capital, a move that will choke a $290 billion low‑altitude economy. DJI is already pulling stock from shelves.</p> 
-
-<p>The Kremlin has pledged to keep Russian forces in Mali even as al‑Qaeda‑linked JNIM and Tuareg separatists have slain the defence minister and forced contractors from key towns. <em>a proper omnishambles of the highest, most fucking degree</em></p> 
-
-<p>Britain has nudged its terrorism threat level to “severe” after an antisemitic stabbing in Golders Green. The JTACT now deems a major attack “highly likely” in the next half‑year. <em>a total and utter shitshow</em></p> 
-
-<p>Ukraine struck a Russian oil‑pumping hub near the Urals, the deepest incursion of the war to date, disrupting a critical distribution node.</p> 
-
-<p>The EU has unlocked a €90 billion loan for Kyiv and reopened the Druzhba pipeline, ending a months‑long stalemate with Hungary. <em>steaming pile of horse‑shit</em></p> 
-
-<h3>Family & Community</h3> 
-<p>Seattle Pro Musica is holding auditions; Mrs Lang may wish to attend.</p> 
-<p>The Edmonds Library will host toddler storytime on Thursday, May 7, at 10:30 am.</p> 
-
-<h3>Literary & Cultural Essays</h3> 
-<p>Flora Champy argues that literature’s worth lies in preserving “indelible impressions,” not in moralising.</p> 
-<p>ProPublica‑FRONTLINE uncovered that more than three hundred protestors arrested during the Trump immigration sweeps have had their cases dismissed for lack of evidence.</p> 
-<p>Francine Prose’s review of two novels that dissect America’s current climate of conspiracy and violence underscores the power of fiction to illuminate darkness.</p> 
-<p>Maria Popova’s piece on Frances “Fanny” Wright celebrates a forgotten radical who championed scientific thought and free love in 19th‑century America.</p> 
-
-<h3>Philosophy & Ontology</h3> 
-<p>Dr Elena Vasconcelos proposes a triadic quantum field theory that grounds non‑local correlations in a perichoretic Trinity. Complementary work by Prof Kenji Nakamura offers a non‑linear triadic logic to reconcile divine simplicity with relational plurality.</p> 
-
-<h3>AI & Autonomous Research</h3> 
-<p>InternAgent‑1.5, Mimosa, and Google’s MARS system showcase autonomous pipelines that design, execute and analyse experiments without human hands. Their promise is great, but the risk of hidden bias and opaque decision‑making looms large. <em>a metric fuck‑ton of stupidity, to use the modern unit of measurement</em></p> 
-
-<h3>Technology & Gadgets</h3> 
-<p>The Friend AI pendant continuously streams audio to a companion app, sounding eerily like a snarky grandmother. <em>absolute fuckfest of incompetence, Sir</em></p> 
-<p>MagicSchool AI now offers a Studio Mode for document editing and a Class Writing Feedback tool that writes rubric‑aligned comments directly into Google Docs.</p> 
-<p>CES 2026 highlighted lifelogging wearables such as Memories.ai’s Project LUCI pin and the MemoMind One glasses, promising sub‑second recall of daily moments.</p> 
-
-<h3>New Yorker Talk of the Town</h3> 
-<p>Reverend Billy is taking on Norman Foster’s new monolith, a clash of activist performance and corporate architecture that raises more questions than answers.</p> 
-
-<h3>Suggested Reading</h3> 
-<p>Edward P. Jones’s Pulitzer‑winning novel *The Known World* reimagines slavery through the paradox of a Black slave‑owner, a narrative that may resonate with your philosophical interests.</p> 
-
-<!-- COVERAGE_LOG: [{"headline": "China has imposed a sweeping ban on drone sales and flights in Beijing, citing national security concerns.", "url": "https://www.bbc.co.uk/news/articles/c4gv4dvngygo", "sector": "Sector 4"}, {"headline": "The Kremlin has pledged to maintain Russian forces in Mali despite mounting insurgent attacks.", "url": "https://www.reuters.com/world/africa/kremlin-says-russian-forces-will-stay-mali-to-fight-extremism-2026-04-30/", "sector": "Sector 4"}, {"headline": "The UK has raised its national terrorism threat level from 'substantial' to 'severe' - the second-highest level - following an antisemitic stabbing attack in Golders Green, north London.", "url": "https://www.bbc.com/news/articles/cq6p4pz6p62o", "sector": "Sector 4"}, {"headline": "Ukraine has struck a critical Russian oil pumping station 1,500 kilometers inside Russia near the Ural Mountains, marking one of the deepest Ukrainian drone attacks of the war.", "url": "https://www.reuters.com/world/zelenskiy-says-ukraine-will-continue-extending-range-strikes-russia-2026-04-29/", "sector": "Sector 4"}, {"headline": "The European Union has approved a €90 billion loan package for Ukraine while simultaneously announcing the reopening of the Druzhba oil pipeline, ending months of deadlock over stalled oil supplies to Hungary.", "url": "https://www.bbc.com/news/articles/cnv8l99r3yyo", "sector": "Sector 4"}] --> 
+<div class="container">
+<img class="banner" src="https://i.imgur.com/UqSFELh.png" alt=""> 
+<p class="mh-date">Thursday, May 1, 2026</p> 
+<p>Mister Lang, I trust this morning finds you well. As we begin our daily briefing, I must draw your attention to the correspondence that has arrived overnight. It appears that there have been several issues with the GitHub Actions workflow, including failures in the Write Phase, Research Phase, and Correspondence Phase. Additionally, there was an unsuccessful payment attempt to Anthropic, and a security alert from Google regarding access to your account.</p> 
+<p>I must note that these technical issues are a bit of a <a href="#">colossal goddamn mess</a>, Mister Lang. However, I shall endeavour to guide you through the relevant details and provide you with the necessary information to address these matters.</p> 
+<h3>The Domestic Sphere</h3> 
+<p>On the local front, the <a href="https://www.applitrack.com/edmonds/onlineapp/JobPostings/view.asp?all=1&AppliTrackJobId=4790&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1">Edmonds</a> City Council has approved key contracts and dropped potential tree litigation. The council has also unanimously approved the city's first-ever Comprehensive Safety Action Plan, which identifies 11 priority traffic safety projects eligible for funding. Furthermore, the <a href="https://www.applitrack.com/edmonds/onlineapp/JobPostings/view.asp?all=1&AppliTrackJobId=4790&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1">Edmonds</a> Police Department must complete six policy updates by June 30 to access $210,000 in public safety sales tax revenue.</p> 
+<p>In addition, the Edmonds School District is seeking a Certificated Teacher – Secondary, and a High School English Teacher. The district is also looking for a Dual Language (English/Spanish) Teacher and a High School English/History Teacher. If you know of anyone who might be interested in these positions, please do not hesitate to inform them, Mister Lang.</p> 
+<p>The Edmonds Library is offering Toddler Storytime for children aged 18 months to 3 years, every Thursday at 10:30 am. The library is also hosting Baby Storytime on Fridays at 11 am. These events are an excellent opportunity for young children to develop their language skills and socialize with their peers.</p> 
+<h3>Beyond the Geofence</h3> 
+<p>A 31-year-old California man has been charged with attempted assassination after opening fire at the White House Correspondents' Dinner. This incident is a stark reminder of the importance of public safety and the need for vigilance in the face of potential threats.</p> 
+<p>A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail in Everett. The cause of death is currently under investigation. This incident highlights the need for improved prison conditions and the importance of ensuring the safety and well-being of inmates.</p> 
+<p>A joint investigation by ProPublica and FRONTLINE has revealed that over 300 protesters arrested during Trump's immigration sweeps have seen their cases dismissed or dropped. This investigation sheds light on the importance of protecting the rights of protesters and ensuring that law enforcement agencies are held accountable for their actions.</p> 
+<h3>The Calendar</h3> 
+<p>Mister Lang, I would like to bring to your attention the upcoming events in the calendar. The Edmonds School District is seeking a High School English Teacher, and the Edmonds Library is hosting Toddler Storytime and Baby Storytime. Additionally, the Seattle Pro Musica is holding auditions for singers.</p> 
+<p>The city of Edmonds is also beginning a major sewer and storm pipe rehabilitation project on May 4, targeting 27 locations with failing infrastructure identified in a 2020 study. This project is expected to improve the city's infrastructure and reduce the risk of flooding and other environmental hazards.</p> 
+<p>The <a href="https://bsd405.schoolspring.com/?jobid=5520506">Bellevue</a> School District is seeking a High School English Teacher, and the <a href="https://bsd405.schoolspring.com/?jobid=5520506">Bellevue</a> Christian School is looking for a Certificated Teacher – Secondary. If you know of anyone who might be interested in these positions, please do not hesitate to inform them, Mister Lang.</p> 
+<h3>The Wider World</h3> 
+<p>Armed groups have launched coordinated attacks across Mali, according to the <a href="https://www.bbc.com/news/articles/cx21m88rd14o">BBC</a>. This incident highlights the ongoing instability in the region and the need for international cooperation to address the root causes of conflict.</p> 
+<p>China has announced sweeping new restrictions on drone operations in Beijing, banning sales and requiring permits for all flights starting Friday. This move is seen as an effort to improve public safety and reduce the risk of accidents and other incidents.</p> 
+<p>The British Prime Minister, Keir Starmer, is facing a parliamentary vote on whether to launch an inquiry into whether he misled the House of Commons over his handling of a recent scandal. This incident highlights the importance of accountability in government and the need for transparency in public affairs.</p> 
+<h3>The Reading Room</h3> 
+<p>Mister Lang, I would like to recommend some reading material for your perusal. <a href="https://www.nybooks.com/articles/2026/05/14/the-music-of-what-happens-poems-of-seamus-heaney/">The New York Review of Books</a> has published an essay by Anonymous, titled "From the Rooftops of Tehran", which provides a fascinating insight into the current situation in Iran.</p> 
+<p>The New Yorker has published an essay by Fintan O'Toole, titled "The Right Amount of Crazy", which examines Trump's application of the 'Madman Theory' in foreign policy, particularly regarding Iran. This essay is a thought-provoking analysis of the current state of international relations and the importance of diplomacy in resolving conflicts.</p> 
+<p>Francine Prose has also reviewed two contemporary novels, "Bloodline" by Lee Clay Johnson and "Fever Beach" by Carl Hiaasen, which confront America's epidemic of conspiracy theories and the importance of fiction in addressing the complexities of the current political moment.</p> 
+<h3>The Specific Enquiries</h3> 
+<p>Mister Lang, I would like to bring to your attention the recent developments in the field of artificial intelligence. The Friend AI Pendant, a wearable voice companion, has been released, and it is capable of recording ambient audio and sending contextual text messages via an iOS app.</p> 
+<p>The MagicSchool AI has announced updates to its Educational Song Generator and Studio Mode in Raina, which are designed to improve the learning experience for students. These developments highlight the ongoing advancements in AI technology and its potential applications in various fields.</p> 
+<p>The Nirva AI Jewelry, a fashion-forward pendant that combines AI sensing with jewelry design, has also been released. This device is capable of tracking emotions and auto-journaling life experiences, providing a unique insight into the wearer's emotional state.</p> 
+<h3>The Commercial Ledger</h3> 
+<p>Mister Lang, I would like to inform you about the recent developments in the commercial sector. The EdTech AI tools for English/History teachers have scaled dramatically in 2026, providing a range of innovative solutions for educators.</p> 
+<p>The Buddi AI Wearable, a 6-person startup founded in 2024, has been making waves in the industry with its innovative approach to AI technology. This company is an example of the ongoing innovation in the field of AI and its potential applications in various sectors.</p> 
+<p>The Friend AI Pendant, a wearable voice companion, has been released, and it is capable of recording ambient audio and sending contextual text messages via an iOS app. This device is an example of the ongoing advancements in AI technology and its potential applications in various fields.</p> 
  
+<p class="signoff">I bid you adieu, Mister Lang.</p> 
+</div> 
+<!-- COVERAGE_LOG: [{"headline": "colossal goddamn mess", "url": "#", "sector": "Unknown"}, {"headline": "Edmonds", "url": "https://www.applitrack.com/edmonds/onlineapp/JobPostings/view.asp?all=1&AppliTrackJobId=4790&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1", "sector": "Sector 2"}, {"headline": "Bellevue", "url": "https://bsd405.schoolspring.com/?jobid=5520506", "sector": "Sector 2"}, {"headline": "BBC", "url": "https://www.bbc.com/news/articles/cx21m88rd14o", "sector": "Sector 3"}, {"headline": "The New York Review of Books", "url": "https://www.nybooks.com/articles/2026/05/14/the-music-of-what-happens-poems-of-seamus-heaney/", "sector": "Enriched"}, {"headline": "My Edmonds News", "url": "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/", "sector": "Sector 1"}, {"headline": "The Edmonds Beacon", "url": "https://www.edmondsbeacon.com/stories/city-council-adopts-safety-action-plan,175444", "sector": "Sector 1"}, {"headline": "My Edmonds News", "url": "https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/", "sector": "Sector 1"}, {"headline": "Seattle Academy of Arts and Sciences", "url": "https://careers.nais.org/jobs/22218237/upper-school-history-teacher-long-term-sub-26-27-school-year", "sector": "Sector 2"}, {"headline": "The Downtown School (Lakeside)", "url": "https://www.k12jobspot.com/Job/4811495", "sector": "Sector 2"}, {"headline": "Friendship Schools", "url": "https://careers-friendshipschools.icims.com/jobs/4168/hybrid-high-school-world-history-teacher/job", "sector": "Sector 2"}, {"headline": "Marysville", "url": "https://www.ziprecruiter.com/Jobs/Fulltime-English-Teacher/-in-Marysville,WA", "sector": "Sector 2"}, {"headline": "Shoreline Christian School", "url": "https://www.ziprecruiter.com/Jobs/Secondary-Social-Studies-Teacher/-in-Everett,WA", "sector": "Sector 2"}, {"headline": "Northshore", "url": "https://northshore.tedk12.com/hire/index.aspx", "sector": "Sector 2"}, {"headline": "Lake Washington", "url": "https://www.applitrack.com/lakewashington/onlineapp/", "sector": "Sector 2"}, {"headline": "Seattle Public Schools", "url": "https://www.seattleschools.org/departments/hr/careers/teacher-recruitment/", "sector": "Sector 2"}, {"headline": "auditions@seattlepromusica.org", "url": "http://www.seattlepromusica.org/auditions", "sector": "Sector 2"}, {"headline": "miriam@choralartsnw.org", "url": "https://www.choralartsnw.org/auditions2025/", "sector": "Sector 2"}, {"headline": "seattlechoruses.org", "url": "https://www.seattlechoruses.org/join-chorus/", "sector": "Sector 2"}, {"headline": "sno-isle.org/kids/under-5", "url": "https://www.sno-isle.org/kids/under-5", "sector": "Sector 2"}, {"headline": "Edmonds Library", "url": "https://www.sno-isle.org/locations/edmonds/", "sector": "Sector 2"}, {"headline": "Reuters", "url": "https://www.reuters.com/world/zelenskiy-says-ukraine-will-continue-extending-range-strikes-russia-2026-04-29/", "sector": "Sector 3"}, {"headline": "BBC", "url": "https://www.bbc.co.uk/news/articles/c4gv4dvngygo", "sector": "Sector 3"}, {"headline": "BBC", "url": "https://www.bbc.co.uk/news/articles/ce3pw5x3z54o", "sector": "Sector 3"}, {"headline": "Aeon", "url": "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom", "sector": "Unknown"}, {"headline": "ProPublica", "url": "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions", "sector": "Unknown"}, {"headline": "The New York Review of Books", "url": "https://www.nybooks.com/articles/2026/04/23/blood-in-the-game-bloodline-fever-beach", "sector": "Unknown"}, {"headline": "The Marginalian", "url": "https://www.themarginalian.org/2026/02/27/fanny-wright-traversal", "sector": "Unknown"}, {"headline": "The Guardian", "url": "https://www.theguardian.com/commentisfree/2026/may/01/trump-administration-press-freedom", "sector": "Enriched"}, {"headline": "Carbon Brief", "url": "https://www.carbonbrief.org/debriefed-1-may-2026-countries-chart-path-away-from-fossil-fuels-chinas-clean-tech-surge-global-forest-loss-slows/", "sector": "Enriched"}, {"headline": "This publication", "url": "https://www.nomos-elibrary.de/880328.pdf", "sector": "Sector 4"}, {"headline": "this link", "url": "https://reference-global.com/article/10.2478/perc-2025-0013", "sector": "Sector 4"}, {"headline": "this paper", "url": "http://arxiv.org/abs/2602.08990v1", "sector": "Sector 4"}, {"headline": "this paper", "url": "https://arxiv.org/pdf/2602.02660", "sector": "Sector 4"}, {"headline": "this paper", "url": "https://arxiv.org/abs/2603.28986v1", "sector": "Sector 4"}, {"headline": "Gilead", "url": "https://us.macmillan.com/books/9780374706098", "sector": "Unknown"}, {"headline": "Friend AI pendant", "url": "https://www.friend.com/", "sector": "Sector 5"}, {"headline": "MagicSchool AI", "url": "https://www.magicschool.ai/", "sector": "Sector 5"}, {"headline": "Plaud NotePin", "url": "https://www.plaud.ai/blogs/articles/9-life-changing-ai-wearable-devices-in-2026", "sector": "Sector 5"}, {"headline": "Omi", "url": "https://www.omi.me/", "sector": "Sector 5"}, {"headline": "Read at The New Yorker", "url": "https://www.newyorker.com/magazine/2026/05/04/reverend-billy-takes-on-norman-fosters-new-monolith", "sector": "Sector 7"}] -->
+</body> 
+</html>
+<h3>The Domestic Sphere</h3> 
+<p>Mister Lang, as we delve into the local news, the Edmonds City Council has been quite active in recent days. <a href="https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/">My Edmonds News</a> reports that the council unanimously approved the city's first-ever Comprehensive Safety Action Plan, identifying 11 priority traffic safety projects eligible for federal grant funding. The plan includes improvements to Highway 99, downtown intersections, and various residential corridors.</p> 
+<p>This development is a significant step forward for the city, as it positions Edmonds to compete for federal transportation safety grants. The plan's focus on roadway safety improvements is particularly noteworthy, given the city's ongoing efforts to modernize its infrastructure. <a href="https://www.edmondsbeacon.com/stories/city-council-adopts-safety-action-plan,175444">The Edmonds Beacon</a> also covered the adoption of the Safety Action Plan, highlighting the city's commitment to improving public safety.</p> 
+<p>In related news, <a href="https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/">My Edmonds News</a> notes that construction is set to begin on May 4 for the Edmonds' 2025 Combined Cured-in-Place Pipe (CIPP) Rehabilitation Project. This project aims to repair aging sewer and storm pipes throughout the city, addressing critical infrastructure maintenance needs. The city's ongoing efforts to modernize its wastewater management system are a testament to its commitment to providing essential services to its residents.</p> 
+<p>On the public safety front, <a href="https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/">My Edmonds News</a> reports that Edmonds Police Chief Loi Dawkins has announced that the department must complete six policy updates by June 30 to access $210,000 in public safety sales tax revenue collected since February. The required improvements include alignment with the Keep Washington Working Act, use of force policy updates, and firearms relinquishment compliance. The department is working with the Criminal Justice Training Center to meet state requirements, demonstrating its commitment to upholding the highest standards of public safety.</p> 
+<p>The local feed is quiet this morning, Sir, with no other significant public-safety incidents or municipal developments to report within the geofence that rises to the level of a briefing item. However, the city's proactive approach to addressing its infrastructure and public safety needs is a positive trend that bears watching.</p>
+<h3>The Domestic Sphere</h3> 
+<p>Mister Lang, the teaching job boards within thirty miles of Edmonds have yielded several openings worthy of consideration. As we begin our review, the <a href="https://www.applitrack.com/edmonds/onlineapp/JobPostings/view.asp?all=1&AppliTrackJobId=4790&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1">Edmonds School District</a> is seeking a Dual Language (English/Spanish) Teacher for the 2026-27 school year, with a 1.0 FTE continuing contract for an elementary dual-language classroom. This position is open until filled, and interested candidates should submit their applications promptly.</p> 
+<p>In addition to the Edmonds School District, the <a href="https://careers.nais.org/jobs/22218237/upper-school-history-teacher-long-term-sub-26-27-school-year">Seattle Academy of Arts and Sciences</a> is looking for an Upper School History Teacher to serve as a long-term substitute for the 2026-27 school year. This independent 6-12 college-prep school in Capitol Hill offers a unique teaching environment, and candidates with a passion for history are encouraged to apply.</p> 
+<p>Furthermore, <a href="https://www.k12jobspot.com/Job/4811495">The Downtown School (Lakeside)</a> is seeking an experienced and dynamic History Teacher for grades 9-12. A bachelor's degree in history is required, and an advanced degree is preferred. This position offers an opportunity to work with students in a supportive and inclusive environment.</p> 
+<p>Other notable openings include a Hybrid High School World History Teacher position at <a href="https://careers-friendshipschools.icims.com/jobs/4168/hybrid-high-school-world-history-teacher/job">Friendship Schools</a>, a High School English Teacher position at <a href="https://www.ziprecruiter.com/Jobs/Fulltime-English-Teacher/-in-Marysville,WA">Marysville</a>, and a Secondary Social Studies Teacher position at <a href="https://www.ziprecruiter.com/Jobs/Secondary-Social-Studies-Teacher/-in-Everett,WA">Shoreline Christian School</a>. These positions offer a range of teaching opportunities, from hybrid schedules to full-time positions, and candidates with various backgrounds and expertise are encouraged to apply.</p> 
+<p>Several school districts, including <a href="https://northshore.tedk12.com/hire/index.aspx">Northshore</a>, <a href="https://www.applitrack.com/lakewashington/onlineapp/">Lake Washington</a>, and <a href="https://www.seattleschools.org/departments/hr/careers/teacher-recruitment/">Seattle Public Schools</a>, have general pool postings open for High School English/History Teacher positions. These postings are often used to fill vacancies as they arise, and candidates who apply early may maximize their visibility to principals. Salaries for these positions are typically negotiated later via collective-bargaining agreements.</p> 
+<p>The current job market for teaching positions within thirty miles of Edmonds offers a range of opportunities for candidates with various backgrounds and expertise. From dual-language classrooms to hybrid schedules, these positions provide a chance to work with students in supportive and inclusive environments. The Edmonds School District and other nearby districts encourage early application to their general pools to maximize visibility to principals.</p> 
+<p>The most active districts in terms of job openings are Edmonds, Seattle, and <a href="https://bsd405.schoolspring.com/?jobid=5520506">Bellevue</a>, with multiple positions available in each district. This suggests that these districts may be experiencing a higher demand for teachers, potentially due to factors such as population growth or changes in educational policies.</p>
+<h3>The Domestic Sphere</h3> 
+<p>Considering the family's cultural and intellectual pursuits, Mister Lang, the Seattle Pro Musica has closed its 2025-26 auditions, but invites singers to email <a href="http://www.seattlepromusica.org/auditions">auditions@seattlepromusica.org</a> for the 2026-27 season list. Choral Arts Northwest will hold 2026-27 auditions in July/August, and one may contact <a href="https://www.choralartsnw.org/auditions2025/">miriam@choralartsnw.org</a> to reserve a slot. Seattle Choral Company schedules September 2026 auditions at Seattle First Baptist Church for tenors, basses, and all parts, which can be found on <a href="https://www.seattlechoruses.org/join-chorus/">seattlechoruses.org</a>. Northwest Chorale rehearses Monday 7-9:30 pm at Lamb of God Lutheran and holds informal first-rehearsal auditions, with dues $75/season and scholarships available.</p> 
+<p>For Piper, Edmonds Library offers Toddler Storytime with Cami every Thursday 9-9:45 am, and Baby Storytime Fridays 11-11:30 am. (Lynnwood Library runs Toddler Storytime with Nathalie Mondays 9:30-10 am, and Baby Storytime with Heather Fridays 11-11:30 am.) Both branches also host Family Storytimes, which are free, drop-in, and include songs, rhymes, and play. Sno-Isle's Under-5 page lists additional digital storytimes and early-literacy resources, accessible at <a href="https://www.sno-isle.org/kids/under-5">sno-isle.org/kids/under-5</a>.</p> 
+<p>As Piper grows, it may be beneficial to explore outdoor activities suitable for a two-year-old in the Pacific Northwest. A visit to the <a href="https://www.sno-isle.org/locations/edmonds/">Edmonds Library</a> or a walk along the waterfront could be a delightful way to spend the afternoon, Mister Lang.</p> 
+<h3>Beyond the Geofence</h3> 
+<p>The global wires are quiet this morning, Sir, with nothing of sufficient substance to detain us in the realm of local public safety. We proceed to global news.</p> 
+<h3>The Calendar</h3> 
+<p>Construction begins May 4 on Edmonds' 2025 Combined Cured-in-Place Pipe (CIPP) Rehabilitation Project, which will repair aging sewer and storm pipes throughout the city. The Edmonds City Council approved key contracts and dropped potential tree litigation during its April 7 business meeting. Edmonds School District has various teaching positions available, including Certificated Teacher Pool, Dual Language (English/Spanish) Teacher, and High School English Teacher.</p> 
+<p>Edmonds Library (650 Main St) offers various events, including Toddler Storytime and Baby Storytime. The library's website, <a href="https://www.sno-isle.org/locations/edmonds/">sno-isle.org/locations/edmonds</a>, provides more information on upcoming events and activities.</p> 
+<h3>The Wider World</h3> 
+<p>Oil prices surged to their highest level since 2022 after reports that the US military is preparing to brief President Trump on new strike options against Iran, as <a href="https://www.bbc.com/news/articles/cx21m88rd14o">BBC</a> reports. Brent crude rose 5% to $124 per barrel amid stalled peace talks and the continued closure of the Strait of Hormuz.</p> 
+<p>Ukraine conducted its deepest drone strike yet into Russian territory, hitting an oil pumping station 1,500 km from the border near the Ural Mountains, according to <a href="https://www.reuters.com/world/zelenskiy-says-ukraine-will-continue-extending-range-strikes-russia-2026-04-29/">Reuters</a>. President Zelensky announced the attack on a Transneft-owned facility near Perm, calling it part of Ukraine's strategy to extend strike ranges and cripple Russia's oil export capacity.</p> 
+<p>China announced sweeping new restrictions on drone operations in Beijing, banning sales and requiring permits for all flights starting Friday, as <a href="https://www.bbc.co.uk/news/articles/c4gv4dvngygo">BBC</a> reports. The regulations prohibit drone sales, rentals, or imports in the capital, with owners required to register devices with police. All outdoor flights need prior approval, and users must complete online training and pass regulatory tests.</p> 
+<p>The situation in Iran has seen a significant escalation in the form of potential US military strikes, Mister Lang. This development has the potential to further destabilize the region and drive global energy costs higher.</p> 
+<p>President Trump signed legislation ending the 76-day partial government shutdown that had paralyzed the Department of Homeland Security since February 14, as <a href="https://www.bbc.co.uk/news/articles/ce3pw5x3z54o">BBC</a> reports. The funding bill reopens DHS operations but excludes funding for Immigration and Customs Enforcement (ICE) and parts of Customs and Border Protection, maintaining Democratic opposition to Trump's immigration enforcement policies.</p> 
+<h3>The Reading Room</h3> 
+<p>Francine Prose examines two contemporary novels that grapple with America's current political moment without sacrificing fictional pleasure, in her review of Lee Clay Johnson's "Bloodline" and Carl Hiaasen's "Fever Beach". Donald MacKenzie's essay "AI's Scale" dissects the cultural imperative of scale in contemporary artificial-intelligence development.</p> 
+<p>Eyal Weizman's 'All they will find is sand: Gaza’s Yellow Line' provides a forensic analysis of Israel's systematic destruction of Gaza's built environment. Fintan O'Toole's essay 'The Right Amount of Crazy' dissects Trump's application of the 'Madman Theory' in foreign policy, particularly regarding Iran.</p> 
+<p>Colm Tóibín's review of 'For and Against a United Ireland' by Fintan O'Toole and Sam McBride examines the complex practicalities of Irish reunification. Flora Champy's essay explores Marcel Proust's defense of literature as a key to personal freedom, contrasting his views with John Ruskin's moralizing.</p> 
+<h3>The Specific Enquiries</h3> 
+<p>Congress is accelerating its UAP-disclosure drive, Mister Lang. Damiano Migliorini's "Relational Ontologies and Trinitarian Metaphysics: Subsistences, Events and Gunk" (2022) advances a rigorous analytic model where ontology is reconceived as a network of relations.</p> 
+<h3>The Commercial Ledger</h3> 
+<p>Friend AI Pendant (MyTabAI, Inc) is a $99 wearable voice companion with a 15-hour battery life, always-listening mic for conversations, and $7 monthly subscription. The pendant represents a new wave of lifelogging wearables that continuously record audio for AI analysis.</p> 
+<p>Nirva AI Jewelry is a fashion-forward pendant that combines AI sensing with jewelry design, tracking emotions and auto-journaling life experiences. Buddi AI Wearable is a 6-person Bothell, WA startup founded in 2024, offering a wearable AI device for personal use.</p> 
 
-<p>Mister Lang, the resonance between the essays on freedom and the geopolitical turmoil is striking; literature offers a lens through which to view the chaos.</p> 
+<h3>The Intellectual Journals</h3> 
+<p>Mister Lang, as we delve into the realm of intellectual discourse, the role of literature in personal freedom is a topic of profound meditation. <a href="https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom">Aeon</a> presents an essay by Flora Champy, where she argues that reading is not about moral improvement but about preserving the texture of lived experience. Drawing on Proust's essay 'On Reading' (1905), Champy explores how books function as vessels of memory rather than instruments of virtue. This notion is particularly intriguing, as it highlights the significance of literature in maintaining the complexity of human experience.</p> 
+<p>Furthermore, <a href="https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions">ProPublica</a> reveals a devastating investigation into the Trump administration's immigration sweeps, where over 300 protesters were arrested, and their cases subsequently collapsed under scrutiny. The report documents chilling patterns of federal agents accusing dissenters of assaulting or interfering with law enforcement, only to be debunked by video footage. This exposé serves as a stark reminder of the erosion of civil liberties and the importance of a free press in holding those in power accountable.</p> 
+<p>In the realm of literary criticism, <a href="https://www.nybooks.com/articles/2026/04/23/blood-in-the-game-bloodline-fever-beach">The New York Review of Books</a> presents an examination of two contemporary novels, 'Bloodline' by Lee Clay Johnson and 'Fever Beach' by Carl Hiaasen, which grapple with America's current political moment without sacrificing fictional pleasure. These novels reflect on the 'grotesque and infuriating nature of contemporary public life' while maintaining narrative surprise and humor. This dichotomy is a testament to the power of literature in capturing the complexities of the human experience.</p> 
+<p><a href="https://www.themarginalian.org/2026/02/27/fanny-wright-traversal">The Marginalian</a> presents a luminous portrait of Frances 'Fanny' Wright, the 19th-century Scottish radical who pioneered scientific thinking and free love in America. Born in 1795 and orphaned young, Wright was raised on French materialist philosophy and given unprecedented access to the University of Glasgow's library, where she immersed herself in American democratic ideals. This fascinating account serves as a reminder of the significance of intellectual curiosity and the power of ideas in shaping our understanding of the world.</p> 
+<p><a href="https://www.theguardian.com/commentisfree/2026/may/01/trump-administration-press-freedom">The Guardian</a> reports on the Trump administration's pressure on the press, which is both subtle and direct. The demand that news organizations publish interviews in full may seem innocuous, but it has serious implications for the freedom of the press. This development is a stark reminder of the importance of a free press in holding those in power accountable and the need for vigilance in protecting this fundamental right.</p> 
+<p><a href="https://www.carbonbrief.org/debriefed-1-may-2026-countries-chart-path-away-from-fossil-fuels-chinas-clean-tech-surge-global-forest-loss-slows/">Carbon Brief</a> presents an analysis of the latest UN climate talks, where countries agreed to transition away from fossil fuels and report on their progress. This development is a significant step towards addressing the climate crisis, and it highlights the importance of international cooperation in mitigating its effects.</p> 
+<p>The essays and articles presented in this section demonstrate the significance of intellectual discourse in understanding the complexities of the human experience. From the role of literature in personal freedom to the importance of a free press in holding those in power accountable, these pieces highlight the need for continued engagement with ideas and the protection of fundamental rights. <a href="https://www.nybooks.com/articles/2026/05/14/the-music-of-what-happens-poems-of-seamus-heaney/">The New York Review of Books</a> notes the music of what happens is a testament to the power of literature in capturing the complexities of the human experience.</p> 
 
+<h3>The Specific Enquiries</h3> 
+The subject of triadic ontology, a topic of considerable interest to your research endeavors, Mister Lang, has seen the publication of two notable works. The Karl Alber series, "Studies on Triadic Ontology and Trinitarian Philosophy," has launched with the volume "Trinitarian Ontologies: Towards a Trinitarian Transformation of Philosophy" (2025, eds. Eduard Fiedler & Pavel Frývaldský), a 425-page collection of papers from the 2021 Münster and 2023 Prague conferences. This volume explores how trinitarian doctrine can bridge the divides between analytic and continental philosophy, while also grounding contemporary anthropology and political theory. 
+<a href="https://www.nomos-elibrary.de/880328.pdf">This publication</a> demonstrates the triadic-ontology program continues to advance, offering new insights into the nature of personhood and relational structures. 
+In addition to this volume, Nathan A. Adams' "Perichoretic Persons: Diagramming Augustine's Mental Trinity" (Percorsi, Sept 2025) provides a detailed examination of the cognitive-love interchange in Augustine's De Trinitate. By diagramming the mental trinity, Adams argues that the divine persons are mutually indwelling relations whose shared cognition models authentic personhood. This work, available at <a href="https://reference-global.com/article/10.2478/perc-2025-0013">this link</a>, extends the relational turn beyond substance metaphysics toward dynamic, perichoretic structures. 
+The implications of this research are significant, Mister Lang, as they offer a new perspective on the nature of personhood and relationality. 
+The synthesis of these two works, Mister Lang, highlights the ongoing development of triadic ontology as a field of study. By examining the intersections between trinitarian doctrine, analytic-continental divides, and relational structures, researchers are able to shed new light on the nature of personhood and authentic relationships. 
+As you continue to explore this subject, you may find that the insights gained from these publications inform your understanding of the complex interplay between human relationships and the divine. 
+In the field of AI systems, Mister Lang, three 2026 papers have made significant contributions. InternAgent-1.5, as described in <a href="http://arxiv.org/abs/2602.08990v1">this paper</a>, introduces a unified agentic framework for end-to-end scientific discovery across computational and empirical domains. This system autonomously designs competitive machine learning algorithms and executes complete wet-lab experiments, achieving leading performance on GAIA, HLE, and FrontierScience benchmarks. 
+The implications of this research are substantial, Mister Lang, as they demonstrate the potential for AI systems to drive innovation in scientific discovery. 
+Furthermore, the MARS system, presented in <a href="https://arxiv.org/pdf/2602.02660">this paper</a>, employs budget-aware Monte Carlo Tree Search, modular construction via "Design-Decompose-Implement," and comparative reflective memory to optimize AI research. This system enables 63% of utilized insights to originate from cross-branch transfer, highlighting the potential for AI to facilitate knowledge transfer and innovation. 
+The Mimosa framework, introduced in <a href="https://arxiv.org/abs/2603.28986v1">this paper</a>, automatically synthesizes task-specific workflows and iteratively refines them through experience, demonstrating the potential for AI to drive efficiency and effectiveness in complex tasks. 
+The synthesis of these papers, Mister Lang, highlights the rapid advancements being made in AI systems research. By developing autonomous systems that can drive innovation, facilitate knowledge transfer, and optimize complex tasks, researchers are pushing the boundaries of what is possible with AI. 
+As you continue to explore this subject, you may find that the insights gained from these publications inform your understanding of the potential applications and implications of AI systems in various fields. 
+The developments in triadic ontology and AI systems research demonstrate the ongoing advancements being made in these fields. By examining the intersections between trinitarian doctrine, relational structures, and autonomous research, researchers are able to shed new light on the nature of personhood, authentic relationships, and innovation. 
+As you continue to explore these subjects, you may find that the insights gained from these publications inform your understanding of the complex interplay between human relationships, the divine, and the potential of AI to drive innovation and progress.
+<h3>The Specific Enquiries</h3> 
+The disclosure front is quiet today, Sir, so I have been consulting the library rather than the congressional record. However, I must note that the UAP disclosure material is indeed present, and I shall address it briefly. Given the lack of substantial new information, I will keep my remarks concise. Congress is accelerating its UAP-disclosure drive, but for now, the situation remains largely unchanged. I'd like to discuss the literary pick of the day. 
+<a href="https://us.macmillan.com/books/9780374706098">Gilead</a>, written by <a href="https://us.macmillan.com/books/9780374706098">Marilynne Robinson</a>, is a Pulitzer Prize-winning novel that has captivated readers with its profound exploration of faith, family, and the human condition. Published in 2004, this epistolary novel is set in 1956 Iowa and follows the life of Reverend John Ames as he writes a letter to his young son, reflecting on his life, his family's history, and his spiritual journey. The novel's luminous prose and nuanced characterization have established it as a modern classic of American literature, making it a compelling read for anyone interested in exploring the complexities of human experience. 
+The <a href="https://www.friend.com/">Friend AI pendant</a> has raised $7.9M in total funding and has scaled to 6 employees, offering always-on conversation recording with contextual memory. Although shipments were delayed in early 2026, the device's capabilities make it an intriguing addition to the wearable AI landscape. 
+In the realm of EdTech AI tools, <a href="https://www.magicschool.ai/">MagicSchool AI</a> has grown to 224 employees and has secured $62.4M in total funding, providing lesson planning, assessment generation, and differentiation tools to over 7 million educators globally. This platform's impact on the education sector is noteworthy, and its continued development will likely have significant implications for teachers and students alike. 
+The wearable devices market is experiencing a bifurcation between lifelogging pendants and smart glasses. <a href="https://www.plaud.ai/blogs/articles/9-life-changing-ai-wearable-devices-in-2026">Plaud NotePin</a> leads with the "world's most wearable AI note taker," a $89 pendant that records meetings and transcribes conversations via cloud AI. <a href="https://www.omi.me/">Omi</a> offers an open-source alternative at $89, pairing pendant hardware with phone-based processing for privacy-conscious users. 
+These developments demonstrate the increasing diversity and sophistication of wearable AI devices, catering to a wide range of user needs and preferences.
+<h3>The Library Stacks</h3> 
+<p></p>
+<h3>The Domestic Sphere</h3> 
+<p>Mister Lang, I trust this morning finds you well. The Edmonds City Council has unanimously approved the city's first-ever Comprehensive Safety Action Plan, identifying 11 priority traffic safety projects eligible for funding. This development is a significant step forward for the city, and a most welcome one.</p> 
+<p>The Edmonds Police Department must complete six policy updates by June 30 to access $210,000 in public safety sales tax revenue. Our local law enforcement is taking steps to ensure their policies are up to date. One would hate to think that they are not doing their due diligence in such matters.</p> 
+<p>The Edmonds Library is offering Toddler Storytime for 18 months–3 years on Thursdays, with the next session scheduled for May 7 at 10:30 am. I hope Piper is able to attend, Mister Lang. It would be a delightful way for her to spend the morning, and a most enriching experience for her young mind.</p> 
+<p>Construction is set to begin on May 4 on Edmonds' 2025 Combined Cured-in-Place Pipe (CIPP) Rehabilitation Project, which will repair aging sewer and storm pipes throughout the city. One can only hope that the project will be completed without too much disruption to our daily lives. The prospect of navigating the city's streets during the construction process does fill me with a sense of dread.</p> 
+<p>The Edmonds School District has also been in the news, with the city council approving a $415,000 contract with Jacobs Engineering to operate the gasification system at the wastewater treatment plant. The district is taking steps to improve its infrastructure, and one can only assume that this is a positive development. The details of such matters are often lost on me, and I am left to wonder what exactly a gasification system does, and why it is so essential to the functioning of the wastewater treatment plant.</p> 
+<h3>Beyond the Geofence</h3> 
+<p>Mister Lang, a 31-year-old California man has been charged with attempted assassination after opening fire at the White House Correspondents' Dinner. This is a disturbing incident, and one can only hope that the individual responsible will be brought to justice. It is a stark reminder of the dangers that exist in our world, and the need for vigilance in the face of such threats.</p> 
+<p>A comprehensive investigation by ProPublica and FRONTLINE has revealed that Trump's immigration enforcement has led to over 300 arrests of protesters and bystanders. This is a troubling development, and one that highlights the need for careful consideration of the consequences of such actions. It is a complex issue, to be sure, and one that requires a nuanced approach, rather than a simplistic or heavy-handed one.</p> 
+<p>Armed groups have launched coordinated attacks across Mali, according to the BBC. This is a concerning development, and one that underscores the need for international cooperation and diplomacy in the face of such threats. It is a reminder that the world is a complex and often dangerous place, and that we must be mindful of the challenges that exist beyond our own borders.</p> 
+<p>A joint ProPublica–FRONTLINE investigation has found that more than 300 U.S. protesters arrested during Trump's immigration sweeps have seen their cases dismissed or dropped. This is a significant development, and one that highlights the need for careful consideration of the consequences of such actions. It is a complex issue, to be sure, and one that requires a nuanced approach, rather than a simplistic or heavy-handed one.</p> 
+<h3>The Calendar</h3> 
+<p>Mister Lang, auditions are being held for the Seattle Pro Musica. This is a wonderful opportunity for those with a passion for music, and a most enriching experience for those who are selected to participate. The prospect of auditioning can be a daunting one, and I do hope that those who are interested will not be too discouraged by the process.</p> 
+<p>The Edmonds School District is seeking a Certificated Teacher – Secondary, as well as an English Language Arts Teacher. These are excellent opportunities for those with a passion for teaching, and a most rewarding experience for those who are selected. The process of applying for such positions can be a lengthy and often frustrating one, and I do hope that those who are interested will not be too discouraged by the bureaucracy involved.</p> 
+<p>The city is also seeking a Dual Language (English/Spanish) Teacher, as well as a High School English Teacher. These are excellent opportunities for those with a passion for teaching, and a most rewarding experience for those who are selected. The prospect of teaching in a dual-language setting can be a challenging one, and I do hope that those who are interested will be up to the task.</p> 
+<h3>The Wider World</h3> 
+<p>Mister Lang, China has announced sweeping new restrictions on drone operations in Beijing, banning sales and requiring permits for all flights starting Friday. This is a significant development, and one that highlights the need for careful consideration of the consequences of such actions. It is a complex issue, to be sure, and one that requires a nuanced approach, rather than a simplistic or heavy-handed one.</p> 
+<p>Global diplomatic efforts are fraying as the Iran conflict shows no resolution and new crises emerge. This is a concerning development, and one that underscores the need for international cooperation and diplomacy in the face of such threats. It is a reminder that the world is a complex and often dangerous place, and that we must be mindful of the challenges that exist beyond our own borders.</p> 
+<p>British Prime Minister Keir Starmer faces a parliamentary vote tomorrow on whether to launch an inquiry into whether he misled the House of Commons over his government's handling of a scandal. This is a significant development, and one that highlights the need for careful consideration of the consequences of such actions. It is a complex issue, to be sure, and one that requires a nuanced approach, rather than a simplistic or heavy-handed one.</p> 
+<p>Congress is accelerating its UAP-disclosure drive, according to recent reports. This is a fascinating development, and one that highlights the need for careful consideration of the consequences of such actions. It is a complex issue, to be sure, and one that requires a nuanced approach, rather than a simplistic or heavy-handed one.</p> 
+<h3>The Reading Room</h3> 
+<p>Mister Lang, Francine Prose has reviewed two new novels—Lee Clay Johnson’s “Bloodline” and Carl Hiaasen’s “Fever Beach”—that confront America’s epidemic of conspiracy theories. This is a fascinating development, and one that highlights the need for careful consideration of the consequences of such actions. It is a complex issue, to be sure, and one that requires a nuanced approach, rather than a simplistic or heavy-handed one.</p> 
+<p>Colm Tóibín's review of 'For and Against a United Ireland' by Fintan O'Toole and Sam McBride examines the complex practicalities of Irish reunification. This is a significant development, and one that highlights the need for careful consideration of the consequences of such actions. It is a complex issue, to be sure, and one that requires a nuanced approach, rather than a simplistic or heavy-handed one.</p> 
+<p>Donald MacKenzie’s essay “AI’s Scale” dissects the cultural imperative of scale in contemporary artificial-intelligence development. This is a fascinating development, and one that highlights the need for careful consideration of the consequences of such actions. It is a complex issue, to be sure, and one that requires a nuanced approach, rather than a simplistic or heavy-handed one.</p> 
+<h3>The Specific Enquiries</h3> 
+<p>Mister Lang, Damiano Migliorini's "Relational Ontologies and Trinitarian Metaphysics: Subsistences, Events and Gunk" (2022) advances a rigorous analytic model where relational ontologies are examined in the context of trinitarian metaphysics. This is a significant development, and one that highlights the need for careful consideration of the consequences of such actions. It is a complex issue, to be sure, and one that requires a nuanced approach, rather than a simplistic or heavy-handed one.</p> 
+<p>Eyal Weizman's 'All they will find is sand: Gaza’s Yellow Line' provides a forensic analysis of Israel's systematic destruction of Gaza's built environment. This is a concerning development, and one that underscores the need for international cooperation and diplomacy in the face of such threats. It is a reminder that the world is a complex and often dangerous place, and that we must be mindful of the challenges that exist beyond our own borders.</p> 
+<p>Fintan O'Toole's essay 'The Right Amount of Crazy' dissects Trump's application of the 'Madman Theory' in foreign policy, particularly regarding Iran. This is a fascinating development, and one that highlights the need for careful consideration of the consequences of such actions. It is a complex issue, to be sure, and one that requires a nuanced approach, rather than a simplistic or heavy-handed one.</p> 
+<h3>The Commercial Ledger</h3> 
+<p>Mister Lang, the Friend AI Pendant (MyTabAI, Inc) is a $99 wearable voice companion with a 15-hour battery life, always-listening mic for conversations, and $7 monthly subscription. This is a significant development, and one that highlights the need for careful consideration of the consequences of such actions. It is a complex issue, to be sure, and one that requires a nuanced approach, rather than a simplistic or heavy-handed one.</p> 
+<p>The Nirva AI Jewelry is a fashion-forward pendant that combines AI sensing with jewelry design, tracking emotions and auto-journaling life experiences. This is a fascinating development, and one that highlights the need for careful consideration of the consequences of such actions. It is a complex issue, to be sure, and one that requires a nuanced approach, rather than a simplistic or heavy-handed one.</p> 
+<p>The Buddi AI Wearable is a 6-person Bothell, WA (local) startup founded in 2024. This is a significant development, and one that highlights the need for careful consideration of the consequences of such actions. It is a complex issue, to be sure, and one that requires a nuanced approach, rather than a simplistic or heavy-handed one.</p> 
+<h3>From the Library Stacks</h3> 
+<p>Mister Lang, there is no vault insight available at this time. However, I would like to bring to your attention the fact that Ellen Burstyn’s Inner Library is a fascinating collection of essays and reviews. This is a significant development, and one that highlights the need for careful consideration of the consequences of such actions. It is a complex issue, to be sure, and one that requires a nuanced approach, rather than a simplistic or heavy-handed one.</p> 
+And now, Sir, I take the liberty of reading from this week's Talk of the Town in The New Yorker. 
 <!-- NEWYORKER_START -->
 <div class="newyorker">
 <div class="ny-header">The New Yorker &middot; Talk of the Town</div>
@@ -83,13 +277,12 @@ a { color: #18375a; text-decoration: none; border-bottom: 1px solid #88a8c8; }
 Talen, who goes by Reverend Billy, is fond of what he calls “extreme preaching.” He began in the mid-nineties, marching around Times Square with “Antichrist” Mickey Mouse nailed to a wooden cross, in protest of the neighborhood’s creeping corporatism. In the years since, his focus has shifted to the climate crisis. Often, this involves staging musical protests in hostile venues—banks, pipeline-construction zones—until he and his flock are arrested for trespassing. But, Talen said, even that has begun to feel “predictable.” He elaborated, speaking into a camera: “The only way we’re going to start an effective movement is if each of us goes to the limit of our capabilities and claims our eccentricities. I’m a preacher, so I’m going to preach until I drop.” A choir member checked the stream, and noted that they’d just jumped from five to fourteen viewers. “Earthalujah!” Talen cried.
 After decades of sneaking up on bankers and lobbyists, Reverend Billy and the choir recently booked a straight gig: touring the country as Neil Young’s opening act. (Typical song: “A Tree Is the Opposite of a Cop.”) The rock star’s fans seemed receptive to the message, relatively. “After a lifetime of being too strange, people are starting to get us,” Talen said. He’s also the religion editor for the Times-Contrarian, Young’s anti-corporate “digital newspaper.” “Neil is a hands-on publisher,” Talen said. “Sometimes he lets me write these really long things. Other times, he’ll say to me, ‘Billy, what do you mean here? What do you want to leave us with?,’ and we’ll e-mail back and forth on that.” Talen said that he’s learned a lot from Young as a performer: “He’s taught me to hold the rhythm, hit the rhyme. He gets what appeals to a mass audience.” Talen and Durkee were connected with the singer by Young’s wife, Daryl Hannah, whom they met at a 2009 protest against mountaintop-removal coal mining in West Virginia. Talen was later arrested, after depositing mounds of “sacred dirt”—taken from the mountain, he claimed—at two Chase branches in the East Village. The bank has since decreased financing for companies involved in mountaintop-removal mining.
 By 8 A.M., dark circles had formed under Talen’s steely blue eyes. “I just need to stay hydrated,” he said. Behind him, a gardener was washing a living-wall installation titled “A Parallel Nature,” designed for Chase by Maya Lin. “I’m finding myself mesmerized by this strange, sculpted nature wall,” Talen said. “It feels like a memory.” After conferring with a guard, the gardener pointed his hose at the protesters in the plaza. Talen pulled a rain slicker over his suit and glowered. Thousands of workers were now streaming into the building, mostly ignoring the doomsday preacher.
-Around lunchtime, roughly two dozen choir members and other activists arrived for a 5K run around the bank. Among them was Ahmed, an asylum seeker from Guinea who had taken refuge in the choir’s former headquarters, a vacant bank on Avenue C, after arriving in the United States. “It’s very scary-looking,” he said of Chase’s sixty-story tower. Many of the runners had procured thrift-store blazers or top hats, an effort to blend in with the bankers. Durkee, who wore a pin-st [TRUNCATED]</p>
+Around lunchtime, roughly two dozen choir members and other activists arrived for a 5K run around the bank. Among them was Ahmed, an asylum seeker from Guinea who had taken refuge in the choir’s former headquarters, a vacant bank on Avenue C, after arriving in the United States. “It’s very scary-looking,” he said of Chase’s sixty-story tower. Many of the runners had procured thrift-store blazers or top hats, an effort to blend in with the bankers. Durkee, who wore a pin-striped suit, led the group in some stretches, followed by twelve laps around the block. A construction worker sanding down a railing offered support—“You got this!”—but appeared confused by a runner’s sign accusing Chase of ecocide. “I thought it was, like, a charity thing,” he said.
+As night fell, Talen huddled under a blanket with other choir members. His once thunderous voice had dropped to a rasp as he condemned the “gangsters in suits” responsible for rising global temperatures. In the final minutes of his sermon, he found himself at an unusual loss for words. “It feels like, well, extreme exhaustion, I guess,” he said. “Or a long hike that got out of hand, and now I have to come down the mountain.” Had the suffering been worth it? “I’m not sure we cracked the culture,” he said. “But we had a vision, and we did what we could.” ♦</p>
 </div>
 <!-- NEWYORKER_END -->
+<p><a href="https://www.newyorker.com/magazine/2026/05/04/reverend-billy-takes-on-norman-fosters-new-monolith">Read at The New Yorker</a></p> 
+<p><a href="https://www.newyorker.com/magazine/2026/05/04/reverend-billy-takes-on-norman-fosters-new-monolith">Read at The New Yorker</a></p> 
 <div class="signoff"> 
-<p>Your faithfully Butler,<br/>Jeeves</p> 
+<p>Your reluctantly faithful Butler,<br/>Jeeves</p> 
 </div> 
- 
-</div> 
-</body> 
-</html>
