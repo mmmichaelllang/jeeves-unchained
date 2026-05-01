@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] mmmichaelllang: GitHub Actions daily pipeline for Jeeves failed again.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline for Jeeves failed again.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline for Jeeves failed again.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline for Jeeves failed again.\n- [escalation] mmmichaelllang: GitHub CI failed on PR for newsletter v4 design changes.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline for Jeeves failed again.\n- [escalation] mmmichaelllang: GitHub CI failed on main branch commit da67951.\n- [escalation] mmmichaelllang: GitHub CI failed on main branch commit 87937ff.\n- [escalation] mmmichaelllang: CI workflow for jeeves-unchained failed on main branch.\n- [escalation] mmmichaelllang: Jeeves Write Phase workflow failed on jeeves-memory repo.\n- [escalation] mmmichaelllang: Jeeves Research Phase workflow failed on jeeves-memory repo.\n- [escalation] mmmichaelllang: Jeeves Correspondence Phase workflow failed on jeeves-memory repo.\n- [escalation] mmmichaelllang: Jeeves Daily Pipeline workflow partially failed on jeeves-unchained repo.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Research Phase failed in jeeves-memory repo.",
+  "text": "- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Research Phase failed on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Correspondence Phase failed on main branch.\n- [escalation] \"Anthropic, PBC\": Failed $16.61 payment to Anthropic; credit card charge was unsuccessful.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Daily Pipeline failed on second attempt.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Daily Pipeline failed on main branch.\n- [escalation] Google: Google security alert that Opal was granted access to the Google account.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Daily Pipeline failed on main branch.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline failed again for jeeves-unchained repo.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline failed again for jeeves-unchained repo.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline failed again for jeeves-unchained repo.\n- [escalation] mmmichaelllang: GitHub PR CI failed for newsletter v4 feature branch.",
   "counts": {
-    "reply_needed": 3,
-    "decision_required": 0,
-    "scheduling": 0,
-    "follow_up": 2,
-    "escalation": 15,
-    "no_action": 30
+    "reply_needed": 2,
+    "decision_required": 1,
+    "scheduling": 1,
+    "follow_up": 0,
+    "escalation": 21,
+    "no_action": 25
   }
 }
