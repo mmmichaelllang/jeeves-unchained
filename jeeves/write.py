@@ -456,6 +456,16 @@ CONTINUATION_RULES = """
     - "this briefing has covered"
     - "this concludes" / "this completes"
     - Any sentence beginning "Mister Lang, this briefing" (meta-closing)
+    - "as reported by [Source]," (mid-sentence attribution boilerplate) — write
+      `<a href="URL">Source</a> reports that…` instead; do not embed the source
+      as a passive parenthetical clause
+    - "This decision, as reported by" / "This development, as reported by"
+    - "This development highlights the importance of" / "This decision highlights"
+    - "This initiative underscores" / "This move underscores" / "This decision underscores"
+    - "This raises questions about the balance" / "This raises serious concerns about"
+    - "Mister Lang, [topic] [verb phrase]," as a paragraph opener in the MIDDLE of a
+      section — address the reader once per section at most; repeated "Mister Lang,"
+      openers are a mechanical tic, not a voice
     - Any sentence that could be copy-pasted unchanged into a briefing about
       a completely different topic. Zero topic-specific nouns = delete it.
 14. LINKING IS MANDATORY WHEN A URL EXISTS IN YOUR PAYLOAD. Every sector
@@ -2206,6 +2216,11 @@ professional estimation, a piece of fucking garbage" and would break that aside.
 - "a thought-provoking read"
 - "It is clear that" / "It is evident that"
 - "underscores the importance of"
+- "as reported by [Source]," (mid-sentence attribution) — rewrite as `Source reports that…`
+- "This decision, as reported by" / "This development, as reported by"
+- "This development highlights the importance of" / "This decision highlights"
+- "This initiative underscores" / "This move underscores" / "This decision underscores"
+- "This raises questions about the balance" / "This raises serious concerns about"
 - "a veritable smorgasbord" (tired; replace with something specific)
 - "It's a veritable" (same)
 
