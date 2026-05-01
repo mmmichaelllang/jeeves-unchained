@@ -140,7 +140,13 @@ FIELD_CAPS: dict[str, int] = {
     "ai_systems.findings": 1000,
     "uap.findings": 1000,
     "vault_insight.insight": 1000,
-    "newyorker.text": 4000,
+    # Talk of the Town pieces top out around ~9000 chars; cap at 40k as safety
+    # rail against an unbounded write while preserving full text in the briefing.
+    # The previous 4000 cap dated from a prior architecture where Groq ingested
+    # the full session JSON; Part 9 now strips `newyorker.text` from its payload
+    # entirely (see write._session_subset / generate_briefing), so this cap is
+    # only protecting the on-disk session file from a runaway fetch.
+    "newyorker.text": 40000,
     "enriched_articles.text": 1200,
     "literary_pick.summary": 600,
 }

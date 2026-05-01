@@ -26,6 +26,32 @@ class BriefingResult:
     profane_aside_count: int
     banned_word_hits: list[str]
     banned_transition_hits: list[str]
+    aside_placement_violations: list[str] = None  # type: ignore[assignment]
+    link_density: float = 0.0
+    structure_errors: list[str] = None  # type: ignore[assignment]
+
+    def __post_init__(self) -> None:
+        if self.aside_placement_violations is None:
+            self.aside_placement_violations = []
+        if self.structure_errors is None:
+            self.structure_errors = []
+
+
+# --- Signoff guard ---------------------------------------------------------
+_SIGNOFF_REPLACEMENT = "Your reluctantly faithful Butler,"
+
+# `Yours faithfully`, `Your faithfully` (typo), with optional `Butler` and `,`
+# Group 0 captures the entire thing for replacement.
+_WRONG_SIGNOFF_FAITHFULLY = re.compile(
+    r"\bYours?\s+faithfully(?:\s+Butler)?,?",
+    re.IGNORECASE,
+)
+# Other generic sign-offs that the model occasionally regresses to.
+_WRONG_SIGNOFF_OTHERS = re.compile(
+    r"\b(?:Sincerely(?:\s+yours)?|Yours\s+sincerely|Yours\s+truly|"
+    r"Best\s+regards|Kind\s+regards|Warm\s+regards|Respectfully\s+yours)(?:\s+Butler)?,?",
+    re.IGNORECASE,
+)
 
 
 BANNED_WORDS = [
@@ -183,6 +209,23 @@ PART_PLAN: list[tuple[str, list[str]]] = [
     ("part8", ["vault_insight"]),
     ("part9", ["newyorker"]),
 ]
+
+
+# Per-part minimum word counts. Below this, the part is logged as "thin"
+# (likely indicates Groq mid-stream truncation, dedup over-pruning, or
+# model under-delivering). Used as a diagnostic signal only — does not
+# trigger automatic retry (would double the wall-clock).
+_PART_WORD_TARGETS: dict[str, int] = {
+    "part1": 200,
+    "part2": 60,    # empty-feed branch is OK at ~30 words
+    "part3": 60,    # empty-feed branch is OK at ~30 words
+    "part4": 350,
+    "part5": 350,
+    "part6": 350,
+    "part7": 250,
+    "part8": 0,     # often empty placeholder
+    "part9": 30,    # placeholder + one sentence + signoff fragment
+}
 
 # Back-compat aliases — a few tests import PART1_SECTORS et al.
 PART1_SECTORS = PART_PLAN[0][1]
@@ -1092,7 +1135,12 @@ def _strip_fences(s: str) -> str:
 
 
 def _strip_continuation_wrapper(s: str) -> str:
-    """Remove DOCTYPE/head/body/h1/masthead divs that a continuation part leaked."""
+    """Remove DOCTYPE/head/body/h1/masthead divs that a continuation part leaked.
+
+    Also strips a TRAILING `</div>` (and `</body>`/`</html>`) — continuation parts
+    are forbidden from closing outer tags but the model occasionally emits them
+    anyway, leaving subsequent parts to render outside `.container`.
+    """
     import re as _re
     s = _re.sub(r"^<!DOCTYPE[^>]*>", "", s, flags=_re.IGNORECASE).strip()
     s = _re.sub(r"<html[^>]*>", "", s, flags=_re.IGNORECASE)
@@ -1101,7 +1149,112 @@ def _strip_continuation_wrapper(s: str) -> str:
     s = _re.sub(r"<h1[^>]*>.*?</h1>", "", s, flags=_re.IGNORECASE | _re.DOTALL)
     # Strip masthead divs (mh-label, mh-date) if a continuation part leaks them.
     s = _re.sub(r'<div[^>]*class="mh-(?:label|date)"[^>]*>.*?</div>', "", s, flags=_re.IGNORECASE | _re.DOTALL)
+    # Strip trailing closers — continuation parts must not close outer tags.
+    s = s.strip()
+    while True:
+        new = _re.sub(r"\s*</(?:div|body|html)>\s*$", "", s, flags=_re.IGNORECASE)
+        if new == s:
+            break
+        s = new
     return s.strip()
+
+
+_CONTAINER_BLOCK_RE = re.compile(
+    r'(<div\b[^>]*\bclass="container"[^>]*>)(.*?)(</div>)(\s*</body>)',
+    re.IGNORECASE | re.DOTALL,
+)
+_CONTAINER_LAST_CLOSE_RE = re.compile(r"</div>\s*</body>", re.IGNORECASE)
+
+
+def _repair_container_structure(html: str) -> str:
+    """Move any orphan content (after `.container` closer, before `</body>`) inside.
+
+    Emerges when continuation parts emit a stray `</div>` that closes
+    `.container` early; later parts append AFTER the close, leaving paragraphs
+    floating between `</div>` and `</body>`. We splice that orphan zone back
+    inside the container, just before its closing `</div>`.
+    """
+
+    body_open_idx = html.lower().find("<body")
+    body_close_idx = html.lower().rfind("</body>")
+    if body_open_idx < 0 or body_close_idx < 0:
+        return html
+
+    # Find the LAST </div> before </body> — that's the .container close.
+    head_chunk = html[:body_close_idx]
+    last_div_close = head_chunk.rfind("</div>")
+    if last_div_close < 0:
+        return html
+
+    # Anything between the LAST </div> and </body> that isn't whitespace/comments
+    # is orphan content that must be moved inside the container.
+    orphan_zone = html[last_div_close + len("</div>"):body_close_idx]
+    if not orphan_zone.strip():
+        return html
+
+    # Detect substantive content (any tag or non-whitespace text other than
+    # comments) — comments alone (e.g. COVERAGE_LOG) are fine where they sit.
+    stripped = re.sub(r"<!--.*?-->", "", orphan_zone, flags=re.DOTALL).strip()
+    if not stripped:
+        return html
+
+    log.warning(
+        "structural repair: %d chars orphaned outside .container — splicing inside",
+        len(stripped),
+    )
+
+    # Splice: head_chunk[:last_div_close] + orphan_zone + </div> + body_close
+    repaired = (
+        html[:last_div_close]
+        + orphan_zone
+        + "</div>"
+        + html[body_close_idx:]
+    )
+    return repaired
+
+
+def _validate_html_structure(html: str) -> list[str]:
+    """Return a list of structural issues. Empty list = healthy.
+
+    Checks:
+    - Exactly one `<div class="container">` open + matching close.
+    - `<div class="signoff">` lives inside `.container`.
+    - No `<p>` outside `.container` (allowing comments/whitespace).
+    - `<!-- COVERAGE_LOG: ... -->` present.
+    """
+    errors: list[str] = []
+    container_opens = re.findall(
+        r'<div\b[^>]*\bclass="container"[^>]*>', html, re.IGNORECASE,
+    )
+    if len(container_opens) != 1:
+        errors.append(f"container open tag count={len(container_opens)} (expected 1)")
+
+    body_close = html.lower().rfind("</body>")
+    if body_close < 0:
+        errors.append("missing </body>")
+        return errors
+
+    head_chunk = html[:body_close]
+    last_div_close = head_chunk.rfind("</div>")
+    if last_div_close < 0:
+        errors.append("no </div> before </body>")
+        return errors
+
+    orphan_zone = html[last_div_close + len("</div>"):body_close]
+    orphan_clean = re.sub(r"<!--.*?-->", "", orphan_zone, flags=re.DOTALL).strip()
+    if "<p" in orphan_clean.lower():
+        errors.append("<p> tags outside .container")
+
+    container_match = _CONTAINER_BLOCK_RE.search(html)
+    if container_match:
+        inside = container_match.group(2)
+        if 'class="signoff"' not in inside.lower():
+            errors.append('signoff div not inside .container')
+
+    if "<!-- COVERAGE_LOG:" not in html:
+        errors.append("no COVERAGE_LOG comment present")
+
+    return errors
 
 
 def _stitch_parts(*parts: str) -> str:
@@ -1423,6 +1576,43 @@ _NY_INTRO_MARKER = "reading from this week's Talk of the Town"
 _NY_SIGNOFF_MARKERS = ('<div class="signoff">', "<!-- COVERAGE_LOG")
 
 
+_BANNER_URL = "https://i.imgur.com/UqSFELh.png"
+_BANNER_HTML = f'<img class="banner" src="{_BANNER_URL}" alt="">'
+_BANNER_RE = re.compile(r'<img\b[^>]*\bclass="banner"[^>]*>', re.IGNORECASE)
+_CONTAINER_OPEN_RE = re.compile(r'(<div\b[^>]*\bclass="container"[^>]*>)', re.IGNORECASE)
+
+
+def _inject_banner(html: str) -> str:
+    """Idempotently guarantee the banner image sits at the top of the container.
+
+    Three cases:
+    1. Banner present with correct URL — leave alone.
+    2. Banner present with WRONG URL (e.g. model rewrote src) — replace in place.
+    3. Banner absent — inject immediately after `<div class="container">`.
+
+    Safe to call multiple times. Idempotent against case (1). Fails open if no
+    container open tag is found (logs warning, returns html unchanged).
+    """
+
+    existing = _BANNER_RE.search(html)
+    if existing:
+        if _BANNER_URL in existing.group(0):
+            return html
+        # Wrong URL — replace in place.
+        log.warning(
+            "banner URL drift detected (had: %.80r); replacing with canonical",
+            existing.group(0),
+        )
+        return _BANNER_RE.sub(_BANNER_HTML, html, count=1)
+
+    m = _CONTAINER_OPEN_RE.search(html)
+    if not m:
+        log.warning("banner injection skipped: no .container open tag found")
+        return html
+    insert_at = m.end()
+    return html[:insert_at] + "\n" + _BANNER_HTML + html[insert_at:]
+
+
 def _build_newyorker_block(text: str, url: str) -> str:
     """Return formatted NEWYORKER_START…END block plus the Read link paragraph."""
     paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
@@ -1621,6 +1811,46 @@ def _build_source_url_map(session: SessionModel) -> dict[str, str]:
         # Map article title → url so inline title mentions get linked.
         _add(title, url)
 
+    # --- Career postings: each opening's title/school → application URL. ---
+    career = session.career or {}
+    if isinstance(career, dict):
+        for opening in career.get("openings") or []:
+            if not isinstance(opening, dict):
+                continue
+            url = opening.get("url") or ""
+            if not url:
+                continue
+            for key in ("title", "position", "school", "district"):
+                val = opening.get(key)
+                if isinstance(val, str) and val.strip():
+                    _add(val.strip(), url)
+
+    # --- Family events: choir auditions and toddler activities. ---
+    family = session.family or {}
+    if isinstance(family, dict):
+        for bucket_name in ("choir", "toddler"):
+            bucket = family.get(bucket_name) or []
+            if isinstance(bucket, list):
+                for ev in bucket:
+                    if not isinstance(ev, dict):
+                        continue
+                    url = ev.get("url") or ""
+                    if not url:
+                        continue
+                    for key in ("name", "ensemble", "venue", "title", "activity"):
+                        val = ev.get(key)
+                        if isinstance(val, str) and val.strip():
+                            _add(val.strip(), url)
+
+    # --- Literary pick: title and author. ---
+    lp = session.literary_pick
+    lp_url = getattr(lp, "url", "") or ""
+    if lp_url:
+        if getattr(lp, "title", ""):
+            _add(lp.title, lp_url)
+        if getattr(lp, "author", ""):
+            _add(lp.author, lp_url)
+
     # Scalar sector URL fields — map known editorial names to each URL position.
     to_urls = getattr(session.triadic_ontology, "urls", None) or []
     _TO_NAMES = ["Academia.edu", "PhilArchive", "Nomos-elibrary"]
@@ -1637,34 +1867,36 @@ def _build_source_url_map(session: SessionModel) -> dict[str, str]:
     return mapping
 
 
+# Per-source injection cap. Up to 3 occurrences of the same name across
+# different paragraphs each get their own anchor — anti-clutter while still
+# producing the dense link mat the briefing wants.
+_INJECT_PER_SOURCE = 3
+
+
 def _inject_source_links(html: str, source_url_map: dict[str, str]) -> str:
     """Deterministically inject <a href> anchors for known source names.
 
-    For each (source_name, url) pair, finds the FIRST occurrence of source_name
-    in the HTML that is NOT already inside an <a> tag, and wraps it in an anchor.
-    Operates on the raw HTML string using a split-on-anchors approach so existing
-    links are never disturbed.
+    For each (source_name, url) pair, finds up to `_INJECT_PER_SOURCE` occurrences
+    of source_name that are NOT inside an existing `<a>` tag and wraps them.
 
-    Only the first occurrence per source is linked (enough to satisfy rule 8
-    without cluttering prose with repeated anchors to the same URL).
+    Operates on the raw HTML string using a split-on-anchors approach so
+    existing links are never disturbed.
     """
     if not source_url_map:
         return html
 
-    # Split HTML into alternating [outside_anchor, inside_anchor, ...] segments.
-    # We only modify segments that are NOT inside <a>…</a> tags.
-    # Pattern: everything up to an <a …>, the anchor content, the </a>, repeat.
     _A_SPLIT = re.compile(r"(<a\b[^>]*>.*?</a>)", re.IGNORECASE | re.DOTALL)
 
     for source_name, url in source_url_map.items():
         if not source_name or not url:
             continue
-        # Skip if already linked anywhere in the document.
-        if url in html:
+        # If this URL is ALREADY anchored anywhere, count those toward the cap
+        # so we top up rather than re-add.
+        existing_anchors_for_url = html.count(f'href="{url}"')
+        remaining_quota = _INJECT_PER_SOURCE - existing_anchors_for_url
+        if remaining_quota <= 0:
             continue
-        # Escape for use in a word-boundary regex.
-        # IGNORECASE so domain-extracted names (magicschool.ai) match prose
-        # capitalisation (MagicSchool.ai). m.group(0) preserves original case.
+
         escaped = re.escape(source_name)
         pattern = re.compile(
             r"(?<![a-zA-Z0-9\-])" + escaped + r"(?![a-zA-Z0-9\-])",
@@ -1672,23 +1904,197 @@ def _inject_source_links(html: str, source_url_map: dict[str, str]) -> str:
         )
 
         segments = _A_SPLIT.split(html)
-        replaced = False
+        injected = 0
         for i, seg in enumerate(segments):
-            if replaced:
+            if injected >= remaining_quota:
                 break
-            # Even-indexed segments are outside anchors.
-            if i % 2 == 0 and pattern.search(seg):
-                new_seg, count = pattern.subn(
-                    lambda m, _url=url: f'<a href="{_url}">{m.group(0)}</a>',
-                    seg,
-                    count=1,
-                )
-                if count:
-                    segments[i] = new_seg
-                    replaced = True
-        if replaced:
+            if i % 2 != 0:
+                continue  # inside an existing anchor, skip
+            if not pattern.search(seg):
+                continue
+            count_to_take = remaining_quota - injected
+            new_seg, count = pattern.subn(
+                lambda m, _url=url: f'<a href="{_url}">{m.group(0)}</a>',
+                seg,
+                count=count_to_take,
+            )
+            if count:
+                segments[i] = new_seg
+                injected += count
+        if injected:
             html = "".join(segments)
 
+    return html
+
+
+def _compute_link_density(html: str, word_count: int) -> float:
+    """anchors per 1000 prose-words. Used as a quality diagnostic only."""
+    if word_count <= 0:
+        return 0.0
+    anchors = len(re.findall(r"<a\b[^>]*\bhref=", html, re.IGNORECASE))
+    return round(anchors * 1000.0 / word_count, 2)
+
+
+# --- Profane aside placement guard ----------------------------------------
+# Pattern that catches the templated standalone-paragraph regression seen in
+# 2026-05-01: `<p>[topic phrase] is, [profane aside].</p>` with the entire
+# paragraph being short, lowercase-opening, and aside-dominated.
+_NY_BLOCK_FENCE_RE = re.compile(
+    r"<!--\s*NEWYORKER_START\s*-->.*?<!--\s*NEWYORKER_END\s*-->",
+    re.DOTALL | re.IGNORECASE,
+)
+_P_TAG_RE = re.compile(r"<p\b[^>]*>(.*?)</p>", re.DOTALL | re.IGNORECASE)
+
+
+def _paragraph_is_aside_orphan(p_text: str) -> tuple[bool, str | None]:
+    """Return (is_orphan, matched_fragment).
+
+    A paragraph is an aside-orphan when:
+    - it contains a profane fragment from PROFANE_FRAGMENTS, AND
+    - its overall word count is < 20, OR
+    - it begins with a lowercase letter (sign of slot-template), AND
+    - the aside is not anchored to ≥1 sentence-ending period of substantive
+      content BEFORE the profane fragment.
+    """
+    plain = re.sub(r"<[^>]+>", " ", p_text)
+    plain = re.sub(r"\s+", " ", plain).strip()
+    if not plain:
+        return False, None
+    lower = plain.lower()
+    matched = None
+    matched_idx = -1
+    for frag in PROFANE_FRAGMENTS:
+        idx = lower.find(frag)
+        if idx >= 0:
+            matched = frag
+            matched_idx = idx
+            break
+    if matched is None:
+        return False, None
+
+    word_count = len(plain.split())
+    starts_lowercase = plain[0].islower() if plain else False
+
+    # Substantive prose BEFORE the aside: at least one sentence-ending period
+    # in the first matched_idx characters.
+    pre_aside = plain[:matched_idx]
+    pre_periods = pre_aside.count(".") + pre_aside.count("!") + pre_aside.count("?")
+
+    if word_count < 20:
+        return True, matched
+    if starts_lowercase and pre_periods == 0:
+        return True, matched
+    if pre_periods == 0 and word_count < 30:
+        return True, matched
+    return False, None
+
+
+def _validate_aside_placement(html: str) -> list[str]:
+    """Return human-readable warnings for orphan-template aside placements."""
+    # Skip the NEWYORKER block — verbatim article text doesn't apply.
+    scoped = _NY_BLOCK_FENCE_RE.sub("", html)
+    warnings: list[str] = []
+    for m in _P_TAG_RE.finditer(scoped):
+        body = m.group(1)
+        is_orphan, frag = _paragraph_is_aside_orphan(body)
+        if is_orphan:
+            preview = re.sub(r"<[^>]+>", "", body).strip()[:80]
+            warnings.append(f"orphan aside ({frag!r}): {preview!r}")
+    return warnings
+
+
+def _merge_orphan_asides(html: str) -> str:
+    """Best-effort fix for orphan templated aside paragraphs.
+
+    Walks `<p>` tags top-to-bottom. When an aside-orphan paragraph is found
+    AND a substantive (≥30-word) preceding paragraph exists in the same
+    sibling section, append the aside as a tail clause on the preceding
+    paragraph and remove the orphan.
+
+    Skips:
+    - any paragraph inside the NEWYORKER block (verbatim article).
+    - paragraphs already inside other tags (`<div class="signoff">`, etc.).
+    """
+    # Extract the NEWYORKER block, replace with a sentinel, restore at end so
+    # the regex walk doesn't have to reason about it.
+    ny_match = _NY_BLOCK_FENCE_RE.search(html)
+    sentinel = "<!--__JEEVES_NY_TMP__-->"
+    if ny_match:
+        ny_saved = ny_match.group(0)
+        html = _NY_BLOCK_FENCE_RE.sub(sentinel, html, count=1)
+    else:
+        ny_saved = None
+
+    paragraphs: list[tuple[int, int, str]] = []  # (start, end, body)
+    for m in _P_TAG_RE.finditer(html):
+        paragraphs.append((m.start(), m.end(), m.group(1)))
+
+    if not paragraphs:
+        if ny_saved:
+            html = html.replace(sentinel, ny_saved, 1)
+        return html
+
+    edits: list[tuple[int, int, str]] = []  # (start, end, replacement)
+    used_targets: set[int] = set()  # indices of paragraphs already merged into
+
+    for i, (start, end, body) in enumerate(paragraphs):
+        is_orphan, frag = _paragraph_is_aside_orphan(body)
+        if not is_orphan:
+            continue
+        if not frag:
+            continue
+        # Find the most recent substantive prior paragraph not yet merged-into,
+        # and not part of the .signoff or .newyorker block.
+        target_idx: int | None = None
+        for j in range(i - 1, -1, -1):
+            if j in used_targets:
+                continue
+            jstart, jend, jbody = paragraphs[j]
+            jplain = re.sub(r"<[^>]+>", " ", jbody)
+            jplain = re.sub(r"\s+", " ", jplain).strip()
+            if len(jplain.split()) < 25:
+                continue
+            # Defensive: don't merge into a paragraph that is itself an orphan.
+            j_is_orphan, _ = _paragraph_is_aside_orphan(jbody)
+            if j_is_orphan:
+                continue
+            target_idx = j
+            break
+        if target_idx is None:
+            continue
+
+        # Convert orphan body → mid-sentence fragment. Strip leading lowercase
+        # subject ("the kremlin's mali pledge is, ") and keep just the aside.
+        plain_orphan = re.sub(r"<[^>]+>", " ", body)
+        plain_orphan = re.sub(r"\s+", " ", plain_orphan).strip().rstrip(".")
+        # Slice from the matched fragment onward to recover just the aside.
+        flow = plain_orphan.lower().find(frag)
+        aside_text = plain_orphan[flow:].strip() if flow >= 0 else plain_orphan
+        # Capitalise first letter — it now starts mid-sentence as a clause but
+        # we keep it natural by lowercasing.
+        if aside_text and aside_text[0].isupper():
+            aside_text = aside_text[0].lower() + aside_text[1:]
+        # Trim any leading "is, " "was, " linker that the orphan template emitted.
+        aside_text = re.sub(r"^(?:is|was|reads),?\s+", "", aside_text)
+
+        tstart, tend, tbody = paragraphs[target_idx]
+        new_target_body = tbody.rstrip()
+        if new_target_body.endswith("."):
+            new_target_body = new_target_body[:-1]
+        merged = f"{new_target_body} — {aside_text}."
+        edits.append((tstart, tend, f"<p>{merged}</p>"))
+        edits.append((start, end, ""))  # remove orphan
+        used_targets.add(target_idx)
+
+    # Apply edits right-to-left to preserve offsets.
+    for s, e, repl in sorted(edits, key=lambda t: t[0], reverse=True):
+        html = html[:s] + repl + html[e:]
+
+    if ny_saved:
+        html = html.replace(sentinel, ny_saved, 1)
+
+    # Collapse any double-blank lines created by removed paragraphs.
+    html = re.sub(r"\n\s*\n\s*\n", "\n\n", html)
     return html
 
 
@@ -1704,6 +2110,43 @@ This is a two-part job: (A) aggressively clean the draft, and (B) add exactly
 five earned profane asides. Do both. Do not skip either.
 
 ## PART A — EDITORIAL SURGERY
+
+### A0. PRESERVATION — DO NOT VIOLATE (READ FIRST, BEFORE EVERY OTHER RULE)
+
+You are a sharpener, not a compressor. Your default action is to KEEP. You
+delete only the patterns explicitly listed in A1. Anything not on the A1 list
+stays.
+
+**Hard preservation guarantees:**
+
+1. **Never delete a paragraph that contains 2+ specific named entities** —
+   proper nouns (people, places, companies), dollar figures, dates,
+   institution names, or article titles. Even if the prose around them is
+   plodding, those entities are the briefing's value. Tighten the prose.
+   Keep the entities.
+
+2. **Never delete an `<a href>` anchor.** Period. Anchors are the briefing's
+   citations. If the surrounding sentence is filler, rewrite the sentence
+   while preserving the anchor in place. The link survives even if the
+   sentence does not.
+
+3. **Word-count floor.** Your output's body prose must be at least **80%**
+   of the input's body prose word count. If you find yourself producing
+   shorter output than that, you are over-deleting — STOP, restore the
+   most aggressively-trimmed paragraphs, and rebalance toward retention.
+
+4. **Section-density floor.** Every `<h3>` section must end with at least
+   3 substantive `<p>` paragraphs (paragraphs whose body is ≥ 25 words and
+   names at least one specific entity). If your edits leave a section with
+   fewer than 3 such paragraphs, restore the most informative one you cut.
+
+5. **The briefing must remain dense.** A briefing with `<h3>` headers and
+   1-paragraph stubs under each is a failure. Better to have a few sections
+   with 4–6 paragraphs each than 7 sections with 1 paragraph each.
+
+If your output violates A0.1, A0.4, or A0.5, the deterministic post-processor
+will reject it and ship the unedited draft. Both options leave the briefing
+worse — get this right.
 
 ### A1. HARD DELETIONS — remove every occurrence without exception
 
@@ -1960,12 +2403,50 @@ five total; never go below five total.
 **Rules for placement:**
 1. Each aside must be *earned* — it reacts to a specific, named dysfunction,
    absurdity, or outrage that Jeeves has just described. Never decorative.
-2. Alter sentence structure to make it feel like the aside erupted naturally.
-   Let the annoyance escalate FIRST, then let the phrase land.
-   Wrong: "The transit merger is an absolute shit-show, Sir."
-   Right: "Everett transit is merging with Sound Transit. The financing is
-           unclear, the timeline is fictional, and the public consultation was
-           a nine-person Zoom call at 2pm on a Tuesday. What a shit-show."
+
+2. **CRITICAL — DO NOT TEMPLATE.** The aside must be EMBEDDED inside an
+   existing substantive paragraph, NOT placed as its own short paragraph.
+   The single most common failure mode is producing standalone paragraphs
+   like:
+
+   `<p>the kremlin's mali pledge is, a proper omnishambles.</p>`
+   `<p>the EU loan package is, a metric fuck-ton of stupidity.</p>`
+
+   THESE ARE BANNED. Every one is a slot-template (lowercase opener, two-clause
+   structure, single-sentence paragraph). The deterministic post-processor will
+   detect and merge them, producing degraded output. Do it right the FIRST time.
+
+   **Required form**: integrate the aside into a paragraph that already has
+   2+ sentences of substance. Let the annoyance escalate FIRST, then let the
+   phrase land.
+
+   Examples of WRONG vs RIGHT placement:
+
+   WRONG (template, standalone):
+     <p>The Kremlin's Mali pledge is, a proper omnishambles.</p>
+
+   RIGHT (embedded, earned):
+     <p>The Kremlin announced its forces will remain in Mali despite a surge
+     of insurgent attacks. JNIM has seized a military base and is threatening
+     Bamako; the Russians are committing more troops anyway. A proper
+     omnishambles, in other words, of the highest, most fucking degree.</p>
+
+   WRONG: <p>the Friend AI rollout is, a total and utter shitshow.</p>
+
+   RIGHT: <p>Friend AI's pendant now monitors continuous speech and uploads
+     it for analysis, raising every privacy alarm in the manual. The
+     consent flow is buried six taps deep and the data-retention policy
+     reads like it was drafted by someone with shares in the panopticon.
+     Total and utter shitshow.</p>
+
+   WRONG: <p>her push is, an absolute thundercunt of a decision.</p>
+
+   RIGHT: <p>Congresswoman Anna Paulina Luna has demanded the Pentagon
+     declassify UAP footage, warning that undisclosed craft near bases
+     jeopardise readiness — a position shared by most of the Senate
+     Intelligence Committee and ignored entirely by the Joint Chiefs.
+     An absolute thundercunt of a decision either way: declassify and
+     embarrass the brass, or stonewall and embarrass the country.</p>
 3. Each aside stands ALONE. Never follow with apology, qualification, or
    "if I may say so." Jeeves does not disclaim the language.
 4. Never stack two asides in the same paragraph or adjacent paragraphs.
@@ -2066,6 +2547,55 @@ _NY_EDIT_PLACEHOLDER = "<!-- NEWYORKER_EDIT_PLACEHOLDER -->"
 _NY_BLOCK_RE = re.compile(
     r"<!-- NEWYORKER_START -->.*?<!-- NEWYORKER_END -->", re.DOTALL
 )
+
+# Editor output gates. Tuned to catch the 2026-05-01 regression mode.
+_EDITOR_WORD_FLOOR_RATIO = 0.80   # output must be ≥80% of input word count
+_EDITOR_MIN_ANCHORS_PER_1K = 5.0  # body link density floor
+_EDITOR_MAX_ASIDE_ORPHANS = 0     # zero standalone-template asides allowed
+
+
+def _editor_quality_gates(
+    input_html: str, edited_html: str, model: str
+) -> tuple[bool, str]:
+    """Gate the OpenRouter editor's output.
+
+    Returns (passed, reason). On failure, caller falls through to the next
+    model in the chain. On success, the edited output is accepted.
+    """
+    in_words = len(_strip_tags(input_html).split())
+    out_words = len(_strip_tags(edited_html).split())
+    if in_words and out_words / in_words < _EDITOR_WORD_FLOOR_RATIO:
+        return False, (
+            f"word-floor: edited {out_words} < "
+            f"{int(in_words * _EDITOR_WORD_FLOOR_RATIO)} (input {in_words}, "
+            f"ratio {out_words / in_words:.2f})"
+        )
+
+    orphans = _validate_aside_placement(edited_html)
+    if len(orphans) > _EDITOR_MAX_ASIDE_ORPHANS:
+        return False, f"aside-orphans: {len(orphans)} > {_EDITOR_MAX_ASIDE_ORPHANS}"
+
+    density = _compute_link_density(edited_html, out_words)
+    if density < _EDITOR_MIN_ANCHORS_PER_1K and in_words > 500:
+        return False, (
+            f"link-density: {density} < {_EDITOR_MIN_ANCHORS_PER_1K} per 1k words"
+        )
+
+    if "Your reluctantly faithful Butler" not in edited_html:
+        # Allow editor to drop the signoff if input didn't have it either —
+        # but if input had it, output must too.
+        if "Your reluctantly faithful Butler" in input_html:
+            return False, "signoff stripped"
+
+    if 'class="banner"' in input_html and 'class="banner"' not in edited_html:
+        return False, "banner stripped"
+
+    log.info(
+        "OpenRouter [%s] passed quality gates "
+        "(words %d→%d, density %s, orphans %d)",
+        model, in_words, out_words, density, len(orphans),
+    )
+    return True, "ok"
 
 
 def _invoke_openrouter_narrative_edit(
@@ -2175,6 +2705,16 @@ def _invoke_openrouter_narrative_edit(
                         edited = edited.replace(signoff_marker, ny_block + "\n" + signoff_marker)
                     else:
                         edited = edited.rstrip().rstrip("</html>").rstrip() + "\n" + ny_block + "\n</html>"
+
+            # --- quality gates: reject over-deletion / orphan asides / link strip ---
+            passed, reason = _editor_quality_gates(html, edited, model)
+            if not passed:
+                log.warning(
+                    "OpenRouter [%s] failed quality gate (%s); trying next model",
+                    model, reason,
+                )
+                continue
+
             log.info("OpenRouter narrative edit complete via [%s] (%d chars output)", model, len(edited))
             return edited
         except Exception as exc:
@@ -2406,6 +2946,21 @@ def generate_briefing(
         )
         raw_drafts[label] = raw_part
 
+        # Density diagnostic — log thin parts for triage. Strip HTML tags
+        # before counting so word totals reflect actual prose, not markup.
+        part_words = len(_strip_tags(raw_part).split())
+        target = _PART_WORD_TARGETS.get(label, 0)
+        if target and part_words < target * 0.6:
+            log.warning(
+                "[%s] thin draft: %d words < 60%% of target (%d). "
+                "Possible causes: Groq truncation, dedup over-pruning, "
+                "or model under-delivering. Investigate if briefing total "
+                "falls below 3000 prose words.",
+                label, part_words, target,
+            )
+        else:
+            log.info("[%s] draft: %d words (target %d)", label, part_words, target)
+
         # Track asides for within-run dedup before launching the refine thread.
         if label not in _NO_ASIDE_PARTS:
             for phrase in aside_pool:
@@ -2433,6 +2988,10 @@ def generate_briefing(
         len(stitched), len(final_parts), ", ".join(str(len(p)) for p in final_parts),
     )
 
+    # Banner image — deterministic post-stitch injection. Idempotent. Re-run
+    # after OpenRouter edit too in case the editor strips it.
+    stitched = _inject_banner(stitched)
+
     # Inject the verbatim New Yorker article text (Part 9 uses a placeholder).
     # Fallback excises any hallucinated TOTT content before the sign-off.
     stitched = _inject_newyorker_verbatim(stitched, session)
@@ -2447,6 +3006,14 @@ def generate_briefing(
     # Pass the day-over-day recently-used list so OpenRouter picks fresh phrases.
     recently_used = _recently_used_asides(cfg) if cfg else []
     stitched = _invoke_openrouter_narrative_edit(cfg, stitched, recently_used_asides=recently_used)
+
+    # Re-inject banner after OpenRouter (idempotent guard against editor stripping it).
+    stitched = _inject_banner(stitched)
+
+    # Repair any structural breakage (orphan paragraphs outside container,
+    # stray </div>, profane asides emitted as standalone paragraphs).
+    stitched = _repair_container_structure(stitched)
+    stitched = _merge_orphan_asides(stitched)
 
     return stitched
 
@@ -2466,13 +3033,32 @@ def postprocess_html(raw: str, session: SessionModel) -> BriefingResult:
     banned_word_hits = [w for w in BANNED_WORDS if w.lower() in body_text.lower()]
     banned_transition_hits = [t for t in BANNED_TRANSITIONS if t.lower() in body_text.lower()]
 
-    if "yours faithfully" in body_text.lower():
-        log.warning("WRONG SIGNOFF: 'Yours faithfully' found — replacing with correct sign-off")
-        html = re.sub(
-            r"[Yy]ours faithfully,?",
-            "Your reluctantly faithful Butler,",
-            html,
+    # Wrong-signoff replacement.
+    # Covers: "Yours faithfully", "Your faithfully" (typo), with optional
+    # trailing " Butler", optional comma, mixed case. Also catches
+    # "Sincerely", "Yours sincerely", "Yours truly", "Best regards".
+    html = _WRONG_SIGNOFF_FAITHFULLY.sub(_SIGNOFF_REPLACEMENT, html)
+    html = _WRONG_SIGNOFF_OTHERS.sub(_SIGNOFF_REPLACEMENT, html)
+
+    # Hard validation: the correct signoff must be present after replacement.
+    # If it isn't, we surface the issue rather than ship a wrong sign-off.
+    if "Your reluctantly faithful Butler" not in html:
+        log.error(
+            "SIGNOFF MISSING after postprocess; injecting safety signoff. "
+            "Investigate Part 9 output."
         )
+        # Inject a minimal signoff before </body> so the briefing ships cleanly.
+        if "<div class=\"signoff\">" not in html and "</body>" in html:
+            safety = (
+                '<div class="signoff">\n'
+                '<p>Your reluctantly faithful Butler,<br/>Jeeves</p>\n'
+                '</div>\n'
+            )
+            html = html.replace("</body>", safety + "</body>", 1)
+
+    structure_errors = _validate_html_structure(html)
+    if structure_errors:
+        log.warning("HTML structure errors after postprocess: %s", structure_errors)
 
     return BriefingResult(
         html=html,
@@ -2481,6 +3067,9 @@ def postprocess_html(raw: str, session: SessionModel) -> BriefingResult:
         profane_aside_count=profane_count,
         banned_word_hits=banned_word_hits,
         banned_transition_hits=banned_transition_hits,
+        aside_placement_violations=_validate_aside_placement(html),
+        link_density=_compute_link_density(html, word_count),
+        structure_errors=structure_errors,
     )
 
 

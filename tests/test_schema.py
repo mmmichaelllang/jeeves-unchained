@@ -18,12 +18,29 @@ def test_session_round_trip():
 def test_field_caps_truncate_long_text():
     payload = canned_session(date(2026, 4, 23))
     payload["weather"] = "x" * 2000
-    payload["newyorker"]["text"] = "y" * 10000
+    payload["newyorker"]["text"] = "y" * 50000
     apply_field_caps(payload)
     assert len(payload["weather"]) <= 800 + len(" [TRUNCATED]")
     assert payload["weather"].endswith("[TRUNCATED]")
-    assert len(payload["newyorker"]["text"]) <= 4000 + len(" [TRUNCATED]")
+    assert len(payload["newyorker"]["text"]) <= 40000 + len(" [TRUNCATED]")
     assert payload["newyorker"]["text"].endswith("[TRUNCATED]")
+
+
+def test_newyorker_text_cap_is_40k():
+    """Talk of the Town pieces top out at ~9000 chars; cap raised to 40k."""
+    from jeeves.schema import FIELD_CAPS
+
+    assert FIELD_CAPS["newyorker.text"] == 40000
+
+
+def test_full_tott_article_survives_cap():
+    """A realistic ~8000-char Talk of the Town must survive apply_field_caps unmodified."""
+    payload = canned_session(date(2026, 4, 23))
+    full_article = "The Reverend Billy preached at the gates. " * 200  # ~8400 chars
+    payload["newyorker"]["text"] = full_article
+    apply_field_caps(payload)
+    assert payload["newyorker"]["text"] == full_article
+    assert "[TRUNCATED]" not in payload["newyorker"]["text"]
 
 
 def test_empty_session_validates():

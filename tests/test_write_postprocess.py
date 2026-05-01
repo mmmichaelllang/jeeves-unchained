@@ -549,30 +549,47 @@ def test_build_source_url_map_extracts_sector_sources():
     assert m["Council passes parking ordinance"] == "https://myedmondsnews.com/council-parking"
 
 
-def test_inject_source_links_wraps_first_unlinked_occurrence():
-    """_inject_source_links anchors the first unlinked mention of a source name."""
+def test_inject_source_links_wraps_up_to_three_occurrences():
+    """_inject_source_links anchors up to _INJECT_PER_SOURCE (3) occurrences of a source name."""
     from jeeves.write import _inject_source_links
 
-    html = "<p>The BBC reports something. The BBC also noted this.</p>"
+    html = (
+        "<p>The BBC reports something.</p>"
+        "<p>The BBC also noted this.</p>"
+        "<p>The BBC followed up.</p>"
+    )
     result = _inject_source_links(html, {"BBC": "https://bbc.example/mock"})
 
     assert '<a href="https://bbc.example/mock">BBC</a>' in result
-    # Only the first occurrence is linked.
-    assert result.count('<a href="https://bbc.example/mock">') == 1
-    # Second occurrence is plain text.
-    assert "The BBC also noted" in result
+    # Up to 3 occurrences linked.
+    assert result.count('<a href="https://bbc.example/mock">') == 3
 
 
-def test_inject_source_links_skips_already_linked_url():
-    """_inject_source_links skips a source whose URL is already present in the HTML."""
+def test_inject_source_links_caps_at_three_with_extra_occurrences():
+    """A 4th occurrence remains plain text once the cap is hit."""
     from jeeves.write import _inject_source_links
 
-    html = '<p>The <a href="https://bbc.example/mock">BBC</a> reports. BBC again.</p>'
+    html = (
+        "<p>BBC one.</p><p>BBC two.</p><p>BBC three.</p><p>BBC four.</p>"
+    )
     result = _inject_source_links(html, {"BBC": "https://bbc.example/mock"})
 
-    # URL already present → no additional injection.
-    assert result.count('<a href="https://bbc.example/mock">') == 1
-    assert result == html
+    assert result.count('<a href="https://bbc.example/mock">') == 3
+    # 4th plain.
+    assert "BBC four" in result
+
+
+def test_inject_source_links_tops_up_existing_anchors():
+    """If 1 anchor already exists, only 2 more get added (3 total)."""
+    from jeeves.write import _inject_source_links
+
+    html = (
+        '<p>The <a href="https://bbc.example/mock">BBC</a> reports first.</p>'
+        '<p>BBC again.</p><p>BBC third.</p><p>BBC fourth.</p>'
+    )
+    result = _inject_source_links(html, {"BBC": "https://bbc.example/mock"})
+
+    assert result.count('<a href="https://bbc.example/mock">') == 3
 
 
 def test_inject_source_links_does_not_nest_anchors():
@@ -1165,19 +1182,55 @@ def test_openrouter_rejects_response_without_p_tags(monkeypatch):
 
 
 def test_openrouter_accepts_valid_html(monkeypatch):
-    """A valid HTML response (DOCTYPE + <p> tags + </html>) is accepted."""
+    """A valid HTML response (DOCTYPE + <p> tags + </html>) at 80%+ word count is accepted."""
     from jeeves.write import _invoke_openrouter_narrative_edit
 
     cfg = _make_or_cfg(monkeypatch)
+    # Build an input long enough that 80% retention is meaningful (gate floors
+    # are skipped only for tiny inputs).
+    long_input = (
+        "<!DOCTYPE html><html><head></head><body>"
+        + "<p>Edmonds City Council voted on a sewer pipe rehabilitation contract today, naming three sites for May work.</p>"
+        + "<p>The Kremlin announced its forces will remain in Mali despite escalating insurgent attacks against Bamako.</p>"
+        + "<p>Friend AI's pendant continuously monitors speech and uploads it for analysis, raising privacy alarms today.</p>"
+        + "</body></html>"
+    )
+    # Edited keeps 90%+ of the words — preserves all entities, just tightens wording.
     edited = (
         "<!DOCTYPE html><html><head></head><body>"
-        "<p>Edited paragraph.</p>"
-        "</body></html>"
+        + "<p>Edmonds City Council voted on a sewer pipe rehabilitation contract today, naming three sites for May.</p>"
+        + "<p>Kremlin forces will remain in Mali despite escalating insurgent attacks against Bamako.</p>"
+        + "<p>Friend AI's pendant continuously monitors speech and uploads it, raising privacy alarms.</p>"
+        + "</body></html>"
     )
     _patch_openai(monkeypatch, [edited])
 
-    result = _invoke_openrouter_narrative_edit(cfg, _MINIMAL_HTML)
+    result = _invoke_openrouter_narrative_edit(cfg, long_input)
     assert result == edited
+
+
+def test_openrouter_rejects_over_deletion(monkeypatch):
+    """A response that drops below 80% input word count fails the gate; falls through to next model."""
+    from jeeves.write import _invoke_openrouter_narrative_edit
+
+    cfg = _make_or_cfg(monkeypatch)
+    long_input = (
+        "<!DOCTYPE html><html><head></head><body>"
+        + "<p>Edmonds City Council voted on a sewer pipe rehabilitation contract today, naming three sites for May work.</p>"
+        + "<p>The Kremlin announced its forces will remain in Mali despite escalating insurgent attacks against Bamako.</p>"
+        + "<p>Friend AI's pendant continuously monitors speech and uploads it for analysis, raising privacy alarms today.</p>"
+        + "</body></html>"
+    )
+    over_deleted = (
+        "<!DOCTYPE html><html><head></head><body>"
+        "<p>Edited.</p>"
+        "</body></html>"
+    )
+    # All four models return over-deleted output → fall through to original.
+    _patch_openai(monkeypatch, [over_deleted, over_deleted, over_deleted, over_deleted])
+
+    result = _invoke_openrouter_narrative_edit(cfg, long_input)
+    assert result == long_input, "over-deletion must be rejected; original returned"
 
 
 def test_openrouter_tott_extracted_and_reinjected(monkeypatch):
@@ -1237,3 +1290,376 @@ def test_openrouter_tott_reinjected_when_placeholder_dropped(monkeypatch):
     result = _invoke_openrouter_narrative_edit(cfg, _HTML_WITH_TOTT)
 
     assert "Verbatim New Yorker text" in result, "TOTT must be grafted back even when model drops placeholder"
+
+
+# =====================================================================
+# Sprint 12 — banner injection
+# =====================================================================
+
+
+def test_inject_banner_added_when_missing():
+    from jeeves.write import _inject_banner
+
+    html = (
+        '<!DOCTYPE html><html><body>'
+        '<div class="container">'
+        '<div class="mh-date">Friday, May 1, 2026</div>'
+        '<p>Good morning, Mister Lang.</p>'
+        '</div></body></html>'
+    )
+    result = _inject_banner(html)
+    assert 'class="banner"' in result
+    assert 'i.imgur.com/UqSFELh.png' in result
+    # Banner must come BEFORE mh-date.
+    assert result.index('class="banner"') < result.index('mh-date')
+
+
+def test_inject_banner_idempotent_when_correct():
+    from jeeves.write import _inject_banner, _BANNER_HTML
+
+    html = (
+        '<!DOCTYPE html><html><body>'
+        '<div class="container">'
+        f'{_BANNER_HTML}'
+        '<div class="mh-date">Friday, May 1, 2026</div>'
+        '</div></body></html>'
+    )
+    result = _inject_banner(html)
+    # Exactly one banner img tag.
+    assert result.count('class="banner"') == 1
+    # No duplicate insertion.
+    assert result == html
+
+
+def test_inject_banner_replaces_wrong_url():
+    from jeeves.write import _inject_banner
+
+    html = (
+        '<!DOCTYPE html><html><body>'
+        '<div class="container">'
+        '<img class="banner" src="https://example.com/wrong.jpg" alt="">'
+        '</div></body></html>'
+    )
+    result = _inject_banner(html)
+    assert 'i.imgur.com/UqSFELh.png' in result
+    assert 'wrong.jpg' not in result
+    assert result.count('class="banner"') == 1
+
+
+# =====================================================================
+# Sprint 12 — structural repair / validation
+# =====================================================================
+
+
+def test_strip_continuation_wrapper_strips_trailing_div():
+    from jeeves.write import _strip_continuation_wrapper
+
+    fragment = "<p>Some content.</p>\n</div>"
+    result = _strip_continuation_wrapper(fragment)
+    assert "</div>" not in result
+    assert "<p>Some content.</p>" in result
+
+
+def test_strip_continuation_wrapper_strips_multiple_trailing_closers():
+    from jeeves.write import _strip_continuation_wrapper
+
+    fragment = "<p>Content.</p>\n</div>\n</body>\n</html>"
+    result = _strip_continuation_wrapper(fragment)
+    assert "</div>" not in result
+    assert "</body>" not in result
+    assert "</html>" not in result
+
+
+def test_repair_container_orphans_moved_inside():
+    from jeeves.write import _repair_container_structure
+
+    html = (
+        '<!DOCTYPE html><html><body>'
+        '<div class="container">'
+        '<p>Inside.</p>'
+        '</div>'
+        '<p>Orphan paragraph.</p>'
+        '<p>Another orphan.</p>'
+        '</body></html>'
+    )
+    result = _repair_container_structure(html)
+    # Both orphan paragraphs end up before the </div>
+    assert result.index("Orphan paragraph") < result.index("</div></body>")
+    assert result.index("Another orphan") < result.index("</div></body>")
+    # Output has exactly one </div></body> sequence
+    assert result.count("</div></body>") == 1
+
+
+def test_repair_container_no_op_when_clean():
+    from jeeves.write import _repair_container_structure
+
+    html = (
+        '<!DOCTYPE html><html><body>'
+        '<div class="container">'
+        '<p>Content.</p>'
+        '</div>'
+        '</body></html>'
+    )
+    assert _repair_container_structure(html) == html
+
+
+def test_validate_html_structure_clean():
+    from jeeves.write import _validate_html_structure
+
+    html = (
+        '<!DOCTYPE html><html><body>'
+        '<div class="container">'
+        '<p>Body.</p>'
+        '<div class="signoff"><p>Your reluctantly faithful Butler,<br/>Jeeves</p></div>'
+        '<!-- COVERAGE_LOG: [] -->'
+        '</div></body></html>'
+    )
+    assert _validate_html_structure(html) == []
+
+
+def test_validate_html_structure_detects_orphan_p():
+    from jeeves.write import _validate_html_structure
+
+    html = (
+        '<!DOCTYPE html><html><body>'
+        '<div class="container">'
+        '<p>Body.</p>'
+        '</div>'
+        '<p>Orphan.</p>'
+        '<!-- COVERAGE_LOG: [] -->'
+        '</body></html>'
+    )
+    errors = _validate_html_structure(html)
+    assert any("outside .container" in e for e in errors)
+
+
+# =====================================================================
+# Sprint 12 — signoff regex
+# =====================================================================
+
+
+def test_signoff_yours_faithfully_corrected():
+    """Postprocess corrects 'Yours faithfully' → 'Your reluctantly faithful Butler'."""
+    from jeeves.write import postprocess_html
+
+    raw = (
+        '<!DOCTYPE html><html><body>'
+        '<div class="container">'
+        '<p>Body content with at least some words for word count.</p>'
+        '<div class="signoff"><p>Yours faithfully,<br/>Jeeves</p></div>'
+        '<!-- COVERAGE_LOG_PLACEHOLDER -->'
+        '</div></body></html>'
+    )
+    result = postprocess_html(raw, _session())
+    assert "Your reluctantly faithful Butler" in result.html
+    assert "Yours faithfully" not in result.html
+
+
+def test_signoff_typo_your_faithfully_corrected():
+    """Typo 'Your faithfully' (missing s) is also corrected."""
+    from jeeves.write import postprocess_html
+
+    raw = (
+        '<!DOCTYPE html><html><body>'
+        '<div class="container">'
+        '<p>Body content with at least some words for word count.</p>'
+        '<div class="signoff"><p>Your faithfully Butler,<br/>Jeeves</p></div>'
+        '<!-- COVERAGE_LOG_PLACEHOLDER -->'
+        '</div></body></html>'
+    )
+    result = postprocess_html(raw, _session())
+    assert "Your reluctantly faithful Butler" in result.html
+    assert "Your faithfully Butler" not in result.html
+
+
+def test_signoff_sincerely_corrected():
+    """'Sincerely' style sign-off is also caught."""
+    from jeeves.write import postprocess_html
+
+    raw = (
+        '<!DOCTYPE html><html><body>'
+        '<div class="container">'
+        '<p>Body content with at least some words for word count.</p>'
+        '<div class="signoff"><p>Sincerely,<br/>Jeeves</p></div>'
+        '<!-- COVERAGE_LOG_PLACEHOLDER -->'
+        '</div></body></html>'
+    )
+    result = postprocess_html(raw, _session())
+    assert "Your reluctantly faithful Butler" in result.html
+    # 'Sincerely' as a signoff body — check it was replaced (the literal word
+    # may still appear elsewhere in body prose).
+    assert "Sincerely,<br/>Jeeves" not in result.html
+
+
+def test_signoff_correct_left_alone():
+    """Already-correct signoff is unchanged."""
+    from jeeves.write import postprocess_html
+
+    raw = (
+        '<!DOCTYPE html><html><body>'
+        '<div class="container">'
+        '<p>Body content with at least some words for word count.</p>'
+        '<div class="signoff"><p>Your reluctantly faithful Butler,<br/>Jeeves</p></div>'
+        '<!-- COVERAGE_LOG_PLACEHOLDER -->'
+        '</div></body></html>'
+    )
+    result = postprocess_html(raw, _session())
+    assert result.html.count("Your reluctantly faithful Butler") == 1
+
+
+def test_signoff_safety_inject_when_missing():
+    """If both wrong and right signoffs are absent, safety signoff is injected."""
+    from jeeves.write import postprocess_html
+
+    raw = (
+        '<!DOCTYPE html><html><body>'
+        '<div class="container">'
+        '<p>Body content with at least some words for word count.</p>'
+        '<!-- COVERAGE_LOG_PLACEHOLDER -->'
+        '</div></body></html>'
+    )
+    result = postprocess_html(raw, _session())
+    assert "Your reluctantly faithful Butler" in result.html
+
+
+# =====================================================================
+# Sprint 12 — aside placement validator + merge
+# =====================================================================
+
+
+def test_validate_aside_placement_flags_orphan_template():
+    from jeeves.write import _validate_aside_placement
+
+    html = (
+        '<p>The Kremlin announced its forces will remain in Mali.</p>'
+        '<p>the kremlin\'s mali pledge is, a proper omnishambles of the highest, most fucking degree.</p>'
+    )
+    warnings = _validate_aside_placement(html)
+    assert any("omnishambles" in w for w in warnings)
+
+
+def test_validate_aside_placement_passes_inline_aside():
+    from jeeves.write import _validate_aside_placement
+
+    html = (
+        '<p>The Kremlin announced its forces will remain in Mali despite a surge of insurgent attacks.'
+        ' JNIM has seized a military base; the Russians are committing more troops.'
+        ' A proper omnishambles, in other words.</p>'
+    )
+    warnings = _validate_aside_placement(html)
+    assert warnings == []
+
+
+def test_merge_orphan_aside_into_preceding_paragraph():
+    from jeeves.write import _merge_orphan_asides
+
+    html = (
+        '<p>The Kremlin announced its forces will remain in Mali despite a surge of insurgent attacks. '
+        'JNIM has seized a military base and is threatening Bamako; Russia is committing more troops anyway.</p>'
+        '<p>the Kremlin\'s Mali pledge is, a proper omnishambles of the highest, most fucking degree.</p>'
+    )
+    result = _merge_orphan_asides(html)
+    # Orphan paragraph removed.
+    assert result.count("<p>") == 1
+    # Aside text fused onto the preceding paragraph.
+    assert "omnishambles" in result
+    assert " — " in result
+
+
+def test_merge_orphan_aside_skipped_without_preceding_substantive():
+    from jeeves.write import _merge_orphan_asides
+
+    # No preceding substantive paragraph — orphan must be left in place
+    # rather than dropped silently.
+    html = (
+        '<p>tiny.</p>'
+        '<p>the Kremlin\'s Mali pledge is, a proper omnishambles of the highest, most fucking degree.</p>'
+    )
+    result = _merge_orphan_asides(html)
+    # Orphan stays (no merge target).
+    assert "omnishambles" in result
+    assert result.count("<p>") == 2
+
+
+def test_merge_orphan_aside_preserves_newyorker_block():
+    from jeeves.write import _merge_orphan_asides
+
+    html = (
+        '<p>Substantive paragraph with at least twenty-five words about a specific topic that has a real subject and several entities and a clear story.</p>'
+        '<!-- NEWYORKER_START -->'
+        '<div class="newyorker">'
+        '<p>the orphan-looking line is, a fucking shitshow.</p>'  # inside NY block — must be preserved verbatim
+        '</div>'
+        '<!-- NEWYORKER_END -->'
+        '<p>the trailing aside is, a thundercunt of a decision.</p>'
+    )
+    result = _merge_orphan_asides(html)
+    # The NEWYORKER block is untouched: the inside-NY orphan-lookalike survives.
+    assert '<!-- NEWYORKER_START -->' in result
+    assert '<!-- NEWYORKER_END -->' in result
+    assert "the orphan-looking line is" in result
+
+
+# =====================================================================
+# Sprint 12 — BriefingResult diagnostic fields
+# =====================================================================
+
+
+def test_briefingresult_carries_diagnostic_fields():
+    from jeeves.write import postprocess_html
+
+    raw = (
+        '<!DOCTYPE html><html><body>'
+        '<div class="container">'
+        '<p>Body content with several words to make a meaningful prose count.</p>'
+        '<div class="signoff"><p>Your reluctantly faithful Butler,<br/>Jeeves</p></div>'
+        '<!-- COVERAGE_LOG_PLACEHOLDER -->'
+        '</div></body></html>'
+    )
+    result = postprocess_html(raw, _session())
+    assert isinstance(result.aside_placement_violations, list)
+    assert isinstance(result.structure_errors, list)
+    assert isinstance(result.link_density, float)
+
+
+# =====================================================================
+# Sprint 12 — broadened source URL map
+# =====================================================================
+
+
+def test_source_url_map_includes_career_postings():
+    from jeeves.write import _build_source_url_map
+
+    s = _session()
+    object.__setattr__(s, "career", {"openings": [
+        {"title": "ELA Teacher", "school": "Edmonds HS", "url": "https://example.com/job/123"}
+    ]})
+    mapping = _build_source_url_map(s)
+    assert mapping.get("ELA Teacher") == "https://example.com/job/123"
+    assert mapping.get("Edmonds HS") == "https://example.com/job/123"
+
+
+def test_source_url_map_includes_family_choir():
+    from jeeves.write import _build_source_url_map
+
+    s = _session()
+    object.__setattr__(s, "family", {
+        "choir": [{"ensemble": "Seattle Choral Company", "venue": "Benaroya Hall", "url": "https://example.com/audition"}]
+    })
+    mapping = _build_source_url_map(s)
+    assert mapping.get("Seattle Choral Company") == "https://example.com/audition"
+
+
+def test_source_url_map_includes_literary_pick():
+    from jeeves.write import _build_source_url_map
+    from jeeves.schema import LiteraryPick
+
+    s = _session()
+    s.literary_pick = LiteraryPick(
+        available=True, title="The Power of the Dog", author="Don Winslow",
+        year=2005, summary="…", url="https://example.com/dog"
+    )
+    mapping = _build_source_url_map(s)
+    assert mapping.get("The Power of the Dog") == "https://example.com/dog"
+    assert mapping.get("Don Winslow") == "https://example.com/dog"
+
