@@ -2062,6 +2062,12 @@ _OPENROUTER_FALLBACK_MODELS = [
 ]
 
 
+_NY_EDIT_PLACEHOLDER = "<!-- NEWYORKER_EDIT_PLACEHOLDER -->"
+_NY_BLOCK_RE = re.compile(
+    r"<!-- NEWYORKER_START -->.*?<!-- NEWYORKER_END -->", re.DOTALL
+)
+
+
 def _invoke_openrouter_narrative_edit(
     cfg: Config, html: str, *, recently_used_asides: list[str] | None = None
 ) -> str:
@@ -2076,12 +2082,29 @@ def _invoke_openrouter_narrative_edit(
     meta-llama/llama-3.3-70b-instruct:free → google/gemma-4-31b-it:free →
     openrouter/auto (free router, highest reasoning).
     Falls back to the unedited document only if all four fail or the key is absent.
+
+    TOTT guard: the verbatim NEWYORKER_START/END block is extracted before the
+    edit call and re-injected after.  This (a) prevents the model from truncating
+    the article mid-sentence when it hits the output token ceiling, and (b) keeps
+    the TOTT out of the edit payload so the model isn't tempted to rewrite it.
     """
     from openai import OpenAI
 
     if not cfg.openrouter_api_key:
         log.debug("OPENROUTER_API_KEY not set; skipping narrative edit pass")
         return html
+
+    # --- extract TOTT block so it never hits the edit model ---
+    ny_match = _NY_BLOCK_RE.search(html)
+    if ny_match:
+        ny_block = ny_match.group(0)
+        html_for_edit = _NY_BLOCK_RE.sub(_NY_EDIT_PLACEHOLDER, html, count=1)
+        log.debug(
+            "TOTT extracted before OpenRouter edit (%d chars removed)", len(ny_block)
+        )
+    else:
+        ny_block = None
+        html_for_edit = html
 
     system = _build_narrative_edit_system(recently_used_asides or [])
     try:
@@ -2097,13 +2120,18 @@ def _invoke_openrouter_narrative_edit(
     models = [cfg.openrouter_model_id] + _OPENROUTER_FALLBACK_MODELS
 
     for model in models:
-        log.info("OpenRouter narrative edit [%s] (%d chars input)", model, len(html))
+        log.info(
+            "OpenRouter narrative edit [%s] (%d chars input, TOTT %s)",
+            model,
+            len(html_for_edit),
+            "extracted" if ny_block else "absent",
+        )
         try:
             resp = client.chat.completions.create(
                 model=model,
                 messages=[
                     {"role": "system", "content": system},
-                    {"role": "user", "content": f"Edit the following HTML briefing:\n\n{html}"},
+                    {"role": "user", "content": f"Edit the following HTML briefing:\n\n{html_for_edit}"},
                 ],
                 max_tokens=16384,
                 temperature=0.4,
@@ -2112,12 +2140,41 @@ def _invoke_openrouter_narrative_edit(
             if not edited:
                 log.warning("OpenRouter [%s] returned empty response; trying next model", model)
                 continue
+            # --- structural validation: must be real HTML, not markdown ---
+            edited_lower = edited.lstrip().lower()
+            if not (edited_lower.startswith("<!doctype html") or edited_lower.startswith("<html")):
+                log.warning(
+                    "OpenRouter [%s] returned non-HTML (starts: %.60r); trying next model",
+                    model, edited[:60],
+                )
+                continue
             if "</html>" not in edited.lower() and "</body>" not in edited.lower():
                 log.warning(
                     "OpenRouter [%s] response truncated (%d chars); trying next model",
                     model, len(edited),
                 )
                 continue
+            if "<p>" not in edited.lower() and "<p " not in edited.lower():
+                log.warning(
+                    "OpenRouter [%s] HTML has no <p> tags (%d chars); trying next model",
+                    model, len(edited),
+                )
+                continue
+            # --- re-inject TOTT ---
+            if ny_block:
+                if _NY_EDIT_PLACEHOLDER in edited:
+                    edited = edited.replace(_NY_EDIT_PLACEHOLDER, ny_block)
+                else:
+                    # Model dropped the placeholder; graft TOTT back before signoff.
+                    log.warning(
+                        "OpenRouter [%s] dropped TOTT placeholder; re-injecting before signoff",
+                        model,
+                    )
+                    signoff_marker = '<div class="signoff">'
+                    if signoff_marker in edited:
+                        edited = edited.replace(signoff_marker, ny_block + "\n" + signoff_marker)
+                    else:
+                        edited = edited.rstrip().rstrip("</html>").rstrip() + "\n" + ny_block + "\n</html>"
             log.info("OpenRouter narrative edit complete via [%s] (%d chars output)", model, len(edited))
             return edited
         except Exception as exc:

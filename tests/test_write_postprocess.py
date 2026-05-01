@@ -1067,3 +1067,173 @@ def test_refine_system_strips_significant_implications() -> None:
     from jeeves.write import _REFINE_SYSTEM
 
     assert "significant implications for the region" in _REFINE_SYSTEM
+
+
+# ---------------------------------------------------------------------------
+# OpenRouter narrative edit — structural validation and TOTT protection
+# ---------------------------------------------------------------------------
+
+_MINIMAL_HTML = (
+    "<!DOCTYPE html><html><head></head><body>"
+    "<p>Good morning, Mister Lang.</p>"
+    "</body></html>"
+)
+
+_TOTT_BLOCK = (
+    "<!-- NEWYORKER_START -->\n"
+    '<div class="newyorker"><p>Verbatim New Yorker text.</p></div>\n'
+    "<!-- NEWYORKER_END -->"
+)
+
+_HTML_WITH_TOTT = (
+    "<!DOCTYPE html><html><head></head><body>"
+    "<p>Before TOTT.</p>"
+    + _TOTT_BLOCK
+    + "<p>After TOTT.</p>"
+    "</body></html>"
+)
+
+
+def _make_or_cfg(monkeypatch):
+    """Return a Config with OPENROUTER_API_KEY set and a fake openai module."""
+    import sys, types
+    from jeeves.config import Config
+
+    monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
+    cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
+    object.__setattr__(cfg, "openrouter_api_key", "test-or-key")
+    return cfg
+
+
+def _patch_openai(monkeypatch, responses: list):
+    """Inject a fake openai.OpenAI whose completions return items from *responses*.
+
+    Each element of *responses* is either a string (the model response content)
+    or an Exception to be raised.
+    """
+    import sys, types
+
+    call_iter = iter(responses)
+
+    class FakeChoice:
+        def __init__(self, content):
+            self.message = type("M", (), {"content": content})()
+
+    class FakeCompletion:
+        def __init__(self, content):
+            self.choices = [FakeChoice(content)]
+
+    class FakeCompletions:
+        def create(self, *, model, messages, max_tokens, temperature):
+            val = next(call_iter)
+            if isinstance(val, Exception):
+                raise val
+            return FakeCompletion(val)
+
+    class FakeClient:
+        def __init__(self, **kw):
+            self.chat = type("Chat", (), {"completions": FakeCompletions()})()
+
+    fake_openai = types.ModuleType("openai")
+    fake_openai.OpenAI = FakeClient
+    monkeypatch.setitem(sys.modules, "openai", fake_openai)
+
+
+def test_openrouter_rejects_non_html_response(monkeypatch):
+    """Model returning plain text (no <!DOCTYPE) must be rejected; falls back to original."""
+    from jeeves.write import _invoke_openrouter_narrative_edit
+
+    cfg = _make_or_cfg(monkeypatch)
+    # All four models return plain markdown — none start with <!DOCTYPE html>
+    plain_text = "Some plain text summary.\n\n</html>"
+    _patch_openai(monkeypatch, [plain_text, plain_text, plain_text, plain_text])
+
+    result = _invoke_openrouter_narrative_edit(cfg, _MINIMAL_HTML)
+    assert result == _MINIMAL_HTML, "should fall back to original when all models return non-HTML"
+
+
+def test_openrouter_rejects_response_without_p_tags(monkeypatch):
+    """Response that starts with DOCTYPE but has no <p> tags must be rejected."""
+    from jeeves.write import _invoke_openrouter_narrative_edit
+
+    cfg = _make_or_cfg(monkeypatch)
+    no_paragraphs = "<!DOCTYPE html><html><body>No paragraphs here</body></html>"
+    _patch_openai(monkeypatch, [no_paragraphs, no_paragraphs, no_paragraphs, no_paragraphs])
+
+    result = _invoke_openrouter_narrative_edit(cfg, _MINIMAL_HTML)
+    assert result == _MINIMAL_HTML
+
+
+def test_openrouter_accepts_valid_html(monkeypatch):
+    """A valid HTML response (DOCTYPE + <p> tags + </html>) is accepted."""
+    from jeeves.write import _invoke_openrouter_narrative_edit
+
+    cfg = _make_or_cfg(monkeypatch)
+    edited = (
+        "<!DOCTYPE html><html><head></head><body>"
+        "<p>Edited paragraph.</p>"
+        "</body></html>"
+    )
+    _patch_openai(monkeypatch, [edited])
+
+    result = _invoke_openrouter_narrative_edit(cfg, _MINIMAL_HTML)
+    assert result == edited
+
+
+def test_openrouter_tott_extracted_and_reinjected(monkeypatch):
+    """TOTT block is removed from the edit payload and re-injected after a valid response."""
+    from jeeves.write import _invoke_openrouter_narrative_edit, _NY_EDIT_PLACEHOLDER
+
+    cfg = _make_or_cfg(monkeypatch)
+    captured_inputs: list[str] = []
+
+    import sys, types
+
+    class FakeChoice:
+        def __init__(self, content):
+            self.message = type("M", (), {"content": content})()
+
+    class FakeCompletions:
+        def create(self, *, model, messages, max_tokens, temperature):
+            user_msg = messages[1]["content"]
+            captured_inputs.append(user_msg)
+            # Return the input (which has the placeholder) with a minor edit
+            body = user_msg.replace("Edit the following HTML briefing:\n\n", "")
+            return type("R", (), {"choices": [FakeChoice(body)]})()
+
+    class FakeClient:
+        def __init__(self, **kw):
+            self.chat = type("Chat", (), {"completions": FakeCompletions()})()
+
+    fake_openai = types.ModuleType("openai")
+    fake_openai.OpenAI = FakeClient
+    monkeypatch.setitem(sys.modules, "openai", fake_openai)
+
+    result = _invoke_openrouter_narrative_edit(cfg, _HTML_WITH_TOTT)
+
+    # Edit payload must NOT contain the verbatim TOTT text
+    assert "Verbatim New Yorker text" not in captured_inputs[0]
+    # Edit payload must contain the placeholder
+    assert _NY_EDIT_PLACEHOLDER in captured_inputs[0]
+    # Final result must contain the original TOTT block, not the placeholder
+    assert "Verbatim New Yorker text" in result
+    assert _NY_EDIT_PLACEHOLDER not in result
+
+
+def test_openrouter_tott_reinjected_when_placeholder_dropped(monkeypatch):
+    """If model drops the TOTT placeholder, the block is grafted back before signoff."""
+    from jeeves.write import _invoke_openrouter_narrative_edit
+
+    cfg = _make_or_cfg(monkeypatch)
+    # Model returns HTML without the placeholder at all
+    edited_without_placeholder = (
+        "<!DOCTYPE html><html><body>"
+        "<p>Edited text.</p>"
+        '<div class="signoff"><p>Your reluctantly faithful Butler,<br/>Jeeves</p></div>'
+        "</body></html>"
+    )
+    _patch_openai(monkeypatch, [edited_without_placeholder])
+
+    result = _invoke_openrouter_narrative_edit(cfg, _HTML_WITH_TOTT)
+
+    assert "Verbatim New Yorker text" in result, "TOTT must be grafted back even when model drops placeholder"
