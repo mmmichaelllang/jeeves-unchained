@@ -1131,15 +1131,54 @@ def _stitch_parts(*parts: str) -> str:
     return combined
 
 
+# Groq free-tier `llama-3.3-70b-versatile` charges (input_tokens +
+# max_tokens_requested) per call against a 12 000 tokens-per-minute ceiling.
+# A single call exceeding 12 000 → HTTP 413 immediately, no retry possible.
+# The system prompt grows part-over-part (run_used_asides, recently-used
+# directive), so by part 4–6 the input alone is ~8 500 tokens, leaving only
+# ~3 500 of headroom for the output budget. We clamp `max_tokens` dynamically
+# against the live input size so the request can never breach the ceiling.
+_GROQ_TPM_LIMIT = 12000
+_GROQ_TPM_SAFETY = 600  # absorbs tokenizer drift between chars/4 and Groq's actual count
+_GROQ_MIN_OUTPUT_TOKENS = 1500  # floor — short sections still ship readable HTML
+
+
+def _estimate_tokens(text: str) -> int:
+    """Conservative chars→tokens approximation. Groq tokenizer is OpenAI-like
+    (~4 chars per token for English HTML). Round up to leave safety margin."""
+    return (len(text) + 3) // 4
+
+
+def _clamp_groq_max_tokens(system: str, user: str, max_tokens: int) -> tuple[int, int]:
+    """Return (effective_max_tokens, estimated_input_tokens). Floor at
+    `_GROQ_MIN_OUTPUT_TOKENS` so we never request a too-small output budget;
+    if input is so large we cannot honour both the floor and the ceiling, the
+    caller (Groq) will still 413 — but logs will surface the cause clearly."""
+    input_tokens = _estimate_tokens(system) + _estimate_tokens(user) + 50  # +50 for chat envelope
+    available = _GROQ_TPM_LIMIT - input_tokens - _GROQ_TPM_SAFETY
+    effective = min(max_tokens, max(available, _GROQ_MIN_OUTPUT_TOKENS))
+    return effective, input_tokens
+
+
 def _invoke_groq(cfg: Config, system: str, user: str, *, max_tokens: int, label: str) -> str:
     from llama_index.core.base.llms.types import ChatMessage, MessageRole
 
     from .llm import build_groq_llm
 
-    llm = build_groq_llm(cfg, temperature=0.65, max_tokens=max_tokens)
+    effective_max_tokens, input_tokens = _clamp_groq_max_tokens(system, user, max_tokens)
+    if effective_max_tokens != max_tokens:
+        log.warning(
+            "clamping Groq max_tokens %d→%d for [%s] (input ~%d tokens, "
+            "ceiling %d, safety %d)",
+            max_tokens, effective_max_tokens, label, input_tokens,
+            _GROQ_TPM_LIMIT, _GROQ_TPM_SAFETY,
+        )
+    llm = build_groq_llm(cfg, temperature=0.65, max_tokens=effective_max_tokens)
     log.info(
-        "invoking Groq %s [%s] (max_tokens=%d, system=%d chars, user=%d chars)",
-        cfg.groq_model_id, label, max_tokens, len(system), len(user),
+        "invoking Groq %s [%s] (max_tokens=%d, system=%d chars, user=%d chars, "
+        "input~%d tok)",
+        cfg.groq_model_id, label, effective_max_tokens, len(system), len(user),
+        input_tokens,
     )
     resp = llm.chat([
         ChatMessage(role=MessageRole.SYSTEM, content=system),

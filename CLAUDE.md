@@ -10,6 +10,8 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth provisi
 
 ## Current focus
 
+**Phase 3 — twelfth sprint complete (2026-04-30).** Groq TPM 413 fix: dynamic `max_tokens` clamping in `_invoke_groq`. Production write workflow died at part4 with `Request too large… TPM Limit 12000, Requested 12143`. Root cause: caller's `max_tokens=4096` was passed verbatim, but system prompt grows part-over-part (run_used_asides + recently-used directive accumulate) so by part4 the input alone is ~8 500 tok and 4 096 output budget breaches the per-call ceiling. Fix: `_clamp_groq_max_tokens()` computes `available = 12000 - input_tokens - 600 safety`, returns `min(max_tokens, max(available, 1500))`. WARNING logged on every clamp so production logs surface every part that would have 413'd. 3 new clamp tests in `tests/test_write_postprocess.py` (190 tests).
+
 **Phase 2/3/4 — eleventh sprint complete (2026-04-28).** Workflow automation + production hardening. All 187 tests green.
 
 **Research architecture (as of 2026-04-28, post PRs #43–#46):**
