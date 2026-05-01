@@ -110,7 +110,7 @@ Use exactly this structure. All CSS lives in `<head>`. No external stylesheets.
 </head>
 <body>
 <div class="container">
-<img class="banner" src="https://i.imgur.com/15Kv9Z9.png" alt="">
+<img class="banner" src="https://i.imgur.com/UqSFELh.png" alt="">
 
   [SECTOR 1 CONTENT]
   [SECTOR 2 CONTENT]
