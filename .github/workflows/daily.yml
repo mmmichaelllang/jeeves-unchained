@@ -99,7 +99,9 @@ jobs:
     timeout-minutes: 65
 
     steps:
-      - uses: actions/checkout@v4  # fresh checkout picks up correspondence commit
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v3
@@ -152,7 +154,9 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - uses: actions/checkout@v4  # fresh checkout picks up research commit
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v3
