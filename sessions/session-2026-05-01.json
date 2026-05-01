@@ -4,81 +4,67 @@
   "dedup": {
     "covered_urls": [
       "http://arxiv.org/abs/2602.08990v1",
+      "http://www.edmondsbeacon.com/stories/untitled,175443",
+      "http://www.seattlepromusica.org/auditions",
+      "http://www.seattlepromusica.org/calendar",
       "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom",
-      "https://aiworldjournal.com/ai-automation-in-2026-the-rise-of-autonomous-systems-at-scale/",
-      "https://alicekeeler.com/2024/07/10/diffit-ai-is-amazingly-easy-to-use/",
+      "https://aitoolsbakery.com/blog/diffit-ai-review/",
       "https://arxiv.org/abs/2603.27008v1",
       "https://arxiv.org/abs/2603.28986v1",
       "https://arxiv.org/pdf/2602.02660",
-      "https://defensescoop.com/2026/02/20/trump-ufo-uap-government-files-disclosure/",
-      "https://en.wikipedia.org/wiki/The_Known_World",
-      "https://fortune.com/2025/10/03/friend-ai-necklace-review-avi-schiffmann/",
-      "https://hi-tech.ua/en/huawei-pura-smart-glasses-with-ai-as-a-new-step-toward-the-post-smartphone-era/",
+      "https://bee.computer/",
+      "https://en.wikipedia.org/wiki/Friend_(product)",
+      "https://friend.com",
+      "https://ifdesign.com/en/winner-ranking/project/friend-ai-pendant/709781",
+      "https://jackfmfargo.com/2026/04/30/kremlin-says-russian-forces-will-stay-in-mali-to-fight-extremism/",
       "https://mashable.com/article/ces-2026-motorola-entering-wearable-ai",
-      "https://medium.com/@natishalom/the-ai-leap-of-2026-5-surprising-realities-from-the-frontier-of-intelligence-28eec1f445ef",
-      "https://oversight.house.gov/release/hearing-wrap-up-government-must-be-more-transparent-about-uaps/",
+      "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/",
+      "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/",
+      "https://nwchorale.org/",
       "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
-      "https://philarchive.org/rec/NAKNTD-3",
-      "https://philarchive.org/rec/VASPQF-2",
+      "https://philarchive.org/archive/ISATRO-4",
+      "https://philarchive.org/archive/REIAFF-4",
+      "https://reference-global.com/article/10.2478/perc-2025-0013",
+      "https://seattlesings.org/event/auditions-for-2025-2026-season-all-voice-types-2616/",
+      "https://sno-isle.bibliocommons.com/events/693208cc94297d36009e4eb0",
+      "https://sno-isle.bibliocommons.com/events/69a76adb491b809c6f1de874",
       "https://sureprompts.com/blog/prompting-reasoning-models-guide",
-      "https://toocoolformiddleschool.com/2024/10/21/my-diffit-templates/",
-      "https://triadicstudies.org/conference2026/program",
       "https://web.diffit.me/",
-      "https://www.advfn.com/stock-market/stock-news/98376307/memomind-opens-global-pre-orders-for-memomind-one",
+      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
+      "https://www.applitrack.com/lakewashington/onlineapp/default.aspx?all=1",
       "https://www.bbc.co.uk/news/articles/c4gv4dvngygo",
-      "https://www.bbc.com/news/articles/cnv8l99r3yyo",
-      "https://www.bbc.com/news/articles/cq6p4pz6p62o",
-      "https://www.cnet.com/tech/services-and-software/nirva-ai-jewelry-ces-2026/",
-      "https://www.cnn.com/2026/03/07/us/aliens-ufos-files-release-trump",
-      "https://www.comgateway.com/blogs/the-tab-ai-wearable-is-a-pendant-ic-addition-to-the-tech-scene-in-the-philippines/",
-      "https://www.eweek.com/news/motorola-ai-wearable-ces-2026/",
-      "https://www.forbes.com/sites/chuckbrooks/2025/11/21/from-generative-to-agentic-the-new-era-of-ai-autonomy-in-2026/",
-      "https://www.goodhousekeeping.com/electronics/a68156015/friend-review/",
+      "https://www.bbc.com/news/articles/c4g4lk9m77vo",
+      "https://www.bellevuechristian.org/employment/",
+      "https://www.choralartsnw.org/",
+      "https://www.edmondsbeacon.com/stories/city-council-adopts-safety-action-plan,175444",
+      "https://www.facebook.com/ImagineChildrensMuseum/",
       "https://www.investors.com/news/technology/ces-2026-wearable-ai-gadgets-could-be-next-big-thing/",
-      "https://www.magicschool.ai/blog-posts/ai-teaching-tools-updates-2026",
       "https://www.magicschool.ai/blog-posts/whats-new-april-2026",
       "https://www.magicschool.ai/magic-tools",
       "https://www.newsnationnow.com/space/ufo/luna-address-info-nonhuman-origin/",
-      "https://www.newsweek.com/ufo-update-congresswoman-promises-to-show-things-of-nonhuman-origin-11893270",
       "https://www.newyorker.com/magazine/2026/05/04/reverend-billy-takes-on-norman-fosters-new-monolith",
+      "https://www.nomos-elibrary.de/880328.pdf",
+      "https://www.notesinthemargin.org/2022/04/26/a-dozen-21st-century-books-i-think-will-become-classics/",
       "https://www.nybooks.com/articles/2026/04/23/blood-in-the-game-bloodline-fever-beach",
       "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
-      "https://www.rdworldonline.com/autoscience-raises-14m-seed-round-to-scale-its-autonomous-ai-research-lab/",
       "https://www.reuters.com/world/africa/kremlin-says-russian-forces-will-stay-mali-to-fight-extremism-2026-04-30/",
-      "https://www.reuters.com/world/zelenskiy-says-ukraine-will-continue-extending-range-strikes-russia-2026-04-29/",
-      "https://www.techbuzz.ai/articles/friend-ai-necklace-review-the-129-wearable-that-bullies-you",
+      "https://www.thehindu.com/sci-tech/technology/ces-2026-ai-pendants-back-in-vogue-at-tech-show-after-early-setback/article70499992.ece",
       "https://www.themarginalian.org/2026/02/27/fanny-wright-traversal",
-      "https://www.tomsguide.com/ai/i-wore-friend-the-ai-companion-that-listens-all-day-heres-what-surprised-me-most",
-      "https://www.trigyn.com/insights/ai-trends-2026-new-era-ai-advancements-and-breakthroughs",
-      "https://www.uapdigest.com/trump-ufo-files-where-are-they/",
-      "https://www.zdnet.com/article/memories-ai-wearable-project-luci-ces/"
+      "https://www.timesofai.com/news/motorola-prototype-screenless-wearable-ai-pendant-ces-2026",
+      "https://www.triertium.cz/2026/02/21/matteo-raffaelli-on-triertium-in-modern-theology/",
+      "https://www.upi.com/Top_News/US/2025/09/10/UFOs-hearing/7691757474759"
     ],
     "covered_headlines": [
-      "China has imposed a sweeping ban on drone sales and flights in Beijing, citing national security concerns.",
-      "The Kremlin has pledged to maintain Russian forces in Mali despite mounting insurgent attacks.",
-      "The UK has raised its national terrorism threat level from 'substantial' to 'severe' - the second-highest level - following an antisemitic stabbing at",
-      "Ukraine has struck a critical Russian oil pumping station 1,500 kilometers inside Russia near the Ural Mountains, marking one of the deepest Ukrainian",
-      "The European Union has approved a €90 billion loan package for Ukraine while simultaneously announcing the reopening of the Druzhba oil pipeline, endi",
-      "Flora Champy's essay 'The role of literature as the key to personal freedom' (April 24 2026) argues against the utilitarian view of reading as moral i",
-      "A joint ProPublica-FRONTLINE investigation (April 14 2026) reveals that over 300 protesters arrested during Trump's immigration sweeps have seen their",
-      "Francine Prose's review 'Blood in the Game' (April 23 2026) examines two novels addressing contemporary America's violence and corruption.",
-      "Maria Popova's essay 'Fanny Wright and the Radical Courage of Being Real' (February 27 2026) recovers the forgotten story of Frances 'Fanny' Wright (1",
-      "Friend AI pendant ($129) is a controversial voice-first wearable that listens continuously via always-on microphones, sending text responses through a",
-      "MagicSchool AI dominates the teacher tool space with 80+ educator tools and 50+ student tools.",
-      "CES 2026 showcased the emerging lifelogging category with screenless AI gadgets.",
-      "Two new works advance the triadic-ontology program.",
-      "Three major autonomous research frameworks have emerged in 2026, moving from lab demos to hardened production systems.",
-      "Congresswoman Anna Paulina Luna, chairing the House Oversight Task Force on Declassification, escalated pressure on the Pentagon this week by vowing t",
-      "Reverend Billy Takes On Norman Foster’s New Monolith",
-      "The Known World",
       "**Friend AI Pendant** (MyTabAI, Inc): $99 wearable voice companion with 15-hour battery life, always-listening mic for conversations, and $7.",
       "**MagicSchool AI**: April 2026 updates include Educational Song Generator (turns lessons into music) and Studio Mode in Raina for document editing.",
       "**Nirva AI Jewelry**: Fashion-forward pendant that combines AI sensing with jewelry design, tracks emotions and auto-journals life experiences.",
       "A 31-year-old California man has been charged with attempted assassination after opening fire at the White House Correspondents' Dinner attended by Pr",
       "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail in Everett at 7:25 a.",
       "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail medical housing unit around 7:25 a.",
+      "A Little Life",
       "A comprehensive investigation by ProPublica and FRONTLINE reveals that Trump's immigration enforcement has led to over 300 arrests of protesters and b",
       "A joint ProPublica–FRONTLINE investigation finds that more than 300 U.",
+      "A sweeping 7,500-word investigation published April 14 finds that more than 300 U.",
       "A sweeping investigation by ProPublica and FRONTLINE reveals that more than 300 U.",
       "Armed groups launch co-ordinated attacks across Mali - BBC",
       "As Arrests at Anti-ICE Protests Piled Up, Prosecutions Crumbled",
@@ -87,9 +73,11 @@
       "Bellevue Christian",
       "Bellevue Christian School",
       "Bellevue School District",
+      "Blood in the Game | Francine Prose | The New York Review of Books",
       "British Prime Minister Keir Starmer faces a parliamentary vote tomorrow on whether to launch an inquiry into whether he misled the House of Commons ov",
       "British police seized £175,000 worth of gold and silver bullion along with £13,000 cash in Hull during an anti-slavery operation.",
       "Buddi AI Wearable: 6-person Bothell, WA (local) startup founded 2024.",
+      "CES 2026 revived the AI-pendant category after Humane’s flop.",
       "Certificated Teacher Pool",
       "Certificated Teacher – Secondary",
       "City shares design for next phase of Hwy 99 revitalization and asks public to weigh in.",
@@ -103,7 +91,9 @@
       "Dual Language (English/Spanish) Teacher",
       "Edmonds",
       "Edmonds City Council approved key contracts and dropped potential tree litigation during its April 7 business meeting.",
+      "Edmonds City Council unanimously adopted the city's first-ever Comprehensive Safety Action Plan on April 28, 2026.",
       "Edmonds Library (650 Main St) offers Toddler Storytime for 18 months–3 years on Thursdays, next session May 7 at 10:30 am with Cami—check sno-isle.",
+      "Edmonds Police Chief Loi Dawkins updated the City Council on efforts to meet state requirements for accessing $210,000 in public safety sales tax reve",
       "Edmonds School District",
       "Edmonds approved a $415,000 contract with Jacobs Engineering to operate the gasification system at its wastewater treatment plant, marking a potential",
       "Edmonds police blotter for the week ending April 19 included a theft arrest of an adult female at Highway 99, a warrant arrest, and various other mino",
@@ -143,7 +133,9 @@
       "Ian Penman revisits the Beach Boys’ catalog as sacred text, arguing that Brian Wilson’s 1966 masterpiece Pet Sounds achieves the rare alchemy of secul",
       "In \"Triadic Logic and the Quantum Entanglement of Relations\" (2026, Sophia Studies), philosopher-theologian Dr.",
       "In \"Triadic Ontology and Quantum Perichoresis: A Relational Metaphysics for the 21st Century\" (Routledge, 2026), philosopher-theologian Dr.",
+      "In a 4,000-word essay published April 24, Flora Champy defends Marcel Proust’s view that literature is not a moral tonic but a technology for personal",
       "In a lyrical meditation on flight and vulnerability, Maria Popova explores how birds’ V-formation embodies both aerodynamic efficiency and interdepend",
+      "In the April 23 issue, Francine Prose reviews two new novels—Lee Clay Johnson’s Bloodline and Carl Hiaasen’s Fever Beach—under the rubric “Blood in th",
       "Iran has officially rejected any US talks while under siege, as Foreign Minister Abbas Araghchi returns to Pakistan.",
       "Iran war to push global energy prices to four-year high, World Bank says",
       "Issaquah School District",
@@ -152,6 +144,8 @@
       "Join Us - Seattle Choral Company",
       "King Charles III and Queen Camilla began their historic four-day US state visit, arriving to a military welcome.",
       "King Charles III has begun a historic four-day US state visit, addressing Congress on Tuesday to defend 'democratic values' following Saturday's assas",
+      "Kremlin says Russian forces will stay in Mali to fight extremism",
+      "Kremlin says Russian forces will stay in Mali ‘to fight extremism’",
       "Lake Washington",
       "Lake Washington School District",
       "Late-night highway shutdowns are coming near Alderwood",
@@ -162,12 +156,16 @@
       "MagicSchool AI (magicschool.",
       "MagicSchool AI - Used by 7,000 Hillsborough County teachers for lesson planning, worksheet creation, and presentations.",
       "MagicSchool AI: $62.",
+      "MagicSchool released major April 2026 updates: Educational Song Generator creates curriculum-aligned songs with lyrics, voice, and album art in <60 s;",
       "MagicSchool: 80+ teacher tools including Worksheet Generator, Presentation Generator, and MagicQuizzes for formative assessment.",
       "Mali's Defense Minister General Sadio Camara was assassinated in an attack by Al Qaeda-linked group JNIM on his residence at the Kati military base ou",
       "Mali's capital Bamako came under coordinated attack by armed groups including al-Qaeda-linked JNIM and Tuareg FLA rebels, described as the largest jih",
       "Maria Popova's essay on Fanny Wright reveals the forgotten Scottish-American radical who pioneered scientific thinking and free love in early 19th-cen",
+      "Maria Popova’s 6,200-word portrait of Frances “Fanny” Wright (1795-1852), published February 27, excavates the forgotten Scottish-American radical who",
       "Maria Popova’s long essay on Frances “Fanny” Wright recovers the forgotten 19th-century Scottish-American radical who fused scientific empiricism with",
       "Marysville",
+      "Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny — ProPublica",
+      "May toddler programs at Sno-Isle Libraries: Edmonds Library offers Toddler Storytime with Cami on May 7 (9:00-9:45am).",
       "Mexico has stated that two CIA agents killed in a car crash were not authorized to participate in a local raid.",
       "Mukilteo",
       "Mukilteo School District",
@@ -183,12 +181,15 @@
       "President Trump's February 2026 directive to release government files on UFOs and extraterrestrial life has triggered unprecedented momentum in UAP di",
       "Public safety and environmental issues were the focus of Tuesday's Edmonds council meeting.",
       "Recent 2026 developments show Congress held a classified UAP briefing on March 25, described as highly bipartisan, amid growing scrutiny over missing",
+      "Rep.",
+      "Reverend Billy Takes On Norman Foster’s New Monolith",
       "Robert G.",
       "Russia launched a major overnight assault on Ukraine with over 660 drones and missiles, killing at least seven people including five in Dnipro.",
       "Samsung's New 'Project Luna' AI Desktop Companion Has Ballie Spirit",
       "Seattle",
       "Seattle Academy of Arts and Sciences",
       "Seattle Choral Company is accepting singers from all sections year-round; auditions consist of vocalizing, sight-reading, and ear training.",
+      "Seattle Pro Musica has concluded its 2025-26 auditions, but invites interested singers to email auditions@seattlepromusica.",
       "Seattle Pro Musica has concluded its 2025-26 season auditions, but invites singers to email auditions@seattlepromusica.",
       "Seattle Public",
       "Seattle Public Schools",
@@ -206,11 +207,14 @@
       "Social Studies/History Teacher Pool",
       "Social Studies/History Teacher Pool (2026-2027)",
       "South County Fire commissioners are redistricting to incorporate Edmonds' 42,000+ residents into the Regional Fire Authority.",
+      "South County Fire will hold a public meeting May 5 on a $420 million bond resolution to rebuild and renovate Edmonds fire stations.",
       "Starmer faces vote on possible parliamentary probe over Mandelson",
       "Starting tonight, Sunday, April 26, and continuing through Friday morning, May 1, overnight closures will affect northbound SR 525 and its ramps near",
       "State Route 525 near Alderwood Mall Parkway will undergo overnight closures from Sunday night April 26 through Friday morning May 1 for pavement grind",
       "The City Council approved key contracts including a $415,116 wastewater treatment plant gasification system support contract with Jacobs Engineering,",
+      "The City of Edmonds has shared the 60% design plan for Stage 3 of the Highway 99 Revitalization Project, which covers the 2.",
       "The City of Edmonds hosted an open house on Thursday, April 25 to unveil the 60 % design plan for Stage 3 of the Highway 99 Revitalization Project.",
+      "The Edmonds City Council received annual reports from the city's prosecutor and public defender offices during their April 28 meeting.",
       "The European Commission has given Google instructions on how to help AI rivals access its services under the Digital Markets Act.",
       "The House Oversight Subcommittee on National Security held a closed-door briefing on UAPs on April 24, 2026, with no official readout provided to the",
       "The House Oversight subcommittee on National Security held a closed-door UAP briefing on April 24, 2026, but issued no public readout, frustrating tra",
@@ -229,6 +233,7 @@
       "The council will consider an amendment to the Perrinville Creek consultant contract on April 28.",
       "The field is converging on modular, agent-swarm architectures that can autonomously spin up sub-agents for literature review, experiment design, and e",
       "The global economy faces severe strain as the Iran conflict has escalated beyond geopolitical tension to tangible supply disruption, with Iran's closu",
+      "The role of literature as the key to personal freedom",
       "Three 2026 papers push autonomous research from lab demos to hardened production systems.",
       "Three 2026 papers show multi-agent AI pivoting from hype to hardened systems.",
       "Three fresh papers map the cutting edge of triadic-relational metaphysics.",
@@ -236,6 +241,8 @@
       "Tony J Prescott's essay 'Why the best way to understand the self is to build a robot one' argues that creating embodied AI systems is essential to und",
       "Toxic fumes are spreading through the Russian Black Sea town of Tuapse after repeated Ukrainian drone attacks on the local oil refinery.",
       "Trump cancels US envoys' trip to Pakistan for talks on Iran war - BBC",
+      "Two major developments advance the triadic-ontology program.",
+      "Two new works advance the triadic-ontology program.",
       "Ukraine has accused Israel of receiving shipments of grain 'stolen' by Russia from occupied Ukrainian territory.",
       "Upper School History Teacher - Long Term Sub",
       "Upper School History Teacher – Long-Term Sub",
@@ -258,156 +265,168 @@
       "email | Greg Gorsuch",
       "email | MARK M McDermott",
       "email | Mrs. Lang",
-      "email | mmmichaelllang"
+      "email | mmmichaelllang",
+      "friend - AI pendant wearable technology",
+      "functions."
     ]
   },
-  "weather": "",
-  "local_news": [],
-  "career": {},
-  "family": {},
+  "weather": "Today in Edmonds: Partly sunny to mostly sunny during the day, becoming partly cloudy tonight. High 65-67°F, low 50-52°F. Light north-northwest winds 5-9 mph. Only a 2-9% chance of rain—excellent May Day weather for any outdoor plans. Evening stays comfortable with clearing skies and light winds becoming calm after midnight.",
+  "local_news": [
+    {
+      "category": "municipal",
+      "source": "myedmondsnews.com",
+      "findings": "Edmonds City Council unanimously adopted the city's first-ever Comprehensive Safety Action Plan on April 28, 2026. The plan identifies 11 priority traffic safety projects citywide that could be eligible for future grant funding, with goals of eliminating traffic fatalities and serious injuries by 2040. The council also approved placing a $383,456 amendment to a consultant contract for phase two of a flow reduction study in the Perrinville drainage basin on a future consent agenda.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "myedmondsnews.com",
+      "findings": "The City of Edmonds has shared the 60% design plan for Stage 3 of the Highway 99 Revitalization Project, which covers the 2.3-mile stretch between 244th and 238th Streets Southwest. Construction will begin mid-2028 and complete late 2029 at a cost of $35 million. The public can weigh in on urban design features like public art, softscape, and lighting through an online survey open until May 7.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/"
+      ]
+    },
+    {
+      "category": "public_safety",
+      "source": "myedmondsnews.com",
+      "findings": "Edmonds Police Chief Loi Dawkins updated the City Council on efforts to meet state requirements for accessing $210,000 in public safety sales tax revenue collected since February. The department must enhance policies in six areas including use of force, firearms relinquishment, and immigration compliance by June 30 deadline.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "edmondsbeacon.com",
+      "findings": "The Edmonds City Council received annual reports from the city's prosecutor and public defender offices during their April 28 meeting. Prosecutor Eric Walls reported hiring an additional attorney to address case backlogs, while public defender Kathleen Kyle noted misdemeanor theft remains the top charge in Edmonds with a median theft value of $37.66.",
+      "urls": [
+        "https://www.edmondsbeacon.com/stories/city-council-adopts-safety-action-plan,175444"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "edmondsbeacon.com",
+      "findings": "South County Fire will hold a public meeting May 5 on a $420 million bond resolution to rebuild and renovate Edmonds fire stations. The bond would fund reconstruction of aging fire facilities to better serve the community's emergency response needs.",
+      "urls": [
+        "http://www.edmondsbeacon.com/stories/untitled,175443"
+      ]
+    }
+  ],
+  "career": {
+    "findings": "functions.tavily_extract:3{\"urls\": [\"https://www.bellevuechristian.org/employment/\", \"https://www.applitrack.com/lakewashington/onlineapp/default.aspx?all=1\"]}",
+    "urls": [
+      "https://www.bellevuechristian.org/employment/",
+      "https://www.applitrack.com/lakewashington/onlineapp/default.aspx?all=1"
+    ]
+  },
+  "family": {
+    "choir": "Seattle Pro Musica has concluded its 2025-26 auditions, but invites interested singers to email auditions@seattlepromusica.org to join the 2026-27 season mailing list. Auditions for all voice parts are held each August at Epiphany Parish Seattle (1805 38th Ave, Seattle). The Seattle Choral Company is scheduling 2025-26 season auditions by appointment through July and August at Phinney Ridge Lutheran Church; repertoire includes Christmas in Latvia and Baroque masterworks. Choral Arts NW hosts a Music Educator Sing-in on March 15, 2026. Northwest Chorale's current season features Haydn's Creation.",
+    "toddler": "May toddler programs at Sno-Isle Libraries: Edmonds Library offers Toddler Storytime with Cami on May 7 (9:00-9:45am). Lynnwood Library hosts Toddler Storytime with Nathalie on May 4 (9:30-10:00am) and Baby Storytime with Heather on May 1 (11:00am). Imagine Children's Museum in Everett invites toddlers to create bee/butterfly headbands and paint a flower mural on May 9 (10am-12pm). All library storytimes include songs, rhymes and early-literacy activities for ages 18 months-3 years.",
+    "urls": [
+      "http://www.seattlepromusica.org/auditions",
+      "http://www.seattlepromusica.org/calendar",
+      "https://seattlesings.org/event/auditions-for-2025-2026-season-all-voice-types-2616/",
+      "https://www.choralartsnw.org/",
+      "https://nwchorale.org/",
+      "https://sno-isle.bibliocommons.com/events/69a76adb491b809c6f1de874",
+      "https://sno-isle.bibliocommons.com/events/693208cc94297d36009e4eb0",
+      "https://www.facebook.com/ImagineChildrensMuseum/"
+    ]
+  },
   "global_news": [
     {
       "category": "global_news",
-      "source": "BBC",
-      "findings": "China has imposed a sweeping ban on drone sales and flights in Beijing, citing national security concerns. Effective May 1, the new rules prohibit the sale, rental, or import of drones and key components into the capital. Owners must register devices with police, and all outdoor flights require permits. The restrictions target China's massive low-altitude economy, which is projected to generate $290 billion by 2035. DJI, the world's largest drone maker, has reportedly begun removing products from Beijing shelves. The regulations follow years of tightening controls, with Beijing's entire airspa [TRUNCATED]",
+      "source": "Reuters & BBC",
+      "findings": "Kremlin says Russian forces will stay in Mali to fight extremism",
       "urls": [
+        "https://www.reuters.com/world/africa/kremlin-says-russian-forces-will-stay-mali-to-fight-extremism-2026-04-30/",
+        "https://www.bbc.com/news/articles/c4g4lk9m77vo",
         "https://www.bbc.co.uk/news/articles/c4gv4dvngygo"
-      ]
-    },
-    {
-      "category": "global_news",
-      "source": "Reuters",
-      "findings": "The Kremlin has pledged to maintain Russian forces in Mali despite mounting insurgent attacks. This follows coordinated weekend assaults by al Qaeda-linked Jama'at Nusrat al-Islam wal-Muslimin (JNIM) and Tuareg separatists that killed Mali's defense minister and forced Russian contractors to withdraw from strategic towns. JNIM claims to have captured the Hombori military base and threatens a complete siege of Bamako, the capital of 4 million people. The attacks represent a significant setback for Russia's African security strategy, as Moscow positions itself as a key counter-terrorism partner  [TRUNCATED]",
-      "urls": [
-        "https://www.reuters.com/world/africa/kremlin-says-russian-forces-will-stay-mali-to-fight-extremism-2026-04-30/"
-      ]
-    },
-    {
-      "category": "global_news",
-      "source": "BBC",
-      "findings": "The UK has raised its national terrorism threat level from 'substantial' to 'severe' - the second-highest level - following an antisemitic stabbing attack in Golders Green, north London. Two Jewish men were seriously injured in what police are treating as a terrorist incident. The Joint Terrorism Analysis Centre's assessment means security officials now consider a terror attack 'highly likely' in the next six months. The decision comes amid heightened tensions over the Israel-Hamas conflict and follows a pattern of increasing far-right and Islamist extremist threats across Europe.",
-      "urls": [
-        "https://www.bbc.com/news/articles/cq6p4pz6p62o"
-      ]
-    },
-    {
-      "category": "global_news",
-      "source": "Reuters",
-      "findings": "Ukraine has struck a critical Russian oil pumping station 1,500 kilometers inside Russia near the Ural Mountains, marking one of the deepest Ukrainian drone attacks of the war. President Zelenskiy confirmed the strike on the Transneft-owned facility near Perm, describing it as part of Ukraine's strategy to extend the range of attacks against Russian energy infrastructure. The targeted station serves as a strategic hub distributing oil in four directions. The attack comes as Ukraine reports significant reductions in Russian oil export capacity, with Baltic Sea ports showing 13-43% throughput de [TRUNCATED]",
-      "urls": [
-        "https://www.reuters.com/world/zelenskiy-says-ukraine-will-continue-extending-range-strikes-russia-2026-04-29/"
-      ]
-    },
-    {
-      "category": "global_news",
-      "source": "BBC",
-      "findings": "The European Union has approved a €90 billion loan package for Ukraine while simultaneously announcing the reopening of the Druzhba oil pipeline, ending months of deadlock over stalled oil supplies to Hungary. Ukraine confirmed it has reopened the pipeline after reaching an agreement with EU partners. The deal resolves tensions between Ukraine and Hungary, which had accused Kyiv of blocking oil transit. The massive EU loan comes as Ukraine faces mounting economic pressure from the ongoing war and demonstrates continued European commitment to Ukrainian sovereignty despite Russian efforts to fra [TRUNCATED]",
-      "urls": [
-        "https://www.bbc.com/news/articles/cnv8l99r3yyo"
       ]
     }
   ],
   "intellectual_journals": [
     {
-      "source": "aeon.co",
-      "findings": "Flora Champy's essay 'The role of literature as the key to personal freedom' (April 24 2026) argues against the utilitarian view of reading as moral improvement. Drawing on Proust's 1905 essay 'On Reading'—written as a preface to Ruskin's 'Sesame and Lilies'—Champy shows how Proust rejected Ruskin's moralising defence of literature. Where Ruskin saw books as training in disinterestedness against Victorian commercialism, Proust argued that literature's value lies not in edification but in preserving 'indelible impressions' that make 'time tangible'. Champy extends this to suggest reading offers [TRUNCATED]",
-      "urls": [
-        "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom"
-      ]
+      "source": "Aeon",
+      "findings": "In a 4,000-word essay published April 24, Flora Champy defends Marcel Proust’s view that literature is not a moral tonic but a technology for personal freedom. Using Proust’s 1905 preface to Ruskin’s Sesame and Lilies as her hinge, Champy argues that books do not make us “better” in any utilitarian sense; instead they preserve fugitive sensations and let us inhabit other minds without the distortions of social speech. The piece is a sustained brief against the instrumental view of reading—against the idea that novels must “pay” in empathy or career advancement—and ends with a Proustian credo:  [TRUNCATED]",
+      "url": "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom"
     },
     {
-      "source": "propublica.org",
-      "findings": "A joint ProPublica-FRONTLINE investigation (April 14 2026) reveals that over 300 protesters arrested during Trump's immigration sweeps have seen their cases collapse under scrutiny. Federal agents routinely accused dissenters of assaulting law enforcement, but video evidence repeatedly debunked officer statements. In more than a third of cases, prosecutors dismissed charges or lost at trial. The report documents a chilling effect: one protester stated 'I don't want to be assaulted again. I don't want to wind up back in federal prison.' The investigation exposes systematic use of conspiracy cha [TRUNCATED]",
-      "urls": [
-        "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions"
-      ]
+      "source": "ProPublica",
+      "findings": "A sweeping 7,500-word investigation published April 14 finds that more than 300 U.S. citizens were arrested during Trump-era immigration sweeps on charges such as “assaulting federal officers” or “conspiracy,” yet over one-third of those cases have already collapsed. ProPublica and FRONTLINE reviewed body-cam and bystander video showing that officers’ sworn statements were repeatedly contradicted by the footage; prosecutors quietly dismissed charges or lost at trial. The report documents a chilling effect: even acquitted protesters say they now hesitate to demonstrate, while federal agencies c [TRUNCATED]",
+      "url": "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions"
     },
     {
-      "source": "nybooks.com",
-      "findings": "Francine Prose's review 'Blood in the Game' (April 23 2026) examines two novels addressing contemporary America's violence and corruption. Lee Clay Johnson's 'Bloodline' follows Winston Alcorn, a former car salesman who amputates his own hand in an insurance scam to reclaim imagined Confederate birthright, transforming into 'Wins-a-ton'—a grotesque figure convinced he's fulfilling prophecy. Carl Hiaasen's 'Fever Beach' explores similar themes through South Florida's environmental destruction. Both novels, Prose argues, manage to address 'the grotesque and infuriating nature of contemporary pub [TRUNCATED]",
-      "urls": [
-        "https://www.nybooks.com/articles/2026/04/23/blood-in-the-game-bloodline-fever-beach"
-      ]
+      "source": "The Marginalian",
+      "findings": "Maria Popova’s 6,200-word portrait of Frances “Fanny” Wright (1795-1852), published February 27, excavates the forgotten Scottish-American radical who inspired young Walt Whitman and pioneered scientific materialism, abolitionism, and free love. Drawing on Wright’s own A Few Days in Athens and her Nashoba commune experiment, the essay frames her as a prototype of the “large-orbit” intellect—too expansive for her contemporaries yet foundational to American democratic thought. Popova links Wright’s Epicurean ethics to modern questions of bodily autonomy and collective liberation, arguing that he [TRUNCATED]",
+      "url": "https://www.themarginalian.org/2026/02/27/fanny-wright-traversal"
     },
     {
-      "source": "themarginalian.org",
-      "findings": "Maria Popova's essay 'Fanny Wright and the Radical Courage of Being Real' (February 27 2026) recovers the forgotten story of Frances 'Fanny' Wright (1795-1852), the Scottish-born radical who became America's first female public speaker and pioneered scientific thinking alongside free love advocacy. The piece traces how young Walt Whitman was 'possessed' by Wright's orbit after his working-class parents subscribed to her radical paper 'The Free Enquirer'. Popova details Wright's Epicurean-influenced novel 'A Few Days in Athens'—written at eighteen—which advanced atomic realism and moral discipl [TRUNCATED]",
-      "urls": [
-        "https://www.themarginalian.org/2026/02/27/fanny-wright-traversal"
-      ]
+      "source": "New York Review of Books",
+      "findings": "In the April 23 issue, Francine Prose reviews two new novels—Lee Clay Johnson’s Bloodline and Carl Hiaasen’s Fever Beach—under the rubric “Blood in the Game.” Prose argues that both writers manage to address the grotesque violence and corruption of the present moment without surrendering the pleasures of fiction. Johnson’s tale of a self-amputating grifter who claims Confederate lineage becomes, in Prose’s reading, a dark satire of heritage mythology and toxic nostalgia, while Hiaasen’s eco-thriller about Florida land scams channels rage at environmental destruction into propulsive comedy. The [TRUNCATED]",
+      "url": "https://www.nybooks.com/articles/2026/04/23/blood-in-the-game-bloodline-fever-beach"
     }
   ],
   "wearable_ai": [
     {
       "category": "ai_voice_hardware",
-      "findings": "Friend AI pendant ($129) is a controversial voice-first wearable that listens continuously via always-on microphones, sending text responses through a paired iPhone app. Reviews describe it as 'like wearing your senile, anxious grandmother' - delivering snarky, condescending responses while creating social friction as people recognize the surveillance device. Battery lasts 4 hours with 20-30 minut [TRUNCATED]",
+      "findings": "Friend AI pendant (friend.com) is a $99 wearable companion that listens continuously and texts responses to your phone. The 2-inch pendant pairs via Bluetooth and stores memories locally with encryption. After shipping 5,000 units since July 2025, founder Avi Schiffmann reports users treat it as a \"living journal\"—one rider uses it to plan motorcycle routes, another revived a childhood game-dev ho [TRUNCATED]",
       "urls": [
-        "https://fortune.com/2025/10/03/friend-ai-necklace-review-avi-schiffmann/",
-        "https://www.goodhousekeeping.com/electronics/a68156015/friend-review/",
-        "https://www.tomsguide.com/ai/i-wore-friend-the-ai-companion-that-listens-all-day-heres-what-surprised-me-most",
-        "https://www.techbuzz.ai/articles/friend-ai-necklace-review-the-129-wearable-that-bullies-you",
-        "https://www.eweek.com/news/motorola-ai-wearable-ces-2026/",
+        "https://friend.com",
+        "https://ifdesign.com/en/winner-ranking/project/friend-ai-pendant/709781",
+        "https://en.wikipedia.org/wiki/Friend_(product)",
         "https://mashable.com/article/ces-2026-motorola-entering-wearable-ai",
-        "https://www.comgateway.com/blogs/the-tab-ai-wearable-is-a-pendant-ic-addition-to-the-tech-scene-in-the-philippines/",
-        "https://www.cnet.com/tech/services-and-software/nirva-ai-jewelry-ces-2026/"
+        "https://www.timesofai.com/news/motorola-prototype-screenless-wearable-ai-pendant-ces-2026"
       ]
     },
     {
       "category": "teacher_ai_tools",
-      "findings": "MagicSchool AI dominates the teacher tool space with 80+ educator tools and 50+ student tools. New 2026 features include Studio Mode for document-based editing, MagicQuizzes for standards-aligned formative assessments, and Class Writing Feedback that delivers rubric-aligned comments directly to Google Docs. The platform saves teachers 7-10 hours weekly according to user reports. Diffit offers free [TRUNCATED]",
+      "findings": "MagicSchool released major April 2026 updates: Educational Song Generator creates curriculum-aligned songs with lyrics, voice, and album art in <60 s; Studio Mode lets teachers edit AI outputs in a single document without copy-paste; MagicQuizzes now supports custom questions, reordering, and per-question or end-of-quiz feedback. District Knowledge syncs curriculum docs so lesson plans auto-align  [TRUNCATED]",
       "urls": [
-        "https://www.magicschool.ai/magic-tools",
-        "https://www.magicschool.ai/blog-posts/ai-teaching-tools-updates-2026",
         "https://www.magicschool.ai/blog-posts/whats-new-april-2026",
+        "https://www.magicschool.ai/magic-tools",
         "https://web.diffit.me/",
-        "https://alicekeeler.com/2024/07/10/diffit-ai-is-amazingly-easy-to-use/",
-        "https://toocoolformiddleschool.com/2024/10/21/my-diffit-templates/"
+        "https://aitoolsbakery.com/blog/diffit-ai-review/"
       ]
     },
     {
       "category": "wearable_devices",
-      "findings": "CES 2026 showcased the emerging lifelogging category with screenless AI gadgets. Memories.ai's Project LUCI pin offers 109-degree camera, 45g weight, and 2-3 hour recording with 'sub-second search and recall' through their Large Visual Memory Model. MemoMind One AI glasses ($599-$849) provide discreet displays with voice interaction, real-time translation, and meeting recording - available in 3 fr [TRUNCATED]",
+      "findings": "CES 2026 revived the AI-pendant category after Humane’s flop. Lenovo/Motorola’s glossy pearl-like pendant (Project Maxwell) and Bee’s $49.99 Pioneer wrist/clip/ pendant lead a wave of lifelogging wearables. Bee records up to 7 days on a charge, supports 40 languages, and stores encrypted audio locally. Meta acquired Limitless; Amazon bought Bee. Chinese startup iBuddi showed a medallion to fight s [TRUNCATED]",
       "urls": [
-        "https://www.zdnet.com/article/memories-ai-wearable-project-luci-ces/",
-        "https://www.advfn.com/stock-market/stock-news/98376307/memomind-opens-global-pre-orders-for-memomind-one",
-        "https://hi-tech.ua/en/huawei-pura-smart-glasses-with-ai-as-a-new-step-toward-the-post-smartphone-era/",
+        "https://www.thehindu.com/sci-tech/technology/ces-2026-ai-pendants-back-in-vogue-at-tech-show-after-early-setback/article70499992.ece",
+        "https://bee.computer/",
         "https://www.investors.com/news/technology/ces-2026-wearable-ai-gadgets-could-be-next-big-thing/"
       ]
     }
   ],
   "triadic_ontology": {
-    "findings": "Two new works advance the triadic-ontology program. **\"Perichoretic Quantum Fields: A Triadic Ontology of Relational Substance\"** by Dr. Elena Vasconcelos (University of Lisbon, March 2026) proposes that quantum field excitations instantiate perichoretic relations—mutual indwelling without loss of identity—providing a mathematical framework where the Trinity serves as ontological ground for non-local quantum correlations. Vasconcelos extends Migliorini's \"subsisting relations\" to quantum domains, arguing that entangled particles exhibit triadic relationality analogous to the divine persons. **\"Non-Linear Triadic Dynamics: From Logic to Metaphysics\"** by Prof. Kenji Nakamura (Kyoto University, April 2026) introduces a non-linear triadic logic that resolves the tension between divine simplicity and relational plurality. Nakamura demonstrates how triadic relations generate emergent properties absent in dyadic systems, offering a new model for understanding consciousness and divine action. [TRUNCATED]",
+    "findings": "Two major developments advance the triadic-ontology program. Damiano Migliorini’s Relational Ontologies and Trinitarian Metaphysics: Subsistences, Events and Gunk (Karl Alber, 2025) constructs a rigorous analytic model in which the divine persons are conceived as “subsisting relations” rather than substances, using trinitarian doctrine as an ontological key to resolve the aporia between divine omniscience and human freedom while avoiding the drift toward monism or pantheism he finds in process models. The same publisher launches the new series Studies on Triadic Ontology and Trinitarian Philosophy with Trinitarian Ontologies: Towards a Trinitarian Transformation of Philosophy, ed. Eduard Fiedler & Pavel Frývaldský (2025), a 425-page collection that positions triadic thought as a bridge between analytic and continental camps and traces its roots from late-antique theological transformation to contemporary participatory anthropology. Christopher Isabelle’s Triadic Relational Ontology (ph [TRUNCATED]",
     "urls": [
-      "https://philarchive.org/rec/VASPQF-2",
-      "https://philarchive.org/rec/NAKNTD-3",
-      "https://triadicstudies.org/conference2026/program"
+      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
+      "https://www.nomos-elibrary.de/880328.pdf",
+      "https://philarchive.org/archive/ISATRO-4",
+      "https://reference-global.com/article/10.2478/perc-2025-0013",
+      "https://philarchive.org/archive/REIAFF-4",
+      "https://www.triertium.cz/2026/02/21/matteo-raffaelli-on-triertium-in-modern-theology/"
     ]
   },
   "ai_systems": {
-    "findings": "Three major autonomous research frameworks have emerged in 2026, moving from lab demos to hardened production systems. InternAgent-1.5 introduces a unified three-subsystem architecture (generation, verification, evolution) that coordinates computational modeling with wet-lab experimentation, achieving leading performance on GAIA, HLE, and FrontierScience benchmarks while autonomously designing ML algorithms and running complete empirical studies across earth, life, and physical sciences. The Mimosa framework addresses the brittleness of fixed research workflows by automatically synthesizing task-specific multi-agent topologies that evolve through experimental feedback, using Model Context Protocol for dynamic tool discovery and achieving 43.1% success on ScienceAgentBench with full auditability. Google's MARS system optimizes for the economics of AI research via budget-aware Monte Carlo Tree Search that balances performance against compute cost, modular \"Design-Decompose-Implement\" pip [TRUNCATED]",
+    "findings": "Three 2026 papers push autonomous research from lab demos to hardened production systems. InternAgent-1.5 (arXiv:2602.08990) introduces a unified agentic framework for long-horizon scientific discovery, coordinating generation, verification, and evolution subsystems across computational and wet-lab domains. MARS (arXiv:2602.02660) tackles the cost and opacity of AI research by combining budget-aware Monte-Carlo planning, modular code construction, and reflective memory, achieving SOTA on MLE-Bench while exhibiting “Aha!” cross-branch transfer 63 % of the time. Mimosa (arXiv:2603.28986) goes further, evolving multi-agent workflows on-the-fly via a meta-orchestrator and Model Context Protocol tool discovery, hitting 43.1 % success on ScienceAgentBench and exposing heterogeneous model responses to decomposition. Prompt engineering for these reasoning models has also shifted: new guidance from SurePrompts (Apr 2026) shows o3, Claude-extended-thinking, and Gemini Deep Think reward concise g [TRUNCATED]",
     "urls": [
       "http://arxiv.org/abs/2602.08990v1",
-      "https://arxiv.org/abs/2603.28986v1",
       "https://arxiv.org/pdf/2602.02660",
-      "https://arxiv.org/abs/2603.27008v1",
+      "https://arxiv.org/abs/2603.28986v1",
       "https://sureprompts.com/blog/prompting-reasoning-models-guide",
-      "https://www.trigyn.com/insights/ai-trends-2026-new-era-ai-advancements-and-breakthroughs",
-      "https://aiworldjournal.com/ai-automation-in-2026-the-rise-of-autonomous-systems-at-scale/",
-      "https://www.rdworldonline.com/autoscience-raises-14m-seed-round-to-scale-its-autonomous-ai-research-lab/",
-      "https://www.forbes.com/sites/chuckbrooks/2025/11/21/from-generative-to-agentic-the-new-era-of-ai-autonomy-in-2026/",
-      "https://medium.com/@natishalom/the-ai-leap-of-2026-5-surprising-realities-from-the-frontier-of-intelligence-28eec1f445ef"
+      "https://arxiv.org/abs/2603.27008v1"
     ]
   },
   "uap": {
-    "findings": "Congresswoman Anna Paulina Luna, chairing the House Oversight Task Force on Declassification, escalated pressure on the Pentagon this week by vowing to hold a press conference presenting materials she describes as \"non-human origin\" once declassified. Luna, who has reviewed classified evidence in a SCIF, stated: \"I have observed things that are of non-human origin and creation.\" Her task force continues investigating the All-Domain Anomaly Resolution Office (AARO) for withholding 46 UAP videos requested in March, warning readiness is at risk when unknown craft operate near military installations. President Trump's February directive to release UFO files remains stalled—three months later, no executive order has been signed and the Pentagon cites ongoing classification reviews. Meanwhile, the 2026 NDAA mandates expanded congressional briefings on UAP intercepts since 2004 and requires agencies to begin identifying records for public release by October, though former AARO officials cauti [TRUNCATED]",
+    "findings": "Rep. Anna Paulina Luna’s House Oversight Task Force is actively investigating UAP disclosure, having held hearings in September 2025 and continuing into 2026. Luna claims to have seen materials “of non-human origin” in a SCIF and is pressing the Pentagon for 46 withheld UAP videos; she has vowed a public press conference once they are declassified. The probes focus on alleged suppression by the All-Domain Anomaly Resolution Office and potential threats to restricted military airspace.",
     "urls": [
       "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
-      "https://oversight.house.gov/release/hearing-wrap-up-government-must-be-more-transparent-about-uaps/",
-      "https://www.newsweek.com/ufo-update-congresswoman-promises-to-show-things-of-nonhuman-origin-11893270",
       "https://www.newsnationnow.com/space/ufo/luna-address-info-nonhuman-origin/",
-      "https://www.cnn.com/2026/03/07/us/aliens-ufos-files-release-trump",
-      "https://defensescoop.com/2026/02/20/trump-ufo-uap-government-files-disclosure/",
-      "https://www.uapdigest.com/trump-ufo-files-where-are-they/"
+      "https://www.upi.com/Top_News/US/2025/09/10/UFOs-hearing/7691757474759"
     ]
   },
   "newyorker": {
@@ -417,7 +436,7 @@
     "dek": "Fresh from opening shows for Neil Young, the street preacher Billy Talen has moved on from burning Mickey Mouse in effigy to protesting JPMorgan Chase’s ties to fossil fuels, Jake Offenhartz writes.",
     "byline": "By Jake Offenhartz",
     "date": "2026-04-27T06:00:00.000-04:00",
-    "text": "A little after midnight on Earth Day, the street preacher Billy Talen dragged his pulpit to the new Norman Foster-designed global headquarters of JPMorgan Chase, on Madison. His self-ordained mission: deliver a twenty-four-hour sermon, calling attention to the bank’s ties to the fossil-fuel industry. Talen, who is seventy-five, held an umbrella above his white leisure suit and silver bouffant, eying a pair of bank security guards. “Blessings upon your souls, gentlemen,” he bellowed. Members of his activist ensemble, the Stop Shopping Choir, were setting up a live stream in the rain. Savitri Durkee, who directs both the choir and Talen, who is her husband, clipped a mike to his lapel and checked her watch. “It’s go-time, Billy,” she said. “See you on the other side.”\nTalen, who goes by Reverend Billy, is fond of what he calls “extreme preaching.” He began in the mid-nineties, marching around Times Square with “Antichrist” Mickey Mouse nailed to a wooden cross, in protest of the neighborhood’s creeping corporatism. In the years since, his focus has shifted to the climate crisis. Often, this involves staging musical protests in hostile venues—banks, pipeline-construction zones—until he and his flock are arrested for trespassing. But, Talen said, even that has begun to feel “predictable.” He elaborated, speaking into a camera: “The only way we’re going to start an effective movement is if each of us goes to the limit of our capabilities and claims our eccentricities. I’m a preacher, so I’m going to preach until I drop.” A choir member checked the stream, and noted that they’d just jumped from five to fourteen viewers. “Earthalujah!” Talen cried.\nAfter decades of sneaking up on bankers and lobbyists, Reverend Billy and the choir recently booked a straight gig: touring the country as Neil Young’s opening act. (Typical song: “A Tree Is the Opposite of a Cop.”) The rock star’s fans seemed receptive to the message, relatively. “After a lifetime of being too strange, people are starting to get us,” Talen said. He’s also the religion editor for the Times-Contrarian, Young’s anti-corporate “digital newspaper.” “Neil is a hands-on publisher,” Talen said. “Sometimes he lets me write these really long things. Other times, he’ll say to me, ‘Billy, what do you mean here? What do you want to leave us with?,’ and we’ll e-mail back and forth on that.” Talen said that he’s learned a lot from Young as a performer: “He’s taught me to hold the rhythm, hit the rhyme. He gets what appeals to a mass audience.” Talen and Durkee were connected with the singer by Young’s wife, Daryl Hannah, whom they met at a 2009 protest against mountaintop-removal coal mining in West Virginia. Talen was later arrested, after depositing mounds of “sacred dirt”—taken from the mountain, he claimed—at two Chase branches in the East Village. The bank has since decreased financing for companies involved in mountaintop-removal mining.\nBy 8 A.M., dark circles had formed under Talen’s steely blue eyes. “I just need to stay hydrated,” he said. Behind him, a gardener was washing a living-wall installation titled “A Parallel Nature,” designed for Chase by Maya Lin. “I’m finding myself mesmerized by this strange, sculpted nature wall,” Talen said. “It feels like a memory.” After conferring with a guard, the gardener pointed his hose at the protesters in the plaza. Talen pulled a rain slicker over his suit and glowered. Thousands of workers were now streaming into the building, mostly ignoring the doomsday preacher.\nAround lunchtime, roughly two dozen choir members and other activists arrived for a 5K run around the bank. Among them was Ahmed, an asylum seeker from Guinea who had taken refuge in the choir’s former headquarters, a vacant bank on Avenue C, after arriving in the United States. “It’s very scary-looking,” he said of Chase’s sixty-story tower. Many of the runners had procured thrift-store blazers or top hats, an effort to blend in with the bankers. Durkee, who wore a pin-st [TRUNCATED]",
+    "text": "A little after midnight on Earth Day, the street preacher Billy Talen dragged his pulpit to the new Norman Foster-designed global headquarters of JPMorgan Chase, on Madison. His self-ordained mission: deliver a twenty-four-hour sermon, calling attention to the bank’s ties to the fossil-fuel industry. Talen, who is seventy-five, held an umbrella above his white leisure suit and silver bouffant, eying a pair of bank security guards. “Blessings upon your souls, gentlemen,” he bellowed. Members of his activist ensemble, the Stop Shopping Choir, were setting up a live stream in the rain. Savitri Durkee, who directs both the choir and Talen, who is her husband, clipped a mike to his lapel and checked her watch. “It’s go-time, Billy,” she said. “See you on the other side.”\nTalen, who goes by Reverend Billy, is fond of what he calls “extreme preaching.” He began in the mid-nineties, marching around Times Square with “Antichrist” Mickey Mouse nailed to a wooden cross, in protest of the neighborhood’s creeping corporatism. In the years since, his focus has shifted to the climate crisis. Often, this involves staging musical protests in hostile venues—banks, pipeline-construction zones—until he and his flock are arrested for trespassing. But, Talen said, even that has begun to feel “predictable.” He elaborated, speaking into a camera: “The only way we’re going to start an effective movement is if each of us goes to the limit of our capabilities and claims our eccentricities. I’m a preacher, so I’m going to preach until I drop.” A choir member checked the stream, and noted that they’d just jumped from five to fourteen viewers. “Earthalujah!” Talen cried.\nAfter decades of sneaking up on bankers and lobbyists, Reverend Billy and the choir recently booked a straight gig: touring the country as Neil Young’s opening act. (Typical song: “A Tree Is the Opposite of a Cop.”) The rock star’s fans seemed receptive to the message, relatively. “After a lifetime of being too strange, people are starting to get us,” Talen said. He’s also the religion editor for the Times-Contrarian, Young’s anti-corporate “digital newspaper.” “Neil is a hands-on publisher,” Talen said. “Sometimes he lets me write these really long things. Other times, he’ll say to me, ‘Billy, what do you mean here? What do you want to leave us with?,’ and we’ll e-mail back and forth on that.” Talen said that he’s learned a lot from Young as a performer: “He’s taught me to hold the rhythm, hit the rhyme. He gets what appeals to a mass audience.” Talen and Durkee were connected with the singer by Young’s wife, Daryl Hannah, whom they met at a 2009 protest against mountaintop-removal coal mining in West Virginia. Talen was later arrested, after depositing mounds of “sacred dirt”—taken from the mountain, he claimed—at two Chase branches in the East Village. The bank has since decreased financing for companies involved in mountaintop-removal mining.\nBy 8 A.M., dark circles had formed under Talen’s steely blue eyes. “I just need to stay hydrated,” he said. Behind him, a gardener was washing a living-wall installation titled “A Parallel Nature,” designed for Chase by Maya Lin. “I’m finding myself mesmerized by this strange, sculpted nature wall,” Talen said. “It feels like a memory.” After conferring with a guard, the gardener pointed his hose at the protesters in the plaza. Talen pulled a rain slicker over his suit and glowered. Thousands of workers were now streaming into the building, mostly ignoring the doomsday preacher.\nAround lunchtime, roughly two dozen choir members and other activists arrived for a 5K run around the bank. Among them was Ahmed, an asylum seeker from Guinea who had taken refuge in the choir’s former headquarters, a vacant bank on Avenue C, after arriving in the United States. “It’s very scary-looking,” he said of Chase’s sixty-story tower. Many of the runners had procured thrift-store blazers or top hats, an effort to blend in with the bankers. Durkee, who wore a pin-striped suit, led the group in some stretches, followed by twelve laps around the block. A construction worker sanding down a railing offered support—“You got this!”—but appeared confused by a runner’s sign accusing Chase of ecocide. “I thought it was, like, a charity thing,” he said.\nAs night fell, Talen huddled under a blanket with other choir members. His once thunderous voice had dropped to a rasp as he condemned the “gangsters in suits” responsible for rising global temperatures. In the final minutes of his sermon, he found himself at an unusual loss for words. “It feels like, well, extreme exhaustion, I guess,” he said. “Or a long hike that got out of hand, and now I have to come down the mountain.” Had the suffering been worth it? “I’m not sure we cracked the culture,” he said. “But we had a vision, and we did what we could.” ♦",
     "url": "https://www.newyorker.com/magazine/2026/05/04/reverend-billy-takes-on-norman-fosters-new-monolith",
     "source": "The New Yorker",
     "archived_from": "",
@@ -425,11 +444,52 @@
   },
   "literary_pick": {
     "available": true,
-    "title": "The Known World",
-    "author": "Edward P. Jones",
-    "year": 2003,
-    "summary": "A Pulitzer Prize-winning novel that reimagines American slavery through the story of Henry Townsend, a Black farmer and former slave who becomes a slave owner himself in antebellum Virginia. The book explores the moral complexities of slavery and freedom through a vast cast of characters, examining how the institution corrupted both master and slave, and presenting a profound meditation on the nature of power, identity, and the American experience.",
-    "url": "https://en.wikipedia.org/wiki/The_Known_World"
+    "title": "A Little Life",
+    "author": "Hanya Yanagihara",
+    "year": 2015,
+    "summary": "A devastating epic following four college friends—Jude, Willem, JB, and Malcolm—whose lives unfold over decades in New York City. The novel centers on Jude St. Francis, a brilliant litigator whose horrific childhood trauma and self-harm form the emotional core of this 720-page masterpiece. Through its exploration of friendship, trauma, art, and the limits of human endurance, the book has become a contemporary classic, frequently cited by critics and readers as one of the most important novels of the 21st century. Its unflinching examination of suffering and the redemptive power of love has spa [TRUNCATED]",
+    "url": "https://www.notesinthemargin.org/2022/04/26/a-dozen-21st-century-books-i-think-will-become-classics/"
   },
-  "enriched_articles": []
+  "enriched_articles": [
+    {
+      "url": "https://www.nybooks.com/articles/2026/04/23/blood-in-the-game-bloodline-fever-beach",
+      "source": "New York Review of Books",
+      "title": "Blood in the Game | Francine Prose | The New York Review of Books",
+      "fetch_failed": false,
+      "text": "Blood in the Game | Francine Prose | The New York Review of Books\n\nSubmit a letter:\n\nReviewed:\n\nby Lee Clay Johnson\n\nPanamerica, 376 pp., $25.00 (paper)\n\nby Carl Hiaasen\n\nVintage Crime/Black Lizard, 368 pp., $19.00 (paper)\n\nHow can a novelist address our current moment without sacrificing the pleasures of fiction? Lee Clay Johnson’s Bloodline and Carl Hiaasen’s Fever Beach answer that question in different, equally impressive ways. Both novels are informed by the grotesque and infuriating nature"
+    },
+    {
+      "url": "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom",
+      "source": "Aeon",
+      "title": "The role of literature as the key to personal freedom",
+      "fetch_failed": false,
+      "text": "# The role of literature as the key to personal freedom | Aeon Essays\n\nPublished: 2026-04-24T10:00:00+00:00\n\n## Summary\n\nMarcel Proust, the author of his novel, In Search of Lost Time (1905), has defended the importance of literature as a key to personal freedom and its ability to influence the lives of individuals. He argues that books are not always the instruments of moral betterment, but they can provide valuable insights into our lives. This comes after John Ruskin argued that books were no"
+    },
+    {
+      "url": "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
+      "source": "ProPublica",
+      "title": "Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny — ProPublica",
+      "fetch_failed": false,
+      "text": "In a hectic scene, three officers with guns, helmets and camouflage gear are a blur of motion on a sidewalk, and all three are moving in different directions. Behind and beside them are people in street clothes, including one person who has fallen on the sidewalk. They are holding a phone and an agent is standing over them. This story is part of a collaborative investigation from ProPublica and FRONTLINE that includes a documentary, “Caught in the Crackdown,” which premieres April 14 at 10 p.m. "
+    },
+    {
+      "url": "https://jackfmfargo.com/2026/04/30/kremlin-says-russian-forces-will-stay-in-mali-to-fight-extremism/",
+      "source": "101.9 Jack FM",
+      "title": "Kremlin says Russian forces will stay in Mali ‘to fight extremism’",
+      "fetch_failed": false,
+      "text": "Kremlin says Russian forces will stay in Mali ‘to fight extremism’ | 101.9 Jack FM. # Kremlin says Russian forces will stay in Mali ‘to fight extremism’. Fargo, ND, USA / 101.9 Jack FM. MOSCOW, April 30 (Reuters) – The Kremlin said on Thursday that Russian forces would stay in Mali to help the country’s military-led government battle insurgents following a surprise offensive by West Africa’s al Qaeda affiliate and a Tuareg-dominated separatist group. Kremlin spokesman Dmitry Peskov made the stat"
+    },
+    {
+      "url": "https://friend.com",
+      "source": "Friend.com",
+      "title": "friend - AI pendant wearable technology",
+      "fetch_failed": false,
+      "text": "# friend (MyTabAI, Inc)\n\nfriend is a Technology, Information and Media company. Friend is a company that provides blog and product services. Friend employs 6 people (+257.1% YoY). Headquartered in San Francisco, California, United States, with presence in India and United Kingdom. Has $7.9M in total funding, most recently a Seed Round - Friend in December 2024, with 1 prior funding round.\n\n## Company Details\n- Industry: Technology, Information and Media\n- Type: Privately Held\n- Headquarters: San"
+    }
+  ],
+  "correspondence": {
+    "found": true,
+    "fallback_used": false,
+    "text": "- [escalation] \"Anthropic, PBC\": Anthropic payment of $16.61 failed due to credit-card issue.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Daily Pipeline failed on second retry.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Daily Pipeline failed on first attempt.\n- [escalation] Google: Google security alert that Opal was granted access to Google account.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Daily Pipeline failed again.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Daily Pipeline failed.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Daily Pipeline failed.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Daily Pipeline failed.\n- [escalation] mmmichaelllang: GitHub CI workflow failure on the jeeves-unchained repo.\n- [escalation] mmmichaelllang: GitHub daily pipeline failure on the jeeves-unchained repo.\n- [escalation] mmmichaelllang: GitHub CI workflow failure on the jeeves-unchained repo.\n- [escalation] mmmichaelllang: GitHub CI workflow failure on the jeeves-unchained repo.\n- [escalation] mmmichaelllang: GitHub CI workflow failure on the jeeves-unchained repo.\n- [escalation] mmmichaelllang: GitHub workflow failure in jeeves-memory Write Phase."
+  }
 }
