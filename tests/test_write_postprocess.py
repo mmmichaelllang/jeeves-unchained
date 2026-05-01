@@ -387,6 +387,43 @@ def test_nim_fallback_skips_groq_tpm_sleep(monkeypatch):
     assert sleep_calls == [65], f"expected exactly one 65s sleep, got {sleep_calls}"
 
 
+def test_clamp_groq_max_tokens_under_ceiling():
+    """Small input keeps the requested max_tokens unchanged."""
+    from jeeves.write import _GROQ_TPM_LIMIT, _clamp_groq_max_tokens
+
+    effective, input_tokens = _clamp_groq_max_tokens("x" * 4000, "y" * 4000, 4096)
+    assert effective == 4096
+    assert input_tokens + effective < _GROQ_TPM_LIMIT
+
+
+def test_clamp_groq_max_tokens_part4_failure_stays_under_ceiling():
+    """The exact part-4 input that produced the 413 (system=22544, user=11513,
+    max_tokens=4096) must clamp to a value that fits under the 12 000 TPM ceiling."""
+    from jeeves.write import (
+        _GROQ_TPM_LIMIT,
+        _GROQ_TPM_SAFETY,
+        _clamp_groq_max_tokens,
+    )
+
+    system = "x" * 22544
+    user = "y" * 11513
+    effective, input_tokens = _clamp_groq_max_tokens(system, user, 4096)
+    # Must be clamped (not the raw 4096).
+    assert effective < 4096
+    # Resulting request must sit safely under the TPM ceiling.
+    assert input_tokens + effective <= _GROQ_TPM_LIMIT - _GROQ_TPM_SAFETY + 50
+
+
+def test_clamp_groq_max_tokens_floor_protects_min_output():
+    """Even when input is very large, max_tokens floors at _GROQ_MIN_OUTPUT_TOKENS
+    (caller may still 413, but we never request a too-tiny output budget)."""
+    from jeeves.write import _GROQ_MIN_OUTPUT_TOKENS, _clamp_groq_max_tokens
+
+    huge_system = "x" * 50000  # ~12 500 tokens — already over the ceiling on its own
+    effective, _ = _clamp_groq_max_tokens(huge_system, "", 4096)
+    assert effective == _GROQ_MIN_OUTPUT_TOKENS
+
+
 def test_invoke_write_llm_returns_true_when_groq_succeeds(monkeypatch):
     """_invoke_write_llm returns used_groq=True when Groq succeeds."""
     from jeeves.config import Config
