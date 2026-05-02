@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Correspondence Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Write Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Research Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Correspondence Phase workflow.\n- [escalation] mmmichaelllang: Jeeves Daily Pipeline workflow failed on second attempt\n- [escalation] mmmichaelllang: Jeeves Daily Pipeline workflow failed on April 30\n- [escalation] Google: Google security alert about Opal accessing Google Account data\n- [escalation] mmmichaelllang: Jeeves Daily Pipeline workflow failed on April 30\n- [escalation] mmmichaelllang: Jeeves Daily Pipeline workflow failed on April 30\n- [escalation] mmmichaelllang: Jeeves Daily Pipeline workflow failed on April 30\n- [escalation] mmmichaelllang: Jeeves Daily Pipeline workflow failed on April 30\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failed for newsletter v4 feature branch.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline failed for Jeeves main branch.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failed for Jeeves main branch.",
+  "text": "- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves — Research Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves — Correspondence Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves — Write Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves — Research Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves — Correspondence Phase.\n- [escalation] \"Anthropic, PBC\": Failed $16.61 payment to Anthropic; credit card charge unsuccessful.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline failed on second attempt.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline failed on first attempt.\n- [escalation] Google: Google security alert about Opal gaining access to Google Account.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline failed again.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline failed.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline failed.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline failed.\n- [escalation] mmmichaelllang: GitHub notification that the CI workflow for the newsletter v4 feature failed.",
   "counts": {
     "reply_needed": 2,
-    "decision_required": 1,
+    "decision_required": 0,
     "scheduling": 1,
     "follow_up": 0,
-    "escalation": 21,
+    "escalation": 22,
     "no_action": 25
   }
 }
