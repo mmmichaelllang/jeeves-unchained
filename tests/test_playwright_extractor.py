@@ -376,7 +376,14 @@ def test_run_navigation_session_returns_failure_when_openrouter_missing(monkeypa
 def test_tavily_extract_uses_playwright_when_tavily_returns_empty_body(monkeypatch):
     """When Tavily returns fetch_failed for a URL, tavily_extract must call
     the Playwright fallback. Verify the wiring exists by patching the
-    fallback to a sentinel and checking it gets invoked."""
+    fallback to a sentinel and checking it gets invoked.
+
+    CRITICAL: must use ``monkeypatch.setattr`` / ``monkeypatch.setitem`` so
+    the patched ``tavily.TavilyClient`` is auto-restored after this test —
+    ``sys.modules["tavily"].TavilyClient = ...`` (direct mutation) leaks the
+    fake into subsequent tests in the suite (see sprint-13 CI failure where
+    test_tavily_extract_coerces_string_url_to_list saw the wrong fake).
+    """
     import json
     import sys
     import types
@@ -400,11 +407,11 @@ def test_tavily_extract_uses_playwright_when_tavily_returns_empty_body(monkeypat
             }
 
     if "tavily" not in sys.modules:
-        fake = types.ModuleType("tavily")
-        fake.TavilyClient = _FakeTavilyClient
-        sys.modules["tavily"] = fake
+        fake_mod = types.ModuleType("tavily")
+        fake_mod.TavilyClient = _FakeTavilyClient
+        monkeypatch.setitem(sys.modules, "tavily", fake_mod)
     else:
-        sys.modules["tavily"].TavilyClient = _FakeTavilyClient
+        monkeypatch.setattr("tavily.TavilyClient", _FakeTavilyClient, raising=False)
 
     monkeypatch.setattr(
         "jeeves.tools.tavily.TavilyClient",
