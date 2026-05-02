@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves — Research Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves — Correspondence Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves — Write Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves — Research Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves — Correspondence Phase.\n- [escalation] \"Anthropic, PBC\": Failed $16.61 payment to Anthropic; credit card charge unsuccessful.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline failed on second attempt.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline failed on first attempt.\n- [escalation] Google: Google security alert about Opal gaining access to Google Account.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline failed again.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline failed.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline failed.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline failed.\n- [escalation] mmmichaelllang: GitHub notification that the CI workflow for the newsletter v4 feature failed.",
+  "text": "- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Daily Pipeline on main branch.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for CI workflow on PR sprint 13 quality fixes.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Research Phase workflow on main branch.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Correspondence Phase workflow on main branch.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Write Phase workflow on main branch.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Research Phase workflow on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow for Jeeves Correspondence Phase failed on main branch.\n- [escalation] \"Anthropic, PBC\": Anthropic failed to charge your card $16.61; payment needs attention.\n- [escalation] mmmichaelllang: GitHub Actions workflow for Jeeves Daily Pipeline failed on second attempt.\n- [escalation] mmmichaelllang: GitHub Actions workflow for Jeeves Daily Pipeline failed on main branch.\n- [escalation] Google: Google security alert that Opal was granted access to your account.",
   "counts": {
     "reply_needed": 2,
     "decision_required": 0,
     "scheduling": 1,
     "follow_up": 0,
-    "escalation": 22,
-    "no_action": 25
+    "escalation": 23,
+    "no_action": 24
   }
 }
