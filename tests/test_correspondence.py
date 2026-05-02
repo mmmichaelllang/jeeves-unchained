@@ -253,6 +253,102 @@ def test_classify_with_kimi_empty_previews_short_circuits(monkeypatch):
     assert classify_with_kimi(cfg=None, previews=[], contacts={}) == []
 
 
+def test_classify_with_kimi_retries_on_429(monkeypatch):
+    """A 429/rate-limit on the first attempt must trigger sleep + retry,
+    not propagate as an unhandled exception. (Production crash 2026-05-02.)"""
+    from llama_index.core.base.llms.types import ChatMessage
+
+    from jeeves import correspondence as corr_mod
+    from jeeves import llm as llm_mod
+
+    sleeps: list[int] = []
+    monkeypatch.setattr(corr_mod.time, "sleep", lambda s: sleeps.append(s))
+
+    previews = [
+        MessagePreview(
+            thread_id="t0", message_id="m0",
+            sender="s@example.com", to="me", subject="subj",
+            date="Wed, 22 Apr 2026 13:42:00 -0700",
+            snippet="snip", body_text="bt", unread=False,
+        )
+    ]
+
+    class FakeResp:
+        def __init__(self, content: str):
+            self.message = type("M", (), {"content": content})()
+
+    call_count = {"n": 0}
+
+    class FlakyLLM:
+        def chat(self, messages: list[ChatMessage]):
+            call_count["n"] += 1
+            if call_count["n"] == 1:
+                raise RuntimeError("Error code: 429 - Too Many Requests")
+            rows = [
+                {"id": "m0", "classification": "no_action",
+                 "priority_contact": False, "summary": "ok",
+                 "suggested_action": ""}
+            ]
+            return FakeResp(json.dumps(rows))
+
+    monkeypatch.setattr(llm_mod, "build_kimi_llm", lambda *a, **kw: FlakyLLM())
+
+    out = classify_with_kimi(cfg=None, previews=previews, contacts={"household": []})
+
+    assert len(out) == 1
+    assert out[0].id == "m0"
+    rate_limit_sleeps = [s for s in sleeps if s >= 60]
+    assert rate_limit_sleeps, f"expected >=60s sleep on 429; got {sleeps}"
+    assert call_count["n"] == 2
+
+
+def test_classify_with_kimi_inter_batch_sleep(monkeypatch):
+    """Successful batches must be separated by a preemptive 15s sleep so NIM
+    doesn't 429 on later batches. Skip after the final batch."""
+    from llama_index.core.base.llms.types import ChatMessage
+
+    from jeeves import correspondence as corr_mod
+    from jeeves import llm as llm_mod
+
+    sleeps: list[int] = []
+    monkeypatch.setattr(corr_mod.time, "sleep", lambda s: sleeps.append(s))
+
+    previews = [
+        MessagePreview(
+            thread_id=f"t{i}", message_id=f"m{i}",
+            sender=f"s{i}@example.com", to="me", subject=f"subj {i}",
+            date="Wed, 22 Apr 2026 13:42:00 -0700",
+            snippet="snip", body_text="bt", unread=False,
+        )
+        for i in range(45)  # 3 batches of 15
+    ]
+
+    class FakeResp:
+        def __init__(self, content: str):
+            self.message = type("M", (), {"content": content})()
+
+    class FakeLLM:
+        def chat(self, messages: list[ChatMessage]):
+            payload = json.loads(messages[-1].content)
+            rows = [
+                {"id": m["id"], "classification": "no_action",
+                 "priority_contact": False, "summary": "ok",
+                 "suggested_action": ""}
+                for m in payload["messages"]
+            ]
+            return FakeResp(json.dumps(rows))
+
+    monkeypatch.setattr(llm_mod, "build_kimi_llm", lambda *a, **kw: FakeLLM())
+
+    out = classify_with_kimi(cfg=None, previews=previews, contacts={"household": []})
+
+    assert len(out) == 45
+    short_sleeps = [s for s in sleeps if s == 15]
+    assert len(short_sleeps) == 2, (
+        f"expected 2 inter-batch 15s sleeps for 3 batches; got {sleeps}"
+    )
+
+
 def test_gmail_decode_roundtrips():
     import base64
     encoded = base64.urlsafe_b64encode(b"hello world").decode().rstrip("=")
