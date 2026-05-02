@@ -32,6 +32,12 @@ def fetch_article_text(url: str) -> str:
     which yields Python repr with single quotes that NIM cannot parse.
 
     JSON shape: {url, title, text, fetch_failed, source}
+
+    Fallback chain:
+      1. httpx + trafilatura (this function's primary path)
+      2. headless Playwright + OpenRouter crystallizer (when both 1 yields
+         <300 chars text AND playwright is installed). Soft-fails to the
+         empty primary result if Playwright is unavailable.
     """
     base = {
         "url": url,
@@ -42,33 +48,57 @@ def fetch_article_text(url: str) -> str:
     }
     if not url:
         return json.dumps(base)
+
+    html = ""
+    primary_error = ""
     try:
         r = _HTTP_CLIENT.get(url)
         r.raise_for_status()
         html = r.text
     except Exception as e:
+        primary_error = str(e)
         log.info("fetch failed %s: %s", url, e)
-        base["text"] = f"fetch_error: {e}"
+        # html stays empty — trafilatura step skipped, go straight to playwright.
+
+    text = ""
+    if html:
+        try:
+            import trafilatura  # type: ignore
+
+            text = trafilatura.extract(
+                html,
+                include_comments=False,
+                include_tables=False,
+                favor_recall=True,
+            ) or ""
+        except Exception as e:
+            log.info("trafilatura failed %s: %s", url, e)
+            text = ""
+
+    if len(text) >= 300:
+        title = _extract_title(html)
+        base.update({"title": title, "text": text[:3000], "fetch_failed": False})
         return json.dumps(base)
 
+    # Playwright fallback — last resort when httpx returned nothing OR
+    # trafilatura couldn't extract enough body text.
     try:
-        import trafilatura  # type: ignore
+        from .playwright_extractor import extract_article as _pw_extract
 
-        text = trafilatura.extract(
-            html,
-            include_comments=False,
-            include_tables=False,
-            favor_recall=True,
-        ) or ""
+        pw_result = _pw_extract(url, timeout_seconds=30, max_chars=3000)
+        if pw_result.get("success"):
+            base.update({
+                "title": pw_result.get("title", ""),
+                "text": pw_result.get("text", "")[:3000],
+                "fetch_failed": False,
+                "extracted_via": "playwright",
+            })
+            return json.dumps(base)
     except Exception as e:
-        log.info("trafilatura failed %s: %s", url, e)
-        text = ""
+        log.debug("playwright fallback failed for %s: %s", url, e)
 
-    if len(text) < 300:
-        return json.dumps(base)
-
-    title = _extract_title(html)
-    base.update({"title": title, "text": text[:3000], "fetch_failed": False})
+    if primary_error:
+        base["text"] = f"fetch_error: {primary_error}"
     return json.dumps(base)
 
 

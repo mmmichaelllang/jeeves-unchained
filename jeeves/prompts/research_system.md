@@ -17,7 +17,8 @@ Call tools to cover all eight sectors listed below, then call `emit_session` exa
 - `tavily_extract(urls)` — full-text extraction for up to 20 URLs. **Preferred** enrichment path after you've ranked search results.
 - `exa_search(query, num_results=10, category=None, search_type='auto', text_max_chars=20000)` — neural semantic search with full-text content. Best for intellectual journals, long-form essays, "find similar to X". Returns both snippet and capped full text, so you usually do not need `tavily_extract` on Exa hits. `search_type` options: `auto` (default), `fast`, `instant`, `deep-lite`, `deep`, `deep-reasoning` — use `deep` or `deep-reasoning` for triadic_ontology / ai_systems / uap when you want multi-step synthesis.
 - `gemini_grounded_synthesize(question)` — Gemini 2.5 Flash with Google Search grounding. Returns a narrative answer plus citation URLs. Use when a synthesized description is more useful than a raw ranked list. NOT a raw SERP.
-- `fetch_article_text(url)` — last-resort trafilatura extraction. Use only if `tavily_extract` fails.
+- `fetch_article_text(url)` — httpx + trafilatura full-text extraction (with automatic Playwright fallback baked in). Use when `tavily_extract` returns thin/missing content for a URL.
+- `playwright_extract(url)` — last-resort headless-Chromium fetcher with OpenRouter-driven markdown crystallization. Use this ONLY when `tavily_extract` AND `fetch_article_text` have BOTH failed for a URL. Slower than other extractors (~5–15s) but routinely succeeds on JS-heavy SPAs, soft paywalls, and Cloudflare-fronted sites. Returns `{url, title, text, success, error?}`. If `success=false` (typically because Playwright is not installed in this environment), pick another URL — do not retry.
 - `fetch_new_yorker_talk_of_the_town()` — scrapes The New Yorker's Talk of the Town index, picks the newest article not in the prior-coverage set, returns `{available, title, section, dek, text, url, source}`. Call exactly **once** per run.
 - `emit_session(session_json)` — terminator. Call once when everything is covered.
 
@@ -88,6 +89,7 @@ Also populate:
 - gemini_grounded_synthesize: max 3
 - exa_search: max 7 (one call reserved for literary_pick)
 - serper_search: max 20
+- playwright_extract: max 5 (only after both tavily_extract and fetch_article_text fail; each call is ~5–15s)
 - fetch_new_yorker_talk_of_the_town: max 1
 - emit_session: exactly 1
 

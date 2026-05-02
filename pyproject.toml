@@ -35,6 +35,15 @@ dev = [
 vertex = [
     "google-cloud-aiplatform>=1.70",
 ]
+# Headless-browser fallback extractor for talk_of_the_town and
+# enriched_articles. Install with:
+#   uv sync --extra playwright
+#   python -m playwright install chromium
+# Optional — pipeline runs without it; the fallback path is silently skipped
+# when playwright is absent (callers fall through to wayback / archive.ph).
+playwright = [
+    "playwright>=1.40",
+]
 
 [tool.uv]
 package = true

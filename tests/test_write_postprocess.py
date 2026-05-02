@@ -890,6 +890,146 @@ def test_system_prompt_run_used_asides_excluded_for_no_aside_parts():
     assert "Pre-approved profane butler asides" not in prompt
 
 
+# ---------------------------------------------------------------------------
+# Sprint 12 quality fixes — within-run topic dedup + cap raise + PART8 + refine
+# ---------------------------------------------------------------------------
+
+def test_dedup_prompt_headlines_cap_is_250():
+    """Cap raised from 80 → 250 so the model sees full prior coverage."""
+    from jeeves.write import DEDUP_PROMPT_HEADLINES_CAP
+
+    assert DEDUP_PROMPT_HEADLINES_CAP == 250
+
+
+def test_trim_session_for_prompt_caps_at_250():
+    from jeeves.write import _trim_session_for_prompt
+
+    sess = SessionModel.model_validate({
+        "date": "2026-05-02",
+        "dedup": {
+            "covered_urls": ["https://x.com/a"] * 50,
+            "covered_headlines": [f"headline {i}" for i in range(400)],
+        },
+    })
+    trimmed = _trim_session_for_prompt(sess)
+    assert len(trimmed["dedup"]["covered_headlines"]) == 250
+    # covered_urls is dropped entirely (existing behaviour, unchanged)
+    assert "covered_urls" not in trimmed["dedup"]
+
+
+def test_extract_written_topics_captures_proper_nouns():
+    from jeeves.write import _extract_written_topics
+
+    html = (
+        "<p>The Department of Commerce announced new rules. "
+        "Senator Maria Cantwell objected.</p>"
+    )
+    topics = _extract_written_topics(html)
+    assert any("Department" in t for t in topics)
+    assert any("Maria Cantwell" in t or "Senator Maria" in t for t in topics)
+
+
+def test_extract_written_topics_captures_quoted_titles():
+    from jeeves.write import _extract_written_topics
+
+    html = '<p>The paper "Triadic Ontology and Relational Logic" appeared.</p>'
+    topics = _extract_written_topics(html)
+    assert any("Triadic Ontology" in t for t in topics)
+
+
+def test_extract_written_topics_filters_noise_and_short_words():
+    from jeeves.write import _extract_written_topics
+
+    html = "<p>Sir, Mister Lang, Jeeves, the.</p>"
+    topics = _extract_written_topics(html)
+    # Skip-list words must not appear as standalone topics
+    assert "Sir" not in topics
+    assert "Jeeves" not in topics
+
+
+def test_extract_written_topics_caps_at_40():
+    from jeeves.write import _extract_written_topics
+
+    # 60 distinct two-word capitalised pairs
+    html = " ".join(f"<p>Person Number{i:02d} appeared.</p>" for i in range(60))
+    topics = _extract_written_topics(html)
+    assert len(topics) <= 40
+
+
+def test_extract_written_topics_dedupes_repeats():
+    from jeeves.write import _extract_written_topics
+
+    html = (
+        "<p>Karl Alber published. Karl Alber appeared again. "
+        "Karl Alber returned.</p>"
+    )
+    topics = _extract_written_topics(html)
+    assert len([t for t in topics if t == "Karl Alber"]) == 1
+
+
+def test_system_prompt_injects_run_used_topics():
+    """run_used_topics builds an explicit avoid block in the part prompt."""
+    from jeeves.write import _system_prompt_for_parts
+
+    prompt = _system_prompt_for_parts(
+        run_used_topics=["Karl Alber", "Triadic Ontology", "Senator Maria Cantwell"],
+    )
+    assert "Topics already written" in prompt
+    assert "Karl Alber" in prompt
+    assert "Triadic Ontology" in prompt
+    assert "Senator Maria Cantwell" in prompt
+
+
+def test_system_prompt_run_used_topics_caps_at_40():
+    from jeeves.write import _system_prompt_for_parts
+
+    topics = [f"Topic{i:02d}" for i in range(80)]
+    prompt = _system_prompt_for_parts(run_used_topics=topics)
+    # Only first 40 are joined — the 41st should be absent.
+    assert "Topic39" in prompt
+    assert "Topic40" not in prompt
+
+
+def test_system_prompt_no_topics_block_when_empty():
+    from jeeves.write import _system_prompt_for_parts
+
+    prompt = _system_prompt_for_parts(run_used_topics=[])
+    assert "Topics already written" not in prompt
+
+
+def test_part8_instructions_have_self_test_and_forbidden_outputs():
+    """PART8 must spell out forbidden filler outputs and the 7-char self-test."""
+    from jeeves.write import PART8_INSTRUCTIONS
+
+    assert "SELF-TEST" in PART8_INSTRUCTIONS or "self-test" in PART8_INSTRUCTIONS.lower()
+    assert "FORBIDDEN OUTPUTS" in PART8_INSTRUCTIONS
+    assert "treasure trove" in PART8_INSTRUCTIONS
+    # The exact 7-char target must appear so the model can compare against it
+    assert "<p></p>" in PART8_INSTRUCTIONS
+
+
+def test_refine_system_includes_new_filler_phrases():
+    """NIM refine must catch the 12 new filler phrases identified in sprint 12."""
+    from jeeves.write import _REFINE_SYSTEM
+
+    new_phrases = [
+        "This development is a positive step",
+        "This is a fascinating contribution",
+        "I must attend to the rest of the briefing",
+        "It will be interesting to see",
+        "It will be worth monitoring",
+        "It will be worth tracking",
+        "This raises important questions about",
+        "This highlights the complexities of",
+        "demonstrates the city's commitment to",
+        "represents a significant step forward",
+        "The variety of positions available is quite impressive",
+        "I shall continue to monitor the situation",
+    ]
+    for phrase in new_phrases:
+        assert phrase in _REFINE_SYSTEM, f"missing banned phrase: {phrase}"
+
+
 def test_part_plan_has_nine_slots_covering_all_session_fields():
     from jeeves.schema import SessionModel
     from jeeves.write import PART_PLAN

@@ -97,8 +97,24 @@ def all_search_tools(
             fn=fetch_article_text,
             name="fetch_article_text",
             description=(
-                "Last-resort full-text fetcher (trafilatura). Use when Tavily extract "
-                "fails. Args: url (str). Returns {url, title, text, fetch_failed}."
+                "Full-text fetcher (httpx + trafilatura, with automatic Playwright "
+                "fallback when both fail). Use when Tavily extract returns thin or "
+                "missing content for a URL. Args: url (str). Returns "
+                "{url, title, text, fetch_failed}."
+            ),
+        ),
+        FunctionTool.from_defaults(
+            fn=_make_playwright_extract_tool(ledger),
+            name="playwright_extract",
+            description=(
+                "Last-resort full-text fetcher: headless Chromium (Playwright) + "
+                "OpenRouter free-model markdown crystallizer. Use this ONLY when "
+                "tavily_extract AND fetch_article_text have both failed for a URL "
+                "(common on JS-heavy SPAs, soft paywalls, or Cloudflare-fronted "
+                "sites). Slower than other extractors (~5-15s). Args: url (str). "
+                "Returns JSON string with {url, title, text, success, error?}. "
+                "Returns success=false if playwright is not installed in this "
+                "environment — soft-fail; pick another URL in that case."
             ),
         ),
         FunctionTool.from_defaults(
@@ -112,3 +128,41 @@ def all_search_tools(
         ),
     ]
     return tools
+
+
+def _make_playwright_extract_tool(ledger: "QuotaLedger"):
+    """Build a Playwright extractor tool that records quota usage.
+
+    Records a "playwright" quota entry per call so the research_sectors quota
+    guard recognises a Playwright-only sector as having performed real work
+    (and therefore not a hallucinated empty default).
+    """
+    def _playwright_extract_tool(url: str) -> str:
+        """FunctionTool wrapper around playwright_extractor.extract_article.
+
+        Returns a JSON string so LlamaIndex's _parse_tool_output() produces a
+        valid JSON TextBlock in the NIM context (matching the contract enforced
+        on every other tool — see notes in research_sectors.py).
+        """
+        import json as _json
+
+        try:
+            from .playwright_extractor import extract_article
+
+            result = extract_article(url, timeout_seconds=30, max_chars=4000)
+        except Exception as e:
+            return _json.dumps({
+                "url": url,
+                "success": False,
+                "title": "",
+                "text": "",
+                "error": f"playwright extractor crashed: {e}",
+            })
+
+        try:
+            ledger.record("playwright", 1)
+        except Exception:
+            pass
+        return _json.dumps(result)
+
+    return _playwright_extract_tool

@@ -16,6 +16,10 @@ class Dedup(BaseModel):
     model_config = ConfigDict(extra="allow")
     covered_urls: list[str] = Field(default_factory=list)
     covered_headlines: list[str] = Field(default_factory=list)
+    # URLs that surfaced in 2+ research sectors (e.g. a ProPublica piece in
+    # both global_news and enriched_articles). Write phase uses these to
+    # synthesise once rather than narrate the same story across 3 sections.
+    cross_sector_dupes: list[str] = Field(default_factory=list)
 
 
 class Correspondence(BaseModel):

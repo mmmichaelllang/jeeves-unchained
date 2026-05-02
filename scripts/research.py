@@ -32,6 +32,7 @@ from jeeves.dedup import covered_headlines as get_covered_headlines  # noqa: E40
 from jeeves.dedup import covered_urls  # noqa: E402
 from jeeves.research_sectors import (  # noqa: E402
     SECTOR_SPECS,
+    _find_cross_sector_dupes,
     collect_headlines_from_sector,
     collect_urls_from_sector,
     extract_correspondence_references,
@@ -251,11 +252,20 @@ async def _run_sector_loop(
         session.setdefault(spec.name, spec.default)
 
     session["dedup"]["covered_urls"] = sorted(set(discovered_urls))
-    # Today's discoveries first so write-phase [:80] always captures fresh content;
+    # Today's discoveries first so write-phase [:N] always captures fresh content;
     # prior-session headlines at the tail for cross-day context.
     today_hl = list(dict.fromkeys(discovered_headlines))  # dedupe, preserve order
     prior_hl_list = sorted(prior_headlines - set(today_hl))
     session["dedup"]["covered_headlines"] = today_hl + prior_hl_list
+
+    # Cross-sector URL collisions — same article landing in 2+ sectors.
+    # Surfaced to the write phase so the same story isn't narrated multiple
+    # times under different section headers.
+    cross_dupes = _find_cross_sector_dupes(session)
+    if cross_dupes:
+        log.info("cross-sector duplicate URLs found: %d", len(cross_dupes))
+    session["dedup"]["cross_sector_dupes"] = cross_dupes
+
     ctx.session = session
 
 
