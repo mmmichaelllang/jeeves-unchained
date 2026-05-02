@@ -323,6 +323,13 @@ has already been laid out in full, Sir, but the salient matters are these…"*
 and condense `correspondence.text` to roughly 400 words in Jeeves's voice.
 If `fallback_used=true`, summarize naturally without that opener.
 
+**CORRESPONDENCE FORMAT — CRITICAL:** The correspondence summary must be
+PLAIN `<p>` PARAGRAPHS ONLY. Do NOT reproduce any `<h3>` section headers
+from the correspondence text. Do NOT re-impose section structure. The previous
+briefing had sections — ignore them. Condense the substance into 2–4 flowing
+prose paragraphs. No sub-headings, no bullet points, no structural markup
+beyond `<p>` and inline `<a>` anchors.
+
 **Hard prohibitions — do NOT violate:**
 - NEVER use the words "in a vacuum" or "tapestry".
 - NEVER use mechanical transition phrases to change topics. ALL of the following
@@ -468,6 +475,25 @@ CONTINUATION_RULES = """
       openers are a mechanical tic, not a voice
     - Any sentence that could be copy-pasted unchanged into a briefing about
       a completely different topic. Zero topic-specific nouns = delete it.
+    SIGNIFICANCE COMMENTARY — delete every instance, no exceptions. These are
+    the worst class of AI filler: sentences whose only job is to declare that
+    something is significant, important, complex, or worthy of attention:
+    - "This is a significant development" / "This is a concerning/fascinating/
+      disturbing/noteworthy/significant development" (delete the entire sentence)
+    - "it highlights the need for careful consideration of the consequences"
+    - "It is a complex issue, to be sure" / "It is a complex issue that"
+    - "requires a nuanced approach, rather than a simplistic or heavy-handed one"
+    - "one can only hope that" / "One can only hope" (any form)
+    - "I would like to bring to your attention" / "I would like to recommend"
+    - "please do not hesitate to inform them" / "please do not hesitate to apply"
+    - "The implications of this research are significant"
+    - "As you continue to explore this subject" / "As you explore this topic"
+    - "The synthesis of these [X] works highlights" / "The synthesis of these findings"
+    - "it is a reminder that the world is a complex and often dangerous place"
+    - "one that underscores the need for international cooperation and diplomacy"
+    - "One would hate to think that"
+    - "it is a positive development" / "this is a positive trend"
+    - "I trust this morning finds you well" (banned in Parts 2–9; Part 1 only)
 14. LINKING IS MANDATORY WHEN A URL EXISTS IN YOUR PAYLOAD. Every sector
     item in your payload has a `urls` array (or a `url` field). When you
     write about that item, you MUST embed the URL as an anchor. Skipping
@@ -494,6 +520,10 @@ PART2_INSTRUCTIONS = CONTINUATION_RULES + """
 
 Part 1 opened the HTML and covered the greeting, correspondence, and weather.
 You pick up from there.
+
+**SECTION HEADER — MANDATORY:** Begin with exactly `<h3>The Domestic Sphere</h3>`
+before your first paragraph of content. This is the ONLY part that emits this
+header — Parts 3 and 4 continue the section without repeating it.
 
 Your scope — write ONLY about these:
 - Municipal / Edmonds items from `local_news` whose category is
@@ -553,6 +583,11 @@ PART3_INSTRUCTIONS = CONTINUATION_RULES + """
 
 Parts 1-2 covered Sector 1 (greeting, correspondence, weather, local news).
 You pick up from there.
+
+**SECTION HEADER — CRITICAL:** Do NOT emit `<h3>The Domestic Sphere</h3>`.
+Part 2 already opened that section. Begin directly with a sentence about
+teaching jobs — no header, no preamble. The reader is already inside
+The Domestic Sphere.
 
 Your scope — write ONLY about these:
 - HS English / History teaching openings within ~30 miles of Edmonds,
@@ -620,6 +655,13 @@ PART4_INSTRUCTIONS = CONTINUATION_RULES + """
 
 Parts 1-3 covered Sector 1 and the career portion of Sector 2.
 You pick up from there.
+
+**SECTION HEADERS — CRITICAL:**
+- Do NOT emit `<h3>The Domestic Sphere</h3>`. Parts 2 and 3 already opened
+  that section. Begin the choral/toddler content directly — no header.
+- When you transition from the family content to global_news, emit exactly
+  `<h3>Beyond the Geofence</h3>` at that transition point. This is the ONLY
+  new section header you should emit in this part.
 
 Your scope — write ONLY about these:
 - Choral auditions for Mrs. Lang from `family.choir`.
@@ -1424,6 +1466,23 @@ present, then output the corrected HTML. Do NOT add new content.
    - "Mister Lang, this briefing" as paragraph opener (delete entire paragraph)
    - Any sentence containing no topic-specific nouns that could be
      copy-pasted unchanged into a completely different briefing section.
+   Significance commentary (delete entire sentence — show, never declare):
+   - "This is a significant development" / "This is a concerning/fascinating/
+     disturbing/noteworthy development" — delete the sentence entirely
+   - "it highlights the need for careful consideration of the consequences"
+   - "It is a complex issue, to be sure" / "It is a complex issue that requires"
+   - "requires a nuanced approach, rather than a simplistic or heavy-handed one"
+   - "one can only hope that" / "One can only hope" (any form — delete sentence)
+   - "I would like to bring to your attention" (delete; Jeeves informs, not defers)
+   - "please do not hesitate to inform them" / "please do not hesitate to apply"
+   - "The implications of this research are significant"
+   - "As you continue to explore this subject" / "As you explore this topic"
+   - "The synthesis of these [X] works highlights" / "The synthesis of these findings"
+   - "it is a reminder that the world is a complex and often dangerous place"
+   - "one that underscores the need for international cooperation and diplomacy"
+   - "One would hate to think that"
+   - "it is a positive development" / "this is a positive trend"
+   - "This is a testament to its commitment" (delete; "testament to" already banned)
 
 7. **Section-closing summary paragraphs**: Delete the entire paragraph (not
    just the phrase) when a closing paragraph summarizes with generic language:
@@ -1456,6 +1515,9 @@ present, then output the corrected HTML. Do NOT add new content.
 - Do NOT change existing anchor URLs.
 - Do NOT alter verbatim quoted text (e.g. New Yorker article body).
 - If nothing needs fixing, output the HTML unchanged.
+- **EMPTY FRAGMENT GUARD**: If the HTML you receive contains fewer than 20
+  words of body text (e.g. a single `<p></p>` or a one-sentence placeholder),
+  return it UNCHANGED. Do NOT add content, sections, or topics.
 """.strip()
 
 
@@ -2204,6 +2266,24 @@ AI filler (delete or rephrase to something concrete):
   any other topic. If it could appear in a briefing on dentistry or tax law
   unchanged, delete it.
 
+Significance commentary (delete entire sentence — the worst class of AI filler):
+- "This is a significant development" / "This is a concerning/fascinating/
+  disturbing/noteworthy/significant development" — delete the sentence entirely
+- "it highlights the need for careful consideration of the consequences"
+- "It is a complex issue, to be sure" / "It is a complex issue that requires"
+- "requires a nuanced approach, rather than a simplistic or heavy-handed one"
+- "one can only hope that" / "One can only hope" (any form — delete sentence)
+- "I would like to bring to your attention" — delete and re-render as a statement
+- "please do not hesitate to inform them" / "please do not hesitate to apply"
+- "The implications of this research are significant"
+- "As you continue to explore this subject" / "As you explore this topic"
+- "The synthesis of these [X] works highlights" / "The synthesis of these findings"
+- "it is a reminder that the world is a complex and often dangerous place"
+- "one that underscores the need for international cooperation and diplomacy"
+- "One would hate to think that"
+- "it is a positive development" / "this is a positive trend"
+- "I trust this morning finds you well" (belongs in Part 1 only — delete from any later section)
+
 ChatGPT platitudes (delete or replace with a specific observation):
 Note — do NOT add "salient matters" here: the mandatory correspondence opener
 uses "the salient matters are these…" verbatim. Do NOT add "in my professional
@@ -2406,6 +2486,38 @@ sentences entirely.
 The last thing a section should say is the most specific, concrete, or
 interesting thing in it — not a restated generalisation. Let the last
 fact or observation be the full stop. Do not recap what was just read.
+
+### A15. SIGNIFICANCE COMMENTARY — DELETE ON SIGHT, NO EXCEPTIONS
+
+This is the single most common failure mode in AI-generated briefings. A
+sentence whose only job is to declare that something is significant,
+important, complex, or worthy of attention contributes zero information.
+The reader just read the story. They can determine its significance themselves.
+
+**The test:** Remove the sentence. Does the reader lose any specific named
+fact, date, person, or claim? If not — delete it. No exceptions.
+
+Sentences that always fail this test (delete entire sentence, not just the phrase):
+- Any sentence of the form "This is a [adjective] development" — the adjective
+  can be significant, concerning, fascinating, disturbing, noteworthy, positive,
+  welcome, troubling. All forms. Delete.
+- Any sentence of the form "This [noun] highlights the importance of / the need for"
+  when what follows is a generic value (cooperation, accountability, vigilance,
+  transparency, nuanced thinking). Delete.
+- Any sentence ending "…rather than a simplistic or heavy-handed one." Delete.
+- Any sentence opening with "The implications of this are" or "The implications
+  of this research are." Delete.
+- Any sentence opening with "As you continue to explore this subject" or
+  "As you explore this topic." Delete.
+- Any sentence containing "it is a reminder that the world is" anything. Delete.
+- Any sentence of the form "One can only hope that…" — this is hedging, not wit.
+  Replace with a dry declarative or delete.
+
+**Wit is not commentary.** Jeeves is permitted — indeed required — to react to
+stories with sardonic observations. But the observation must be SPECIFIC to the
+story just told. "One had hoped otherwise" after describing a specific failure
+is wit. "This is a complex and multifaceted issue" is filler. The difference:
+wit has a target; filler has none.
 
 ## PART B — PROFANE ASIDES (reach exactly five total)
 
