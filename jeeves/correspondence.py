@@ -109,18 +109,37 @@ def classify_with_kimi(
             ChatMessage(role=MessageRole.USER, content=user),
         ]
         raw = ""
-        for attempt in range(3):
+        # Retry schedule:
+        #   timeout/network → 30s, 60s
+        #   429 / rate-limit / TPM → 60s, 120s, 240s (NIM free tier needs ≥60s
+        #     for the rolling rate-limit window to clear)
+        # Both share the same 4-attempt envelope; the sleep length is chosen
+        # by which class of error fired.
+        _RATE_LIMIT_SLEEPS = (60, 120, 240)
+        _TIMEOUT_SLEEPS = (30, 60, 90)
+        max_attempts = 4
+        for attempt in range(max_attempts):
             try:
                 resp = llm.chat(messages)
                 raw = str(resp.message.content or "").strip()
                 break
             except Exception as exc:
                 exc_str = str(exc).lower()
-                if attempt < 2 and ("timeout" in exc_str or "timed out" in exc_str):
-                    sleep_s = 30 * (attempt + 1)
+                is_rate_limit = (
+                    "429" in exc_str
+                    or "too many requests" in exc_str
+                    or "rate limit" in exc_str
+                    or "ratelimit" in exc_str
+                )
+                is_timeout = "timeout" in exc_str or "timed out" in exc_str
+                if attempt < max_attempts - 1 and (is_rate_limit or is_timeout):
+                    schedule = _RATE_LIMIT_SLEEPS if is_rate_limit else _TIMEOUT_SLEEPS
+                    sleep_s = schedule[min(attempt, len(schedule) - 1)]
+                    kind = "rate-limit" if is_rate_limit else "timeout"
                     log.warning(
-                        "classify batch %d/%d timeout (attempt %d/3) — sleeping %ds: %s",
-                        batch_num, n_batches, attempt + 1, sleep_s, exc,
+                        "classify batch %d/%d %s (attempt %d/%d) — sleeping %ds: %s",
+                        batch_num, n_batches, kind,
+                        attempt + 1, max_attempts, sleep_s, exc,
                     )
                     time.sleep(sleep_s)
                     continue
@@ -146,6 +165,18 @@ def classify_with_kimi(
                     date=preview.date if preview else "",
                 )
             )
+
+        # Preemptive inter-batch sleep — NIM free tier's rolling rate-limit
+        # window is ~60s. Three back-to-back classify calls each take ~55s,
+        # which is right at the boundary; the 4th call routinely 429s without
+        # a buffer. Skip the sleep after the final batch.
+        if batch_num < n_batches:
+            log.info(
+                "classify batch %d/%d done — sleeping 15s before next batch "
+                "(NIM rate-limit guard)",
+                batch_num, n_batches,
+            )
+            time.sleep(15)
     return out
 
 
