@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Write Phase\" failed in the jeeves-memory repo.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Research Phase\" failed in the jeeves-memory repo.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Correspondence Phase\" failed in the jeeves-memory repo.\n- [escalation] \"Anthropic, PBC\": Anthropic failed to charge $16.61 to the provided credit card.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Daily Pipeline\" failed on second attempt in the jeeves-unchained repo.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Daily Pipeline\" failed in the jeeves-unchained repo.\n- [escalation] Google: Google security alert that Opal was granted access to the Google Account.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Daily Pipeline\" failed in the jeeves-unchained repo.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline for jeeves-unchained failed again.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline for jeeves-unchained failed again.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline for jeeves-unchained failed again.\n- [escalation] mmmichaelllang: GitHub Actions CI failed on newsletter v4 PR.",
+  "counts": {
+    "reply_needed": 2,
+    "decision_required": 0,
+    "scheduling": 1,
+    "follow_up": 0,
+    "escalation": 21,
+    "no_action": 26
+  }
+}
