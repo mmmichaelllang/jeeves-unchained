@@ -719,3 +719,137 @@ def test_tavily_extract_coerces_string_url_to_list(monkeypatch):
     assert captured[0] == ["https://example.com/article"], (
         f"Expected list with full URL, got: {captured[0]}"
     )
+
+
+# ---------------------------------------------------------------------------
+# Sprint 12 quality fixes — headline extraction quality + cross-sector dedup
+# ---------------------------------------------------------------------------
+
+def test_first_sentence_default_is_250_chars():
+    """_first_sentence default cap raised from 150 → 250 chars so titles
+    aren't truncated mid-phrase before the dedup match runs."""
+    from jeeves.research_sectors import _first_sentence
+
+    long_text = "a" * 300
+    out = _first_sentence(long_text)
+    # No sentence terminator, so it falls back to the max_chars truncation.
+    assert len(out) == 250
+
+
+def test_first_sentence_respects_terminator_within_window():
+    from jeeves.research_sectors import _first_sentence
+
+    text = "Short headline. Long second sentence padding."
+    out = _first_sentence(text)
+    assert out == "Short headline."
+
+
+def test_first_two_sentences_extracts_both_when_present():
+    """Two-sentence extraction captures the title sentence + the
+    distinguishing detail sentence for cross-day dedup matching."""
+    from jeeves.research_sectors import _first_two_sentences
+
+    text = (
+        "AI policy update. The Department of Commerce released new export "
+        "restrictions on advanced GPUs."
+    )
+    out = _first_two_sentences(text)
+    assert "AI policy update." in out
+    assert "Department of Commerce" in out
+
+
+def test_first_two_sentences_falls_back_to_one_when_second_overflows():
+    from jeeves.research_sectors import _first_two_sentences
+
+    text = "First sentence. " + ("X" * 400) + "."
+    out = _first_two_sentences(text, max_chars=300)
+    assert out == "First sentence."
+
+
+def test_first_two_sentences_returns_truncation_when_no_terminator():
+    from jeeves.research_sectors import _first_two_sentences
+
+    text = "no terminator at all in this entire string of text"
+    out = _first_two_sentences(text, max_chars=20)
+    assert out == "no terminator at all"
+
+
+def test_collect_headlines_extracts_two_sentences_for_findings_like_keys():
+    """Family-style nested findings (choir/toddler) should now produce a
+    two-sentence label so cross-day matching catches the title+detail pair."""
+    from jeeves.research_sectors import collect_headlines_from_sector
+
+    value = {
+        "toddler": (
+            "Lynnwood library storytime. Baby Storytime Thursdays 10:30am "
+            "in the children's wing."
+        ),
+        "urls": [],
+    }
+    out = collect_headlines_from_sector(value)
+    assert any(
+        "Lynnwood library storytime." in h and "Baby Storytime" in h
+        for h in out
+    ), f"two-sentence label missing: {out}"
+
+
+def test_find_cross_sector_dupes_identifies_repeated_urls():
+    from jeeves.research_sectors import _find_cross_sector_dupes
+
+    session = {
+        "global_news": [
+            {"source": "BBC", "urls": ["https://propublica.org/x"]},
+        ],
+        "intellectual_journals": [
+            {"source": "ProPublica", "urls": ["https://propublica.org/x"]},
+        ],
+        "enriched_articles": [
+            {"url": "https://propublica.org/x", "urls": ["https://propublica.org/x"]},
+        ],
+        "wearable_ai": [],
+        "local_news": [],
+    }
+    dupes = _find_cross_sector_dupes(session)
+    assert "https://propublica.org/x" in dupes
+    assert len(dupes) == 1
+
+
+def test_find_cross_sector_dupes_ignores_single_sector_urls():
+    from jeeves.research_sectors import _find_cross_sector_dupes
+
+    session = {
+        "global_news": [{"source": "BBC", "urls": ["https://bbc.com/a"]}],
+        "intellectual_journals": [
+            {"source": "Aeon", "urls": ["https://aeon.co/b"]},
+        ],
+        "wearable_ai": [],
+        "local_news": [],
+        "enriched_articles": [],
+    }
+    assert _find_cross_sector_dupes(session) == []
+
+
+def test_find_cross_sector_dupes_handles_missing_or_malformed_fields():
+    from jeeves.research_sectors import _find_cross_sector_dupes
+
+    session = {
+        "global_news": "not a list",
+        "intellectual_journals": [None, "string item", {"urls": "not a list"}],
+        # No other fields present
+    }
+    # Should not crash, should return empty list
+    assert _find_cross_sector_dupes(session) == []
+
+
+def test_dedup_schema_has_cross_sector_dupes_field():
+    """Dedup model must expose cross_sector_dupes for the write phase."""
+    from jeeves.schema import Dedup
+
+    d = Dedup(
+        covered_urls=[],
+        covered_headlines=[],
+        cross_sector_dupes=["https://example.com/a"],
+    )
+    assert d.cross_sector_dupes == ["https://example.com/a"]
+    # Default is empty list
+    assert Dedup().cross_sector_dupes == []

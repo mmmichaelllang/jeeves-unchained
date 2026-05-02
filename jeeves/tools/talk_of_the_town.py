@@ -431,6 +431,25 @@ def _try_direct(url: str, jina_api_key: str, base: dict) -> bool:
         base["archived_from"] = ""
         return True
 
+    # Last resort: headless Playwright + OpenRouter free-model crystallizer.
+    # Triggers when ld+json, Jina, AND raw <p> extraction all came back short.
+    # Fail-soft: if playwright is not installed or any path errors, returns
+    # success=False and we fall through to wayback / archive.ph.
+    try:
+        from .playwright_extractor import extract_article as _pw_extract
+
+        pw_result = _pw_extract(url, timeout_seconds=30, max_chars=12000)
+        if pw_result.get("success") and len(pw_result.get("text", "")) > 500:
+            if not base.get("title") and pw_result.get("title"):
+                base["title"] = pw_result["title"]
+            base["text"] = pw_result["text"]
+            base["available"] = True
+            base["archived_from"] = "playwright"
+            log.info("TOTT: text retrieved via playwright fallback for %s", url)
+            return True
+    except Exception as e:
+        log.debug("playwright fallback failed for %s: %s", url, e)
+
     return False
 
 

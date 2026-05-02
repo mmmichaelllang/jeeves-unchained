@@ -109,7 +109,14 @@ jobs:
           version: "0.8.17"
 
       - name: Sync dependencies
-        run: uv sync --no-dev --extra vertex
+        run: uv sync --no-dev --extra vertex --extra playwright
+
+      - name: Install Playwright Chromium
+        # Universal article-fetch fallback (jeeves/tools/playwright_extractor.py).
+        # Used by talk_of_the_town, enrichment, tavily_extract, and the
+        # `playwright_extract` agent tool. Soft-fails when absent, but in
+        # production we want it present so the fallback path can fire.
+        run: uv run python -m playwright install --with-deps chromium
 
       - name: Run research phase
         env:
@@ -122,6 +129,7 @@ jobs:
           GOOGLE_CLOUD_REGION: ${{ secrets.GOOGLE_CLOUD_REGION || 'us-central1' }}
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
           JINA_API_KEY: ${{ secrets.JINA_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF_NAME: ${{ github.ref_name }}

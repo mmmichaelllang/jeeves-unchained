@@ -138,7 +138,7 @@ def load_write_system_prompt() -> str:
     return WRITE_PROMPT_PATH.read_text(encoding="utf-8")
 
 
-DEDUP_PROMPT_HEADLINES_CAP = 80
+DEDUP_PROMPT_HEADLINES_CAP = 250
 
 
 def _trim_session_for_prompt(session: SessionModel) -> dict[str, Any]:
@@ -1046,9 +1046,28 @@ Reference with *"Drawn from your notes on [topic]…"* — never expose
 
 Then the sentinel. That is the entire output for this case.
 
-Do NOT write "I had hoped to find some solace in the library stacks."
-Do NOT write "the vault insight is entirely empty" — "vault insight" and
-"vault_insight" are internal field names; Jeeves does not know them.
+**SELF-TEST before emitting:** count the characters between the START of
+your output and `<!-- PART8 END -->`. The answer must be exactly 7
+(`<p></p>` = 7 chars). If it is more, you have violated scope and must
+delete everything except `<p></p>`.
+
+**FORBIDDEN OUTPUTS when `vault_insight.available !== true`** — every one
+of these is a scope violation, regardless of how natural it feels:
+- "The library's collection is a treasure trove..."
+- "The library's commitment to providing..."
+- "The library is a treasure trove of knowledge"
+- "I have been browsing..." (only allowed when `available === true`)
+- "I had hoped to find some solace in the library stacks"
+- "the vault insight is entirely empty" (`vault_insight` is an internal
+  field name; Jeeves does not know it)
+- ANY mention of books, collections, knowledge, resources, learning,
+  the library, the stacks, browsing, reading, study, or research as
+  filler in lieu of a real insight
+- ANY pivot to another topic (weather, journals, AI, news — Part 8 owns
+  Library Stacks ONLY)
+- ANY explanation that vault insight is unavailable
+- ANY apology, hedging, or reassurance
+
 Do NOT explain the absence. Do NOT apologise. Do NOT pivot to any other
 topic. Do NOT mention The New Yorker, the weather, or anything else.
 ONE empty paragraph tag. Sentinel. Done.
@@ -1483,6 +1502,17 @@ present, then output the corrected HTML. Do NOT add new content.
    - "One would hate to think that"
    - "it is a positive development" / "this is a positive trend"
    - "This is a testament to its commitment" (delete; "testament to" already banned)
+   - "This development is a positive step" (delete entire sentence)
+   - "This is a fascinating contribution" (delete entire sentence)
+   - "I must attend to the rest of the briefing" (delete; meta-narration)
+   - "It will be interesting to see" / "It will be worth monitoring" (delete)
+   - "It will be worth tracking" (delete)
+   - "This raises important questions about" (delete entire sentence)
+   - "This highlights the complexities of" (delete entire sentence)
+   - "demonstrates the city's commitment to" (delete; civic-PR voice)
+   - "represents a significant step forward" (delete entire sentence)
+   - "The variety of positions available is quite impressive" (delete)
+   - "I shall continue to monitor the situation" (delete; meta-narration)
 
 7. **Section-closing summary paragraphs**: Delete the entire paragraph (not
    just the phrase) when a closing paragraph summarizes with generic language:
@@ -2913,6 +2943,53 @@ def _recently_used_asides(cfg: Config, days: int = ASIDES_RECENT_WINDOW_DAYS) ->
     return used
 
 
+# Topic extraction noise — common short words that survive the regex but
+# carry no dedup signal. Lowercase comparison.
+_TOPIC_SKIP = frozenset({
+    "sir", "jeeves", "mister", "lang", "the", "and", "or", "of", "a",
+    "mister lang", "good morning", "talk of the town", "library stacks",
+    "new yorker", "the new yorker",
+})
+
+
+def _extract_written_topics(text: str) -> list[str]:
+    """Extract ~30 recognizable topic slugs from a rendered HTML draft.
+
+    Used to build within-run topic coverage so subsequent parts don't repeat
+    the same story. Targets:
+      - quoted titles (book/article/paper names)
+      - capitalized proper-noun sequences (people, places, organisations)
+      - named acts / laws / amendments / bills
+    Returns the original-cased phrases, deduped, capped at 40.
+    """
+    import re as _re
+
+    plain = _re.sub(r"<[^>]+>", " ", text)
+    titles = _re.findall(r'"([^"]{5,80})"', plain)
+    proper = _re.findall(
+        r'\b([A-Z][a-z]{1,}(?:\s[A-Z][a-z]{1,}){1,3})\b', plain
+    )
+    acts = _re.findall(
+        r'\b([A-Z][A-Za-z\s]{3,40}(?:Act|Bill|Amendment|Law|Resolution))\b',
+        plain,
+    )
+    combined = titles + proper + acts
+    seen: set[str] = set()
+    out: list[str] = []
+    for t in combined:
+        cleaned = t.strip()
+        slug = cleaned.lower()
+        if slug in _TOPIC_SKIP or len(slug) < 5:
+            continue
+        if slug in seen:
+            continue
+        seen.add(slug)
+        out.append(cleaned)
+        if len(out) >= 40:
+            break
+    return out
+
+
 # Parts that do NOT generate profane asides in their output (pass-through
 # transport parts). For these we strip the ~3000-char asides pool + the
 # Horrific Slips directive from the base system prompt — those rules don't
@@ -2925,6 +3002,7 @@ def _system_prompt_for_parts(
     cfg: Config | None = None,
     part_label: str | None = None,
     run_used_asides: list[str] | None = None,
+    run_used_topics: list[str] | None = None,
 ) -> str:
     """Build a per-call system prompt.
 
@@ -2998,6 +3076,19 @@ def _system_prompt_for_parts(
                 f"{avoid_line}\n"
             )
 
+    if run_used_topics:
+        topic_str = "; ".join(run_used_topics[:40])
+        base = base.rstrip() + (
+            "\n\n### Topics already written in earlier parts of today's briefing\n\n"
+            "The following topics, titles, and named entities have ALREADY been "
+            "covered in earlier parts of today's briefing. Do NOT re-explain or "
+            "re-summarise them. If a payload item references one of these, write "
+            "ONE short sentence acknowledging the prior coverage and pivot to a "
+            "genuinely new angle, OR omit it entirely. No paragraph in this part "
+            "should re-narrate any of these:\n\n"
+            f"{topic_str}\n"
+        )
+
     return base.rstrip() + "\n"
 
 
@@ -3030,6 +3121,7 @@ def generate_briefing(
     payload = _trim_session_for_prompt(session)
     aside_pool = _parse_all_asides()
     used_this_run: list[str] = []
+    used_topics_this_run: list[str] = []
 
     raw_drafts: dict[str, str] = {}
     refined: dict[str, str] = {}
@@ -3064,7 +3156,10 @@ def generate_briefing(
             ny.pop("text", None)
             part_payload = {**part_payload, "newyorker": ny}
         base_system = _system_prompt_for_parts(
-            cfg, part_label=label, run_used_asides=used_this_run
+            cfg,
+            part_label=label,
+            run_used_asides=used_this_run,
+            run_used_topics=used_topics_this_run,
         )
         part_system = base_system + PART_INSTRUCTIONS_BY_NAME[label]
         part_user = build_user_prompt_from_payload(part_payload)
@@ -3093,6 +3188,15 @@ def generate_briefing(
             for phrase in aside_pool:
                 if phrase in raw_part and phrase not in used_this_run:
                     used_this_run.append(phrase)
+
+        # Track topics for within-run dedup so subsequent parts don't repeat.
+        # Skip Part 9 (verbatim New Yorker text — every proper noun in the
+        # article would inflate used_topics with article-internal entities).
+        if label not in _NO_ASIDE_PARTS:
+            topics = _extract_written_topics(raw_part)
+            for t in topics:
+                if t not in used_topics_this_run:
+                    used_topics_this_run.append(t)
 
         # Fire-and-forget NIM refine; runs during the next 65s Groq sleep.
         t = threading.Thread(target=_refine_bg, args=(label, raw_part), daemon=True)

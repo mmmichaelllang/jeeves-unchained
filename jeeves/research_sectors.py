@@ -1129,11 +1129,13 @@ _HEADLINE_KEYS = {"title", "headline", "subject", "role", "event", "district"}
 _FINDINGS_LIKE_KEYS = {"findings", "choir", "toddler"}
 
 
-def _first_sentence(text: str, max_chars: int = 150) -> str:
+def _first_sentence(text: str, max_chars: int = 250) -> str:
     """Extract a short dedup-usable label from a findings string.
 
     Slices at the first sentence-ending punctuation that lands within
     max_chars, or truncates at max_chars if no such punctuation exists.
+    Default raised from 150 → 250 so titles/headlines aren't truncated
+    mid-phrase, which previously broke cross-sector matching.
     """
     text = text.strip()
     for end in (".", "!", "?", ";"):
@@ -1141,6 +1143,36 @@ def _first_sentence(text: str, max_chars: int = 150) -> str:
         if 0 < i < max_chars:
             return text[: i + 1].strip()
     return text[:max_chars].strip()
+
+
+def _first_two_sentences(text: str, max_chars: int = 300) -> str:
+    """Extract up to the first two sentences from a findings string.
+
+    Used for ``findings`` entries in news/deep sectors where the first
+    sentence often gives only a topic header and the second carries the
+    distinguishing detail (title/author/place) that makes cross-day dedup
+    actually catch repeats.
+    """
+    text = text.strip()
+    if not text:
+        return ""
+    end_chars = (".", "!", "?", ";")
+    first_end = -1
+    for end in end_chars:
+        i = text.find(end)
+        if 0 < i and (first_end == -1 or i < first_end):
+            first_end = i
+    if first_end == -1:
+        return text[:max_chars].strip()
+    second_end = -1
+    for end in end_chars:
+        i = text.find(end, first_end + 1)
+        if 0 < i and (second_end == -1 or i < second_end):
+            second_end = i
+    if second_end == -1 or second_end >= max_chars:
+        # Only one sentence fits within the budget.
+        return text[: first_end + 1].strip()
+    return text[: second_end + 1].strip()
 
 
 def collect_headlines_from_sector(value: Any) -> list[str]:
@@ -1164,12 +1196,64 @@ def collect_headlines_from_sector(value: Any) -> list[str]:
             if k in _HEADLINE_KEYS and isinstance(v, str) and v.strip():
                 out.append(v.strip())
             elif k in _FINDINGS_LIKE_KEYS and isinstance(v, str) and v.strip():
-                sentence = _first_sentence(v)
+                # Two sentences: first often a topic header ("AI policy update."),
+                # second carries the distinguishing title/place/author needed for
+                # cross-day dedup matching.
+                sentence = _first_two_sentences(v)
                 if sentence:
                     out.append(sentence)
             elif isinstance(v, (dict, list)):
                 out.extend(collect_headlines_from_sector(v))
     return out
+
+
+# Sector fields scanned for cross-sector URL collisions. The same article
+# regularly surfaces in 2-3 of these (e.g. a ProPublica feature lands in
+# global_news, intellectual_journals, AND enriched_articles). Recording
+# the collision in the session lets the write phase synthesise once
+# rather than repeat across 3 sections.
+_CROSS_SECTOR_FIELDS = (
+    "local_news",
+    "global_news",
+    "intellectual_journals",
+    "wearable_ai",
+    "enriched_articles",
+)
+
+
+def _find_cross_sector_dupes(session: dict) -> list[str]:
+    """Return URLs that appear in 2+ research sectors.
+
+    The write phase reads ``session.dedup.cross_sector_dupes`` and treats
+    those URLs as already-covered after their first appearance — preventing
+    the same story from being narrated three times under different headers.
+    Order is the order in which dupes were discovered (stable-ish; based on
+    the iteration order of sector → item → urls).
+    """
+
+    url_to_sectors: dict[str, list[str]] = {}
+    for field in _CROSS_SECTOR_FIELDS:
+        items = session.get(field) or []
+        if not isinstance(items, list):
+            continue
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            urls = item.get("urls") or []
+            if not isinstance(urls, list):
+                continue
+            for url in urls:
+                if not url or not isinstance(url, str):
+                    continue
+                url_to_sectors.setdefault(url, []).append(field)
+
+    dupes: list[str] = []
+    seen: set[str] = set()
+    for url, sectors in url_to_sectors.items():
+        if len(sectors) > 1 and url not in seen:
+            seen.add(url)
+            dupes.append(url)
+    return dupes
 
 
 def extract_correspondence_references(handoff_text: str) -> list[str]:

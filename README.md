@@ -89,8 +89,33 @@ All secrets live in GitHub Secrets and are passed to workflows via `env:` blocks
 | `GROQ_API_KEY` | Write (Groq Llama 3.3 70B) | P3 |
 | `GMAIL_APP_PASSWORD` | Write (SMTP send) | P3 |
 | `GMAIL_OAUTH_TOKEN_JSON` | Correspondence (Gmail sweep) | P4 — see "Gmail OAuth provisioning" above |
+| `OPENROUTER_API_KEY` | Write (final narrative editor); Research (Playwright extractor markdown crystallizer) | Free-tier router; pipeline ships without it (lower-quality output + Playwright falls back to deterministic regex markdown) |
+| `JINA_API_KEY` | Research — Talk of the Town text extraction | Free tier works without; key raises rate limit |
 | `GITHUB_TOKEN` | Committing session JSON + quota state | Auto-provided in Actions |
 | `GITHUB_REPOSITORY` | Repo coordinates for session writes | Auto in Actions; set locally |
+
+### Optional: Playwright fallback extractor
+
+`jeeves/tools/playwright_extractor.py` is the universal article-fetch
+fallback — used by `talk_of_the_town`, `enrichment.fetch_article_text`,
+`tavily_extract`, and the agent-callable `playwright_extract` tool. It runs
+headless Chromium + an OpenRouter free-model markdown crystallizer.
+
+**Local setup (optional, for the fallback to fire):**
+
+```bash
+uv sync --extra playwright
+uv run python -m playwright install chromium
+```
+
+**GitHub Actions:** `daily.yml` and `research.yml` already install the
+extra and the Chromium binary in their setup steps. No manual action needed
+in CI.
+
+**When absent:** the import gates are lazy and every wired call site
+soft-fails to its previous behaviour. The pipeline still ships; you just
+lose the last-resort recovery path on JS-heavy SPAs, soft paywalls, and
+Cloudflare-fronted sites.
 
 Model IDs can be overridden via `KIMI_MODEL_ID` and `GROQ_MODEL_ID`.
 
