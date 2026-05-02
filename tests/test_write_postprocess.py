@@ -1663,3 +1663,67 @@ def test_source_url_map_includes_literary_pick():
     assert mapping.get("The Power of the Dog") == "https://example.com/dog"
     assert mapping.get("Don Winslow") == "https://example.com/dog"
 
+
+# ---------------------------------------------------------------------------
+# Filler / significance-commentary regression tests
+# Verify that the banned-phrase lists in CONTINUATION_RULES, _REFINE_SYSTEM,
+# and the OpenRouter A1/A15 rules contain the worst-offending patterns.
+# These tests don't run the LLM — they check that the prompt strings include
+# the phrases so models are instructed to avoid them.
+# ---------------------------------------------------------------------------
+
+def test_continuation_rules_bans_significance_commentary():
+    """Key significance-commentary phrases must appear in CONTINUATION_RULES."""
+    from jeeves.write import CONTINUATION_RULES
+
+    must_ban = [
+        "This is a significant development",
+        "one can only hope",
+        "requires a nuanced approach",
+        "The implications of this research are significant",
+        "As you continue to explore this subject",
+        "I would like to bring to your attention",
+        "it is a reminder that the world is a complex",
+        "I trust this morning finds you well",
+    ]
+    for phrase in must_ban:
+        assert phrase.lower() in CONTINUATION_RULES.lower(), (
+            f"CONTINUATION_RULES missing ban for: {phrase!r}"
+        )
+
+
+def test_refine_system_bans_significance_commentary():
+    """Key significance-commentary phrases must appear in _REFINE_SYSTEM."""
+    from jeeves.write import _REFINE_SYSTEM
+
+    must_ban = [
+        "This is a significant development",
+        "one can only hope",
+        "requires a nuanced approach",
+        "As you continue to explore this subject",
+        "I would like to bring to your attention",
+        "please do not hesitate to inform them",
+    ]
+    for phrase in must_ban:
+        assert phrase.lower() in _REFINE_SYSTEM.lower(), (
+            f"_REFINE_SYSTEM missing ban for: {phrase!r}"
+        )
+
+
+def test_openrouter_narrative_system_bans_significance_commentary():
+    """Key significance-commentary phrases must appear in the OpenRouter system prompt."""
+    from jeeves.write import _NARRATIVE_EDIT_SYSTEM_BASE
+
+    must_ban = [
+        "This is a significant development",
+        "one can only hope",
+        "requires a nuanced approach",
+        "The implications of this research are significant",
+        "As you continue to explore this subject",
+        "SIGNIFICANCE COMMENTARY",
+    ]
+    for phrase in must_ban:
+        assert phrase.lower() in _NARRATIVE_EDIT_SYSTEM_BASE.lower(), (
+            f"_NARRATIVE_EDIT_SYSTEM_BASE missing ban for: {phrase!r}"
+        )
+
