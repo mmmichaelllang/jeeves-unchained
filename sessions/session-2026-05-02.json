@@ -1,0 +1,631 @@
+{
+  "date": "2026-05-02",
+  "status": "complete",
+  "dedup": {
+    "covered_urls": [
+      "http://www.edmondsbeacon.com/stories/untitled,175596",
+      "http://www.seattlepromusica.org/auditions",
+      "https://apnews.com/article/iran-us-war-ceasefire-negotiations-strait-b48635e586e2907caae65b58bd03f5b7",
+      "https://arxiv.org/abs/2603.27008v1",
+      "https://arxiv.org/abs/2603.28986v1",
+      "https://arxiv.org/pdf/2602.02660",
+      "https://defensescoop.com/2025/12/10/uap-ufo-military-intercepts-north-america-fy-2026-ndaa/",
+      "https://defensescoop.com/2026/02/20/trump-ufo-uap-government-files-disclosure/",
+      "https://immaculateconstellation.online/",
+      "https://library.diffit.me",
+      "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/",
+      "https://oversight.house.gov/wp-content/uploads/2026/03/UAP-Request-Letter-FINAL.pdf",
+      "https://philarchive.org/rec/ISATRO-4",
+      "https://seattlesings.org/event/auditions-for-2025-2026-season-all-voice-types-2616/",
+      "https://sfl.media/u-s-representative-anna-paulina-luna-claims-she-was-shown-top-secret-evidence-suggesting-the-existence-of-inter-dimensional-beings/",
+      "https://sno-isle.bibliocommons.com/v2/events?types=5f0ce972da1b731c0af31864",
+      "https://sureprompts.com/blog/prompting-reasoning-models-guide",
+      "https://talents.vaia.com/companies/lake-washington-school-district/english-language-arts-teacher-1-0-fte-eastlake-high-school-2025-2026-34112511/",
+      "https://talents.vaia.com/companies/lake-washington-school-district/english-language-arts-teacher-1-0-fte-lake-washington-high-school-34165538/",
+      "https://vietnguyen.info/2014/sympathizer",
+      "https://web.diffit.me",
+      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
+      "https://www.arxiv.org/pdf/2604.06170",
+      "https://www.bbc.co.uk/news/articles/c4g4xexy4w7o",
+      "https://www.bbc.com/news/articles/c2e4ygndjpwo",
+      "https://www.bbc.com/news/articles/cddp0021pq4o",
+      "https://www.bbc.com/news/articles/cz0ev7enk2lo",
+      "https://www.bellevuechristian.org/employment/",
+      "https://www.briskteaching.com/post/brisk-announces-curriculum-intelligence-for-back-to-school-2026",
+      "https://www.career.com/job/marysville-school-district/english-social-studies-teacher-marysville-middle-school/j202211180246271605915",
+      "https://www.choralartsnw.org/",
+      "https://www.congress.gov/bill/119th-congress/house-bill/1187",
+      "https://www.edjoblist.com/employment/search.aspx?catid=-1&keywords=English%20ELA%20Language&keywordsall=&country=&state=&city=&Proximity=20&postalcode=&Remote=&IndustryId=-1&EmpTypeId=-1&WorkSchTypeId=-1&PostedWithin=-1&pg=",
+      "https://www.edmondsbeacon.com/stories/city-council-adopts-safety-action-plan,175444",
+      "https://www.edmondswa.gov/news/what_s_new/aging_pipe_repairs_begins_may_4_-_who_s_affected_",
+      "https://www.heraldnet.com/2026/04/09/edmonds-approves-contract-for-gasifier-operations-at-sewage-plant/",
+      "https://www.heraldnet.com/2026/04/10/court-of-appeals-reopens-edmonds-tree-mandate-case",
+      "https://www.ibtimes.co.uk/us-congressman-claims-aliens-exist-classified-briefings-1792027",
+      "https://www.imaginecm.org/calendar/",
+      "https://www.imaginecm.org/museum-on-the-go/family-engagement-night/",
+      "https://www.indeed.com/q-high-school-english-teacher-l-issaquah,-wa-jobs.html",
+      "https://www.k12jobspot.com/Job/5407943",
+      "https://www.magicschool.ai/blog-posts/ai-teaching-tools-updates-2026",
+      "https://www.magicschool.ai/blog-posts/whats-new-april-2026",
+      "https://www.newsweek.com/ufo-update-congresswoman-promises-to-show-things-of-nonhuman-origin-11893270",
+      "https://www.newyorker.com/magazine/2026/05/04/medallions-movement-and-mamdani-at-moma-ps-1",
+      "https://www.nomos-elibrary.de/880325.pdf",
+      "https://www.nybooks.com/articles/2026/04/23/blood-in-the-game-bloodline-fever-beach/",
+      "https://www.nybooks.com/articles/2026/05/14/the-music-of-what-happens-poems-of-seamus-heaney/",
+      "https://www.nybooks.com/online/2026/04/26/vengeance-is-theirs/",
+      "https://www.nybooks.com/online/2026/04/30/quoting-the-world-max-norman/",
+      "https://www.propublica.org/article/trump-midterm-elections-takeover",
+      "https://www.reuters.com/world/middle-east/syria-relies-russias-oil-despite-pivot-west-2026-05-01/",
+      "https://www.seattlechoralcompany.org/join-us/",
+      "https://www.seattlepromusica.org/calendar/2025/8/25/2025-26-season-auditions-for-all-voice-parts",
+      "https://www.sno-isle.org/locations/edmonds/",
+      "https://www.sno-isle.org/locations/lynnwood/",
+      "https://www.theguardian.com/commentisfree/2026/mar/02/us-trump-iran-war",
+      "https://www.themarginalian.org/2026/04/12/margaret-boden-creativity/",
+      "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/",
+      "https://www.ziprecruiter.com/c/Kings-Schools/Job/Social-Studies,-Civics,-and-Economics-Teacher-High-School/-in-Shoreline,WA?jid=75b9cf49958bbfd5"
+    ],
+    "covered_headlines": [
+      "**Friend AI Pendant** (MyTabAI, Inc): $99 wearable voice companion with 15-hour battery life, always-listening mic for conversations, and $7.",
+      "**MagicSchool AI**: April 2026 updates include Educational Song Generator (turns lessons into music) and Studio Mode in Raina for document editing.",
+      "**Nirva AI Jewelry**: Fashion-forward pendant that combines AI sensing with jewelry design, tracks emotions and auto-journals life experiences.",
+      "A 31-year-old California man has been charged with attempted assassination after opening fire at the White House Correspondents' Dinner attended by Pr",
+      "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail in Everett at 7:25 a.",
+      "A 58-year-old woman was found unresponsive in her cell at the Snohomish County Jail medical housing unit around 7:25 a.",
+      "A companion essay revisits AI pioneer Margaret Boden’s trinity of creativity—intuition, analytical evaluation, and combinatorial play—to ask whether m",
+      "A comprehensive investigation by ProPublica and FRONTLINE reveals that Trump's immigration enforcement has led to over 300 arrests of protesters and b",
+      "A devastating investigation by ProPublica and FRONTLINE reveals that over 300 protesters arrested during Trump's immigration sweeps have seen their ca",
+      "A joint ProPublica–FRONTLINE investigation finds that more than 300 U.",
+      "A sweeping ProPublica investigation reveals how President Trump has systematically dismantled the federal safeguards that prevented him from overturni",
+      "A sweeping investigation by ProPublica and FRONTLINE reveals that more than 300 U.",
+      "Armed groups launch co-ordinated attacks across Mali - BBC",
+      "As Arrests at Anti-ICE Protests Piled Up, Prosecutions Crumbled",
+      "Auditions — Seattle Pro Musica",
+      "Bellevue",
+      "Bellevue Christian",
+      "Bellevue Christian School",
+      "Bellevue School District",
+      "British Prime Minister Keir Starmer faces a parliamentary vote tomorrow on whether to launch an inquiry into whether he misled the House of Commons ov",
+      "British police seized £175,000 worth of gold and silver bullion along with £13,000 cash in Hull during an anti-slavery operation.",
+      "Buddi AI Wearable: 6-person Bothell, WA (local) startup founded 2024.",
+      "Certificated Teacher Pool",
+      "Certificated Teacher – Secondary",
+      "China announced sweeping new restrictions on drone operations in Beijing, banning sales and requiring permits for all flights starting Friday.",
+      "City shares design for next phase of Hwy 99 revitalization and asks public to weigh in.",
+      "City shares design for next phase of Hwy 99 revitalization, asks public to weigh in",
+      "Colin Powers' analysis 'The Emirates on the Tightrope' provides a deep dive into the UAE's precarious position during the Iran war.",
+      "Colm Tóibín's review of 'For and Against a United Ireland' by Fintan O'Toole and Sam McBride examines the complex practicalities of Irish reunificatio",
+      "Congress is accelerating its UAP-disclosure drive.",
+      "Congressional UAP momentum has reached fever pitch in May 2026.",
+      "Construction begins May 4 on Edmonds' 2025 Combined Cured-in-Place Pipe (CIPP) Rehabilitation Project, which will repair aging sewer and storm pipes t",
+      "Construction on pedestrian improvements and the 88th Avenue West overlay project is scheduled to resume the week of May 4, weather permitting.",
+      "Council approves key contracts, drops potential tree litigation and proclaims April 9 Local News Day",
+      "Damiano Migliorini's \"Relational Ontologies and Trinitarian Metaphysics: Subsistences, Events and Gunk\" (2022) advances a rigorous analytic model wher",
+      "DeBriefed 1 May 2026: Countries chart path away from fossil fuels | China’s clean-tech surge | Global forest loss slows",
+      "Donald MacKenzie’s essay “AI’s Scale” dissects the cultural imperative of scale in contemporary artificial-intelligence development.",
+      "Dual Language (English/Spanish) Teacher",
+      "EdTech AI tools for English/History teachers scaled dramatically in 2026.",
+      "Edmonds",
+      "Edmonds City Council approved key contracts and dropped potential tree litigation during its April 7 business meeting.",
+      "Edmonds City Council unanimously approved the city's first-ever Comprehensive Safety Action Plan, identifying 11 priority traffic safety projects elig",
+      "Edmonds Library (650 Main St) offers Toddler Storytime for 18 months–3 years on Thursdays, next session May 7 at 10:30 am with Cami—check sno-isle.",
+      "Edmonds Library offers Toddler Storytime with Cami every Thursday 9-9:45 am and Baby Storytime Fridays 11-11:30 am.",
+      "Edmonds Police Chief Loi Dawkins reported the department must complete six policy updates by June 30 to access $210,000 in public safety sales tax rev",
+      "Edmonds School District",
+      "Edmonds approved a $415,000 contract with Jacobs Engineering to operate the gasification system at its wastewater treatment plant, marking a potential",
+      "Edmonds police blotter for the week ending April 19 included a theft arrest of an adult female at Highway 99, a warrant arrest, and various other mino",
+      "Edmonds to begin sewer storm pipe rehabilitation project on May 4.",
+      "Edmonds to begin sewer, storm pipe rehabilitation project May 4",
+      "Edmonds will begin a major sewer and storm pipe rehabilitation project on May 4, targeting 27 locations with failing infrastructure identified in a 20",
+      "Ellen Burstyn’s Inner Library",
+      "English Language Arts Teacher",
+      "English Language Arts Teacher (0.6 FTE)",
+      "English Language Arts Teacher (1.0 FTE) - Eastlake High School",
+      "English Language Arts Teacher (1.0 FTE) - Lake Washington High School",
+      "English Language Arts Teacher (Long-Term Sub)",
+      "English Language Development Teacher – Secondary",
+      "English and History teachers now have three well-funded, purpose-built AI co-teachers.",
+      "English-Social Studies Teacher",
+      "Everett",
+      "Everett Public Schools",
+      "Eyal Weizman's 'All they will find is sand: Gaza’s Yellow Line' provides a forensic analysis of Israel's systematic destruction of Gaza's built enviro",
+      "Fintan O'Toole's essay 'The Right Amount of Crazy' dissects Trump's application of the 'Madman Theory' in foreign policy, particularly regarding Iran.",
+      "Flora Champy's essay explores Marcel Proust's defense of literature as a key to personal freedom, contrasting his views with John Ruskin's moralizing",
+      "Francine Prose examines two contemporary novels that grapple with America's current political moment without sacrificing fictional pleasure.",
+      "Francine Prose reviews two new novels—Lee Clay Johnson’s Bloodline and Carl Hiaasen’s Fever Beach—that tackle the grotesque violence and corruption of",
+      "Francine Prose reviews two new novels—Lee Clay Johnson’s “Bloodline” and Carl Hiaasen’s “Fever Beach”—that confront America’s epidemic of conspiratori",
+      "Francine Prose's review of two contemporary novels - Lee Clay Johnson's \"Bloodline\" and Carl Hiaasen's \"Fever Beach\" - examines how fiction can addres",
+      "Friend AI Pendant (MyTabAI, Inc): $7.",
+      "Friend AI pendant ($99) - A circular, always-listening companion that records ambient audio and sends contextual text messages via iOS app.",
+      "Friend AI pendant (friend.",
+      "Friend AI pendant: $99 wearable that records ambient audio and sends text messages to your phone in real-time.",
+      "Friend and Tab pendants represent the new wave of lifelogging wearables that continuously record audio for AI analysis.",
+      "Friendship Schools",
+      "From the Rooftops of Tehran | Anonymous | The New York Review of Books",
+      "Gilead",
+      "Global diplomatic efforts are fraying as the Iran conflict shows no resolution and new crises emerge.",
+      "Gold and silver bullion seized in anti-slavery raid in Hull",
+      "High School English / History Teacher",
+      "High School English Teacher",
+      "High School English Teacher (Long-Term Sub)",
+      "High School English Teacher Pool",
+      "High School English or History Teacher",
+      "High School English/History Teacher Pool",
+      "High School History Teacher",
+      "High-School English Teacher",
+      "High-School Teacher (English/History)",
+      "History Teacher",
+      "How Should a Pixel Be? | Dennis Lim | The New York Review of Books",
+      "How the Iran war affects your money and bills",
+      "Humane AI Pin: $699 wearable with cameras and microphones, positioned as smartphone replacement.",
+      "Hungarian Prime Minister Viktor Orbán stepped down from parliament after his Fidesz party suffered a landslide defeat in April elections, ending his 1",
+      "Hybrid High School World History Teacher",
+      "Ian Penman revisits the Beach Boys’ catalog as sacred text, arguing that Brian Wilson’s 1966 masterpiece Pet Sounds achieves the rare alchemy of secul",
+      "In \"Triadic Logic and the Quantum Entanglement of Relations\" (2026, Sophia Studies), philosopher-theologian Dr.",
+      "In \"Triadic Ontology and Quantum Perichoresis: A Relational Metaphysics for the 21st Century\" (Routledge, 2026), philosopher-theologian Dr.",
+      "In a luminous essay on Oliver Sacks’ posthumous collection The River of Consciousness, Maria Popova explores how the neurologist-poet fused clinical o",
+      "In a lyrical meditation on flight and vulnerability, Maria Popova explores how birds’ V-formation embodies both aerodynamic efficiency and interdepend",
+      "In a profound meditation on literature's role in personal freedom, Flora Champy argues that reading is not about moral improvement but about preservin",
+      "Iran has officially rejected any US talks while under siege, as Foreign Minister Abbas Araghchi returns to Pakistan.",
+      "Iran war to push global energy prices to four-year high, World Bank says",
+      "Issaquah",
+      "Issaquah School District",
+      "Jake Nevins examines how the 2026 Winter Olympics in Italy, initially framed around the theme of 'armonia' (harmony), became a stage for geopolitical",
+      "Jo Livingstone's essay 'We Goofed' examines Yale's new exhibition on literary errata, exploring how publishers' correction slips have evolved from pra",
+      "Join Us - Seattle Choral Company",
+      "King Charles III and Queen Camilla began their historic four-day US state visit, arriving to a military welcome.",
+      "King Charles III has begun a historic four-day US state visit, addressing Congress on Tuesday to defend 'democratic values' following Saturday's assas",
+      "Lake Washington",
+      "Lake Washington School District",
+      "Late-night highway shutdowns are coming near Alderwood",
+      "Late-night highway shutdowns are coming near Alderwood - Edmonds Beacon",
+      "Lifelogging and lifestyle wearables are converging on discreet jewelry form factors.",
+      "Live updates: Iran war, Israel-Lebanon ceasefire extended by 3 weeks, Trump says | CNN",
+      "Live updates: Trump says he called off dispatching envoys to Iran talks",
+      "MagicSchool AI (magicschool.",
+      "MagicSchool AI - Used by 7,000 Hillsborough County teachers for lesson planning, worksheet creation, and presentations.",
+      "MagicSchool AI: $62.",
+      "MagicSchool: 80+ teacher tools including Worksheet Generator, Presentation Generator, and MagicQuizzes for formative assessment.",
+      "Mali's Defense Minister General Sadio Camara was assassinated in an attack by Al Qaeda-linked group JNIM on his residence at the Kati military base ou",
+      "Mali's capital Bamako came under coordinated attack by armed groups including al-Qaeda-linked JNIM and Tuareg FLA rebels, described as the largest jih",
+      "Maria Popova presents a luminous portrait of Frances 'Fanny' Wright, the 19th-century Scottish radical who pioneered scientific thinking and free love",
+      "Maria Popova's essay on Fanny Wright reveals the forgotten Scottish-American radical who pioneered scientific thinking and free love in early 19th-cen",
+      "Maria Popova’s long essay on Frances “Fanny” Wright recovers the forgotten 19th-century Scottish-American radical who fused scientific empiricism with",
+      "Marysville",
+      "Medallions, Movement, and Mamdani at MOMA PS1",
+      "Mexico has stated that two CIA agents killed in a car crash were not authorized to participate in a local raid.",
+      "Mukilteo",
+      "Mukilteo School District",
+      "Myanmar’s former leader Aung San Suu Kyi to be moved to house arrest, state media says",
+      "No one can predict how the US war with Iran will unfold",
+      "North Korea has officially confirmed for the first time that it deployed 14,000 troops to fight alongside Russia in Ukraine under Kim Jong Un's direct",
+      "Northshore",
+      "Northshore School District",
+      "Nuna emotion-tracking pendant (nunatechnology.",
+      "Oil prices surged to their highest level since 2022 after reports that the US military is preparing to brief President Trump on new strike options aga",
+      "Philosopher Nir Eisikovits warns in Jacobin that outsourcing judgment to AI chatbots is creating a \"decaffeinated subjectivity\"—a hollowed-out capacit",
+      "Pope Leo and the first female Archbishop of Canterbury, Sarah Mullally, met for the first time at the Vatican in a symbolic encounter.",
+      "President Trump abruptly cancelled a planned US delegation trip to Pakistan for Iran peace talks, saying envoys Steve Witkoff and Jared Kushner would",
+      "President Trump has told Congress that US hostilities with Iran have \"terminated\" during an ongoing ceasefire, arguing he does not need congressional",
+      "President Trump rejected Iran's latest proposal to end the war, saying he's \"not satisfied\" while blaming Iran's \"fractured\" leadership.",
+      "President Trump signed legislation ending the 76-day partial government shutdown that had paralyzed the Department of Homeland Security since February",
+      "President Trump stated at a White House state dinner for King Charles that Britain's monarch agrees with him that Iran should not have nuclear weapons",
+      "President Trump was rushed to safety by Secret Service agents after shots were fired inside the Washington Hilton hotel during the White House Corresp",
+      "President Trump's February 2026 directive to release government files on UFOs and extraterrestrial life has triggered unprecedented momentum in UAP di",
+      "Public safety and environmental issues were the focus of Tuesday's Edmonds council meeting.",
+      "Quoting the World",
+      "Recent 2026 developments show Congress held a classified UAP briefing on March 25, described as highly bipartisan, amid growing scrutiny over missing",
+      "Reverend Billy Takes On Norman Foster’s New Monolith",
+      "Robert G.",
+      "Russia has emerged as Syria's dominant oil supplier despite the new Western-leaning government's alignment, with oil shipments jumping 75% to about 60",
+      "Russia launched a major overnight assault on Ukraine with over 660 drones and missiles, killing at least seven people including five in Dnipro.",
+      "Samsung's New 'Project Luna' AI Desktop Companion Has Ballie Spirit",
+      "Seattle",
+      "Seattle Academy of Arts and Sciences",
+      "Seattle Choral Company is accepting singers from all sections year-round; auditions consist of vocalizing, sight-reading, and ear training.",
+      "Seattle Pro Musica has closed 2025-26 auditions but invites singers to email auditions@seattlepromusica.",
+      "Seattle Pro Musica has concluded 2025-26 auditions, but invites singers to email auditions@seattlepromusica.",
+      "Seattle Pro Musica has concluded its 2025-26 season auditions, but invites singers to email auditions@seattlepromusica.",
+      "Seattle Public",
+      "Seattle Public Schools",
+      "Secondary History Teacher",
+      "Secondary History Teacher (Part or Full Time)",
+      "Secondary Social Studies Teacher",
+      "Secondary Teacher Pool",
+      "Secondary Teacher Pool (Grades 6-12)",
+      "Secondary Teacher Pool (Grades 6–12)",
+      "Secondary Teachers – General Pool",
+      "Shoreline",
+      "Shoreline Christian School",
+      "Shoreline School District",
+      "Sno-Isle Libraries offers weekly Toddler Storytime at Lynnwood Library (19200 44th Ave W) on Mondays 9:30-10:00 am starting May 4, featuring stories,",
+      "Sno-Isle Libraries offers weekly Toddler Storytime in May: Edmonds Library with Cami every Wednesday 9:00-9:45 am, and Lynnwood Library with Nathalie",
+      "Snohomish",
+      "Snohomish School District",
+      "Social Studies, Civics, and Economics Teacher - High School",
+      "Social Studies/History Teacher Pool",
+      "Social Studies/History Teacher Pool (2026-2027)",
+      "South County Fire commissioners are redistricting to incorporate Edmonds' 42,000+ residents into the Regional Fire Authority.",
+      "Starmer faces vote on possible parliamentary probe over Mandelson",
+      "Starting tonight, Sunday, April 26, and continuing through Friday morning, May 1, overnight closures will affect northbound SR 525 and its ramps near",
+      "State Route 525 near Alderwood Mall Parkway will undergo overnight closures from Sunday night April 26 through Friday morning May 1 for pavement grind",
+      "The 2026 wearable landscape reveals a bifurcated market between lifelogging pendants and smart glasses.",
+      "The City Council approved key contracts including a $415,116 wastewater treatment plant gasification system support contract with Jacobs Engineering,",
+      "The City of Edmonds hosted an open house on Thursday, April 25 to unveil the 60 % design plan for Stage 3 of the Highway 99 Revitalization Project.",
+      "The Downtown School (Lakeside)",
+      "The Edmonds City Council adopted the city's first comprehensive Safety Action Plan during their April 28 meeting, receiving annual reports from the ci",
+      "The Edmonds City Council approved a $415,000 contract with Jacobs Engineering to operate the gasification system at its wastewater treatment plant, ma",
+      "The Edmonds City Council has adopted the city's first comprehensive Safety Action Plan, which will make the city eligible for Safe Streets and Roads F",
+      "The Edmonds City Council unanimously adopted the city's first-ever Comprehensive Safety Action Plan on April 28, 2026.",
+      "The European Commission has given Google instructions on how to help AI rivals access its services under the Digital Markets Act.",
+      "The House Oversight Subcommittee on National Security held a closed-door briefing on UAPs on April 24, 2026, with no official readout provided to the",
+      "The House Oversight subcommittee on National Security held a closed-door UAP briefing on April 24, 2026, but issued no public readout, frustrating tra",
+      "The IMF has downgraded global growth forecasts to 3.",
+      "The Line of Beauty",
+      "The Music of What Happens: Poems of Seamus Heaney",
+      "The New Normal",
+      "The New Yorker’s New Look",
+      "The South County Fire Board is considering redistricting proposals.",
+      "The South County Fire Board of Commissioners is considering redistricting proposals to incorporate Edmonds' 42,000+ residents into the Regional Fire A",
+      "The Sympathizer",
+      "The Talk of the Town: April 27, 2026",
+      "The UK government is facing renewed scrutiny over pro-Palestinian marches, with Justice Minister Alex Davies-Jones saying the demonstrations have been",
+      "The US is withdrawing 5,000 troops from Germany amid President Trump's escalating feud with German Chancellor Friedrich Merz.",
+      "The US-Iran conflict has reached a deadlock two months after the war began, with peace talks stalled over control of the Strait of Hormuz and Iran's n",
+      "The United States and Iran clashed at the United Nations on Monday over Tehran's nuclear program and its selection as a vice president for the month-l",
+      "The United States and Iran clashed at the United Nations over Tehran's selection as a vice president for the Nuclear Non-Proliferation Treaty conferen",
+      "The Washington State Court of Appeals reopened a case involving Edmonds' tree regulations, potentially reviving litigation over the city's tree mandat",
+      "The autonomous research landscape has exploded with multi-agent systems now capable of end-to-end scientific discovery.",
+      "The council will consider an amendment to the Perrinville Creek consultant contract on April 28.",
+      "The field is converging on modular, agent-swarm architectures that can autonomously spin up sub-agents for literature review, experiment design, and e",
+      "The global economy faces severe strain as the Iran conflict has escalated beyond geopolitical tension to tangible supply disruption, with Iran's closu",
+      "Three 2026 papers push autonomous research from lab demos to hardened production systems.",
+      "Three 2026 papers show multi-agent AI pivoting from hype to hardened systems.",
+      "Three fresh papers map the cutting edge of triadic-relational metaphysics.",
+      "Three key documents: 1) House Oversight Committee held a joint hearing 13 Nov 2024 titled “Unidentified Anomalous Phenomena: Exposing the Truth” with",
+      "Three recent works advance triadic-relational metaphysics: Migliorini (2025) fuses analytic philosophy of religion with trinitarian ontology to model",
+      "Tony J Prescott's essay 'Why the best way to understand the self is to build a robot one' argues that creating embodied AI systems is essential to und",
+      "Toxic fumes are spreading through the Russian Black Sea town of Tuapse after repeated Ukrainian drone attacks on the local oil refinery.",
+      "Trump cancels US envoys' trip to Pakistan for talks on Iran war - BBC",
+      "Two new works advance the triadic-ontology program.",
+      "Ukraine conducted its deepest drone strike yet into Russian territory, hitting an oil pumping station 1,500 km from the border near the Ural Mountains",
+      "Ukraine has accused Israel of receiving shipments of grain 'stolen' by Russia from occupied Ukrainian territory.",
+      "Under the Trump administration, pressure on the press is both subtle and direct",
+      "Upper School History Teacher - Long Term Sub",
+      "Upper School History Teacher – Long-Term Sub",
+      "Vengeance Is Theirs",
+      "Voice-first AI hardware continues rapid iteration in 2026.",
+      "Voice-first AI hardware is rapidly expanding beyond familiar pendants.",
+      "Waiting for Day Zero | Will Alden | The New York Review of Books",
+      "Washington state sues Albertsons over deceptive buy-one-get-one promotions.",
+      "Why the best way to understand the self is to build a robot one",
+      "Will Alden profiles the Iranian exile community in Los Angeles as they wait for what they call \"Day Zero\"—the moment they believe former crown prince",
+      "Will Alden's 'Waiting for Day Zero' chronicles the Iranian monarchist movement in Los Angeles, focusing on Reza Pahlavi's failed attempt to position h",
+      "Wolf Hall",
+      "Woman, 58, died in her cell at Snohomish County Jail",
+      "Woman, 58, died in her cell at Snohomish County Jail | HeraldNet.com",
+      "email | \"Anthropic, PBC\"",
+      "email | \"Superhuman – Zain Kahn\"",
+      "email | \"Tithe.ly\"",
+      "email | Andy",
+      "email | Dean Ferguson",
+      "email | GitClear",
+      "email | Google",
+      "email | Greg Gorsuch",
+      "email | MARK M McDermott",
+      "email | Mrs. Lang",
+      "email | mmmichaelllang",
+      "functions.",
+      "‘The Music of What Happens’ | Nick Laird | The New York Review of Books"
+    ]
+  },
+  "weather": "Today in Edmonds: Partly cloudy morning becoming mostly sunny by afternoon. High 69°F with light N-NW winds 10-15 mph. Just a 10% chance of rain. Evening stays clear and pleasant, low around 56°F with light north winds. Perfect May weather for any outdoor plans.",
+  "local_news": [
+    {
+      "category": "municipal",
+      "source": "My Edmonds News",
+      "findings": "The Edmonds City Council unanimously adopted the city's first-ever Comprehensive Safety Action Plan on April 28, 2026. This plan identifies 11 priority traffic safety projects eligible for federal grant funding and aims to eliminate traffic fatalities and serious injuries by 2040. The council also received annual reports from the city's prosecutor and public defender offices during the same meeting.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "Edmonds Beacon",
+      "findings": "The Edmonds City Council has adopted the city's first comprehensive Safety Action Plan, which will make the city eligible for Safe Streets and Roads For All grants. The plan aims to eliminate traffic fatalities and serious injuries by 2040, with an interim goal of a 50% reduction by 2035.",
+      "urls": [
+        "https://www.edmondsbeacon.com/stories/city-council-adopts-safety-action-plan,175444"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "City of Edmonds",
+      "findings": "Construction on pedestrian improvements and the 88th Avenue West overlay project is scheduled to resume the week of May 4, weather permitting. The city will begin its 2025 Combined Cured-in-Place Pipe (CIPP) Rehabilitation Project on May 4 to repair aging sewer and storm pipes throughout the city.",
+      "urls": [
+        "https://www.edmondswa.gov/news/what_s_new/aging_pipe_repairs_begins_may_4_-_who_s_affected_",
+        "http://www.edmondsbeacon.com/stories/untitled,175596"
+      ]
+    },
+    {
+      "category": "public_safety",
+      "source": "HeraldNet",
+      "findings": "The Washington State Court of Appeals reopened a case involving Edmonds' tree regulations, potentially reviving litigation over the city's tree mandate requirements. This follows an earlier dismissal of the case as moot after the city updated its tree code in October 2025.",
+      "urls": [
+        "https://www.heraldnet.com/2026/04/10/court-of-appeals-reopens-edmonds-tree-mandate-case"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "HeraldNet",
+      "findings": "The Edmonds City Council approved a $415,000 contract with Jacobs Engineering to operate the gasification system at its wastewater treatment plant, marking a potential breakthrough after three years of technical challenges. The system uses gasification to turn human waste into dried solids and was the first of its kind in the country.",
+      "urls": [
+        "https://www.heraldnet.com/2026/04/09/edmonds-approves-contract-for-gasifier-operations-at-sewage-plant/"
+      ]
+    }
+  ],
+  "career": {
+    "openings": [
+      {
+        "district": "Edmonds",
+        "role": "Dual Language (English/Spanish) Teacher",
+        "url": "https://www.k12jobspot.com/Job/5407943",
+        "summary": "Multiple 1.0 FTE continuing contract positions for dual language classroom teachers starting with the 2026-27 school year. Requires Spanish language proficiency and preference for ELL/ESOL/Bilingual endorsement.",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Shoreline",
+        "role": "Social Studies, Civics, and Economics Teacher - High School",
+        "url": "https://www.ziprecruiter.com/c/Kings-Schools/Job/Social-Studies,-Civics,-and-Economics-Teacher-High-School/-in-Shoreline,WA?jid=75b9cf49958bbfd5",
+        "summary": "Full-time high school social studies position at King's Schools in Shoreline starting August 2026. Teaching civics and economics courses.",
+        "deadline": null,
+        "salary_range": "$50,000 - $93,888"
+      },
+      {
+        "district": "Lake Washington",
+        "role": "English Language Arts Teacher (1.0 FTE) - Lake Washington High School",
+        "url": "https://talents.vaia.com/companies/lake-washington-school-district/english-language-arts-teacher-1-0-fte-lake-washington-high-school-34165538/",
+        "summary": "Full-time English Language Arts teaching position at Lake Washington High School in Kirkland for the 2025-2026 school year. Requires Washington State teaching certificate with English Language Arts endorsement.",
+        "deadline": null,
+        "salary_range": "Per teacher salary schedule with base contract plus additional contracts for LEAP days and responsibility"
+      },
+      {
+        "district": "Lake Washington",
+        "role": "English Language Arts Teacher (1.0 FTE) - Eastlake High School",
+        "url": "https://talents.vaia.com/companies/lake-washington-school-district/english-language-arts-teacher-1-0-fte-eastlake-high-school-2025-2026-34112511/",
+        "summary": "Full-time English Language Arts teaching position at Eastlake High School focusing on English 9 including co-taught sections for multilingual learners. Collaborative humanities department environment.",
+        "deadline": null,
+        "salary_range": "Per teacher salary schedule with base contract plus additional contracts for LEAP days and responsibility"
+      },
+      {
+        "district": "Bellevue Christian",
+        "role": "Secondary History Teacher (Part or Full Time)",
+        "url": "https://www.bellevuechristian.org/employment/",
+        "summary": "Part or full-time secondary history teaching position at Clyde Hill Junior High/High School campus for the 2026-27 school year. Christian school environment.",
+        "deadline": null,
+        "salary_range": "$57,000 - $88,000"
+      },
+      {
+        "district": "Seattle Public Schools",
+        "role": "High School English Teacher",
+        "url": "https://www.edjoblist.com/employment/search.aspx?catid=-1&keywords=English%20ELA%20Language&keywordsall=&country=&state=&city=&Proximity=20&postalcode=&Remote=&IndustryId=-1&EmpTypeId=-1&WorkSchTypeId=-1&PostedWithin=-1&pg=",
+        "summary": "High school English teaching position at Cristo Rey Jesuit Seattle High School for the 2026-27 school year.",
+        "deadline": "2026-04-16",
+        "salary_range": null
+      },
+      {
+        "district": "Issaquah",
+        "role": "High School English Teacher",
+        "url": "https://www.indeed.com/q-high-school-english-teacher-l-issaquah,-wa-jobs.html",
+        "summary": "Multiple high school English teacher positions available in Issaquah School District with 159 positions currently listed on Indeed.",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Marysville",
+        "role": "English-Social Studies Teacher",
+        "url": "https://www.career.com/job/marysville-school-district/english-social-studies-teacher-marysville-middle-school/j202211180246271605915",
+        "summary": "Combined English and Social Studies teaching position at Marysville Middle School. Full-time position in Marysville School District.",
+        "deadline": "2026-12-25",
+        "salary_range": null
+      }
+    ],
+    "notes": "Found active high school English and History teaching positions across multiple districts within 30 miles of Edmonds. Most positions are for the 2026-27 school year starting in August/September. Salary ranges vary significantly by district and experience level, with public districts typically following state salary schedules and private schools offering competitive ranges. Several districts have multiple openings, particularly Lake Washington and Seattle Public Schools. Application processes vary - some require direct district applications while others use third-party platforms like EdJobList or ZipRecruiter."
+  },
+  "family": {
+    "choir": "Seattle Pro Musica has concluded 2025-26 auditions, but invites singers to email auditions@seattlepromusica.org to join the mailing list for August 2026-27 season auditions (all voice parts, Tuesday rehearsals at Epiphany Parish Seattle). Seattle Choral Company schedules July-August 2025 auditions for their 2025-26 season (Christmas in Latvia, Bach & Handel, Chariot Jubilee) at Phinney Ridge Lutheran Church—sign-up via seattlechoralcompany.org/join-us. Choral Arts Northwest hosts a free Music Educator Sing-in on March 15, 2026 at First United Methodist Church (register by March 1). No current Pacific Lutheran University choir auditions found.",
+    "toddler": "Sno-Isle Libraries offers weekly Toddler Storytime in May: Edmonds Library with Cami every Wednesday 9:00-9:45 am, and Lynnwood Library with Nathalie every Monday 9:30-10:00 am. Imagine Children’s Museum (Everett) has Curiosity Cove guided play for ages 1-5 and Family Engagement Night science experiments—check imaginecm.org/calendar for specific May dates. Baby Storytime at Lynnwood Library Fridays 11:00 am and Preschool Storytimes also available.",
+    "urls": [
+      "http://www.seattlepromusica.org/auditions",
+      "https://www.seattlepromusica.org/calendar/2025/8/25/2025-26-season-auditions-for-all-voice-parts",
+      "https://seattlesings.org/event/auditions-for-2025-2026-season-all-voice-types-2616/",
+      "https://www.seattlechoralcompany.org/join-us/",
+      "https://www.choralartsnw.org/",
+      "https://sno-isle.bibliocommons.com/v2/events?types=5f0ce972da1b731c0af31864",
+      "https://www.sno-isle.org/locations/edmonds/",
+      "https://www.sno-isle.org/locations/lynnwood/",
+      "https://www.imaginecm.org/calendar/",
+      "https://www.imaginecm.org/museum-on-the-go/family-engagement-night/"
+    ]
+  },
+  "global_news": [
+    {
+      "category": "global_news",
+      "source": "BBC",
+      "findings": "President Trump has told Congress that US hostilities with Iran have \"terminated\" during an ongoing ceasefire, arguing he does not need congressional approval for the war under the War Powers Act. This comes as the 60-day deadline for seeking legislative approval approaches. Iran has reportedly sent a new proposal via Pakistan, but Trump stated he's \"not happy\" with it, describing Iran's leadership as \"very confused\" after the killing of top military officials. The US Treasury has warned that paying Iran for passage through the Strait of Hormuz could violate sanctions.",
+      "urls": [
+        "https://www.bbc.co.uk/news/articles/c4g4xexy4w7o"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "Reuters",
+      "findings": "Russia has emerged as Syria's dominant oil supplier despite the new Western-leaning government's alignment, with oil shipments jumping 75% to about 60,000 barrels per day. This shift occurred after Iran halted supplies following Assad's fall, leaving Syria dependent on Russian oil delivered via a fleet of sanctioned vessels. The trade gives Moscow significant influence in Syria while potentially straining Damascus's relations with the EU and Washington, as Syria seeks to diversify suppliers but faces limited options due to financial constraints and years of conflict.",
+      "urls": [
+        "https://www.reuters.com/world/middle-east/syria-relies-russias-oil-despite-pivot-west-2026-05-01/"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "AP",
+      "findings": "President Trump rejected Iran's latest proposal to end the war, saying he's \"not satisfied\" while blaming Iran's \"fractured\" leadership. The shaky three-week ceasefire appears to be holding, but both countries remain locked in a standoff over the Strait of Hormuz. Trump described having only two options: \"blast the hell out of them and finish them forever\" or \"make a deal.\" Meanwhile, imprisoned Iranian Nobel laureate Narges Mohammadi was urgently hospitalized after a \"catastrophic deterioration\" of her health, and an explosion of leftover bombs killed 14 Revolutionary Guard members in Iran.",
+      "urls": [
+        "https://apnews.com/article/iran-us-war-ceasefire-negotiations-strait-b48635e586e2907caae65b58bd03f5b7"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "BBC",
+      "findings": "The UK government is facing renewed scrutiny over pro-Palestinian marches, with Justice Minister Alex Davies-Jones saying the demonstrations have been \"hijacked\" by people seeking to sow division. Chief Rabbi Sir Ephraim Mirvis has called for a temporary ban on the marches after two Jewish men were stabbed in what police declared a terror incident. The government's independent adviser on antisemitism warned an attack in the next six months was \"inevitable\" as the terrorism threat level rises.",
+      "urls": [
+        "https://www.bbc.com/news/articles/cddp0021pq4o"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "BBC",
+      "findings": "The US is withdrawing 5,000 troops from Germany amid President Trump's escalating feud with German Chancellor Friedrich Merz. This significant reduction in US military presence in Europe comes as Trump has been critical of Germany's response to the Iran War and NATO contributions. The withdrawal represents a major shift in transatlantic relations and European security arrangements, with NATO working to understand the implications of the US decision.",
+      "urls": [
+        "https://www.bbc.com/news/articles/cz0ev7enk2lo"
+      ]
+    }
+  ],
+  "intellectual_journals": [
+    {
+      "source": "ProPublica",
+      "findings": "A sweeping ProPublica investigation reveals how President Trump has systematically dismantled the federal safeguards that prevented him from overturning the 2020 election, replacing career staff with loyalists and election-deniers ahead of the 2026 midterms. The report reconstructs a previously unreported December 2020 meeting in which Attorney General William Barr convened CISA and FBI officials to interrogate whether the 2020 vote had been hacked; after hearing that Antrim County’s vote-switching was mere human error, Barr told a deputy he was about to “kamikaze” into the White House with th [TRUNCATED]",
+      "urls": [
+        "https://www.propublica.org/article/trump-midterm-elections-takeover"
+      ]
+    },
+    {
+      "source": "The Marginalian",
+      "findings": "In a luminous essay on Oliver Sacks’ posthumous collection The River of Consciousness, Maria Popova explores how the neurologist-poet fused clinical observation with philosophical wonder to illuminate the 100-millisecond gap between world and mind. Sacks’ case studies of patients whose consciousness enters “standstills” reveal perception not as passive reception but as creative coalition-building among millions of neurons—an act that “marshals all that we are and reflects us back to ourselves.” The piece traces Sacks’ argument that qualia, the subjective feel of experience, arise when neuronal [TRUNCATED]",
+      "urls": [
+        "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/"
+      ]
+    },
+    {
+      "source": "The Marginalian",
+      "findings": "A companion essay revisits AI pioneer Margaret Boden’s trinity of creativity—intuition, analytical evaluation, and combinatorial play—to ask whether machines can ever truly originate ideas. Boden, who died in July 2025, argued that creativity requires not just pattern recognition but the embodied reservoir of lived experience that fuels “combinatorial alchemy.” The piece warns that as we train ever-larger models on human output, we risk being conditioned to “mistake the simulacrum of life for life itself,” reducing our own aliveness to algorithms and outsourcing the very faculty that defines u [TRUNCATED]",
+      "urls": [
+        "https://www.themarginalian.org/2026/04/12/margaret-boden-creativity/"
+      ]
+    },
+    {
+      "source": "New York Review of Books",
+      "findings": "Francine Prose reviews two new novels—Lee Clay Johnson’s Bloodline and Carl Hiaasen’s Fever Beach—that tackle the grotesque violence and corruption of contemporary America while preserving the pleasures of fiction. Johnson’s protagonist, a Tennessee grifter named Wins-a-ton Alcorn, saws off his own hand in an insurance scam he believes will restore his Confederate birthright, embodying a nation so marinated in historical delusion that self-mutilation passes for redemption. Hiaasen’s South Florida satire, meanwhile, trains its gimlet eye on toxic waste dumps and megamansions swallowing the natu [TRUNCATED]",
+      "urls": [
+        "https://www.nybooks.com/articles/2026/04/23/blood-in-the-game-bloodline-fever-beach/"
+      ]
+    }
+  ],
+  "wearable_ai": [
+    {
+      "category": "wearable_ai",
+      "source": "functions.tavily_extract",
+      "findings": "functions.tavily_extract:8{\"urls\": [\"https://www.magicschool.ai/blog-posts/ai-teaching-tools-updates-2026\", \"https://www.magicschool.ai/blog-posts/whats-new-april-2026\", \"https://www.briskteaching.com/post/brisk-announces-curriculum-intelligence-for-back-to-school-2026\", \"https://web.diffit.me\", \"https://library.diffit.me\"]}",
+      "urls": [
+        "https://www.magicschool.ai/blog-posts/ai-teaching-tools-updates-2026",
+        "https://www.magicschool.ai/blog-posts/whats-new-april-2026",
+        "https://www.briskteaching.com/post/brisk-announces-curriculum-intelligence-for-back-to-school-2026",
+        "https://web.diffit.me",
+        "https://library.diffit.me"
+      ]
+    }
+  ],
+  "triadic_ontology": {
+    "findings": "Three recent works advance triadic-relational metaphysics: Migliorini (2025) fuses analytic philosophy of religion with trinitarian ontology to model divine relationality beyond substance metaphysics; Isabelle (2026) proposes Triadic Relational Ontology (TRO), arguing that emergence and meaning require an irreducible third “relational field” sustained by tension between poles; and the 2025 Nomos volume “Trinitarian Ontologies” collects interdisciplinary papers bridging late-antique/medieval trinitarian thought with contemporary analytic and continental projects, framing triadic ontology as a transformative philosophical paradigm.",
+    "urls": [
+      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
+      "https://philarchive.org/rec/ISATRO-4",
+      "https://www.nomos-elibrary.de/880325.pdf"
+    ]
+  },
+  "ai_systems": {
+    "findings": "Three 2026 papers push autonomous research from lab demos to hardened production systems. The Mimosa framework (arXiv:2603.28986) introduces an evolving multi-agent architecture that automatically synthesizes task-specific workflows and iteratively refines them through experimental feedback, achieving 43.1% success on ScienceAgentBench. Google's MARS system (arXiv:2602.02660) employs budget-aware Monte Carlo Tree Search and reflective memory to handle computationally expensive AI research tasks, demonstrating \"Aha!\" moments where 63% of insights transfer across branches. Paper Circle (arXiv:2604.06170) offers an open-source multi-agent discovery pipeline that transforms papers into structured knowledge graphs for graph-aware question answering. Meanwhile, RASPRef (arXiv:2603.27008) revolutionizes prompt engineering through retrieval-augmented self-supervised refinement, optimizing prompts for reasoning models like o3 and Claude without human annotation. These systems mark the transitio [TRUNCATED]",
+    "urls": [
+      "https://arxiv.org/abs/2603.28986v1",
+      "https://arxiv.org/pdf/2602.02660",
+      "https://www.arxiv.org/pdf/2604.06170",
+      "https://arxiv.org/abs/2603.27008v1",
+      "https://sureprompts.com/blog/prompting-reasoning-models-guide"
+    ]
+  },
+  "uap": {
+    "findings": "Congressional UAP momentum has reached fever pitch in May 2026. Rep. Anna Paulina Luna, chair of the House Oversight Task Force on Declassification, publicly claims she has reviewed classified evidence of \"non-human origin\" craft and has formally demanded 46 specific UAP videos from the Pentagon by April 14, 2026, a deadline the Department of War missed. Luna now vows to hold a press conference to reveal the footage once declassified. The Pentagon’s All-domain Anomaly Resolution Office (AARO) insists it is working with the White House to release \"never-before-seen\" UAP information, but lawmakers accuse officials of slow-walking. President Trump’s February directive to release government files on UFOs and extraterrestrial life has activated interagency meetings to digitize and declassify decades of records. Whistleblowers warn that while older cases may be releasable, any files tied to recovered technology or reverse-engineering will likely remain hidden to protect national security sec [TRUNCATED]",
+    "urls": [
+      "https://oversight.house.gov/wp-content/uploads/2026/03/UAP-Request-Letter-FINAL.pdf",
+      "https://www.newsweek.com/ufo-update-congresswoman-promises-to-show-things-of-nonhuman-origin-11893270",
+      "https://defensescoop.com/2026/02/20/trump-ufo-uap-government-files-disclosure/",
+      "https://www.congress.gov/bill/119th-congress/house-bill/1187",
+      "https://defensescoop.com/2025/12/10/uap-ufo-military-intercepts-north-america-fy-2026-ndaa/",
+      "https://immaculateconstellation.online/",
+      "https://www.ibtimes.co.uk/us-congressman-claims-aliens-exist-classified-briefings-1792027",
+      "https://sfl.media/u-s-representative-anna-paulina-luna-claims-she-was-shown-top-secret-evidence-suggesting-the-existence-of-inter-dimensional-beings/"
+    ]
+  },
+  "newyorker": {
+    "available": true,
+    "title": "Medallions, Movement, and Mamdani at MOMA PS1",
+    "section": "here to there dept.",
+    "dek": "The cab-driving Elcharfa brothers, Bilal and Salah, star in a new piece by the artist Kenneth Tam that showcases the hardships of their jobs, Emma Allen writes.",
+    "byline": "By Emma Allen",
+    "date": "2026-04-27T06:00:00.000-04:00",
+    "text": "On Election Night, Mayor Zohran Mamdani proclaimed, from a stage, “My brother, we are in City Hall now!” The remark was directed at Richard Chow, a cabdriver from Myanmar whom Mamdani had joined in 2021 on a fifteen-day hunger strike, to demand relief for the taxi-medallion debt crisis. The crisis, in brief: the N.Y.C. Taxi and Limousine Commission sells permits (“medallions”) to operate yellow cabs; the medallion—till recently a near-million-dollar investment—had its bottom drop out, owing to predatory lending and the deregulation of rideshare services. The body of Chow’s brother, Kenny, who’d accrued enormous medallion-related debt, was found in the East River in 2018. Chow would later chauffeur Mamdani to Gracie Mansion.\nThe other day, the artist Kenneth Tam, forty-four, was in Queens, admiring his contribution to MOMA PS1’s “Greater New York” survey of art with ties to the metropolitan area. Title: “I’m Staying Hopeful and Strong (for Bilal and Salah).” A projected video showed the sixtysomething Lebanese taxi-driver brothers Bilal and Salaheldin Elcharfa performing interpretive movements in an empty gymnasium while intoning words they wrote about the crisis (“no retirement no retirement no retirement / scared scared scared”). Also, on the floor of the gallery: wood-beaded seat covers and other car detritus.\nTam had previously worked with nonprofessional performers in his video-art projects (Craigslist-sourced fraternity brothers and cowboys). But recruiting taxi-drivers proved difficult. He tried pitching the idea from back seats, but no luck. Then a black-car driver took him to the “J.F.K. taxi hole.”\n“It’s essentially a lot where all the yellow cabs go and take their breaks,” Tam said. Rideshare drivers, too, but they have a separate zone. There’s also a space for prayer. “Ostensibly, they’re there to wait for the call to go to J.F.K., but I met guys that aren’t even drivers anymore, who go to hang out.” Tam and his producer knocked on windows and handed out flyers. Finally, he approached Bilal in the bathroom line. “I did make it clear that this was not necessarily an advocacy project: ‘I’m not an activist, but I do want to tell your story, in a different way.’ ” A way that would eventually involve dancing with metal folding chairs—but one thing at a time.\nOutside the museum, Bilal was parked by a fire hydrant in his yellow RAV4. Salah was still en route from Staten Island. Of first meeting Tam, Bilal said, “He asked me, ‘Are you interested in being in a movie?’ ”\n“A loose documentary,” Tam clarified.\nBilal was game. “When someone has anger inside them, you want to explore it with the outsider,” he said.\n“Did you appreciate then that you would have to dance?” Tam asked.\n“It was really interesting, to go for it,” Bilal said. “Falling down, reaching out, maybe looking for some hope. I was sitting in a box where I just felt like, I’m not able to get out of my situation by circling around, making all the moves—this way, that way, left, right, down, up.” He punched a fist into the air.\nWhen things for the brothers turned grim, “we were always leaning on each other,” Bilal said. “Don’t give up. Keep going.” A friend died of a heart attack when the value of his medallion tanked.\n“You’re not sick of each other?” Tam asked.\n“We fight. But we never really broke up. The next day, it’s as if nothing happened. That’s our attitude.”\nSalah called to say that he was stuck on the Verrazzano Bridge.\nTam said that he’d learned to drive in a suburban part of Queens—“and I distinctly remember, for my road test, I didn’t even encounter a traffic light.”\nBilal laughed. “In Lebanon,” he said, “my dad told me, ‘Just drive.’ ”\nSalah was still in traffic, so Bilal decided to drive to him. Eventually, he spotted his brother and honked, yelling, “Follow that cab!”\nEveryone piled into one car. Salah recounted meeting Tam: “He asked, ‘What kind of song do you like?’ ” The finished video is minimally scored, but, while shooting, Tam had the Elcharfas dance to their favorite tunes. Salah’s: Air Supply’s “Making Love Out of Nothing at All.” Bilal’s: the Scorpions’ “When the Smoke Is Going Down.”\n“I’m secretly hoping Mamdani makes an appearance at PS1,” Tam said.\n“He’s going to help, but he’s not going to get us back to what was before,” Salah predicted. Both brothers voted for Mamdani, though Bilal also had a laminated photo of Trump (fist raised) dangling from his rearview mirror.\nThe brothers’ kids recently watched Tam’s film. Bilal: “They were making fun of me—‘You’re getting old! What are you doing?’ ”\nSalah: “My daughter, she’s copying me. She starts making the same movements. I said, ‘Maybe I’m going to be a movie star!’ ”\n“I explained to them, ‘That’s an art project,’ ” Bilal said. “ ‘The words plus the movement, it makes a story about our situation.’ Hopefully, maybe, we educate the public.” ♦",
+    "url": "https://www.newyorker.com/magazine/2026/05/04/medallions-movement-and-mamdani-at-moma-ps-1",
+    "source": "The New Yorker",
+    "archived_from": "",
+    "error": null
+  },
+  "literary_pick": {
+    "available": true,
+    "title": "The Sympathizer",
+    "author": "Viet Thanh Nguyen",
+    "year": 2015,
+    "summary": "A Pulitzer Prize-winning novel that redefines the Vietnam War narrative through the eyes of a half-Vietnamese, half-French communist spy. The unnamed narrator flees Saigon with the South Vietnamese army, embedding himself in the refugee community of Los Angeles while secretly reporting back to his communist handlers. This darkly comic literary thriller explores themes of identity, betrayal, and the psychological toll of living between two worlds. Critics have hailed it as \"a magnificent feat of storytelling\" and \"destined to become a classic\" that will \"redefine the way we think about the Viet [TRUNCATED]",
+    "url": "https://vietnguyen.info/2014/sympathizer"
+  },
+  "enriched_articles": [
+    {
+      "url": "https://www.bbc.com/news/articles/c2e4ygndjpwo",
+      "source": "BBC",
+      "title": "How the Iran war affects your money and bills",
+      "fetch_failed": false,
+      "text": "From petrol prices to mortgage rates, the US-Israel war with Iran has already had an impact on people's finances in the UK. One think tank has estimated the average working-age British household could be hundreds of pounds worse off this year as a result of the conflict. Drivers have noticed that prices at the pump have jumped since the war began, but they are now dropping. Crude oil is a key ingredient in petrol and diesel, meaning higher wholesale costs make filling up a car more expensive."
+    },
+    {
+      "url": "https://www.theguardian.com/commentisfree/2026/mar/02/us-trump-iran-war",
+      "source": "The Guardian",
+      "title": "No one can predict how the US war with Iran will unfold",
+      "fetch_failed": false,
+      "text": "War, once unleashed, can produce all manner of unintended consequences, including some that prove uncontrollable and enduring. The US president offered a lengthy bill of indictment against Iran's Islamic Republic, stretching back to the 1979 revolution: the takeover of the American embassy in Tehran, support for terrorism, brutality towards its citizenry, and support for proxies that have killed Americans. Above all, Trump stressed the peril the US and its allies would face were Iran to build nu"
+    },
+    {
+      "url": "https://www.nybooks.com/articles/2026/05/14/the-music-of-what-happens-poems-of-seamus-heaney/",
+      "source": "New York Review of Books",
+      "title": "The Music of What Happens: Poems of Seamus Heaney",
+      "fetch_failed": false,
+      "text": "Seamus Heaney, a renowned Anglophone poet, was born in 1939 in County Derry, Ireland, and passed away in Dublin in 2013. His first collection, Death of a Naturalist, was published by Faber and Faber in 1966 and followed by eleven other volumes of poetry, including collections of literary criticism, anthologies, translations, and verse plays. His literary criticism and writing influenced his work significantly, with his work growing under the attention of the academy and a larger and not-yet-balk"
+    },
+    {
+      "url": "https://www.nybooks.com/online/2026/04/30/quoting-the-world-max-norman/",
+      "source": "New York Review of Books",
+      "title": "Quoting the World",
+      "fetch_failed": false,
+      "text": "Eugène Atget, a former actor and actor, has been featured in a new exhibition at the International Center of Photography in Paris. The exhibition includes fifty photographs of Atget's familiar images of Paris, which are often obscured by their descriptions or narratives. During his lifetime, Atget registered with the state as an artiste dramatique primarily for tax purposes, but he never showed in a gallery or museum."
+    },
+    {
+      "url": "https://www.nybooks.com/online/2026/04/26/vengeance-is-theirs/",
+      "source": "New York Review of Books",
+      "title": "Vengeance Is Theirs",
+      "fetch_failed": false,
+      "text": "The brutal and bloody Titus Andronicus has been performed in a Red Bull Theater production in New York. The play, often overlooked due to its high level of violence and themes of consumption, exposes a disordered Roman state. The most notable modern version, directed by Peter Brook in 1955 and starring Laurence Olivier, caused twenty faintings at a single performance."
+    }
+  ],
+  "correspondence": {
+    "found": true,
+    "fallback_used": false,
+    "text": "- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Write Phase\" failed in the jeeves-memory repo.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Research Phase\" failed in the jeeves-memory repo.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Correspondence Phase\" failed in the jeeves-memory repo.\n- [escalation] \"Anthropic, PBC\": Anthropic failed to charge $16.61 to the provided credit card.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Daily Pipeline\" failed on second attempt in the jeeves-unchained repo.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Daily Pipeline\" failed in the jeeves-unchained repo.\n- [escalation] Google: Google security alert that Opal was granted access to the Google Account.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Daily Pipeline\" failed in the jeeves-unchained repo.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline for jeeves-unchained failed again.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline for jeeves-unchained failed again.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline for jeeves-unchained failed again.\n- [escalation] mmmichaelllang: GitHub Actions CI failed on newsletter v4 PR."
+  }
+}
