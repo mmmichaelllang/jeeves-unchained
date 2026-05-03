@@ -1780,7 +1780,6 @@ def _invoke_write_llm(
 
     Falls back to NIM when:
     - Input tokens alone exceed the TPM ceiling (pre-check; avoids guaranteed 413).
-    - Groq returns a 413 "tokens per minute" error (tokenizer drift guard).
     - Groq daily TPD quota is exhausted.
     """
     _, input_tokens = _clamp_groq_max_tokens(system, user, max_tokens)
@@ -1795,19 +1794,11 @@ def _invoke_write_llm(
     try:
         return _invoke_groq(cfg, system, user, max_tokens=max_tokens, label=label), True
     except Exception as e:
-        err = str(e).lower()
-        if "tokens per day" in err:
+        if "tokens per day" in str(e).lower():
             log.warning(
                 "Groq daily TPD quota exhausted on [%s]; retrying on NIM (%s). "
                 "Groq free-tier resets at midnight UTC.",
                 label, cfg.nim_write_model_id,
-            )
-            return _invoke_nim_write(cfg, system, user, max_tokens=max_tokens, label=label), False
-        if "tokens per minute" in err or ("413" in err and "tpm" in err):
-            log.warning(
-                "Groq TPM 413 on [%s] (input ~%d tokens, estimated available=%d); "
-                "falling back to NIM.",
-                label, input_tokens, available,
             )
             return _invoke_nim_write(cfg, system, user, max_tokens=max_tokens, label=label), False
         raise
