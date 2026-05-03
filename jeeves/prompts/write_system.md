@@ -74,7 +74,7 @@ section has the data to fill them):
 - `<h3>The Calendar</h3>` — career + family choir + family toddler
 - `<h3>The Wider World</h3>` — global news, threaded by region
 - `<h3>The Reading Room</h3>` — intellectual journals + literary pick
-- `<h3>The Specific Enquiries</h3>` — triadic ontology + AI systems + UAP
+- `<h3>The Specific Enquiries</h3>` — triadic ontology + AI systems + UAP (write the header ONCE for this whole section; do NOT repeat it for UAP)
 - `<h3>The Commercial Ledger</h3>` — wearable AI + teacher tools
 - `<h3>From the Library Stacks</h3>` — vault_insight (only if available)
 
