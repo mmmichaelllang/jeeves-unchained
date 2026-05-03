@@ -116,6 +116,7 @@ jobs:
         # Used by talk_of_the_town, enrichment, tavily_extract, and the
         # `playwright_extract` agent tool. Soft-fails when absent, but in
         # production we want it present so the fallback path can fire.
+        timeout-minutes: 8
         run: uv run python -m playwright install --with-deps chromium
 
       - name: Run research phase
@@ -129,6 +130,7 @@ jobs:
           GOOGLE_CLOUD_REGION: ${{ secrets.GOOGLE_CLOUD_REGION || 'us-central1' }}
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
           JINA_API_KEY: ${{ secrets.JINA_API_KEY }}
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -136,6 +138,7 @@ jobs:
         run: uv run python scripts/research.py
 
       - name: Commit quota ledger
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

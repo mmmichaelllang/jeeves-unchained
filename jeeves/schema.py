@@ -128,6 +128,9 @@ class SessionModel(BaseModel):
     vault_insight: VaultInsight = Field(default_factory=VaultInsight)
     enriched_articles: list[EnrichedArticle] = Field(default_factory=list)
     literary_pick: LiteraryPick = Field(default_factory=LiteraryPick)
+    # Write-phase quality warnings (NIM refine fallbacks, timeout, etc.)
+    # Populated by generate_briefing; empty list means all refine passes succeeded.
+    quality_warnings: list[str] = Field(default_factory=list)
 
 
 # Per-field char caps applied before serialization. Mirrors jeeves-memory.

@@ -28,6 +28,20 @@ from .config import Config
 log = logging.getLogger(__name__)
 
 
+def _classify_api_error(exc: Exception) -> str:
+    """Return 'rate_limit', 'auth', 'timeout', 'server', or 'unknown'."""
+    msg = str(exc).lower()
+    if any(k in msg for k in ("429", "rate limit", "rate_limit", "too many")):
+        return "rate_limit"
+    if any(k in msg for k in ("401", "403", "unauthorized", "forbidden", "api key")):
+        return "auth"
+    if any(k in msg for k in ("timeout", "timed out", "connection", "peer closed")):
+        return "timeout"
+    if any(k in msg for k in ("500", "502", "503", "504", "internal server")):
+        return "server"
+    return "unknown"
+
+
 @dataclass
 class SectorSpec:
     name: str
@@ -480,23 +494,28 @@ def _try_normalize_json(fragment: str, *, is_array: bool) -> Any | None:
     if is_array and fragment.strip().startswith("{"):
         wrapped = f"[{fragment.strip()}]"
         if (v := _try(wrapped)) is not None:
+            log.debug("_try_normalize_json: pass 'bare_obj_to_array' succeeded.")
             return v
         if (v := _try(_remove_trailing_commas(_python_repr_to_json(wrapped)))) is not None:
+            log.debug("_try_normalize_json: pass 'bare_obj_to_array+repr+comma' succeeded.")
             return v
 
     # 1. Python repr conversion alone.
     repr_fixed = _python_repr_to_json(fragment)
     if (v := _try(repr_fixed)) is not None:
+        log.debug("_try_normalize_json: pass 'python_repr' succeeded.")
         return v
 
     # 2. Trailing commas alone.
     comma_fixed = _remove_trailing_commas(fragment)
     if (v := _try(comma_fixed)) is not None:
+        log.debug("_try_normalize_json: pass 'trailing_comma' succeeded.")
         return v
 
     # 3. Both combined.
     both_fixed = _remove_trailing_commas(repr_fixed)
     if (v := _try(both_fixed)) is not None:
+        log.debug("_try_normalize_json: pass 'python_repr+trailing_comma' succeeded.")
         return v
 
     # 4. Truncation recovery (arrays only).
@@ -504,9 +523,11 @@ def _try_normalize_json(fragment: str, *, is_array: bool) -> Any | None:
         recovered = _recover_truncated_array(fragment)
         if recovered:
             if (v := _try(recovered)) is not None:
+                log.debug("_try_normalize_json: pass 'truncation_recovery' succeeded.")
                 return v
             # Also try repr + comma fixes on the recovered fragment.
             if (v := _try(_remove_trailing_commas(_python_repr_to_json(recovered)))) is not None:
+                log.debug("_try_normalize_json: pass 'truncation_recovery+repr+comma' succeeded.")
                 return v
 
     return None
@@ -537,12 +558,14 @@ def _parse_sector_output(raw: str, spec: SectorSpec) -> Any:
     """
 
     text = (raw or "").strip()
+    log.debug("sector %s: _parse_sector_output raw=%d chars, shape=%s.", spec.name, len(text), spec.shape)
     # Strip common markdown fences.
     text = re.sub(r"^```(?:json)?\s*", "", text)
     text = re.sub(r"\s*```\s*$", "", text)
     text = text.strip()
 
     if spec.shape == "string":
+        log.debug("sector %s: string shape — returning %d chars.", spec.name, len(text))
         return text
 
     # Find the outermost JSON token.
@@ -570,6 +593,7 @@ def _parse_sector_output(raw: str, spec: SectorSpec) -> Any:
         fragment = text[start : end + 1]
         try:
             parsed = json.loads(fragment)
+            log.debug("sector %s: JSON extracted cleanly (%d chars).", spec.name, len(fragment))
         except json.JSONDecodeError as e:
             # Try deterministic normalizations first — cheaper than an LLM call.
             fixed = _try_normalize_json(fragment, is_array=_is_array)
@@ -884,6 +908,12 @@ async def _json_repair_retry(
         return spec.default
 
     raw_r = str(response_r)
+    if not raw_r or not raw_r.strip():
+        log.warning(
+            "sector %s: repair retry LLM returned empty/None response; returning default.",
+            spec.name,
+        )
+        return spec.default
     result_r = _parse_sector_output(raw_r, spec)
     if isinstance(result_r, _ParseFailed):
         log.warning("sector %s: repair retry also produced malformed JSON; returning default.", spec.name)
@@ -980,7 +1010,17 @@ async def run_sector(
         "one search tool (serper_search, tavily_search, exa_search, or "
         "gemini_grounded_synthesize) and receive live results before writing "
         "any findings. Output that contains no URLs returned by tools in this "
-        "session will be rejected as hallucinated. "
+        "session will be rejected as hallucinated.\n\n"
+        "PROVIDER SELECTION — pick the cheapest tool that fits:\n"
+        "  breaking/local/time-filtered   → serper_search (tbs='qdr:d' for last 24h)\n"
+        "  intellectual/long-form/similar → exa_search\n"
+        "  multi-source synthesized answer → tavily_search\n"
+        "  narrative 'state of X' question → gemini_grounded_synthesize\n"
+        "  article full-text after ranking → tavily_extract (preferred) or fetch_article_text\n"
+        "  JS-heavy / paywall (last resort) → playwright_extract (only if both above fail)\n\n"
+        "EMPTY SECTOR PROTOCOL — if after 2 searches a sector yields zero usable results:\n"
+        "  return an empty array/object for that sector plus the key _empty_reason with a\n"
+        "  short explanation (e.g. 'no_results_after_2_searches'). Do NOT fabricate sources.\n\n"
         "Follow the user's instruction exactly, then return ONLY the requested "
         "JSON (or raw string for string-shape)."
     )

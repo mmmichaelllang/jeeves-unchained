@@ -21,20 +21,24 @@ def _make_sector_value(urls: list[str], headlines: list[str]) -> list[dict]:
     return [{"url": u, "headline": h} for u, h in zip(urls, headlines)]
 
 
-def test_prior_sample_grows_between_sectors():
-    """Sequential loop must append each sector's URLs to prior_sample so the
-    next sector sees them — not a frozen snapshot from before any sector ran."""
+def test_prior_sample_grows_between_pairs():
+    """Tiered parallelism contract: light sectors run in pairs sharing the same
+    prior_sample snapshot; between pairs, prior_sample accumulates.
+
+    Pair 1: sector_a + sector_b — both see only prior_urls_ordered.
+    Pair 2: sector_c — sees prior_urls_ordered + sector_a URL + sector_b URL.
+    """
 
     captured_samples: list[list] = []
 
     async def fake_run_sector(cfg, spec, prior_sample, ledger, **kwargs):
-        captured_samples.append(list(prior_sample))  # snapshot what this sector saw
-        # Each sector "discovers" one new URL.
+        captured_samples.append(list(prior_sample))
         return [{"url": f"https://example.com/{spec.name}", "headline": f"{spec.name} headline"}]
 
-    # Two minimal specs.
+    # Three light sectors (none are in _DEEP_SECTOR_NAMES).
     spec_a = SimpleNamespace(name="sector_a", default=[])
     spec_b = SimpleNamespace(name="sector_b", default=[])
+    spec_c = SimpleNamespace(name="sector_c", default=[])
 
     from scripts.research import _run_sector_loop
     from jeeves.tools.emit_session import ResearchContext
@@ -46,7 +50,7 @@ def test_prior_sample_grows_between_sectors():
 
     prior_urls_ordered = ["https://prior.com/old"]
 
-    with patch("scripts.research.SECTOR_SPECS", [spec_a, spec_b]), \
+    with patch("scripts.research.SECTOR_SPECS", [spec_a, spec_b, spec_c]), \
          patch("scripts.research.run_sector", side_effect=fake_run_sector), \
          patch("scripts.research.collect_urls_from_sector",
                side_effect=lambda v: [item["url"] for item in v]), \
@@ -59,11 +63,21 @@ def test_prior_sample_grows_between_sectors():
             limit=0,
         ))
 
-    # sector_a saw only prior_urls_ordered
-    assert captured_samples[0] == ["https://prior.com/old"]
-    # sector_b saw prior_urls_ordered + sector_a's discovery
-    assert "https://example.com/sector_a" in captured_samples[1]
-    assert "https://prior.com/old" in captured_samples[1]
+    assert len(captured_samples) == 3, "Three sectors → three captured snapshots"
+
+    # Pair 1 (sector_a, sector_b): both see the same pre-pair snapshot.
+    for s in captured_samples[:2]:
+        assert "https://prior.com/old" in s, "Both pair-1 sectors must see prior URL"
+        assert "https://example.com/sector_a" not in s, \
+            "Within a pair, sectors share a pre-pair snapshot — cross-sector visibility not guaranteed"
+
+    # Pair 2 (sector_c): must see URLs from pair 1 merged in.
+    pair2 = captured_samples[2]
+    assert "https://prior.com/old" in pair2
+    assert "https://example.com/sector_a" in pair2, \
+        "sector_c must see sector_a's URL from the completed pair 1"
+    assert "https://example.com/sector_b" in pair2, \
+        "sector_c must see sector_b's URL from the completed pair 1"
 
 
 def test_prior_sample_cap_is_150():
