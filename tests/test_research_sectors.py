@@ -204,6 +204,8 @@ def test_sector_specs_cover_every_researched_session_field():
         # uap_has_new is a flag set inline by the agent alongside the uap sector,
         # not a separate FunctionAgent sector call.
         "uap_has_new",
+        # quality_warnings is populated during the write phase, not researched.
+        "quality_warnings",
     }
     researched = set(SessionModel.model_fields.keys()) - excluded
     spec_names = {s.name for s in SECTOR_SPECS}
