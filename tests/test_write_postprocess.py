@@ -276,7 +276,7 @@ def test_nim_refine_is_called_for_each_part(monkeypatch):
     monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
     monkeypatch.setattr(asyncio, "sleep", _noop_sleep)
 
-    html = asyncio.run(generate_briefing(cfg, session))
+    html, _warnings, _groq, _nim = asyncio.run(generate_briefing(cfg, session))
     assert set(refined_labels) == {name for name, _ in wmod.PART_PLAN}
     assert "refined" in html
 
@@ -308,7 +308,7 @@ def test_nim_refine_failure_falls_back_to_raw_draft(monkeypatch):
     monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
     monkeypatch.setattr(asyncio, "sleep", _noop_sleep)
 
-    html = asyncio.run(generate_briefing(cfg, session))
+    html, _warnings, _groq, _nim = asyncio.run(generate_briefing(cfg, session))
     # Raw drafts must be in the output even though refine failed.
     assert "raw-part1" in html
 
@@ -391,7 +391,7 @@ def test_nim_fallback_skips_groq_tpm_sleep(monkeypatch):
     monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
     monkeypatch.setattr(asyncio, "sleep", _tracking_sleep)
 
-    asyncio.run(generate_briefing(cfg, session))
+    asyncio.run(generate_briefing(cfg, session))  # return value unused; checking side-effect
 
     # Only one sleep should have fired: the one between part1 (Groq) and part2 (NIM).
     # Parts 3–9 see last_used_groq=False and skip the sleep.
@@ -682,7 +682,7 @@ def test_narrative_edit_called_in_generate_briefing(monkeypatch):
     monkeypatch.setattr(wmod, "_invoke_openrouter_narrative_edit", fake_narrative_edit)
     monkeypatch.setattr(asyncio, "sleep", _noop_sleep)
 
-    html = asyncio.run(generate_briefing(cfg, session))
+    html, _warnings, _groq, _nim = asyncio.run(generate_briefing(cfg, session))
     assert len(edit_calls) == 1, "narrative editor should be called exactly once"
     assert "data-edited='true'" in html
 
@@ -1060,6 +1060,8 @@ def test_part_plan_has_nine_slots_covering_all_session_fields():
     covered = {f for _, fields in PART_PLAN for f in fields if f != "newyorker_hint"}
     assert covered == set(SessionModel.model_fields.keys()) - {
         "date", "status", "dedup", "schema_version",
+        # quality_warnings is populated by the write phase (not a research sector)
+        "quality_warnings",
     }, f"PART_PLAN should cover every researched + correspondence field; got {covered}"
 
 

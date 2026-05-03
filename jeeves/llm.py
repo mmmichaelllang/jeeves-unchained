@@ -229,9 +229,12 @@ def build_groq_llm(cfg: Config, *, temperature: float = 0.65, max_tokens: int = 
 
     from llama_index.llms.groq import Groq
 
+    # Prefer cfg.groq_api_key (single source of truth); fall back to env-var
+    # lookup for callers that pass a minimal Config (e.g. tests with dry_run=True).
+    api_key = cfg.groq_api_key or _ensure_groq_key()
     return Groq(
         model=cfg.groq_model_id,
-        api_key=_ensure_groq_key(),
+        api_key=api_key,
         temperature=temperature,
         max_tokens=max_tokens,
         top_p=0.9,

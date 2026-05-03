@@ -29,6 +29,7 @@ from jeeves.config import Config, MissingSecret  # noqa: E402
 from jeeves.email import SMTPConfigError, send_html  # noqa: E402
 from jeeves.session_io import load_session_by_date  # noqa: E402
 from jeeves.write import (  # noqa: E402
+    _write_run_manifest,
     generate_briefing,
     postprocess_html,
     render_mock_briefing,
@@ -204,12 +205,21 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.dry_run:
         raw_html = render_mock_briefing(session)
+        _quality_warnings: list[str] = []
+        _groq_parts = 0
+        _nim_fallback_parts = 0
         log.info("dry-run fixture briefing assembled (%d chars)", len(raw_html))
     else:
         import asyncio
-        raw_html = asyncio.run(generate_briefing(cfg, session, max_tokens=args.max_tokens))
+        raw_html, _quality_warnings, _groq_parts, _nim_fallback_parts = asyncio.run(
+            generate_briefing(cfg, session, max_tokens=args.max_tokens)
+        )
 
-    result = postprocess_html(raw_html, session)
+    result = postprocess_html(raw_html, session, quality_warnings=_quality_warnings)
+
+    # Write run manifest with full metrics now that postprocess has run.
+    if not args.dry_run:
+        _write_run_manifest(cfg, result, _groq_parts, _nim_fallback_parts)
     log.info(
         "briefing: %d words, %d profane asides, %d coverage entries",
         result.word_count, result.profane_aside_count, len(result.coverage_log),
