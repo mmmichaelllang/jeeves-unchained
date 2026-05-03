@@ -84,7 +84,7 @@ def classify_with_kimi(
     from llama_index.core.base.llms.types import ChatMessage, MessageRole
 
     from .gmail import previews_to_classifier_input
-    from .llm import build_kimi_llm
+    from .llm import build_groq_llm, build_kimi_llm
 
     if not previews:
         return []
@@ -143,6 +143,23 @@ def classify_with_kimi(
                     )
                     time.sleep(sleep_s)
                     continue
+                # All NIM attempts exhausted — fall back to Groq for this batch.
+                if is_timeout or is_rate_limit:
+                    log.warning(
+                        "classify batch %d/%d NIM exhausted — falling back to Groq: %s",
+                        batch_num, n_batches, exc,
+                    )
+                    groq_llm = build_groq_llm(cfg, temperature=0.1, max_tokens=2048)
+                    try:
+                        resp = groq_llm.chat(messages)
+                        raw = str(resp.message.content or "").strip()
+                        break
+                    except Exception as groq_exc:
+                        log.error(
+                            "classify batch %d/%d Groq fallback also failed: %s",
+                            batch_num, n_batches, groq_exc,
+                        )
+                        raise groq_exc from exc
                 raise
         rows = _parse_json_array(raw)
 
