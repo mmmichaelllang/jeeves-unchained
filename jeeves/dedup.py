@@ -20,6 +20,8 @@ def covered_urls(session: SessionModel | None) -> set[str]:
         out.update(block.urls)
     if session.newyorker.url:
         out.add(session.newyorker.url)
+    if session.literary_pick.url:
+        out.add(session.literary_pick.url)
     for art in session.enriched_articles:
         if art.url:
             out.add(art.url)
@@ -35,4 +37,9 @@ def covered_headlines(session: SessionModel | None) -> set[str]:
     # wasn't called on that session's newyorker value.
     if session.newyorker.title:
         out.add(session.newyorker.title)
+    # Include the literary pick title so the same book is not re-selected the
+    # following day.  The literary_pick instruction checks dedup.covered_headlines
+    # before selecting a title; without this the same book can recur daily.
+    if session.literary_pick.title:
+        out.add(session.literary_pick.title)
     return out
