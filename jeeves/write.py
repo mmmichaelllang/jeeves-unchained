@@ -1036,6 +1036,14 @@ PART7_INSTRUCTIONS = CONTINUATION_RULES + """
 Parts 1-6 covered Sectors 1-3 plus the triadic/AI portion of Sector 4.
 You pick up from there.
 
+**HEADER RULE — CRITICAL:** Part 6 already wrote
+`<h3>The Specific Enquiries</h3>` for the triadic/AI material. Your
+UAP content continues under that same header. **DO NOT** write another
+`<h3>The Specific Enquiries</h3>` for UAP — that produces two adjacent
+identical headers. Begin Part 7 with the UAP content directly (a `<p>`
+paragraph, no h3). The Wearable Intelligence sub-section that follows
+gets its own `<h3>The Commercial Ledger</h3>`.
+
 Your scope — write ONLY about these:
 - UAP disclosure material from `uap`.
 - Wearable Intelligence from `wearable_ai` — all three subcategories
@@ -1454,25 +1462,138 @@ def _stitch_parts(*parts: str) -> str:
     Part 1 carries the DOCTYPE/head/body/h1. Parts 2+ are HTML fragments.
     Sentinel comments (<!-- PART1 END -->, <!-- PART2 END -->, etc.) are stripped.
     If the final part didn't close </body></html>, we append them.
+
+    Hardening (sprint 15): every part — including Part 1 — has any
+    premature trailing close tags scrubbed. The stitcher guarantees exactly
+    one </body> and one </html> in the output.
     """
 
     cleaned: list[str] = []
+    last_idx = len(parts) - 1
     for i, raw in enumerate(parts):
         s = _strip_fences((raw or "").strip())
         # Remove sentinel comments of any part number.
-        import re as _re
         s = re.sub(r"<!--\s*PART\d+\s*END\s*-->", "", s).rstrip()
         if i > 0:
             s = _strip_continuation_wrapper(s)
+        else:
+            # Part 0 keeps DOCTYPE/head/body OPEN tags but loses any
+            # premature trailing </body></html> that a hallucinating model
+            # appended after writing Part 1's section. Also strips a stray
+            # signoff div / COVERAGE_LOG that Part 1 never owns.
+            s = _strip_part_zero_premature_close(s)
+        # All parts: strip any standalone signoff div (only Part 9 owns it)
+        # and any stray COVERAGE_LOG comment (postprocess owns it).
+        if i != last_idx:
+            s = _strip_misplaced_signoff_and_coverage(s)
         cleaned.append(s)
 
     combined = "\n".join(p for p in cleaned if p)
+
+    # Invariant: exactly one </body> and one </html>. Splice out duplicates.
+    combined, body_strip_count = _enforce_single_close_tag(combined, "</body>")
+    combined, html_strip_count = _enforce_single_close_tag(combined, "</html>")
+    if body_strip_count or html_strip_count:
+        log.warning(
+            "stitched briefing: stripped %d duplicate </body>, %d duplicate </html>",
+            body_strip_count, html_strip_count,
+        )
+
     low = combined.lower()
     if "</body>" not in low:
         combined += "\n</body>"
     if "</html>" not in low:
         combined += "\n</html>"
     return combined
+
+
+def _strip_part_zero_premature_close(s: str) -> str:
+    """For Part 1 — strip any premature </body>/</html> and orphan signoff/coverage.
+
+    Part 1 owns DOCTYPE/head/body/h1 but never the closing tags or signoff.
+    A misbehaving model that emits a complete briefing for Part 1 would
+    cause Parts 2-9 to land outside </html>. Rip them out.
+    """
+    s = s.strip()
+    # Strip any </html> closer.
+    s = re.sub(r"\s*</html>\s*$", "", s, flags=re.IGNORECASE).strip()
+    # Strip any </body> closer.
+    s = re.sub(r"\s*</body>\s*$", "", s, flags=re.IGNORECASE).strip()
+    # Strip a standalone .signoff div (only Part 9 owns it).
+    s = re.sub(
+        r'\s*<div[^>]*\bclass="signoff"[^>]*>.*?</div>\s*',
+        "",
+        s,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    # Strip a standalone <p class="signoff"> if model used <p> instead of <div>.
+    s = re.sub(
+        r'\s*<p[^>]*\bclass="signoff"[^>]*>.*?</p>\s*',
+        "",
+        s,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    # Strip any COVERAGE_LOG comment (postprocess owns it).
+    s = re.sub(
+        r"<!--\s*COVERAGE_LOG.*?-->",
+        "",
+        s,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    # Strip the trailing </div> that closes .container — Part 9 owns that.
+    while True:
+        new = re.sub(r"\s*</div>\s*$", "", s, flags=re.IGNORECASE)
+        if new == s:
+            break
+        s = new
+    return s.strip()
+
+
+def _strip_misplaced_signoff_and_coverage(s: str) -> str:
+    """For non-final parts — strip any signoff div or COVERAGE_LOG comment.
+
+    These belong only in Part 9 / postprocess. Mid-pipeline parts that emit
+    them duplicate the signoff and confuse the postprocessor.
+    """
+    s = re.sub(
+        r'\s*<div[^>]*\bclass="signoff"[^>]*>.*?</div>\s*',
+        "",
+        s,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    s = re.sub(
+        r'\s*<p[^>]*\bclass="signoff"[^>]*>.*?</p>\s*',
+        "",
+        s,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    s = re.sub(
+        r"<!--\s*COVERAGE_LOG.*?-->",
+        "",
+        s,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    return s
+
+
+def _enforce_single_close_tag(html: str, tag: str) -> tuple[str, int]:
+    """Strip all but the LAST occurrence of `tag` (case-insensitive).
+
+    Returns (cleaned_html, strip_count). Used to enforce one </body> and
+    one </html> in the stitched briefing.
+    """
+    pattern = re.compile(re.escape(tag), re.IGNORECASE)
+    matches = list(pattern.finditer(html))
+    if len(matches) <= 1:
+        return html, 0
+    # Keep the LAST match; strip everything earlier.
+    pieces: list[str] = []
+    cursor = 0
+    for m in matches[:-1]:
+        pieces.append(html[cursor:m.start()])
+        cursor = m.end()
+    pieces.append(html[cursor:])
+    return "".join(pieces), len(matches) - 1
 
 
 # Groq free-tier `llama-3.3-70b-versatile` charges (input_tokens +
@@ -1846,9 +1967,18 @@ def _inject_banner(html: str) -> str:
 
 
 def _build_newyorker_block(text: str, url: str) -> str:
-    """Return formatted NEWYORKER_START…END block plus the Read link paragraph."""
+    """Return formatted NEWYORKER_START…END block. NO Read link.
+
+    PART9_INSTRUCTIONS Step 3 already tells the model to write
+    `<p><a href="...">Read at The New Yorker</a></p>` after the placeholder.
+    Adding it again here produced two adjacent Read links every run
+    (the duplicate-link bug visible in briefings 2026-05-01 and 05-02).
+    Letting Part 9 own it keeps a single source of truth.
+
+    `url` is accepted for backwards compatibility with callers but unused.
+    """
+    del url  # intentional: Part 9 owns the Read link
     paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
-    read_link = f'\n<p><a href="{url}">Read at The New Yorker</a></p>' if url else ""
     return (
         "<!-- NEWYORKER_START -->\n"
         + '<div class="newyorker">\n'
@@ -1856,7 +1986,6 @@ def _build_newyorker_block(text: str, url: str) -> str:
         + "\n".join(f"<p>{p}</p>" for p in paragraphs)
         + "\n</div>"
         + "\n<!-- NEWYORKER_END -->"
-        + read_link
     )
 
 
@@ -1918,15 +2047,73 @@ def _inject_newyorker_verbatim(html: str, session: SessionModel) -> str:
             if signoff_idx == -1 or pos < signoff_idx:
                 signoff_idx = pos
 
+    # In the fallback path the model's hallucinated content is excised —
+    # which removes whatever Read link Part 9 wrote. We must inject one
+    # explicitly here. (Happy-path placeholder substitution does NOT need
+    # this — Part 9's Step 3 link survives the placeholder replacement.)
+    fallback_read_link = (
+        f'\n<p><a href="{ny_url}">Read at The New Yorker</a></p>'
+        if ny_url
+        else ""
+    )
+
     if signoff_idx == -1:
         # No sign-off found — just insert after intro, leave rest intact.
         log.warning("Could not find sign-off anchor; inserting after intro only.")
-        block = "\n" + _build_newyorker_block(ny_text, ny_url) + "\n"
+        block = "\n" + _build_newyorker_block(ny_text, ny_url) + fallback_read_link + "\n"
         return html[:intro_end] + block + html[intro_end:]
 
     # Splice: intro_end … signoff_idx is the hallucinated zone — replace entirely.
-    block = "\n" + _build_newyorker_block(ny_text, ny_url) + "\n"
+    block = "\n" + _build_newyorker_block(ny_text, ny_url) + fallback_read_link + "\n"
     return html[:intro_end] + block + html[signoff_idx:]
+
+
+_NY_READ_LINK_RE = re.compile(
+    r'<p>\s*<a\s+href="([^"]+)"[^>]*>\s*Read at The New Yorker\s*</a>\s*</p>',
+    re.IGNORECASE,
+)
+
+
+def _ensure_single_newyorker_read_link(html: str, session: SessionModel) -> str:
+    """Guarantee exactly one `<p><a>Read at The New Yorker</a></p>`.
+
+    Idempotent. Three cases:
+    1. NY block absent → no Read link needed; strip any that exist.
+    2. NY block present + ≥1 Read link → keep the FIRST one after NEWYORKER_END;
+       strip all others (this is the bug we are fixing — Part 9 + injector
+       both wrote one, producing two adjacent links).
+    3. NY block present + 0 Read links → inject one immediately after
+       NEWYORKER_END (Part 9 dropped it; safety net).
+    """
+    has_ny_block = "<!-- NEWYORKER_END -->" in html
+    if not has_ny_block:
+        # Strip any orphan Read links — they don't belong without TOTT.
+        return _NY_READ_LINK_RE.sub("", html)
+
+    matches = list(_NY_READ_LINK_RE.finditer(html))
+    if len(matches) >= 1:
+        # Keep the first Read link, strip the rest.
+        if len(matches) > 1:
+            log.info(
+                "stripping %d duplicate `Read at The New Yorker` links", len(matches) - 1
+            )
+            # Build new HTML keeping only the first match.
+            keep = matches[0]
+            pieces: list[str] = [html[:keep.end()]]
+            cursor = keep.end()
+            for m in matches[1:]:
+                pieces.append(html[cursor:m.start()])
+                cursor = m.end()
+            pieces.append(html[cursor:])
+            return "".join(pieces)
+        return html
+
+    # No Read link present — inject one after NEWYORKER_END.
+    ny_url = session.newyorker.url or ""
+    if not ny_url:
+        return html
+    inject = f'\n<p><a href="{ny_url}">Read at The New Yorker</a></p>'
+    return html.replace("<!-- NEWYORKER_END -->", "<!-- NEWYORKER_END -->" + inject, 1)
 
 
 _DOMAIN_NICE_NAMES: dict[str, list[str]] = {
@@ -2233,6 +2420,119 @@ def _validate_aside_placement(html: str) -> list[str]:
             preview = re.sub(r"<[^>]+>", "", body).strip()[:80]
             warnings.append(f"orphan aside ({frag!r}): {preview!r}")
     return warnings
+
+
+_H3_TAG_RE = re.compile(r"<h3[^>]*>(.*?)</h3>", re.IGNORECASE | re.DOTALL)
+
+
+def _collapse_adjacent_duplicate_h3(html: str) -> str:
+    """Strip adjacent duplicate `<h3>` headers (case-insensitive text match).
+
+    When Parts 6 + 7 both emit `<h3>The Specific Enquiries</h3>`, the stitched
+    output shows the header twice in a row with no content between (or only
+    whitespace). This collapses the duplicate so the briefing reads cleanly.
+
+    Only collapses adjacent duplicates — non-adjacent duplicates may be
+    legitimate section reuse (rare but possible).
+    """
+    matches = list(_H3_TAG_RE.finditer(html))
+    if len(matches) < 2:
+        return html
+
+    drop_ranges: list[tuple[int, int]] = []
+    for i in range(1, len(matches)):
+        prev = matches[i - 1]
+        cur = matches[i]
+        # Compare normalized text content.
+        prev_text = re.sub(r"\s+", " ", prev.group(1)).strip().lower()
+        cur_text = re.sub(r"\s+", " ", cur.group(1)).strip().lower()
+        if prev_text != cur_text:
+            continue
+        # Adjacent only if the content between is whitespace, comments,
+        # or empty paragraphs.
+        between = html[prev.end():cur.start()]
+        between_stripped = re.sub(r"<!--.*?-->", "", between, flags=re.DOTALL)
+        between_stripped = re.sub(r"<p>\s*</p>", "", between_stripped, flags=re.IGNORECASE)
+        between_stripped = re.sub(r"\s+", "", between_stripped)
+        if between_stripped:
+            continue
+        drop_ranges.append((prev.end(), cur.end()))
+
+    if not drop_ranges:
+        return html
+
+    log.info("collapsing %d adjacent duplicate <h3> headers", len(drop_ranges))
+    # Apply drops back-to-front so indices stay valid.
+    for start, end in reversed(drop_ranges):
+        html = html[:start] + html[end:]
+    return html
+
+
+def _dedup_paragraphs_across_blocks(html: str) -> str:
+    """Drop near-duplicate <p> bodies that appear more than once.
+
+    Fingerprint each `<p>` body's first 80 chars (lowercased, whitespace
+    collapsed, tags stripped). When the same fingerprint appears more than
+    once, keep the first occurrence and drop subsequent ones.
+
+    Skips:
+    - Paragraphs inside the verbatim TOTT block (`<!-- NEWYORKER_START -->`
+      … `<!-- NEWYORKER_END -->`).
+    - Paragraphs inside `<div class="signoff">`.
+    - Paragraphs ≤ 6 words (likely intro/outro fragments where exact
+      collision is intentional).
+    """
+    # Extract NEWYORKER block and any signoff divs as "do not touch" zones.
+    ny_match = _NY_BLOCK_FENCE_RE.search(html)
+    sentinel = "<!--__JEEVES_NY_DEDUP_TMP__-->"
+    if ny_match:
+        ny_saved = ny_match.group(0)
+        scoped = _NY_BLOCK_FENCE_RE.sub(sentinel, html, count=1)
+    else:
+        ny_saved = None
+        scoped = html
+
+    paragraphs: list[tuple[int, int, str]] = []  # (start, end, body)
+    for m in _P_TAG_RE.finditer(scoped):
+        paragraphs.append((m.start(), m.end(), m.group(1)))
+
+    if len(paragraphs) < 2:
+        if ny_saved:
+            scoped = scoped.replace(sentinel, ny_saved, 1)
+        return scoped
+
+    seen_fingerprints: dict[str, int] = {}  # fingerprint → first paragraph idx
+    drop_indices: list[int] = []
+    for idx, (start, end, body) in enumerate(paragraphs):
+        plain = re.sub(r"<[^>]+>", " ", body)
+        plain = re.sub(r"\s+", " ", plain).strip().lower()
+        if len(plain.split()) <= 6:
+            continue
+        fingerprint = plain[:80]
+        if fingerprint in seen_fingerprints:
+            drop_indices.append(idx)
+        else:
+            seen_fingerprints[fingerprint] = idx
+
+    if not drop_indices:
+        if ny_saved:
+            scoped = scoped.replace(sentinel, ny_saved, 1)
+        return scoped
+
+    log.warning(
+        "paragraph dedup: dropping %d duplicate <p> blocks across stitched briefing",
+        len(drop_indices),
+    )
+
+    # Apply drops back-to-front so indices stay valid.
+    drop_indices.sort(reverse=True)
+    for idx in drop_indices:
+        start, end, _ = paragraphs[idx]
+        scoped = scoped[:start] + scoped[end:]
+
+    if ny_saved:
+        scoped = scoped.replace(sentinel, ny_saved, 1)
+    return scoped
 
 
 def _merge_orphan_asides(html: str) -> str:
@@ -2837,6 +3137,7 @@ _NY_BLOCK_RE = re.compile(
 
 # Editor output gates. Tuned to catch the 2026-05-01 regression mode.
 _EDITOR_WORD_FLOOR_RATIO = 0.80   # output must be ≥80% of input word count
+_EDITOR_WORD_CEILING_RATIO = 1.30 # output must be ≤130% — bloated/echoed edits fail
 _EDITOR_MIN_ANCHORS_PER_1K = 5.0  # body link density floor
 _EDITOR_MAX_ASIDE_ORPHANS = 0     # zero standalone-template asides allowed
 
@@ -2856,6 +3157,12 @@ def _editor_quality_gates(
             f"word-floor: edited {out_words} < "
             f"{int(in_words * _EDITOR_WORD_FLOOR_RATIO)} (input {in_words}, "
             f"ratio {out_words / in_words:.2f})"
+        )
+    if in_words and out_words / in_words > _EDITOR_WORD_CEILING_RATIO:
+        return False, (
+            f"word-ceiling: edited {out_words} > "
+            f"{int(in_words * _EDITOR_WORD_CEILING_RATIO)} (input {in_words}, "
+            f"ratio {out_words / in_words:.2f}) — likely echo+edit failure"
         )
 
     orphans = _validate_aside_placement(edited_html)
@@ -3167,6 +3474,15 @@ def _system_prompt_for_parts(
     base = re.sub(
         r"## Briefing structure.*?(?=^## |\Z)", "", base, count=1, flags=_FLAGS,
     )
+    # Strip "## Final output rules" — these apply to a complete briefing
+    # (must start with DOCTYPE, end with </html>, ≥5000 words). For per-part
+    # rendering, each PART_INSTRUCTIONS appendix carries its own scoped rules.
+    # Leaving the global block in causes Part 1 (and sometimes others) to
+    # emit a complete briefing that the stitcher then layers Parts 2-9 onto
+    # — the root cause of the multi-draft concatenation regression.
+    base = re.sub(
+        r"## Final output rules.*?(?=^## |\Z)", "", base, count=1, flags=_FLAGS,
+    )
 
     if part_label in _NO_ASIDE_PARTS:
         # Strip the Horrific Slips bullet (within "## Mandatory style rules")
@@ -3215,6 +3531,68 @@ def _system_prompt_for_parts(
     log.debug("_system_prompt_for_parts [%s]: est. %d tokens", part_label, _est_tokens)
 
     return base.rstrip() + "\n"
+
+
+def _validate_part_fragment(
+    part_idx: int, part_label: str, raw_html: str, total_parts: int
+) -> tuple[str, list[str]]:
+    """Validate + repair a single part's draft BEFORE it enters the stitcher.
+
+    Returns (repaired_html, warnings). Warnings are appended to RunManifest
+    so we can spot-check what the model is producing across runs.
+
+    Rules:
+    - Part 0 (Part 1 / first part): MUST contain DOCTYPE or open <html>;
+      MUST NOT contain a closing </html> (signals the model wrote a complete
+      briefing instead of just Part 1).
+    - Middle parts: MUST NOT contain DOCTYPE/<html>/<head>/<body> open tags
+      (those are Part 0's job); MUST NOT contain <div class="signoff">
+      (Part 9's job); MUST NOT contain COVERAGE_LOG (postprocess's job).
+    - Last part (Part 9): SHOULD contain `<div class="signoff">`. If missing,
+      log a warning — postprocess_html injects a safety signoff.
+    """
+    warnings: list[str] = []
+    is_first = part_idx == 0
+    is_last = part_idx == total_parts - 1
+    low = raw_html.lower()
+
+    if is_first:
+        if "<!doctype" not in low and "<html" not in low:
+            warnings.append(f"part0_missing_doctype:{part_label}")
+        if "</html>" in low:
+            warnings.append(f"part0_premature_html_close:{part_label}")
+        if "</body>" in low:
+            warnings.append(f"part0_premature_body_close:{part_label}")
+        if 'class="signoff"' in low:
+            warnings.append(f"part0_premature_signoff:{part_label}")
+        if "<!-- coverage_log:" in low:
+            warnings.append(f"part0_premature_coverage_log:{part_label}")
+    else:
+        if "<!doctype" in low:
+            warnings.append(f"middle_part_doctype_leak:{part_label}")
+        if re.search(r"<html\b", raw_html, re.IGNORECASE):
+            warnings.append(f"middle_part_html_tag_leak:{part_label}")
+        if re.search(r"<head\b", raw_html, re.IGNORECASE):
+            warnings.append(f"middle_part_head_tag_leak:{part_label}")
+        if re.search(r"<body\b", raw_html, re.IGNORECASE):
+            warnings.append(f"middle_part_body_tag_leak:{part_label}")
+        if not is_last:
+            if 'class="signoff"' in low:
+                warnings.append(f"middle_part_signoff_leak:{part_label}")
+            if "<!-- coverage_log:" in low:
+                warnings.append(f"middle_part_coverage_log_leak:{part_label}")
+
+    if is_last:
+        if 'class="signoff"' not in low:
+            warnings.append(f"part_last_missing_signoff:{part_label}")
+
+    if warnings:
+        log.warning(
+            "[%s] fragment validation: %s",
+            part_label, ", ".join(warnings),
+        )
+
+    return raw_html, warnings
 
 
 async def generate_briefing(
@@ -3297,6 +3675,15 @@ async def generate_briefing(
         raw_part, last_used_groq = _invoke_write_llm(
             cfg, part_system, part_user, max_tokens=max_tokens, label=label
         )
+
+        # Pre-stitch fragment validation. Catches Part 1 emitting complete
+        # briefings, middle parts leaking DOCTYPE/signoff/coverage_log, etc.
+        raw_part, fragment_warnings = _validate_part_fragment(
+            i, label, raw_part, len(PART_PLAN)
+        )
+        if fragment_warnings:
+            quality_warnings.extend(fragment_warnings)
+
         raw_drafts[label] = raw_part
         if last_used_groq:
             groq_part_count += 1
@@ -3373,6 +3760,10 @@ async def generate_briefing(
     # Fallback excises any hallucinated TOTT content before the sign-off.
     stitched = _inject_newyorker_verbatim(stitched, session)
 
+    # Guarantee exactly one Read-at-The-New-Yorker link. Idempotent —
+    # strips duplicates, injects one if Part 9 dropped it.
+    stitched = _ensure_single_newyorker_read_link(stitched, session)
+
     # Deterministically inject <a href> anchors for known source URLs.
     # Runs after TOTT injection so the New Yorker block itself is also covered.
     source_map = _build_source_url_map(session)
@@ -3391,6 +3782,16 @@ async def generate_briefing(
     # stray </div>, profane asides emitted as standalone paragraphs).
     stitched = _repair_container_structure(stitched)
     stitched = _merge_orphan_asides(stitched)
+
+    # Collapse adjacent duplicate <h3> headers. Parts 6 + 7 both write
+    # `<h3>The Specific Enquiries</h3>` and similar collisions exist
+    # whenever the prompt maps multiple parts to the same canonical header.
+    stitched = _collapse_adjacent_duplicate_h3(stitched)
+
+    # Cross-block paragraph dedup. When the same paragraph appears more
+    # than once outside the verbatim TOTT block (e.g., Part 1 emitted a
+    # full briefing then Parts 2-9 repeated material), drop the duplicates.
+    stitched = _dedup_paragraphs_across_blocks(stitched)
 
     # Return structured context so callers can forward quality metadata.
     # Scripts call postprocess_html(html, session, quality_warnings=warnings)
