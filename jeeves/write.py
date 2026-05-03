@@ -1773,17 +1773,24 @@ def _invoke_nim_write(cfg: Config, system: str, user: str, *, max_tokens: int, l
 def _invoke_write_llm(
     cfg: Config, system: str, user: str, *, max_tokens: int, label: str
 ) -> tuple[str, bool]:
-    """Call Groq for the write phase; auto-fall back to NIM on daily-quota exhaustion.
+    """Call Groq for the write phase; auto-fall back to NIM on quota exhaustion.
 
-    Returns (text, used_groq). used_groq=False means Groq TPD was exhausted and
-    NIM handled the draft — the caller can skip the Groq TPM cooldown sleep.
+    Returns (text, used_groq). used_groq=False means Groq was skipped/exhausted
+    and NIM handled the draft — the caller can skip the Groq TPM cooldown sleep.
 
-    Groq's free-tier TPD (tokens-per-day) limit charges input_tokens +
-    max_tokens_requested per call. At 100k tokens/day the 9-part pipeline
-    (~63k tokens at max_tokens=3000) fits, but test runs earlier in the day
-    can exhaust the budget. When the specific TPD error fires, we transparently
-    retry on NVIDIA NIM (meta/llama-3.3-70b-instruct — same model family).
+    Falls back to NIM when:
+    - Input tokens alone exceed the TPM ceiling (pre-check; avoids guaranteed 413).
+    - Groq daily TPD quota is exhausted.
     """
+    _, input_tokens = _clamp_groq_max_tokens(system, user, max_tokens)
+    available = _GROQ_TPM_LIMIT - input_tokens - _GROQ_TPM_SAFETY
+    if available <= 0:
+        log.warning(
+            "Groq skipped for [%s]: input ~%d tokens exceeds TPM ceiling %d "
+            "(available=%d); routing directly to NIM.",
+            label, input_tokens, _GROQ_TPM_LIMIT, available,
+        )
+        return _invoke_nim_write(cfg, system, user, max_tokens=max_tokens, label=label), False
     try:
         return _invoke_groq(cfg, system, user, max_tokens=max_tokens, label=label), True
     except Exception as e:
