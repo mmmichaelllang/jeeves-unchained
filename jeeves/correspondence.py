@@ -90,9 +90,16 @@ def classify_with_kimi(
         return []
 
     system = (PROMPTS_DIR / "correspondence_classify.md").read_text(encoding="utf-8")
-    llm = build_kimi_llm(cfg, temperature=0.1, max_tokens=4096)
+    # Short timeout: NIM free tier hangs 3min before failing. Fail fast at 60s
+    # so circuit breaker can engage on the first batch instead of burning 15min.
+    llm = build_kimi_llm(cfg, temperature=0.1, max_tokens=4096, timeout=60.0)
     by_id = {p.message_id: p for p in previews}
     out: list[ClassifiedMessage] = []
+
+    # Circuit breaker — once NIM fails (timeout or rate-limit) for any batch,
+    # skip NIM entirely for remaining batches and go straight to Groq. Prevents
+    # the 15min-per-batch retry burn that cancelled the 2026-05-03 run.
+    nim_dead = False
 
     n_batches = (len(previews) + batch_size - 1) // batch_size
     for i in range(0, len(previews), batch_size):
@@ -109,16 +116,51 @@ def classify_with_kimi(
             ChatMessage(role=MessageRole.USER, content=user),
         ]
         raw = ""
+
+        # Circuit-broken: skip NIM, render directly via Groq.
+        if nim_dead:
+            log.info(
+                "classify batch %d/%d skipping NIM (circuit broken) — using Groq",
+                batch_num, n_batches,
+            )
+            groq_llm = build_groq_llm(cfg, temperature=0.1, max_tokens=2048)
+            resp = groq_llm.chat(messages)
+            raw = str(resp.message.content or "").strip()
+            rows = _parse_json_array(raw)
+            for row in rows:
+                mid = row.get("id", "")
+                preview = by_id.get(mid)
+                cls = row.get("classification", "no_action")
+                if cls not in CLASSIFICATIONS:
+                    cls = "no_action"
+                out.append(
+                    ClassifiedMessage(
+                        id=mid,
+                        classification=cls,
+                        priority_contact=bool(row.get("priority_contact")),
+                        priority_contact_label=row.get("priority_contact_label"),
+                        summary=str(row.get("summary", "")),
+                        suggested_action=str(row.get("suggested_action", "")),
+                        sender=preview.sender if preview else "",
+                        subject=preview.subject if preview else "",
+                        date=preview.date if preview else "",
+                    )
+                )
+            # No inter-batch sleep needed — Groq has no NIM-style rate window.
+            continue
+
         # Retry schedule:
-        #   timeout / timed-out / network → 30s, 60s, 90s
-        #   429 / rate-limit / TPM exhaustion → 60s, 120s, 240s (NIM free
-        #     tier needs ≥60s for the rolling rate-limit window to clear)
-        # Both share the 4-attempt envelope; sleep length is selected by
-        # which class of error fired.
-        _RATE_LIMIT_SLEEPS = (60, 120, 240)
-        _TIMEOUT_SLEEPS = (30, 60, 90)
-        max_attempts = 4
-        for attempt in range(max_attempts):
+        #   timeout / timed-out / network → 30s (single retry)
+        #   429 / rate-limit / TPM exhaustion → 60s, 120s (NIM free tier
+        #     needs ≥60s for the rolling rate-limit window to clear)
+        # Timeout retries kept minimal — if NIM is hanging, retrying won't help;
+        # fall back to Groq fast and trip the circuit breaker.
+        _RATE_LIMIT_SLEEPS = (60, 120)
+        _TIMEOUT_SLEEPS = (30,)
+        max_attempts_rate = 3
+        max_attempts_timeout = 2
+        attempt = 0
+        while True:
             try:
                 resp = llm.chat(messages)
                 raw = str(resp.message.content or "").strip()
@@ -132,6 +174,7 @@ def classify_with_kimi(
                     or "ratelimit" in exc_str
                 )
                 is_timeout = "timeout" in exc_str or "timed out" in exc_str
+                max_attempts = max_attempts_rate if is_rate_limit else max_attempts_timeout
                 if attempt < max_attempts - 1 and (is_rate_limit or is_timeout):
                     schedule = _RATE_LIMIT_SLEEPS if is_rate_limit else _TIMEOUT_SLEEPS
                     sleep_s = schedule[min(attempt, len(schedule) - 1)]
@@ -142,13 +185,17 @@ def classify_with_kimi(
                         attempt + 1, max_attempts, sleep_s, exc,
                     )
                     time.sleep(sleep_s)
+                    attempt += 1
                     continue
-                # All NIM attempts exhausted — fall back to Groq for this batch.
+                # All NIM attempts exhausted — fall back to Groq for this batch
+                # AND trip the circuit breaker so subsequent batches skip NIM.
                 if is_timeout or is_rate_limit:
                     log.warning(
-                        "classify batch %d/%d NIM exhausted — falling back to Groq: %s",
+                        "classify batch %d/%d NIM exhausted — falling back to Groq "
+                        "and tripping circuit breaker: %s",
                         batch_num, n_batches, exc,
                     )
+                    nim_dead = True
                     groq_llm = build_groq_llm(cfg, temperature=0.1, max_tokens=2048)
                     try:
                         resp = groq_llm.chat(messages)
