@@ -39,6 +39,45 @@ log = logging.getLogger("jeeves.write")
 SUBJECT_TEMPLATE = "📜 Daily Intelligence from Jeeves — {full_date}"
 
 
+def _log_missing_session(cfg: "Config") -> None:
+    """Emit an actionable error when no session JSON exists for cfg.run_date.
+
+    Lists the most recent sessions on disk and tells the user what to run
+    next, instead of leaving them with a bare ``No session file found`` line
+    and a non-zero exit code.
+    """
+
+    sessions_dir = cfg.repo_root / "sessions"
+    available: list[str] = []
+    if sessions_dir.exists():
+        for p in sorted(sessions_dir.glob("session-*.json"), reverse=True):
+            stem = p.stem  # session-2026-05-02
+            # Drop the "session-" prefix so the date is what shows.
+            available.append(stem.replace("session-", "", 1))
+
+    target = cfg.run_date.isoformat()
+    log.error("No session file found for %s.", target)
+    if available:
+        recent = ", ".join(available[:5])
+        log.error(
+            "Most recent sessions on disk: %s. Pass one with `--date YYYY-MM-DD` "
+            "to write a briefing from an existing session.",
+            recent,
+        )
+    if available and target not in available:
+        log.error(
+            "If you want today's briefing, run the research phase first — either "
+            "via the GitHub Actions workflow `Jeeves — Daily Pipeline` (which "
+            "chains correspondence -> research -> write) or locally with "
+            "`uv run python scripts/research.py --date %s`.",
+            target,
+        )
+    log.error(
+        "Alternatively, smoke-test the write pipeline against the canned fixture: "
+        "`uv run python scripts/write.py --use-fixture --skip-send`."
+    )
+
+
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Jeeves write phase (Phase 3).")
     p.add_argument("--date", default=None, help="Session date (YYYY-MM-DD). Defaults to today UTC.")
@@ -156,7 +195,7 @@ def main(argv: list[str] | None = None) -> int:
         try:
             session = load_session_by_date(cfg, cfg.run_date)
         except FileNotFoundError:
-            log.error("No session file found for %s", cfg.run_date.isoformat())
+            _log_missing_session(cfg)
             return 3
 
     if args.plan_only:
