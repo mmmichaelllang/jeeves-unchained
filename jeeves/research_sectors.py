@@ -220,6 +220,15 @@ SECTOR_SPECS: list[SectorSpec] = [
             "from the same journal. Prioritise articles not in prior_urls.\n"
             "Read the full text returned by exa for each chosen article — do not summarise "
             "from the title or dek alone. Write findings from the body.\n"
+            "DOMAIN-ANCHOR FALLBACK (use if the three parallel searches above return fewer "
+            "than 3 distinct publications — these are known-good anchor domains):\n"
+            "  4. exa_search(query='long-form essay 2025 2026', search_type='fast', "
+            "num_results=4, text_max_chars=4000, "
+            "include_domains=['aeon.co', 'lrb.co.uk', 'nybooks.com', 'themarginalia.com'])\n"
+            "  5. serper_search(query='Jacobin ProPublica Intercept OpenSecrets new article "
+            "this week', tbs='qdr:w') — then tavily_extract on top 2 results.\n"
+            "  6. exa_search(query='Artforum N+1 Jewish Currents Dissent essay 2026', "
+            "search_type='fast', num_results=3, text_max_chars=4000)\n"
             "Return a JSON array of {source, findings, urls}."
         ),
         default=[],
@@ -601,6 +610,30 @@ def _parse_sector_output(raw: str, spec: SectorSpec) -> Any:
             )
         parsed = cleaned if cleaned else spec.default
 
+    # Quality filter (inspired by preset-URL pipelines that gate on content
+    # richness before accepting a result): drop list items whose "findings"
+    # string is non-empty but trivially short (< 20 chars after strip).
+    # These are noise entries — "N/A", "No results.", truncated model outputs —
+    # that add nothing to the briefing and confuse the write phase.
+    # Guard: never empty the array; if all items would be dropped, keep them.
+    if spec.shape == "list" and isinstance(parsed, list):
+        quality_filtered = [
+            item for item in parsed
+            if not (
+                isinstance(item, dict)
+                and "findings" in item
+                and item["findings"].strip()
+                and len(item["findings"].strip()) < 20
+            )
+        ]
+        if quality_filtered and len(quality_filtered) < len(parsed):
+            log.warning(
+                "sector %s: quality filter dropped %d item(s) with trivially "
+                "short findings (< 20 chars).",
+                spec.name, len(parsed) - len(quality_filtered),
+            )
+            parsed = quality_filtered
+
     # For deep sectors, if urls is empty the findings are almost certainly
     # from training data.  Return the default so write phase gets nothing
     # rather than stale or fabricated research.
@@ -766,6 +799,7 @@ _REPAIR_SHAPE_HINT: dict[str, str] = {
     "dict": '{"findings": "...", "urls": ["..."]}',
     "deep": '{"findings": "...", "urls": ["..."]}',
     "newyorker": '{"available": true, "title": "...", "section": "...", "dek": "...", "byline": "...", "date": "...", "text": "...", "url": "...", "source": "The New Yorker"}',
+    "literary_pick": '{"available": true, "title": "...", "author": "...", "year": 2020, "summary": "...", "url": "..."}',
 }
 
 
