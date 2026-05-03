@@ -10,6 +10,7 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth, schema
 branch: main | sprint: 14 (quality) | date: 2026-05-03 | tests: 379 passing (27 pre-existing llama_index sandbox failures)
 last-push: direct-to-main (no PR)
 sprint-14-added: generate_briefing 4-tuple return (html, quality_warnings, groq_parts, nim_parts) | postprocess_html quality_warnings kwarg | _write_run_manifest moved to scripts/write.py | _re NameError fixed | RunManifest.from_briefing_result dynamic total_parts | quality sprint (33 files, ~3500 lines) | test_research_sectors excluded quality_warnings
+hotfix-2026-05-03: classify_with_kimi NIM circuit breaker + 60s timeout (was 180s) — prevents 60min cancellation when NIM hangs every call. First batch tries NIM with 1 timeout-retry (30s sleep); on second failure → Groq AND trips nim_dead so remaining batches skip NIM. Rate-limit retries kept at 60s+120s (3 attempts) since 429s clear within window.
 </state>
 
 <gates>
