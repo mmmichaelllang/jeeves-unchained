@@ -7,10 +7,9 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth, schema
 ---
 
 <state>
-branch: main | sprint: 13 (quality) | date: 2026-05-03 | tests: 378 passing (27 pre-existing llama_index sandbox failures)
+branch: main | sprint: 14 (quality) | date: 2026-05-03 | tests: 379 passing (27 pre-existing llama_index sandbox failures)
 last-push: direct-to-main (no PR)
-sprint-13-added: within-run topic dedup | DEDUP_HEADLINES_CAP 80→250 | cross-sector URL collision | playwright_extractor.py (NEW) | 12 NIM refine banned phrases | PART8 hardened
-skill-sprint-added: 10 new .claude/skills/ created (tool-use-guardian, playwright-pro, async-python-patterns, python-testing-patterns, advanced-evaluation, senior-prompt-engineer, github-actions-templates, agent-orchestration, firecrawl-scraper, daily-news-report) | generate_briefing async (threading→asyncio.to_thread) | playwright stealth headers + cookie-consent + CircuitBreaker.trip_count | research sector tiered semaphore (heavy=1, light=2 pairs) | DEDUP_PROMPT_ASIDES_CAP=20 DEDUP_PROMPT_TOPICS_CAP=30 (last-N not first-N) | firecrawl_extractor.py (NEW optional fetch-chain) | scripts/eval_briefing.py (NEW quality scorer) | write_system.md: 3 hook patterns + info-density rule + sparse-sector rule + BAD/GOOD menu-announcing example | daily.yml: Playwright step timeout + continue-on-error quota commit + FIRECRAWL_API_KEY | 45 new integration tests (test_research_integration.py)
+sprint-14-added: generate_briefing 4-tuple return (html, quality_warnings, groq_parts, nim_parts) | postprocess_html quality_warnings kwarg | _write_run_manifest moved to scripts/write.py | _re NameError fixed | RunManifest.from_briefing_result dynamic total_parts | quality sprint (33 files, ~3500 lines) | test_research_sectors excluded quality_warnings
 </state>
 
 <gates>
