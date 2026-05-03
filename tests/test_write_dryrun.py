@@ -79,6 +79,21 @@ def test_write_missing_session_fails_cleanly(isolated_repo: Path):
     assert "No session file found" in result.stderr
 
 
+def test_write_missing_session_lists_available_and_suggests_recovery(isolated_repo: Path):
+    """Error path must guide the user — list recent sessions on disk + tell
+    them how to either pick an existing one (`--date`), produce today's
+    research first (daily.yml), or smoke-test (`--use-fixture`)."""
+    result = _run(isolated_repo, "--dry-run", "--date", "2099-01-01")
+    assert result.returncode == 3
+    # Lists the canned session on disk so user knows what's available.
+    assert "Most recent sessions on disk" in result.stderr
+    assert "2026-04-23" in result.stderr
+    # Points at the daily pipeline / research script for today's data.
+    assert "research" in result.stderr.lower()
+    # Suggests --use-fixture as the smoke-test fallback.
+    assert "--use-fixture" in result.stderr
+
+
 def test_write_use_fixture_bypasses_session_load(isolated_repo: Path):
     # 2099-01-01 has no session file, but --use-fixture skips that load.
     result = _run(isolated_repo, "--use-fixture", "--dry-run", "--date", "2099-01-01")
