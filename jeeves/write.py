@@ -70,12 +70,13 @@ class RunManifest:
     def from_briefing_result(cls, result: "BriefingResult", date: str,
                              groq_parts: int, nim_fallback_parts: int) -> "RunManifest":
         refine_warnings = [w for w in result.quality_warnings if "nim_refine" in w]
+        total_parts = groq_parts + nim_fallback_parts
         score = _compute_quality_score(result)
         return cls(
             date=date,
             groq_parts=groq_parts,
             nim_fallback_parts=nim_fallback_parts,
-            nim_refine_succeeded=9 - len(refine_warnings),
+            nim_refine_succeeded=max(0, total_parts - len(refine_warnings)),
             nim_refine_failed=len(refine_warnings),
             briefing_word_count=result.word_count,
             profane_aside_count=result.profane_aside_count,
@@ -209,6 +210,25 @@ PROFANE_FRAGMENTS = [
 
 def load_write_system_prompt() -> str:
     return WRITE_PROMPT_PATH.read_text(encoding="utf-8")
+
+
+# Module-level cache so 9 sequential Groq calls don't re-read the same files.
+_WRITE_SYSTEM_PROMPT_CACHE: str | None = None
+_EMAIL_SCAFFOLD_CACHE: str | None = None
+
+
+def _cached_write_system_prompt() -> str:
+    global _WRITE_SYSTEM_PROMPT_CACHE
+    if _WRITE_SYSTEM_PROMPT_CACHE is None:
+        _WRITE_SYSTEM_PROMPT_CACHE = load_write_system_prompt()
+    return _WRITE_SYSTEM_PROMPT_CACHE
+
+
+def _cached_email_scaffold() -> str:
+    global _EMAIL_SCAFFOLD_CACHE
+    if _EMAIL_SCAFFOLD_CACHE is None:
+        _EMAIL_SCAFFOLD_CACHE = load_email_scaffold()
+    return _EMAIL_SCAFFOLD_CACHE
 
 
 def load_email_scaffold() -> str:
@@ -1300,8 +1320,8 @@ def _session_subset(payload: dict[str, Any], fields: list[str]) -> dict[str, Any
 
 def _strip_fences(s: str) -> str:
     import re as _re
-    s = _re.sub(r"^```(?:html)?\s*", "", s)
-    s = _re.sub(r"\s*```\s*$", "", s)
+    s = re.sub(r"^```(?:html)?\s*", "", s)
+    s = re.sub(r"\s*```\s*$", "", s)
     return s
 
 
@@ -1313,17 +1333,17 @@ def _strip_continuation_wrapper(s: str) -> str:
     anyway, leaving subsequent parts to render outside `.container`.
     """
     import re as _re
-    s = _re.sub(r"^<!DOCTYPE[^>]*>", "", s, flags=_re.IGNORECASE).strip()
-    s = _re.sub(r"<html[^>]*>", "", s, flags=_re.IGNORECASE)
-    s = _re.sub(r"<head>.*?</head>", "", s, flags=_re.IGNORECASE | _re.DOTALL)
-    s = _re.sub(r"<body[^>]*>", "", s, flags=_re.IGNORECASE)
-    s = _re.sub(r"<h1[^>]*>.*?</h1>", "", s, flags=_re.IGNORECASE | _re.DOTALL)
+    s = re.sub(r"^<!DOCTYPE[^>]*>", "", s, flags=_re.IGNORECASE).strip()
+    s = re.sub(r"<html[^>]*>", "", s, flags=_re.IGNORECASE)
+    s = re.sub(r"<head>.*?</head>", "", s, flags=_re.IGNORECASE | re.DOTALL)
+    s = re.sub(r"<body[^>]*>", "", s, flags=_re.IGNORECASE)
+    s = re.sub(r"<h1[^>]*>.*?</h1>", "", s, flags=_re.IGNORECASE | re.DOTALL)
     # Strip masthead divs (mh-label, mh-date) if a continuation part leaks them.
-    s = _re.sub(r'<div[^>]*class="mh-(?:label|date)"[^>]*>.*?</div>', "", s, flags=_re.IGNORECASE | _re.DOTALL)
+    s = re.sub(r'<div[^>]*class="mh-(?:label|date)"[^>]*>.*?</div>', "", s, flags=_re.IGNORECASE | re.DOTALL)
     # Strip trailing closers — continuation parts must not close outer tags.
     s = s.strip()
     while True:
-        new = _re.sub(r"\s*</(?:div|body|html)>\s*$", "", s, flags=_re.IGNORECASE)
+        new = re.sub(r"\s*</(?:div|body|html)>\s*$", "", s, flags=_re.IGNORECASE)
         if new == s:
             break
         s = new
@@ -1441,7 +1461,7 @@ def _stitch_parts(*parts: str) -> str:
         s = _strip_fences((raw or "").strip())
         # Remove sentinel comments of any part number.
         import re as _re
-        s = _re.sub(r"<!--\s*PART\d+\s*END\s*-->", "", s).rstrip()
+        s = re.sub(r"<!--\s*PART\d+\s*END\s*-->", "", s).rstrip()
         if i > 0:
             s = _strip_continuation_wrapper(s)
         cleaned.append(s)
@@ -3000,7 +3020,7 @@ def _parse_all_asides() -> list[str]:
     m = _re.search(
         r'^"clusterfuck of biblical proportions[^\n]+$',
         base,
-        flags=_re.MULTILINE,
+        flags=re.MULTILINE,
     )
     if not m:
         return []
@@ -3067,7 +3087,7 @@ def _extract_written_topics(text: str) -> list[str]:
     """
     import re as _re
 
-    plain = _re.sub(r"<[^>]+>", " ", text)
+    plain = re.sub(r"<[^>]+>", " ", text)
     titles = _re.findall(r'"([^"]{5,80})"', plain)
     proper = _re.findall(
         r'\b([A-Z][a-z]{1,}(?:\s[A-Z][a-z]{1,}){1,3})\b', plain
@@ -3128,32 +3148,30 @@ def _system_prompt_for_parts(
     Everything else — persona, mandatory rules, coverage-log rules, final
     output rules — stays verbatim.
     """
-    import re as _re
-
-    base = load_write_system_prompt()
+    base = _cached_write_system_prompt()
 
     # Use re.MULTILINE so the lookahead `^## ` anchors to a real line boundary.
     # Without MULTILINE, `.*?` would stop at the first `#` of any `### Sector`
     # subheading (two of its three `#`s look like `## ` to the lookahead).
-    _FLAGS = _re.DOTALL | _re.MULTILINE
-    base = _re.sub(
+    _FLAGS = re.DOTALL | re.MULTILINE
+    base = re.sub(
         r"## HTML scaffold.*?(?=^## |\Z)", "", base, count=1, flags=_FLAGS,
     )
-    base = _re.sub(
+    base = re.sub(
         r"## Briefing structure.*?(?=^## |\Z)", "", base, count=1, flags=_FLAGS,
     )
 
     if part_label in _NO_ASIDE_PARTS:
         # Strip the Horrific Slips bullet (within "## Mandatory style rules")
         # and the "### Pre-approved profane butler asides" subsection below it.
-        base = _re.sub(
+        base = re.sub(
             r"- \*\*\[HARD RULE\] Horrific Slips.*?(?=^- \*\*|^## |^### |\Z)",
             "",
             base,
             count=1,
             flags=_FLAGS,
         )
-        base = _re.sub(
+        base = re.sub(
             r"### Pre-approved profane butler asides.*?(?=^## |\Z)",
             "",
             base,
@@ -3187,10 +3205,7 @@ def _system_prompt_for_parts(
         )
 
     _est_tokens = len(base) // 4
-    import logging as _logging
-    _logging.getLogger(__name__).debug(
-        "_system_prompt_for_parts [%s]: est. %d tokens", part_label, _est_tokens
-    )
+    log.debug("_system_prompt_for_parts [%s]: est. %d tokens", part_label, _est_tokens)
 
     return base.rstrip() + "\n"
 
@@ -3370,11 +3385,28 @@ async def generate_briefing(
     stitched = _repair_container_structure(stitched)
     stitched = _merge_orphan_asides(stitched)
 
-    return stitched
+    # Return structured context so callers can forward quality metadata.
+    # Scripts call postprocess_html(html, session, quality_warnings=warnings)
+    # then _write_run_manifest(cfg, result, groq_part_count, nim_fallback_part_count).
+    return stitched, quality_warnings, groq_part_count, nim_fallback_part_count
 
 
-def postprocess_html(raw: str, session: SessionModel) -> BriefingResult:
-    """Clean model output, ensure COVERAGE_LOG, and compute QA metrics."""
+def postprocess_html(
+    raw: str,
+    session: SessionModel,
+    *,
+    quality_warnings: list[str] | None = None,
+) -> BriefingResult:
+    """Clean model output, ensure COVERAGE_LOG, and compute QA metrics.
+
+    Args:
+        raw: Raw HTML string from generate_briefing (or render_mock_briefing).
+        session: The session model used to generate the briefing.
+        quality_warnings: Optional list of quality warnings from generate_briefing
+            (NIM refine failures, timeouts, etc.). Defaults to an empty list.
+            Pass the warnings from generate_briefing so they appear in BriefingResult.
+    """
+    quality_warnings_list: list[str] = list(quality_warnings or [])
 
     html = _strip_markdown_fences(raw.strip())
     html = _ensure_doctype(html)
@@ -3425,11 +3457,8 @@ def postprocess_html(raw: str, session: SessionModel) -> BriefingResult:
         aside_placement_violations=_validate_aside_placement(html),
         link_density=_compute_link_density(html, word_count),
         structure_errors=structure_errors,
-        quality_warnings=quality_warnings,
+        quality_warnings=quality_warnings_list,
     )
-
-    # Write run manifest for post-run observability.
-    _write_run_manifest(cfg, result, groq_part_count, nim_fallback_part_count)
 
     return result
 
@@ -3451,10 +3480,8 @@ def _write_run_manifest(
     manifest = RunManifest.from_briefing_result(
         result, cfg.run_date.isoformat(), groq_parts, nim_fallback_parts
     )
-    path = cfg.sessions_dir / f"run-manifest-{cfg.run_date.isoformat()}.json"
     suffix = ".local" if cfg.dry_run else ""
-    if cfg.dry_run:
-        path = cfg.sessions_dir / f"run-manifest-{cfg.run_date.isoformat()}.local.json"
+    path = cfg.sessions_dir / f"run-manifest-{cfg.run_date.isoformat()}{suffix}.json"
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(
