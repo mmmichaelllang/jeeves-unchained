@@ -10,12 +10,18 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from .config import Config
+from .config import (
+    Config,
+    DEDUP_PROMPT_HEADLINES_CAP,
+    DEDUP_PROMPT_ASIDES_CAP,
+    DEDUP_PROMPT_TOPICS_CAP,
+)
 from .schema import SessionModel
 
 log = logging.getLogger(__name__)
 
 WRITE_PROMPT_PATH = Path(__file__).resolve().parent / "prompts" / "write_system.md"
+EMAIL_SCAFFOLD_PATH = Path(__file__).resolve().parent / "prompts" / "email_scaffold.html"
 
 
 @dataclass
@@ -29,12 +35,79 @@ class BriefingResult:
     aside_placement_violations: list[str] = None  # type: ignore[assignment]
     link_density: float = 0.0
     structure_errors: list[str] = None  # type: ignore[assignment]
+    quality_warnings: list[str] = None  # type: ignore[assignment]
 
     def __post_init__(self) -> None:
         if self.aside_placement_violations is None:
             self.aside_placement_violations = []
         if self.structure_errors is None:
             self.structure_errors = []
+        if self.quality_warnings is None:
+            self.quality_warnings = []
+
+
+@dataclass
+class RunManifest:
+    """Structured summary of a write-phase run, written to sessions/run-manifest-DATE.json.
+
+    Gives post-run visibility into quality-degradation events without requiring
+    manual inspection of the HTML.  Committed to git → queryable history.
+    """
+
+    date: str
+    groq_parts: int
+    nim_fallback_parts: int
+    nim_refine_succeeded: int
+    nim_refine_failed: int
+    briefing_word_count: int
+    profane_aside_count: int
+    banned_word_hits: list[str]
+    banned_transition_hits: list[str]
+    quality_warnings: list[str]
+    quality_score: int  # 0–100 structural score
+
+    @classmethod
+    def from_briefing_result(cls, result: "BriefingResult", date: str,
+                             groq_parts: int, nim_fallback_parts: int) -> "RunManifest":
+        refine_warnings = [w for w in result.quality_warnings if "nim_refine" in w]
+        score = _compute_quality_score(result)
+        return cls(
+            date=date,
+            groq_parts=groq_parts,
+            nim_fallback_parts=nim_fallback_parts,
+            nim_refine_succeeded=9 - len(refine_warnings),
+            nim_refine_failed=len(refine_warnings),
+            briefing_word_count=result.word_count,
+            profane_aside_count=result.profane_aside_count,
+            banned_word_hits=result.banned_word_hits,
+            banned_transition_hits=result.banned_transition_hits,
+            quality_warnings=result.quality_warnings,
+            quality_score=score,
+        )
+
+
+def _compute_quality_score(result: "BriefingResult") -> int:
+    """Structural quality score 0–100 for the briefing.
+
+    Dimensions (each 0 or full points):
+      word_count ≥ 5000         → 25 pts
+      aside_count ≥ 5           → 20 pts
+      banned_word_hits = 0      → 20 pts
+      banned_transition_hits = 0 → 20 pts
+      quality_warnings = 0      → 15 pts
+    """
+    score = 0
+    if result.word_count >= 5000:
+        score += 25
+    if result.profane_aside_count >= 5:
+        score += 20
+    if not result.banned_word_hits:
+        score += 20
+    if not result.banned_transition_hits:
+        score += 20
+    if not result.quality_warnings:
+        score += 15
+    return score
 
 
 # --- Signoff guard ---------------------------------------------------------
@@ -138,7 +211,34 @@ def load_write_system_prompt() -> str:
     return WRITE_PROMPT_PATH.read_text(encoding="utf-8")
 
 
-DEDUP_PROMPT_HEADLINES_CAP = 250
+def load_email_scaffold() -> str:
+    """Return the canonical HTML scaffold including CSS.
+
+    Loaded separately from the system prompt so the scaffold can be updated
+    without touching write_system.md.  The scaffold is injected into the
+    system prompt where the placeholder ``{EMAIL_SCAFFOLD}`` appears.
+    If no placeholder is found the scaffold text is appended at the end of
+    the system prompt (backward-compatible fallback).
+    """
+    return EMAIL_SCAFFOLD_PATH.read_text(encoding="utf-8")
+
+
+def build_write_system_prompt_with_scaffold() -> str:
+    """Return the system prompt with the email scaffold injected.
+
+    Replaces ``{EMAIL_SCAFFOLD}`` in write_system.md with the contents of
+    email_scaffold.html.  Falls back to appending if the placeholder is absent
+    (e.g. during tests that pass a minimal system prompt).
+    """
+    prompt = load_write_system_prompt()
+    scaffold = load_email_scaffold()
+    placeholder = "{EMAIL_SCAFFOLD}"
+    if placeholder in prompt:
+        return prompt.replace(placeholder, scaffold)
+    return prompt
+
+
+# DEDUP_PROMPT_*_CAP constants imported from jeeves.config (authoritative source)
 
 
 def _trim_session_for_prompt(session: SessionModel) -> dict[str, Any]:
@@ -1577,6 +1677,9 @@ def _invoke_nim_refine(cfg: Config, draft_html: str, *, label: str) -> str:
     if not cfg.nvidia_api_key:
         log.debug("NVIDIA_API_KEY not set; skipping refine for [%s]", label)
         return draft_html
+    if cfg.skip_nim_refine:
+        log.info("JEEVES_SKIP_NIM_REFINE set; skipping NIM refine for [%s]", label)
+        return draft_html
 
     llm = build_nim_write_llm(cfg, temperature=0.2, max_tokens=4096)
     user = f"Edit the following HTML fragment:\n\n{draft_html}"
@@ -2775,11 +2878,11 @@ def _invoke_openrouter_narrative_edit(
     the article mid-sentence when it hits the output token ceiling, and (b) keeps
     the TOTT out of the edit payload so the model isn't tempted to rewrite it.
     """
-    from openai import OpenAI
-
     if not cfg.openrouter_api_key:
         log.debug("OPENROUTER_API_KEY not set; skipping narrative edit pass")
         return html
+
+    from openai import OpenAI
 
     # --- extract TOTT block so it never hits the edit model ---
     ny_match = _NY_BLOCK_RE.search(html)
@@ -3060,39 +3163,39 @@ def _system_prompt_for_parts(
 
     if part_label not in _NO_ASIDE_PARTS:
         # Combine within-run used asides with day-over-day history.
+        # Cap to DEDUP_PROMPT_ASIDES_CAP most-recent entries — earlier ones are
+        # unlikely to recur and only inflate the system prompt token count.
         all_avoid: list[str] = list(run_used_asides or [])
         if cfg is not None:
             for p in _recently_used_asides(cfg):
                 if p not in all_avoid:
                     all_avoid.append(p)
         if all_avoid:
-            avoid_line = " | ".join(f'"{p}"' for p in all_avoid)
+            all_avoid_capped = all_avoid[-DEDUP_PROMPT_ASIDES_CAP:]
+            avoid_line = " | ".join(f'"{p}"' for p in all_avoid_capped)
             base = base.rstrip() + (
-                "\n\n### Recently used asides — DO NOT reuse in today's briefing\n\n"
-                "The following asides appeared in earlier parts of today's briefing "
-                f"or in Jeeves's briefings over the last {ASIDES_RECENT_WINDOW_DAYS} "
-                "days. Pick a fresh phrase from the full pool above — same thematic "
-                "matching rules apply, just a different word choice:\n\n"
+                "\n\n### Used asides (no repeats)\n\n"
                 f"{avoid_line}\n"
             )
 
     if run_used_topics:
-        topic_str = "; ".join(run_used_topics[:40])
+        topics_capped = run_used_topics[-DEDUP_PROMPT_TOPICS_CAP:]
+        topic_str = "; ".join(topics_capped)
         base = base.rstrip() + (
-            "\n\n### Topics already written in earlier parts of today's briefing\n\n"
-            "The following topics, titles, and named entities have ALREADY been "
-            "covered in earlier parts of today's briefing. Do NOT re-explain or "
-            "re-summarise them. If a payload item references one of these, write "
-            "ONE short sentence acknowledging the prior coverage and pivot to a "
-            "genuinely new angle, OR omit it entirely. No paragraph in this part "
-            "should re-narrate any of these:\n\n"
+            "\n\n### Run topics (avoid re-narrating)\n\n"
             f"{topic_str}\n"
         )
+
+    _est_tokens = len(base) // 4
+    import logging as _logging
+    _logging.getLogger(__name__).debug(
+        "_system_prompt_for_parts [%s]: est. %d tokens", part_label, _est_tokens
+    )
 
     return base.rstrip() + "\n"
 
 
-def generate_briefing(
+async def generate_briefing(
     cfg: Config,
     session: SessionModel,
     *,
@@ -3115,8 +3218,7 @@ def generate_briefing(
     - If NVIDIA_API_KEY is absent → refine is silently skipped.
     """
 
-    import threading
-    import time
+    import asyncio
 
     payload = _trim_session_for_prompt(session)
     aside_pool = _parse_all_asides()
@@ -3125,24 +3227,31 @@ def generate_briefing(
 
     raw_drafts: dict[str, str] = {}
     refined: dict[str, str] = {}
-    refine_threads: list[tuple[str, threading.Thread]] = []
+    refine_tasks: list[tuple[str, "asyncio.Task[None]"]] = []
     last_used_groq = True  # assume Groq until proven otherwise
+    quality_warnings: list[str] = []   # unexpected fallbacks captured for RunManifest
+    groq_part_count = 0
+    nim_fallback_part_count = 0
 
-    def _refine_bg(label: str, draft: str) -> None:
+    def _refine_bg_sync(label: str, draft: str) -> None:
         try:
             refined[label] = _invoke_nim_refine(cfg, draft, label=label)
         except Exception as exc:
             log.warning(
                 "NIM refine failed for [%s] (%s); using raw draft", label, exc
             )
+            quality_warnings.append(f"nim_refine_failed:{label}:{type(exc).__name__}")
             refined[label] = draft
 
     for i, (label, sectors) in enumerate(PART_PLAN):
         if i > 0:
             if last_used_groq:
                 # Groq free-tier 12k TPM window — must clear before next call.
-                log.info("sleeping 65s before %s (Groq TPM window cooldown)", label)
-                time.sleep(65)
+                log.info(
+                    "sleeping %ds before %s (Groq TPM window cooldown)",
+                    cfg.groq_inter_part_sleep_s, label,
+                )
+                await asyncio.sleep(cfg.groq_inter_part_sleep_s)
             else:
                 # NIM handled the last draft (Groq TPD exhausted). NIM has no
                 # 12k TPM limit, so the cooldown sleep is unnecessary.
@@ -3167,6 +3276,10 @@ def generate_briefing(
             cfg, part_system, part_user, max_tokens=max_tokens, label=label
         )
         raw_drafts[label] = raw_part
+        if last_used_groq:
+            groq_part_count += 1
+        else:
+            nim_fallback_part_count += 1
 
         # Density diagnostic — log thin parts for triage. Strip HTML tags
         # before counting so word totals reflect actual prose, not markup.
@@ -3199,17 +3312,28 @@ def generate_briefing(
                     used_topics_this_run.append(t)
 
         # Fire-and-forget NIM refine; runs during the next 65s Groq sleep.
-        t = threading.Thread(target=_refine_bg, args=(label, raw_part), daemon=True)
-        t.start()
-        refine_threads.append((label, t))
+        task = asyncio.create_task(asyncio.to_thread(_refine_bg_sync, label, raw_part))
+        refine_tasks.append((label, task))
 
-    # Wait for any refine threads that are still running (typically only the
-    # last part, since earlier threads finish during the inter-part sleeps).
+    # Wait for any refine tasks that are still running (typically only the
+    # last part, since earlier tasks finish during the inter-part sleeps).
     log.info("waiting for NIM quality-editor passes to complete…")
-    for label, t in refine_threads:
-        t.join(timeout=120)
-        if t.is_alive():
-            log.warning("NIM refine timed out for [%s]; using raw draft", label)
+    for label, task in refine_tasks:
+        try:
+            await asyncio.wait_for(asyncio.shield(task), timeout=120)
+        except (asyncio.TimeoutError, Exception) as exc:
+            warn_key = (
+                f"nim_refine_timeout:{label}"
+                if isinstance(exc, asyncio.TimeoutError)
+                else f"nim_refine_wait_error:{label}:{type(exc).__name__}"
+            )
+            log.warning(
+                "NIM refine timed out or failed for [%s] (%s); using raw draft",
+                label, exc,
+            )
+            quality_warnings.append(warn_key)
+            if not task.done():
+                task.cancel()
             refined.setdefault(label, raw_drafts[label])
 
     final_parts = [refined.get(label, raw_drafts[label]) for label, _ in PART_PLAN]
@@ -3291,7 +3415,7 @@ def postprocess_html(raw: str, session: SessionModel) -> BriefingResult:
     if structure_errors:
         log.warning("HTML structure errors after postprocess: %s", structure_errors)
 
-    return BriefingResult(
+    result = BriefingResult(
         html=html,
         coverage_log=coverage,
         word_count=word_count,
@@ -3301,7 +3425,48 @@ def postprocess_html(raw: str, session: SessionModel) -> BriefingResult:
         aside_placement_violations=_validate_aside_placement(html),
         link_density=_compute_link_density(html, word_count),
         structure_errors=structure_errors,
+        quality_warnings=quality_warnings,
     )
+
+    # Write run manifest for post-run observability.
+    _write_run_manifest(cfg, result, groq_part_count, nim_fallback_part_count)
+
+    return result
+
+
+def _write_run_manifest(
+    cfg: Config,
+    result: BriefingResult,
+    groq_parts: int,
+    nim_fallback_parts: int,
+) -> None:
+    """Persist a RunManifest JSON to sessions/run-manifest-DATE.json.
+
+    Additive — does not modify the session JSON. Committed to git alongside
+    the briefing HTML so quality history is queryable across days.
+    """
+    import dataclasses
+    import json as _json
+
+    manifest = RunManifest.from_briefing_result(
+        result, cfg.run_date.isoformat(), groq_parts, nim_fallback_parts
+    )
+    path = cfg.sessions_dir / f"run-manifest-{cfg.run_date.isoformat()}.json"
+    suffix = ".local" if cfg.dry_run else ""
+    if cfg.dry_run:
+        path = cfg.sessions_dir / f"run-manifest-{cfg.run_date.isoformat()}.local.json"
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            _json.dumps(dataclasses.asdict(manifest), indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        log.info(
+            "run manifest written: %s (score=%d, warnings=%d)",
+            path.name, manifest.quality_score, len(manifest.quality_warnings),
+        )
+    except Exception as exc:
+        log.warning("failed to write run manifest: %s", exc)
 
 
 def _strip_markdown_fences(s: str) -> str:

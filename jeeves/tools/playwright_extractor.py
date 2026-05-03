@@ -313,10 +313,14 @@ class CircuitBreaker:
     recent ``max_repeats`` hashes are identical, the breaker reports tripped.
     The agent loop then forces a page reset and warns the LLM that its
     previous actions had no effect.
+
+    ``trip_count`` persists across resets so the session can give_up after
+    too many consecutive trips (see ``run_navigation_session``).
     """
 
     max_repeats: int = 3
     history: list[str] = field(default_factory=list)
+    trip_count: int = 0
 
     def record(self, h: str) -> bool:
         """Append ``h`` to history and return True if the breaker has tripped."""
@@ -324,10 +328,15 @@ class CircuitBreaker:
         if len(self.history) < self.max_repeats:
             return False
         last = self.history[-self.max_repeats:]
-        return all(x == last[0] for x in last)
+        tripped = all(x == last[0] for x in last)
+        if tripped:
+            self.trip_count += 1
+        return tripped
 
     def reset(self) -> None:
         self.history.clear()
+        # Note: trip_count is intentionally NOT reset — it persists so the
+        # session can give_up after too many trips.
 
 
 # ---------------------------------------------------------------------------
@@ -467,6 +476,66 @@ Output only the markdown. No commentary. No JSON. No code fences.
 
 
 # ---------------------------------------------------------------------------
+# Cookie / GDPR consent dismissal.
+# ---------------------------------------------------------------------------
+
+# Attribute-based selectors tried first (faster, more specific).
+_COOKIE_CONSENT_SELECTORS = (
+    "button[id*='accept']",
+    "button[class*='accept']",
+    "button[data-testid*='accept']",
+    "[class*='cookie'] button",
+    "[id*='cookie'] button",
+    "[id*='consent'] button",
+    "[class*='consent'] button",
+)
+
+# Visible button-text fallbacks (case-sensitive role locator).
+_COOKIE_CONSENT_TEXTS = (
+    "Accept All",
+    "Accept all",
+    "Accept",
+    "I Accept",
+    "Got it",
+    "Agree",
+    "OK",
+    "Allow all",
+)
+
+
+def _dismiss_cookie_consent(page, *, timeout_ms: int = 1500) -> bool:
+    """Try to dismiss a GDPR/cookie-consent banner.
+
+    Tries attribute-based selectors first, then role-based text locators.
+    Returns True if a button was successfully clicked, False otherwise.
+    Fail-soft — never raises.
+    """
+    # Attribute-based selectors first.
+    for sel in _COOKIE_CONSENT_SELECTORS:
+        try:
+            el = page.locator(sel).first
+            if el.is_visible(timeout=timeout_ms):
+                el.click(timeout=timeout_ms)
+                page.wait_for_timeout(400)
+                log.debug("cookie consent dismissed via selector %s", sel)
+                return True
+        except Exception:
+            continue
+    # Text-based fallback.
+    for text in _COOKIE_CONSENT_TEXTS:
+        try:
+            el = page.get_by_role("button", name=text, exact=True).first
+            if el.is_visible(timeout=timeout_ms):
+                el.click(timeout=timeout_ms)
+                page.wait_for_timeout(400)
+                log.debug("cookie consent dismissed via text %r", text)
+                return True
+        except Exception:
+            continue
+    return False
+
+
+# ---------------------------------------------------------------------------
 # Public API — the simple article extractor used by TOTT and enrichment.
 # ---------------------------------------------------------------------------
 
@@ -538,6 +607,16 @@ def extract_article(
                         "Chrome/124.0.0.0 Safari/537.36"
                     ),
                     viewport={"width": 1280, "height": 900},
+                    extra_http_headers={
+                        "Accept-Language": "en-US,en;q=0.9",
+                        "Accept": (
+                            "text/html,application/xhtml+xml,application/xml"
+                            ";q=0.9,image/webp,*/*;q=0.8"
+                        ),
+                        "DNT": "1",
+                        "Upgrade-Insecure-Requests": "1",
+                    },
+                    ignore_https_errors=True,
                 )
                 page = ctx.new_page()
                 try:
@@ -548,6 +627,8 @@ def extract_article(
                     )
                     # Let JS hydrate; many SPAs need a beat after DOMContentLoaded.
                     page.wait_for_timeout(1500)
+                    # Dismiss cookie/GDPR consent banners before extraction.
+                    _dismiss_cookie_consent(page)
 
                     title = ""
                     try:
@@ -772,7 +853,24 @@ def run_navigation_session(
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
             try:
-                ctx = browser.new_context(viewport={"width": 1280, "height": 900})
+                ctx = browser.new_context(
+                    user_agent=(
+                        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/124.0.0.0 Safari/537.36"
+                    ),
+                    viewport={"width": 1280, "height": 900},
+                    extra_http_headers={
+                        "Accept-Language": "en-US,en;q=0.9",
+                        "Accept": (
+                            "text/html,application/xhtml+xml,application/xml"
+                            ";q=0.9,image/webp,*/*;q=0.8"
+                        ),
+                        "DNT": "1",
+                        "Upgrade-Insecure-Requests": "1",
+                    },
+                    ignore_https_errors=True,
+                )
                 page = ctx.new_page()
                 try:
                     page.goto(
@@ -826,6 +924,9 @@ def run_navigation_session(
                             )
                             action_log.push(f"step {step}: breaker tripped → reload")
                             breaker.reset()
+                            if breaker.trip_count >= 2:
+                                base["error"] = "circuit breaker tripped twice; giving up"
+                                return base
                             continue
 
                         # LLM step.

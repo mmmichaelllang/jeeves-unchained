@@ -206,7 +206,8 @@ def main(argv: list[str] | None = None) -> int:
         raw_html = render_mock_briefing(session)
         log.info("dry-run fixture briefing assembled (%d chars)", len(raw_html))
     else:
-        raw_html = generate_briefing(cfg, session, max_tokens=args.max_tokens)
+        import asyncio
+        raw_html = asyncio.run(generate_briefing(cfg, session, max_tokens=args.max_tokens))
 
     result = postprocess_html(raw_html, session)
     log.info(

@@ -266,14 +266,17 @@ def test_nim_refine_is_called_for_each_part(monkeypatch):
         refined_labels.append(label)
         return draft.replace("draft", "refined")
 
+    import asyncio
     import jeeves.write as wmod
+
+    async def _noop_sleep(s):
+        return None
+
     monkeypatch.setattr(wmod, "_invoke_write_llm", fake_write_llm)
     monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
-    # Suppress sleeps
-    import time
-    monkeypatch.setattr(time, "sleep", lambda s: None)
+    monkeypatch.setattr(asyncio, "sleep", _noop_sleep)
 
-    html = generate_briefing(cfg, session)
+    html = asyncio.run(generate_briefing(cfg, session))
     assert set(refined_labels) == {name for name, _ in wmod.PART_PLAN}
     assert "refined" in html
 
@@ -295,13 +298,17 @@ def test_nim_refine_failure_falls_back_to_raw_draft(monkeypatch):
     def fake_nim_refine(c, draft, *, label):
         raise RuntimeError("NIM is down")
 
+    import asyncio
     import jeeves.write as wmod
-    import time
+
+    async def _noop_sleep(s):
+        return None
+
     monkeypatch.setattr(wmod, "_invoke_write_llm", fake_write_llm)
     monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
-    monkeypatch.setattr(time, "sleep", lambda s: None)
+    monkeypatch.setattr(asyncio, "sleep", _noop_sleep)
 
-    html = generate_briefing(cfg, session)
+    html = asyncio.run(generate_briefing(cfg, session))
     # Raw drafts must be in the output even though refine failed.
     assert "raw-part1" in html
 
@@ -374,13 +381,17 @@ def test_nim_fallback_skips_groq_tpm_sleep(monkeypatch):
     def fake_nim_refine(c, draft, *, label):
         return draft
 
+    import asyncio
     import jeeves.write as wmod
-    import time
+
+    async def _tracking_sleep(s):
+        sleep_calls.append(s)
+
     monkeypatch.setattr(wmod, "_invoke_write_llm", fake_write_llm)
     monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
-    monkeypatch.setattr(time, "sleep", lambda s: sleep_calls.append(s))
+    monkeypatch.setattr(asyncio, "sleep", _tracking_sleep)
 
-    generate_briefing(cfg, session)
+    asyncio.run(generate_briefing(cfg, session))
 
     # Only one sleep should have fired: the one between part1 (Groq) and part2 (NIM).
     # Parts 3–9 see last_used_groq=False and skip the sleep.
@@ -660,14 +671,18 @@ def test_narrative_edit_called_in_generate_briefing(monkeypatch):
         edit_calls.append(html)
         return html.replace("<p>", "<p data-edited='true'>")
 
+    import asyncio
     import jeeves.write as wmod
-    import time
+
+    async def _noop_sleep(s):
+        return None
+
     monkeypatch.setattr(wmod, "_invoke_write_llm", fake_write_llm)
     monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
     monkeypatch.setattr(wmod, "_invoke_openrouter_narrative_edit", fake_narrative_edit)
-    monkeypatch.setattr(time, "sleep", lambda s: None)
+    monkeypatch.setattr(asyncio, "sleep", _noop_sleep)
 
-    html = generate_briefing(cfg, session)
+    html = asyncio.run(generate_briefing(cfg, session))
     assert len(edit_calls) == 1, "narrative editor should be called exactly once"
     assert "data-edited='true'" in html
 
@@ -845,7 +860,7 @@ def test_system_prompt_injects_avoid_list_when_cfg_has_history(tmp_path, monkeyp
         '<p>A symphony of screaming shit-weasels today, Sir.</p>'
     )
     prompt = _system_prompt_for_parts(cfg)
-    assert "Recently used asides" in prompt
+    assert "Used asides (no repeats)" in prompt
     assert "A symphony of screaming shit-weasels" in prompt
 
 
@@ -858,9 +873,9 @@ def test_system_prompt_has_no_avoid_list_without_history(tmp_path, monkeypatch):
     object.__setattr__(cfg, "repo_root", tmp_path)
     (tmp_path / "sessions").mkdir()
     prompt = _system_prompt_for_parts(cfg)
-    assert "Recently used asides" not in prompt
+    assert "Used asides (no repeats)" not in prompt
     # And bare call (no cfg) should also omit it.
-    assert "Recently used asides" not in _system_prompt_for_parts()
+    assert "Used asides (no repeats)" not in _system_prompt_for_parts()
 
 
 def test_system_prompt_injects_run_used_asides_without_cfg():
@@ -873,7 +888,7 @@ def test_system_prompt_injects_run_used_asides_without_cfg():
             "absolute bollocks today",
         ]
     )
-    assert "Recently used asides" in prompt
+    assert "Used asides (no repeats)" in prompt
     assert "clusterfuck of biblical proportions, Sir" in prompt
     assert "absolute bollocks today" in prompt
 
@@ -886,7 +901,7 @@ def test_system_prompt_run_used_asides_excluded_for_no_aside_parts():
         part_label="part9",
         run_used_asides=["clusterfuck of biblical proportions, Sir"],
     )
-    assert "Recently used asides" not in prompt
+    assert "Used asides (no repeats)" not in prompt
     assert "Pre-approved profane butler asides" not in prompt
 
 
@@ -974,27 +989,32 @@ def test_system_prompt_injects_run_used_topics():
     prompt = _system_prompt_for_parts(
         run_used_topics=["Karl Alber", "Triadic Ontology", "Senator Maria Cantwell"],
     )
-    assert "Topics already written" in prompt
+    assert "Run topics (avoid re-narrating)" in prompt
     assert "Karl Alber" in prompt
     assert "Triadic Ontology" in prompt
     assert "Senator Maria Cantwell" in prompt
 
 
-def test_system_prompt_run_used_topics_caps_at_40():
+def test_system_prompt_run_used_topics_caps_at_30_newest_first():
+    """Cap is 30, taking the LAST 30 (most recently written — most important
+    to avoid re-narrating in the next part).  With 80 topics Topic00-Topic79
+    the last 30 are Topic50-Topic79; anything before Topic50 is dropped."""
     from jeeves.write import _system_prompt_for_parts
 
     topics = [f"Topic{i:02d}" for i in range(80)]
     prompt = _system_prompt_for_parts(run_used_topics=topics)
-    # Only first 40 are joined — the 41st should be absent.
-    assert "Topic39" in prompt
-    assert "Topic40" not in prompt
+    # Last 30 (most recent) must be present.
+    assert "Topic79" in prompt
+    assert "Topic50" in prompt
+    # Topics before the cap must be absent.
+    assert "Topic49" not in prompt
 
 
 def test_system_prompt_no_topics_block_when_empty():
     from jeeves.write import _system_prompt_for_parts
 
     prompt = _system_prompt_for_parts(run_used_topics=[])
-    assert "Topics already written" not in prompt
+    assert "Run topics (avoid re-narrating)" not in prompt
 
 
 def test_part8_instructions_have_self_test_and_forbidden_outputs():

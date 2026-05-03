@@ -45,12 +45,31 @@ from jeeves.tools.quota import QuotaLedger  # noqa: E402
 
 log = logging.getLogger("jeeves.research")
 
-# NIM free tier allows only ~2 concurrent inference connections; running 3+
-# agents simultaneously causes the 3rd (and all subsequent) to get a 429 on
-# their very first LLM call, silently returning empty defaults for every sector
-# after the first two.  Sequential execution (semaphore=1) stays well within
-# the 65-minute workflow budget (~3 min × 11 sectors ≈ 33 min).
-_SECTOR_SEMAPHORE = 1
+# Tiered sector semaphores — NIM free tier constraint.
+#
+# Deep sectors (triadic_ontology, ai_systems, uap) use max_tokens=4096 and
+# have forced NIM retries (~10s overhead each). Running two concurrently risks
+# a 429 cascade that costs 60-120s backoff — wiping out any wall-clock gain.
+# Historical: semaphore=3 caused ALL sectors to return defaults in <1 min.
+#
+# Lightweight sectors use fewer tokens and rarely trigger rate limits.
+# semaphore=2 lets two light sectors share a NIM connection slot while the
+# sequential for-loop still ensures prior_sample grows correctly between pairs.
+#
+# Wall-clock estimate with tiering (~14 sectors):
+#   3 deep × 3 min = 9 min (sequential)
+#   11 light × 2 min / 2 concurrent = ~11 min (overlapped in pairs)
+#   Total ≈ 20 min vs ~33 min fully sequential (−13 min, −40%)
+_SECTOR_SEMAPHORE_HEAVY = asyncio.Semaphore(1)
+_SECTOR_SEMAPHORE_LIGHT = asyncio.Semaphore(2)
+
+# Sectors that use max_tokens=4096 and are prone to 429 / stream-drop on NIM.
+_DEEP_SECTOR_NAMES: frozenset[str] = frozenset({"triadic_ontology", "ai_systems", "uap"})
+
+
+def _sector_semaphore(sector_name: str) -> asyncio.Semaphore:
+    """Return the appropriate asyncio.Semaphore for this sector's weight class."""
+    return _SECTOR_SEMAPHORE_HEAVY if sector_name in _DEEP_SECTOR_NAMES else _SECTOR_SEMAPHORE_LIGHT
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -179,12 +198,12 @@ async def _run_sector_loop(
     across earlier sectors today.
 
     Key design decisions:
-    - Sequential (not asyncio.gather): semaphore=1 made gather sequential anyway,
-      but gather still dispatched all closures simultaneously — each captured the
-      SAME frozen prior_sample from before any sector ran. Fix: explicit for-loop
-      so we can grow prior_sample after every sector.
-    - prior_sample grows progressively: after each sector we append its discovered
-      URLs so the NEXT sector sees full within-session context (not just yesterday).
+    - Tiered parallelism: deep sectors (triadic_ontology, ai_systems, uap) run
+      solo (semaphore=1) to avoid NIM 429 cascades. Light sectors run in pairs
+      (semaphore=2) via asyncio.gather, cutting light-sector wall-clock by ~40%.
+    - prior_sample grows progressively: after each sector (or pair) we append
+      discovered URLs so the NEXT sector sees full within-session context. Pairs
+      share the same prior_sample snapshot at pair-start; both URLs merge after.
     - prior_urls_ordered is newest-first: caller builds it by walking prior sessions
       newest→oldest, then COVERAGE_LOG. A 150-URL cap keeps the prompt size bounded
       while guaranteeing yesterday's URLs always appear first.
@@ -209,29 +228,52 @@ async def _run_sector_loop(
     non_enriched = [s for s in specs if s.name != "enriched_articles"]
     enriched_spec = next((s for s in specs if s.name == "enriched_articles"), None)
 
-    log.info("running %d non-enriched sectors sequentially…", len(non_enriched))
-    for spec in non_enriched:
-        name, value = spec.name, await run_sector(
-            cfg, spec, prior_sample, ledger,
-            quota_summary=quota_summary,
-            story_continuity=story_continuity,
-        )
-        session[name] = value
+    # Helper: run one sector under its weight-class semaphore.
+    async def _run_one(spec):
+        async with _sector_semaphore(spec.name):
+            return spec.name, await run_sector(
+                cfg, spec, list(prior_sample), ledger,
+                quota_summary=quota_summary,
+                story_continuity=story_continuity,
+            )
 
-        new_urls = collect_urls_from_sector(value)
-        discovered_urls.extend(new_urls)
-        discovered_headlines.extend(collect_headlines_from_sector(value))
-
-        # Grow prior_sample so the NEXT sector sees today's findings.
-        for u in new_urls:
-            if u not in prior_sample_set:
-                prior_sample.append(u)
-                prior_sample_set.add(u)
-
+    def _update_prior(results):
+        """Merge sector results into session and grow prior_sample."""
+        for name, value in results:
+            session[name] = value
+            new_urls = collect_urls_from_sector(value)
+            discovered_urls.extend(new_urls)
+            discovered_headlines.extend(collect_headlines_from_sector(value))
+            for u in new_urls:
+                if u not in prior_sample_set:
+                    prior_sample.append(u)
+                    prior_sample_set.add(u)
         log.debug(
-            "sector %s done — prior_sample now %d URLs, %d today's headlines",
-            name, len(prior_sample), len(discovered_headlines),
+            "batch done — prior_sample now %d URLs, %d today's headlines",
+            len(prior_sample), len(discovered_headlines),
         )
+
+    # Separate deep (solo) from light (pairable) sectors, preserving SECTOR_SPECS order.
+    deep_specs = [s for s in non_enriched if s.name in _DEEP_SECTOR_NAMES]
+    light_specs = [s for s in non_enriched if s.name not in _DEEP_SECTOR_NAMES]
+
+    log.info(
+        "running %d non-enriched sectors: %d deep (sequential), %d light (pairs)…",
+        len(non_enriched), len(deep_specs), len(light_specs),
+    )
+
+    # Run deep sectors one at a time — NIM stream-drop / 429 risk too high to pair.
+    for spec in deep_specs:
+        results = [await _run_one(spec)]
+        _update_prior(results)
+
+    # Run light sectors in pairs (semaphore=2 allows 2 concurrent NIM connections).
+    # Both sectors in a pair share the same prior_sample snapshot at pair-start;
+    # their URLs are merged into prior_sample together after the pair completes.
+    for i in range(0, len(light_specs), 2):
+        pair = light_specs[i:i + 2]
+        results = await asyncio.gather(*[_run_one(s) for s in pair])
+        _update_prior(results)
 
     if enriched_spec is not None:
         seed = "\n".join(discovered_urls[:25]) or "(no candidate URLs from prior sectors)"

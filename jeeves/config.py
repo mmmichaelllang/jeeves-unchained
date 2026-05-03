@@ -15,6 +15,23 @@ from typing import Literal
 
 from dotenv import load_dotenv
 
+# ---------------------------------------------------------------------------
+# Write-phase dedup prompt caps — shared source of truth; imported by write.py
+# ---------------------------------------------------------------------------
+DEDUP_PROMPT_HEADLINES_CAP: int = 250   # max prior headlines sent to Groq
+DEDUP_PROMPT_ASIDES_CAP: int = 20       # max aside phrases in Part 4+ prompt
+DEDUP_PROMPT_TOPICS_CAP: int = 30       # max used topics in Part 4+ prompt
+
+# ---------------------------------------------------------------------------
+# Research phase tool budgets — injected into per-sector user messages
+# ---------------------------------------------------------------------------
+RESEARCH_BUDGET_TAVILY_SEARCH: int = 4
+RESEARCH_BUDGET_TAVILY_EXTRACT: int = 5   # URLs total (20 hits max)
+RESEARCH_BUDGET_GEMINI: int = 3
+RESEARCH_BUDGET_EXA: int = 7             # 1 reserved for literary_pick
+RESEARCH_BUDGET_SERPER: int = 20
+RESEARCH_BUDGET_PLAYWRIGHT: int = 5      # last-resort; each call ~5-15s
+
 Phase = Literal["research", "write", "correspondence"]
 
 # Per-phase required environment variables (in addition to shared ones).
@@ -87,6 +104,10 @@ class Config:
     google_cloud_project: str = ""
     google_cloud_region: str = "us-central1"
     google_application_credentials_json: str = ""  # Full JSON content, not a path
+    # NIM refine skip flag (JEEVES_SKIP_NIM_REFINE=1 → skip refine even when key is set)
+    skip_nim_refine: bool = False
+    # Groq inter-part sleep in seconds. Must exceed 60s TPM window. JEEVES_GROQ_SLEEP overrides.
+    groq_inter_part_sleep_s: int = 65
     # Recipient
     recipient_email: str = "lang.mc@gmail.com"
     # Paths
@@ -176,6 +197,9 @@ class Config:
                 "GOOGLE_APPLICATION_CREDENTIALS_JSON", ""
             ),
             recipient_email=os.environ.get("JEEVES_RECIPIENT_EMAIL", "lang.mc@gmail.com"),
+            skip_nim_refine=os.environ.get("JEEVES_SKIP_NIM_REFINE", "").lower()
+            in ("1", "true", "yes"),
+            groq_inter_part_sleep_s=int(os.environ.get("JEEVES_GROQ_SLEEP", "65")),
         )
 
 
