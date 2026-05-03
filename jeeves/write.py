@@ -2047,14 +2047,24 @@ def _inject_newyorker_verbatim(html: str, session: SessionModel) -> str:
             if signoff_idx == -1 or pos < signoff_idx:
                 signoff_idx = pos
 
+    # In the fallback path the model's hallucinated content is excised —
+    # which removes whatever Read link Part 9 wrote. We must inject one
+    # explicitly here. (Happy-path placeholder substitution does NOT need
+    # this — Part 9's Step 3 link survives the placeholder replacement.)
+    fallback_read_link = (
+        f'\n<p><a href="{ny_url}">Read at The New Yorker</a></p>'
+        if ny_url
+        else ""
+    )
+
     if signoff_idx == -1:
         # No sign-off found — just insert after intro, leave rest intact.
         log.warning("Could not find sign-off anchor; inserting after intro only.")
-        block = "\n" + _build_newyorker_block(ny_text, ny_url) + "\n"
+        block = "\n" + _build_newyorker_block(ny_text, ny_url) + fallback_read_link + "\n"
         return html[:intro_end] + block + html[intro_end:]
 
     # Splice: intro_end … signoff_idx is the hallucinated zone — replace entirely.
-    block = "\n" + _build_newyorker_block(ny_text, ny_url) + "\n"
+    block = "\n" + _build_newyorker_block(ny_text, ny_url) + fallback_read_link + "\n"
     return html[:intro_end] + block + html[signoff_idx:]
 
 
