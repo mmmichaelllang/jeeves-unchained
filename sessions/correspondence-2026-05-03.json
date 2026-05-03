@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] mmmichaelllang: Jeeves daily pipeline failed on GitHub.\n- [escalation] Mrs. Lang: Automated morning correspondence summary from Jeeves.\n- [escalation] mmmichaelllang: Another Jeeves daily pipeline failure on GitHub.\n- [escalation] mmmichaelllang: CI pipeline failed for sprint 13 quality fixes PR.\n- [escalation] Mrs. Lang: Automated daily intelligence briefing from Jeeves.\n- [escalation] mmmichaelllang: Jeeves research phase workflow failed on GitHub.\n- [escalation] Mrs. Lang: Automated morning correspondence summary from Jeeves.\n- [escalation] mmmichaelllang: Jeeves correspondence phase workflow failed on GitHub.\n- [escalation] Mrs. Lang: Automated morning correspondence summary from Jeeves.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed on main branch\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Research Phase failed on main branch\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Correspondence Phase failed on main branch\n- [escalation] \"Anthropic, PBC\": Anthropic reports failed $16.61 payment due to credit-card issue\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Daily Pipeline failed on second attempt",
+  "counts": {
+    "reply_needed": 1,
+    "decision_required": 0,
+    "scheduling": 1,
+    "follow_up": 0,
+    "escalation": 28,
+    "no_action": 20
+  }
+}
