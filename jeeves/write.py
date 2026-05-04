@@ -1843,11 +1843,92 @@ present, then output the corrected HTML. Do NOT add new content.
 
 
 _NIM_RETRY_DELAYS = (2, 8, 32)  # seconds between attempts on 429
+# Shorter timeout for write-phase NIM calls — when NIM hangs the whole pipeline
+# burns the daily.yml 60min budget. classify_with_kimi already learned this
+# (sprint-15 hotfix). Now write-phase NIM gets the same 60s ceiling.
+_NIM_WRITE_TIMEOUT_S = 60.0
+# OpenRouter free-tier write-fallback chain. Fires when BOTH Groq AND NIM fail.
+# Drop gemma-2-9b — known paraphrase offender per playwright_extractor research.
+_OR_WRITE_FALLBACK_MODELS = (
+    "meta-llama/llama-3.3-70b-instruct:free",
+    "qwen/qwen-2.5-72b-instruct:free",
+)
+# Module-level circuit breaker: once NIM times out for any part during a run,
+# subsequent parts skip NIM and go directly to OR. Reset at module-init time
+# (each pipeline run gets a fresh process). Without this, every Part 2-9
+# retried the same hung NIM endpoint for another 60-180s each.
+_NIM_WRITE_DEAD = False
 
 
 def _is_nim_rate_limit(exc: Exception) -> bool:
     msg = str(exc).lower()
     return "429" in msg or "rate limit" in msg or "too many requests" in msg
+
+
+def _is_nim_timeout(exc: Exception) -> bool:
+    """Match openai.APITimeoutError, httpx.TimeoutException, or generic timeout."""
+    cls = type(exc).__name__.lower()
+    msg = str(exc).lower()
+    return (
+        "timeout" in cls
+        or "timeout" in msg
+        or "timed out" in msg
+        or "peer closed connection" in msg
+    )
+
+
+def _invoke_or_write(
+    cfg: Config, system: str, user: str, *, max_tokens: int, label: str
+) -> str:
+    """Last-resort write call when BOTH Groq AND NIM fail.
+
+    Iterates _OR_WRITE_FALLBACK_MODELS; first model returning content wins.
+    Returns the assistant message text, or raises RuntimeError on total failure.
+    """
+    api_key = (cfg.openrouter_api_key or "").strip()
+    if not api_key:
+        raise RuntimeError(
+            f"NIM write [{label}] failed AND OPENROUTER_API_KEY is not set. "
+            "Add OPENROUTER_API_KEY to GitHub Secrets so write-phase has a "
+            "third-tier fallback."
+        )
+    try:
+        from openai import OpenAI
+    except ImportError as e:
+        raise RuntimeError(
+            f"NIM write [{label}] failed AND openai SDK not installed for OR fallback: {e}"
+        ) from e
+
+    client = OpenAI(
+        api_key=api_key,
+        base_url="https://openrouter.ai/api/v1",
+        timeout=120,
+    )
+    messages = [
+        {"role": "system", "content": system},
+        {"role": "user", "content": user},
+    ]
+    last_exc: Exception | None = None
+    for model_id in _OR_WRITE_FALLBACK_MODELS:
+        try:
+            resp = client.chat.completions.create(
+                model=model_id,
+                messages=messages,
+                max_tokens=max_tokens,
+                temperature=0.65,
+            )
+            text = (resp.choices[0].message.content or "").strip()
+            if text:
+                log.warning(
+                    "OR write fallback [%s] succeeded via %s (Groq+NIM both failed)",
+                    label, model_id,
+                )
+                return text
+        except Exception as exc:
+            last_exc = exc
+            log.debug("OR write [%s] %s failed: %s", label, model_id, exc)
+            continue
+    raise RuntimeError(f"OR write [{label}] exhausted all models: {last_exc}")
 
 
 def _invoke_nim_refine(cfg: Config, draft_html: str, *, label: str) -> str:
@@ -1918,9 +1999,18 @@ def _invoke_nim_refine(cfg: Config, draft_html: str, *, label: str) -> str:
 
 
 def _invoke_nim_write(cfg: Config, system: str, user: str, *, max_tokens: int, label: str) -> str:
-    """Call NIM as a fallback write-draft generator (Groq TPD exhausted).
+    """Call NIM as a fallback write-draft generator (Groq TPD/TPM exhausted).
 
-    Retries up to 3 times with exponential backoff (2s, 8s, 32s) on HTTP 429.
+    Behavior:
+    - 60s timeout per request (down from 180s — production NIM hangs eat the
+      60min daily.yml budget if we wait too long. Sprint-15 fix for classify;
+      sprint-17 extension for write.)
+    - 1 retry on 429 (rate-limit) — wait 60s for window to clear, then retry.
+    - 0 retries on timeout — sets _NIM_WRITE_DEAD circuit breaker so the next
+      part skips NIM entirely.
+    - On non-rate-limit non-timeout exception: raise immediately.
+
+    Caller (`_invoke_write_llm`) handles OR fallback when this raises.
     """
     import time
 
@@ -1928,69 +2018,125 @@ def _invoke_nim_write(cfg: Config, system: str, user: str, *, max_tokens: int, l
 
     from .llm import build_nim_write_llm
 
+    global _NIM_WRITE_DEAD
+
     if not cfg.nvidia_api_key:
         raise RuntimeError(
             "Groq TPD exhausted and NVIDIA_API_KEY is not set — cannot fall back to NIM. "
             "Add NVIDIA_API_KEY to secrets or wait for Groq's daily quota to reset (midnight UTC)."
         )
-    llm = build_nim_write_llm(cfg, temperature=0.65, max_tokens=max_tokens)
+    llm = build_nim_write_llm(
+        cfg, temperature=0.65, max_tokens=max_tokens, timeout=_NIM_WRITE_TIMEOUT_S,
+    )
     log.info(
-        "invoking NIM write fallback %s [%s] (max_tokens=%d, system=%d chars, user=%d chars)",
-        cfg.nim_write_model_id, label, max_tokens, len(system), len(user),
+        "invoking NIM write fallback %s [%s] (max_tokens=%d, timeout=%.0fs, "
+        "system=%d chars, user=%d chars)",
+        cfg.nim_write_model_id, label, max_tokens, _NIM_WRITE_TIMEOUT_S,
+        len(system), len(user),
     )
     messages = [
         ChatMessage(role=MessageRole.SYSTEM, content=system),
         ChatMessage(role=MessageRole.USER, content=user),
     ]
-    last_exc: Exception | None = None
-    for attempt, delay in enumerate((*_NIM_RETRY_DELAYS, None)):
+
+    # Two attempts max: initial + ONE 60s rate-limit retry. No retry on timeout
+    # — if NIM is hanging, retrying just burns more budget.
+    for attempt in range(2):
         try:
             resp = llm.chat(messages)
             return str(resp.message.content or "")
         except Exception as exc:
-            last_exc = exc
-            if _is_nim_rate_limit(exc) and delay is not None:
+            if _is_nim_rate_limit(exc) and attempt == 0:
                 log.warning(
-                    "NIM write [%s] got 429 (attempt %d/4); retrying in %ds",
-                    label, attempt + 1, delay,
+                    "NIM write [%s] got 429 (attempt 1/2); waiting 60s for window to clear",
+                    label,
                 )
-                time.sleep(delay)
-            else:
+                time.sleep(60)
+                continue
+            if _is_nim_timeout(exc):
+                # Trip circuit breaker — subsequent parts skip NIM entirely.
+                _NIM_WRITE_DEAD = True
+                log.warning(
+                    "NIM write [%s] timeout (%s) — tripping circuit breaker, "
+                    "remaining parts will skip NIM and go to OR directly",
+                    label, exc,
+                )
                 raise
-    raise RuntimeError(f"NIM write [%s] exhausted retries: {last_exc}")
+            raise
+    raise RuntimeError(f"NIM write [{label}] exhausted retries")
+
+
+def _try_nim_then_or(
+    cfg: Config, system: str, user: str, *, max_tokens: int, label: str
+) -> str:
+    """Try NIM (unless circuit broken), fall back to OpenRouter on any failure.
+
+    This is the post-Groq escalation path. Either the input was too big for
+    Groq's TPM, or Groq returned a TPD-exhaustion error.
+    """
+    if _NIM_WRITE_DEAD:
+        log.warning(
+            "NIM circuit broken — [%s] skipping NIM, going directly to OR fallback",
+            label,
+        )
+        return _invoke_or_write(cfg, system, user, max_tokens=max_tokens, label=label)
+    try:
+        return _invoke_nim_write(cfg, system, user, max_tokens=max_tokens, label=label)
+    except Exception as nim_exc:
+        log.warning(
+            "NIM write [%s] failed (%s) — escalating to OpenRouter fallback chain",
+            label, nim_exc,
+        )
+        try:
+            return _invoke_or_write(
+                cfg, system, user, max_tokens=max_tokens, label=label,
+            )
+        except Exception as or_exc:
+            # Both NIM and OR died — no third tier. Raise the OR error chained
+            # to NIM's so the run manifest preserves both.
+            raise RuntimeError(
+                f"write [{label}] all three tiers failed: NIM={nim_exc!r}, OR={or_exc!r}"
+            ) from or_exc
 
 
 def _invoke_write_llm(
     cfg: Config, system: str, user: str, *, max_tokens: int, label: str
 ) -> tuple[str, bool]:
-    """Call Groq for the write phase; auto-fall back to NIM on quota exhaustion.
+    """Call Groq for the write phase; auto-fall back to NIM → OR on failure.
 
     Returns (text, used_groq). used_groq=False means Groq was skipped/exhausted
-    and NIM handled the draft — the caller can skip the Groq TPM cooldown sleep.
+    and NIM (or OR) handled the draft — the caller can skip the Groq TPM
+    cooldown sleep.
 
-    Falls back to NIM when:
-    - Input tokens alone exceed the TPM ceiling (pre-check; avoids guaranteed 413).
-    - Groq daily TPD quota is exhausted.
+    Three-tier escalation:
+    - Tier 1: Groq Llama 3.3 70B (primary, free tier).
+    - Tier 2: NIM meta/llama-3.3-70b-instruct (60s timeout + circuit breaker).
+    - Tier 3: OpenRouter free-tier chain (llama-3.3-70b → qwen-2.5-72b).
+
+    Triggers:
+    - Input tokens exceed TPM ceiling → skip Groq, go straight to NIM/OR.
+    - Groq daily TPD quota exhausted → escalate to NIM/OR.
+    - NIM timeout/rate-limit → escalate to OR; trip circuit breaker.
     """
     _, input_tokens = _clamp_groq_max_tokens(system, user, max_tokens)
     available = _GROQ_TPM_LIMIT - input_tokens - _GROQ_TPM_SAFETY
     if available <= 0:
         log.warning(
             "Groq skipped for [%s]: input ~%d tokens exceeds TPM ceiling %d "
-            "(available=%d); routing directly to NIM.",
+            "(available=%d); routing directly to NIM/OR.",
             label, input_tokens, _GROQ_TPM_LIMIT, available,
         )
-        return _invoke_nim_write(cfg, system, user, max_tokens=max_tokens, label=label), False
+        return _try_nim_then_or(cfg, system, user, max_tokens=max_tokens, label=label), False
     try:
         return _invoke_groq(cfg, system, user, max_tokens=max_tokens, label=label), True
     except Exception as e:
         if "tokens per day" in str(e).lower():
             log.warning(
-                "Groq daily TPD quota exhausted on [%s]; retrying on NIM (%s). "
+                "Groq daily TPD quota exhausted on [%s]; retrying on NIM/OR. "
                 "Groq free-tier resets at midnight UTC.",
-                label, cfg.nim_write_model_id,
+                label,
             )
-            return _invoke_nim_write(cfg, system, user, max_tokens=max_tokens, label=label), False
+            return _try_nim_then_or(cfg, system, user, max_tokens=max_tokens, label=label), False
         raise
 
 
