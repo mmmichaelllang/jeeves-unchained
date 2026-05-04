@@ -38,10 +38,17 @@ vertex = [
 # Headless-browser fallback extractor for talk_of_the_town and
 # enriched_articles. Install with:
 #   uv sync --extra playwright
-#   python -m playwright install chromium
+#   python -m playwright install --only-shell chromium
 # Optional — pipeline runs without it; the fallback path is silently skipped
 # when playwright is absent (callers fall through to wayback / archive.ph).
+#
+# patchright (preferred): drop-in replacement for playwright that fixes the
+# Runtime.enable CDP-leak (the #1 bot-detection signal in 2026), strips
+# --enable-automation, and removes navigator.webdriver. Same API surface.
+# playwright_extractor.py picks patchright at import-time when available,
+# falls back to vanilla playwright otherwise.
 playwright = [
+    "patchright>=1.40",
     "playwright>=1.40",
 ]
 

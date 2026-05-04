@@ -2035,6 +2035,60 @@ def _inject_banner(html: str) -> str:
     return html[:insert_at] + "\n" + _BANNER_HTML + html[insert_at:]
 
 
+_TOTT_INTRO_PARAGRAPH = (
+    "<p>And now, Sir, I take the liberty of reading from this week's "
+    "Talk of the Town in The New Yorker.</p>"
+)
+_TOTT_PLACEHOLDER = "<!-- NEWYORKER_CONTENT_PLACEHOLDER -->"
+_TOTT_HEADER = "<h3>Talk of the Town</h3>"
+
+
+def _ensure_tott_scaffolding(part9_html: str, newyorker_available: bool, ny_url: str = "") -> str:
+    """Programmatically guarantee Part 9 contains the intro + placeholder.
+
+    Models repeatedly skip the verbatim intro paragraph and placeholder comment
+    despite explicit instructions. Without those anchors, _inject_newyorker_verbatim
+    cannot place the article text. This function scans Part 9 output and prepends
+    whatever scaffolding is missing — idempotent (won't double-up if model
+    cooperated).
+
+    Order in output:
+      <h3>Talk of the Town</h3>
+      <p>And now, Sir, I take the liberty of reading...</p>
+      <!-- NEWYORKER_CONTENT_PLACEHOLDER -->
+      <p><a href="...">Read at The New Yorker</a></p>   (added if missing)
+      [model's signoff block + closing tags]
+    """
+    if not newyorker_available:
+        return part9_html
+    additions: list[str] = []
+    if _TOTT_HEADER not in part9_html and "Talk of the Town</h3>" not in part9_html:
+        additions.append(_TOTT_HEADER)
+    if _NY_INTRO_MARKER not in part9_html:
+        additions.append(_TOTT_INTRO_PARAGRAPH)
+    if _TOTT_PLACEHOLDER not in part9_html:
+        additions.append(_TOTT_PLACEHOLDER)
+    if ny_url and "Read at The New Yorker" not in part9_html:
+        additions.append(f'<p><a href="{ny_url}">Read at The New Yorker</a></p>')
+    if not additions:
+        return part9_html
+    log.warning(
+        "Part 9 model omitted %d of 4 TOTT scaffolding elements; pre-injecting: %s",
+        len(additions),
+        ", ".join(_TOTT_HEADER if a == _TOTT_HEADER
+                  else "intro" if a == _TOTT_INTRO_PARAGRAPH
+                  else "placeholder" if a == _TOTT_PLACEHOLDER
+                  else "read-link"
+                  for a in additions),
+    )
+    # Insert before <div class="signoff"> if present, else prepend.
+    signoff_pos = part9_html.find('<div class="signoff">')
+    scaffold = "\n" + "\n".join(additions) + "\n"
+    if signoff_pos != -1:
+        return part9_html[:signoff_pos] + scaffold + part9_html[signoff_pos:]
+    return scaffold + part9_html
+
+
 def _build_newyorker_block(text: str, url: str) -> str:
     """Return formatted NEWYORKER_START…END block. NO Read link.
 
@@ -2095,11 +2149,32 @@ def _inject_newyorker_verbatim(html: str, session: SessionModel) -> str:
 
     # Find the intro sentence end.
     if _NY_INTRO_MARKER not in html:
+        # FORCE-INJECT: model wrote neither placeholder nor intro paragraph.
+        # We MUST NOT lose the verbatim article text. Find <div class="signoff">
+        # and inject intro + NY block + Read link immediately before it.
+        signoff_pos = -1
+        for marker in _NY_SIGNOFF_MARKERS:
+            pos = html.find(marker)
+            if pos != -1 and (signoff_pos == -1 or pos < signoff_pos):
+                signoff_pos = pos
+        if signoff_pos == -1:
+            log.error(
+                "TOTT FORCE-INJECT failed: neither intro marker nor signoff "
+                "anchor found in Part 9 output. Verbatim article text lost."
+            )
+            return html
         log.warning(
-            "Talk of the Town intro sentence also missing — "
-            "verbatim article text will not appear in this briefing."
+            "Talk of the Town intro sentence missing — FORCE-INJECTING "
+            "intro + verbatim block + Read link before <div class='signoff'>."
         )
-        return html
+        forced_block = (
+            "\n<h3>Talk of the Town</h3>\n"
+            "<p>And now, Sir, I take the liberty of reading from this week's "
+            "Talk of the Town in The New Yorker.</p>\n"
+            + _build_newyorker_block(ny_text, ny_url)
+            + (f'\n<p><a href="{ny_url}">Read at The New Yorker</a></p>\n' if ny_url else "\n")
+        )
+        return html[:signoff_pos] + forced_block + html[signoff_pos:]
 
     idx = html.find(_NY_INTRO_MARKER)
     close_p = html.find("</p>", idx)
@@ -3963,6 +4038,24 @@ async def generate_briefing(
         )
         if fragment_warnings:
             quality_warnings.extend(fragment_warnings)
+
+        # Part 9 scaffolding hardening — guarantee TOTT intro + placeholder
+        # are present so _inject_newyorker_verbatim can splice in the verbatim
+        # article text. Models repeatedly skip these despite explicit prompts.
+        if label == "part9":
+            ny_payload = payload.get("newyorker", {}) if isinstance(payload, dict) else {}
+            if not ny_payload and hasattr(payload, "newyorker"):
+                ny_obj = payload.newyorker
+                ny_payload = {
+                    "available": getattr(ny_obj, "available", False),
+                    "url": getattr(ny_obj, "url", "") or "",
+                }
+            ny_avail = bool(ny_payload.get("available"))
+            ny_url = ny_payload.get("url", "") or ""
+            scaffolded = _ensure_tott_scaffolding(raw_part, ny_avail, ny_url)
+            if scaffolded != raw_part:
+                quality_warnings.append("part9_tott_scaffolding_injected")
+                raw_part = scaffolded
 
         raw_drafts[label] = raw_part
         if last_used_groq:
