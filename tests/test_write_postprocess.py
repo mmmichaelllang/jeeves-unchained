@@ -539,6 +539,119 @@ def test_inject_newyorker_verbatim_removes_placeholder_when_unavailable():
     assert "<!-- NEWYORKER_START -->" not in result
 
 
+def test_inject_newyorker_verbatim_force_injects_when_intro_missing_but_signoff_present():
+    """REGRESSION: 2026-05-04 silent TOTT loss. Model output had no placeholder
+    AND no intro paragraph but DID have a signoff. Old fallback returned html
+    unchanged → article text silently lost. New behavior MUST inject the
+    verbatim block + intro + Read link before <div class="signoff">."""
+    from jeeves.write import _inject_newyorker_verbatim
+
+    session = _session()
+    assert session.newyorker.available
+    # Model wrote prose summary referencing the article BUT no intro and no placeholder.
+    # The signoff appears after the prose.
+    no_intro_no_placeholder = (
+        "<p>The New Yorker has an article titled 'Spring Cleaning' which "
+        "might provide insight into the geopolitical landscape.</p>\n"
+        '<div class="signoff"><p>Your reluctantly faithful Butler,<br/>Jeeves</p></div>\n'
+        "<!-- COVERAGE_LOG_PLACEHOLDER -->\n</div></body></html>"
+    )
+    result = _inject_newyorker_verbatim(no_intro_no_placeholder, session)
+    # The verbatim NY block MUST be present.
+    assert "<!-- NEWYORKER_START -->" in result
+    assert "<!-- NEWYORKER_END -->" in result
+    first_para = session.newyorker.text.split("\n\n")[0].strip()
+    assert first_para in result
+    # Read link injected too.
+    assert "Read at The New Yorker" in result
+    # Signoff still present after the inject.
+    assert "Your reluctantly faithful Butler" in result
+    # Verbatim block appears BEFORE signoff.
+    assert result.index("<!-- NEWYORKER_END -->") < result.index('<div class="signoff">')
+
+
+def test_inject_newyorker_verbatim_force_inject_skipped_when_unavailable():
+    """Force-inject path must NOT add a TOTT block when newyorker.available=False."""
+    from jeeves.write import _inject_newyorker_verbatim
+    from jeeves.schema import NewYorker
+
+    session = _session()
+    object.__setattr__(session, "newyorker", NewYorker(available=False))
+    html = (
+        "<p>Some prose.</p>\n"
+        '<div class="signoff"><p>Jeeves</p></div>'
+    )
+    result = _inject_newyorker_verbatim(html, session)
+    assert "<!-- NEWYORKER_START -->" not in result
+    assert "Read at The New Yorker" not in result
+
+
+def test_ensure_tott_scaffolding_adds_all_when_missing():
+    """When Part 9 output is empty, scaffolding must add header + intro + placeholder + read link."""
+    from jeeves.write import _ensure_tott_scaffolding
+
+    raw = '<div class="signoff"><p>Jeeves</p></div>'
+    out = _ensure_tott_scaffolding(raw, newyorker_available=True,
+                                    ny_url="https://example.com/article")
+    assert "<h3>Talk of the Town</h3>" in out
+    assert "reading from this week's Talk of the Town" in out
+    assert "<!-- NEWYORKER_CONTENT_PLACEHOLDER -->" in out
+    assert "Read at The New Yorker" in out
+    assert "https://example.com/article" in out
+    # Scaffolding is inserted BEFORE the signoff div.
+    assert out.index("<!-- NEWYORKER_CONTENT_PLACEHOLDER -->") < out.index('<div class="signoff">')
+
+
+def test_ensure_tott_scaffolding_idempotent_when_all_present():
+    """Scaffolding must NOT double-up when Part 9 cooperated."""
+    from jeeves.write import _ensure_tott_scaffolding
+
+    raw = (
+        "<h3>Talk of the Town</h3>\n"
+        "<p>And now, Sir, I take the liberty of reading from this week's "
+        "Talk of the Town in The New Yorker.</p>\n"
+        "<!-- NEWYORKER_CONTENT_PLACEHOLDER -->\n"
+        '<p><a href="https://example.com">Read at The New Yorker</a></p>\n'
+        '<div class="signoff"><p>Jeeves</p></div>'
+    )
+    out = _ensure_tott_scaffolding(raw, newyorker_available=True,
+                                    ny_url="https://example.com")
+    assert out == raw  # unchanged
+    # Verify no duplication.
+    assert out.count("<!-- NEWYORKER_CONTENT_PLACEHOLDER -->") == 1
+    assert out.count("Read at The New Yorker") == 1
+    assert out.count("<h3>Talk of the Town</h3>") == 1
+
+
+def test_ensure_tott_scaffolding_partial_injection_only_missing_pieces():
+    """When some scaffolding present and some missing, inject only the missing."""
+    from jeeves.write import _ensure_tott_scaffolding
+
+    # Has intro paragraph but missing placeholder + read-link.
+    raw = (
+        "<p>And now, Sir, I take the liberty of reading from this week's "
+        "Talk of the Town in The New Yorker.</p>\n"
+        '<div class="signoff"><p>Jeeves</p></div>'
+    )
+    out = _ensure_tott_scaffolding(raw, newyorker_available=True,
+                                    ny_url="https://example.com/x")
+    # Intro still appears exactly once.
+    assert out.count("reading from this week's Talk of the Town") == 1
+    # Placeholder added.
+    assert "<!-- NEWYORKER_CONTENT_PLACEHOLDER -->" in out
+    # Read link added.
+    assert "Read at The New Yorker" in out
+
+
+def test_ensure_tott_scaffolding_skip_when_unavailable():
+    """Scaffolding must not add anything when newyorker.available=False."""
+    from jeeves.write import _ensure_tott_scaffolding
+
+    raw = '<div class="signoff"><p>Jeeves</p></div>'
+    out = _ensure_tott_scaffolding(raw, newyorker_available=False, ny_url="")
+    assert out == raw
+
+
 def test_build_source_url_map_extracts_sector_sources():
     """_build_source_url_map returns source→url pairs from all session sectors."""
     from jeeves.write import _build_source_url_map

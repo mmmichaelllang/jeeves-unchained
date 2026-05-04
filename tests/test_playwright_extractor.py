@@ -501,3 +501,164 @@ def test_enrichment_uses_playwright_when_httpx_fails(monkeypatch):
     assert data["fetch_failed"] is False
     assert "Recovered body" in data["text"]
     assert data.get("extracted_via") == "playwright"
+
+
+# ---------------------------------------------------------------------------
+# New helpers added in the 2026-05-04 hardening sprint.
+# ---------------------------------------------------------------------------
+
+
+def test_score_extraction_returns_zero_on_empty():
+    score, reason = pe._score_extraction("", "")
+    assert score == 0.0
+    assert reason == "empty"
+
+
+def test_score_extraction_too_short():
+    score, reason = pe._score_extraction("Short content here.", "")
+    assert score < 0.5
+    assert reason == "too_short"
+
+
+def test_score_extraction_boilerplate_heavy():
+    # Build a >800-char text dominated by boilerplate phrases.
+    text = (
+        "Welcome to the website. Sign in to read more about this topic. "
+        "Subscribe to read the article in full. Create a free account "
+        "to continue reading the rest of this story. We hope you enjoy "
+        "the content. Sign in to read more articles like this one. "
+        "Subscribe to read more. Create a free account today. "
+    ) * 5
+    assert len(text) >= 800
+    score, reason = pe._score_extraction(text, "")
+    assert score < 0.5
+    assert reason == "boilerplate_heavy"
+
+
+def test_score_extraction_high_quality_with_title_in_body():
+    title = "Patrick Ball's Path to Broadway"
+    text = (
+        "Patrick Ball's Path to Broadway is a story about persistence and luck. "
+        "Two years ago, the actor was thirty-four years old and working three "
+        "jobs in the city, none of them particularly glamorous or lucrative. "
+        "He was a server at the Fort Greene restaurant Evelina, a barista at "
+        "the Chelsea cafe known as the Sleeping Cat, and a wardrobe production "
+        "assistant for the HBO series And Just Like That. His acting career "
+        "was not going as he had originally hoped. He had earned his MFA from "
+        "Yale's drama school in 2022 and had done quite a bit of regional "
+        "theater work, but he had had no real luck breaking into Broadway. "
+        "His IMDb page listed only two credits when he was casting around "
+        "for steady work in the spring of that year. He kept submitting "
+        "self-tapes and waiting to hear back from casting directors who "
+        "rarely returned his calls. Then everything changed in a single "
+        "afternoon when his agent finally rang with news of a callback."
+    )
+    assert len(text) >= 800
+    score, reason = pe._score_extraction(text, title)
+    assert score >= 0.9
+    assert "title_in_body" in reason
+
+
+def test_score_extraction_ok_score_without_title_match():
+    text = (
+        "This is a perfectly normal article body with several sentences "
+        "of substantive prose throughout the entire piece. Each sentence "
+        "is reasonably long and quite informative for the reader following "
+        "along closely. The author writes clearly and carefully about a "
+        "topic of interest to the audience reading along at home. The "
+        "reader follows along easily through the well-organized argument "
+        "the author has constructed with skill. There are no boilerplate "
+        "phrases or paywall walls anywhere in this content for sure. The "
+        "piece is engaging and well-structured throughout the entire body "
+        "of the work and remains coherent throughout. We continue with "
+        "another paragraph that develops the argument further with care. "
+        "The author cites several relevant sources and weaves them into "
+        "the narrative with great skill and nuance. The reader emerges "
+        "informed and entertained by the time the closing paragraph arrives."
+    )
+    assert len(text) >= 800
+    score, reason = pe._score_extraction(text, "Some Unrelated Title Phrase")
+    assert 0.6 <= score <= 0.95
+    assert reason == "ok"
+
+
+def test_block_resource_types_includes_images_fonts_media():
+    """Verify route-block constants cover the agent-recommended resource types."""
+    assert "image" in pe._BLOCK_RESOURCE_TYPES
+    assert "font" in pe._BLOCK_RESOURCE_TYPES
+    assert "media" in pe._BLOCK_RESOURCE_TYPES
+    assert "stylesheet" in pe._BLOCK_RESOURCE_TYPES
+
+
+def test_block_host_re_matches_common_trackers():
+    assert pe._BLOCK_HOST_RE.search("https://www.googletagmanager.com/gtm.js")
+    assert pe._BLOCK_HOST_RE.search("https://connect.facebook.net/en_US/sdk.js")
+    assert pe._BLOCK_HOST_RE.search("https://static.hotjar.com/c/hotjar-1.js")
+    assert pe._BLOCK_HOST_RE.search("https://cdn.taboola.com/x.js")
+    assert pe._BLOCK_HOST_RE.search("https://www.google-analytics.com/ga.js")
+    assert not pe._BLOCK_HOST_RE.search("https://www.newyorker.com/article")
+
+
+def test_block_paywall_re_matches_metering_scripts():
+    assert pe._BLOCK_PAYWALL_RE.search("https://cdn.tinypass.com/api/tinypass.min.js")
+    assert pe._BLOCK_PAYWALL_RE.search("https://experience.piano.io/xbuilder/main.js")
+    assert pe._BLOCK_PAYWALL_RE.search("https://example.com/paywall-script.js")
+    assert not pe._BLOCK_PAYWALL_RE.search("https://example.com/article-content.html")
+
+
+def test_no_js_hosts_includes_static_publishers():
+    """Static-render publishers route to the JS-disabled context for speed."""
+    assert "nytimes.com" in pe._NO_JS_HOSTS
+    assert "arxiv.org" in pe._NO_JS_HOSTS
+    assert "bbc.com" in pe._NO_JS_HOSTS
+    assert "myedmondsnews.com" in pe._NO_JS_HOSTS
+
+
+def test_openrouter_fallback_drops_gemma():
+    """gemma-2-9b was the worst paraphrase offender; it must NOT be in the chain."""
+    assert not any("gemma" in m for m in pe._OPENROUTER_FALLBACK_MODELS)
+    assert "meta-llama/llama-3.3-70b-instruct:free" in pe._OPENROUTER_FALLBACK_MODELS
+
+
+def test_parse_crystallize_extracts_structured_response():
+    raw = (
+        '{"title": "Test Title", '
+        '"byline": "By Jane Doe", '
+        '"article_body_markdown": "First paragraph.\\n\\nSecond paragraph."}'
+    )
+    result = pe._parse_crystallize(raw)
+    assert result is not None
+    assert result.title == "Test Title"
+    assert result.byline == "By Jane Doe"
+    assert "First paragraph" in result.article_body_markdown
+
+
+def test_parse_crystallize_strips_markdown_fences():
+    raw = '```json\n{"title": "X", "byline": "", "article_body_markdown": "body text"}\n```'
+    result = pe._parse_crystallize(raw)
+    assert result is not None
+    assert result.article_body_markdown == "body text"
+
+
+def test_parse_crystallize_returns_none_on_invalid_json():
+    assert pe._parse_crystallize("not json at all") is None
+    assert pe._parse_crystallize("") is None
+    assert pe._parse_crystallize("{invalid syntax}") is None
+
+
+def test_extract_article_default_no_crystallize_unless_env_set(monkeypatch):
+    """Saves OpenRouter quota — career sector retry-storm fix."""
+    monkeypatch.delenv("JEEVES_PW_USE_LLM_CRYSTALLIZE", raising=False)
+    monkeypatch.setattr(pe, "_playwright_available", lambda: False)
+    out = pe.extract_article("https://example.com/x")
+    # Test only confirms early-exit path; the default-False guard is read
+    # inside extract_article before the playwright-unavailable check fires.
+    assert out["success"] is False
+    assert "playwright not installed" in out["error"]
+
+
+def test_extract_article_returns_quality_score_field():
+    """quality_score field MUST always be present for downstream score-gating."""
+    out = pe.extract_article("")
+    assert "quality_score" in out
+    assert out["quality_score"] == 0.0

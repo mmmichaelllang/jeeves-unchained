@@ -54,11 +54,13 @@ treat this as a fallback path, not a primary fetcher.
 
 from __future__ import annotations
 
+import atexit
 import hashlib
 import json
 import logging
 import os
 import re
+import threading
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -69,20 +71,52 @@ log = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Lazy availability checks — playwright and openai are optional.
+# Patchright preferred (Runtime.enable CDP-leak fix, navigator.webdriver
+# stripped, --enable-automation removed) — falls back to vanilla Playwright
+# transparently.
 # ---------------------------------------------------------------------------
 
 _PLAYWRIGHT_AVAILABLE: bool | None = None
+_USING_PATCHRIGHT: bool = False
 
 
 def _playwright_available() -> bool:
-    global _PLAYWRIGHT_AVAILABLE
+    """Return True if either patchright or vanilla playwright is importable.
+
+    Sets module-global _USING_PATCHRIGHT flag for downstream import routing.
+    """
+    global _PLAYWRIGHT_AVAILABLE, _USING_PATCHRIGHT
     if _PLAYWRIGHT_AVAILABLE is None:
+        # Prefer patchright. Same API surface; ships stealth defaults.
         try:
-            import playwright  # noqa: F401
+            import patchright  # noqa: F401
             _PLAYWRIGHT_AVAILABLE = True
+            _USING_PATCHRIGHT = True
+            log.debug("playwright_extractor: using patchright (stealth-patched)")
         except ImportError:
-            _PLAYWRIGHT_AVAILABLE = False
+            try:
+                import playwright  # noqa: F401
+                _PLAYWRIGHT_AVAILABLE = True
+                _USING_PATCHRIGHT = False
+                log.debug("playwright_extractor: using vanilla playwright")
+            except ImportError:
+                _PLAYWRIGHT_AVAILABLE = False
     return _PLAYWRIGHT_AVAILABLE
+
+
+def _import_sync_playwright():
+    """Import sync_playwright + TimeoutError from the active backend."""
+    if _USING_PATCHRIGHT:
+        from patchright.sync_api import (  # type: ignore[import-not-found]
+            TimeoutError as PWTimeoutError,
+            sync_playwright,
+        )
+    else:
+        from playwright.sync_api import (
+            TimeoutError as PWTimeoutError,
+            sync_playwright,
+        )
+    return sync_playwright, PWTimeoutError
 
 
 _OPENAI_AVAILABLE: bool | None = None
@@ -97,6 +131,366 @@ def _openai_available() -> bool:
         except ImportError:
             _OPENAI_AVAILABLE = False
     return _OPENAI_AVAILABLE
+
+
+_TRAFILATURA_AVAILABLE: bool | None = None
+
+
+def _trafilatura_available() -> bool:
+    """Check if trafilatura is importable for high-quality main-content extraction."""
+    global _TRAFILATURA_AVAILABLE
+    if _TRAFILATURA_AVAILABLE is None:
+        try:
+            import trafilatura  # noqa: F401
+            _TRAFILATURA_AVAILABLE = True
+        except ImportError:
+            _TRAFILATURA_AVAILABLE = False
+    return _TRAFILATURA_AVAILABLE
+
+
+# ---------------------------------------------------------------------------
+# Browser/context singleton — eliminates ~1.5-2s startup cost per fetch.
+# Module-level state guarded by a lock for thread safety. atexit cleanup
+# ensures chromium is closed even on hard interpreter shutdown.
+# ---------------------------------------------------------------------------
+
+_BROWSER_LOCK = threading.Lock()
+_PW_INSTANCE: Any = None
+_BROWSER: Any = None
+_CONTEXT: Any = None
+_CONTEXT_NOJS: Any = None  # second context with JS disabled (for static sites)
+
+# Hosts that render server-side and don't need JS — gates the no-JS context.
+_NO_JS_HOSTS = frozenset({
+    "nytimes.com", "theguardian.com", "ft.com", "apnews.com",
+    "reuters.com", "bbc.co.uk", "bbc.com", "arxiv.org", "npr.org",
+    "propublica.org", "washingtonpost.com", "wsj.com", "edmondsbeacon.com",
+    "myedmondsnews.com", "jacobin.com", "nybooks.com", "lrb.co.uk",
+})
+
+
+def _stealth_launch_args() -> list[str]:
+    """Args that improve stealth + reliability + perf in CI environments."""
+    return [
+        "--no-sandbox",
+        "--disable-dev-shm-usage",       # avoids /dev/shm OOM on ubuntu-latest
+        "--disable-gpu",
+        "--disable-blink-features=AutomationControlled",  # strips webdriver flag
+        "--disable-background-networking",
+        "--disable-sync",
+        "--disable-extensions",
+        "--no-first-run",
+        "--disable-features=IsolateOrigins,site-per-process",
+        "--disable-breakpad",
+        "--disable-component-update",
+        "--disable-default-apps",
+    ]
+
+
+# Resource types we drop unconditionally — kills bandwidth + render time.
+_BLOCK_RESOURCE_TYPES = frozenset({
+    "image", "media", "font", "stylesheet", "imageset", "beacon", "csp_report",
+    "ping", "manifest",
+})
+
+# Hostname patterns we drop — ad/tracker/analytics noise.
+_BLOCK_HOST_RE = re.compile(
+    r"(doubleclick|googletagmanager|google-analytics|googlesyndication|"
+    r"facebook\.net|hotjar|segment\.io|amplitude|mixpanel|fullstory|"
+    r"adsystem|taboola|outbrain|criteo|scorecardresearch|chartbeat|"
+    r"quantserve|bing\.com/maps|tealium|piano\.io|tinypass|optimize\.google|"
+    r"newrelic\.com|sentry\.io/api|adsrvr\.org|adnxs\.com|krxd\.net)",
+    re.IGNORECASE,
+)
+
+# Paywall script URLs we always abort — drops metering JS before it counts.
+_BLOCK_PAYWALL_RE = re.compile(
+    r"(paywall|metered|tinypass|piano\.io|admiral|qualtrics|tp\.media)",
+    re.IGNORECASE,
+)
+
+
+def _route_block_handler(route: Any) -> None:
+    """Context-level route handler. Aborts heavy/tracker/paywall requests."""
+    try:
+        req = route.request
+        if req.resource_type in _BLOCK_RESOURCE_TYPES:
+            return route.abort()
+        url = req.url
+        if _BLOCK_HOST_RE.search(url) or _BLOCK_PAYWALL_RE.search(url):
+            return route.abort()
+        return route.continue_()
+    except Exception:
+        # Route already responded to or aborted — playwright raises if so.
+        try:
+            return route.continue_()
+        except Exception:
+            return None
+
+
+def _make_context(p: Any, browser: Any, *, java_script_enabled: bool = True) -> Any:
+    """Create a stealth context with route blocking + init scripts attached."""
+    ctx = browser.new_context(
+        viewport={"width": 1366, "height": 900},
+        java_script_enabled=java_script_enabled,
+        ignore_https_errors=True,
+        # Note: no custom user_agent — using whatever the patched binary ships.
+        # Custom UA pinned to a specific Chrome version is itself a fingerprint.
+        extra_http_headers={
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept": (
+                "text/html,application/xhtml+xml,application/xml;q=0.9,"
+                "image/webp,image/apng,*/*;q=0.8"
+            ),
+            "Accept-Encoding": "gzip, deflate, br",
+            "DNT": "1",
+            "Upgrade-Insecure-Requests": "1",
+            "Sec-Fetch-Dest": "document",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-Site": "none",
+            "Sec-Fetch-User": "?1",
+        },
+    )
+    # Route-level resource blocking — context-wide, applies to every page.
+    try:
+        ctx.route("**/*", _route_block_handler)
+    except Exception as e:
+        log.debug("route handler attach failed: %s", e)
+    # Init scripts injected into every page before any site JS runs.
+    try:
+        ctx.add_init_script(_INIT_SCRIPT)
+    except Exception as e:
+        log.debug("init script attach failed: %s", e)
+    return ctx
+
+
+def _get_shared_context(*, java_script_enabled: bool = True) -> tuple[Any, Any] | None:
+    """Return (page, context) using the module-level singleton browser.
+
+    Lazily launches chromium on first call. atexit ensures shutdown.
+    Returns None if Playwright unavailable.
+    """
+    global _PW_INSTANCE, _BROWSER, _CONTEXT, _CONTEXT_NOJS
+    if not _playwright_available():
+        return None
+    with _BROWSER_LOCK:
+        if _PW_INSTANCE is None:
+            try:
+                sync_playwright, _ = _import_sync_playwright()
+                _PW_INSTANCE = sync_playwright().start()
+                _BROWSER = _PW_INSTANCE.chromium.launch(
+                    headless=True,  # CI-only — no display server available
+                    args=_stealth_launch_args(),
+                )
+                atexit.register(_shutdown_browser)
+                log.info(
+                    "playwright_extractor: launched %s chromium singleton",
+                    "patchright" if _USING_PATCHRIGHT else "vanilla",
+                )
+            except Exception as e:
+                log.warning("singleton launch failed: %s", e)
+                _PW_INSTANCE = _BROWSER = None
+                return None
+        if java_script_enabled:
+            if _CONTEXT is None:
+                try:
+                    _CONTEXT = _make_context(_PW_INSTANCE, _BROWSER, java_script_enabled=True)
+                except Exception as e:
+                    log.warning("context creation failed: %s", e)
+                    return None
+            ctx = _CONTEXT
+        else:
+            if _CONTEXT_NOJS is None:
+                try:
+                    _CONTEXT_NOJS = _make_context(_PW_INSTANCE, _BROWSER, java_script_enabled=False)
+                except Exception as e:
+                    log.warning("nojs context creation failed: %s", e)
+                    return None
+            ctx = _CONTEXT_NOJS
+    try:
+        page = ctx.new_page()
+        page.set_default_timeout(8000)
+        page.set_default_navigation_timeout(30000)
+        return page, ctx
+    except Exception as e:
+        log.warning("new_page failed: %s", e)
+        return None
+
+
+def _shutdown_browser() -> None:
+    """atexit handler — cleanly close the singleton browser + playwright."""
+    global _PW_INSTANCE, _BROWSER, _CONTEXT, _CONTEXT_NOJS
+    with _BROWSER_LOCK:
+        for ctx in (_CONTEXT, _CONTEXT_NOJS):
+            if ctx is not None:
+                try:
+                    ctx.close()
+                except Exception:
+                    pass
+        if _BROWSER is not None:
+            try:
+                _BROWSER.close()
+            except Exception:
+                pass
+        if _PW_INSTANCE is not None:
+            try:
+                _PW_INSTANCE.stop()
+            except Exception:
+                pass
+        _PW_INSTANCE = _BROWSER = _CONTEXT = _CONTEXT_NOJS = None
+
+
+# ---------------------------------------------------------------------------
+# Init script: stealth fingerprint patches + JSON-LD extractor + MutationObserver.
+# Injected via add_init_script before any site JS runs. Patchright handles most
+# of the stealth surface but these patches cover Camoufox-style edge cases too.
+# ---------------------------------------------------------------------------
+
+_INIT_SCRIPT = r"""
+// Stealth: patches that hide automation indicators. Patchright already does
+// most of these at the binary level; these are extra belt-and-suspenders for
+// vanilla Playwright fallback.
+(() => {
+  try {
+    Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+  } catch(e) {}
+  try {
+    if (!('chrome' in window)) {
+      window.chrome = {runtime: {}};
+    }
+  } catch(e) {}
+  try {
+    const origPlugins = navigator.plugins;
+    if (!origPlugins || origPlugins.length === 0) {
+      Object.defineProperty(navigator, 'plugins', {
+        get: () => [{name:'Chrome PDF Plugin'}, {name:'Chrome PDF Viewer'}, {name:'Native Client'}],
+      });
+    }
+  } catch(e) {}
+  try {
+    Object.defineProperty(navigator, 'languages', {get: () => ['en-US', 'en']});
+  } catch(e) {}
+  try {
+    const origPerm = navigator.permissions && navigator.permissions.query;
+    if (origPerm) {
+      navigator.permissions.query = (p) => (
+        p.name === 'notifications'
+          ? Promise.resolve({state: Notification.permission})
+          : origPerm.call(navigator.permissions, p)
+      );
+    }
+  } catch(e) {}
+
+  // MutationObserver for "page settled" detection.
+  // window.__pwLastMutation is read by _wait_for_settled() after navigation.
+  try {
+    window.__pwLastMutation = Date.now();
+    new MutationObserver(() => { window.__pwLastMutation = Date.now(); })
+      .observe(document.documentElement, {
+        childList: true, subtree: true, characterData: true, attributes: false
+      });
+  } catch(e) {}
+})();
+"""
+
+
+# JS to extract JSON-LD articleBody — the ground-truth article text emitted
+# by most major news sites (NYT, NewYorker, Atlantic, Reuters, BBC, etc.).
+# Skip Readability + LLM crystallization entirely when this returns content.
+_JSON_LD_EXTRACT_JS = r"""
+() => {
+  try {
+    const scripts = document.querySelectorAll('script[type="application/ld+json"]');
+    for (const s of scripts) {
+      let raw = (s.textContent || '').trim();
+      if (!raw) continue;
+      let data;
+      try { data = JSON.parse(raw); } catch (e) { continue; }
+      const arr = Array.isArray(data) ? data : (data['@graph'] || [data]);
+      for (const o of arr) {
+        if (!o || typeof o !== 'object') continue;
+        const t = o['@type'];
+        const isArticle = t && (
+          /Article|NewsArticle|BlogPosting|ReportageNewsArticle/.test(
+            Array.isArray(t) ? t.join(',') : String(t)
+          )
+        );
+        if (isArticle && o.articleBody && String(o.articleBody).length > 500) {
+          let author = '';
+          if (o.author) {
+            if (Array.isArray(o.author)) {
+              author = o.author.map(a => (a && a.name) || '').filter(Boolean).join(', ');
+            } else if (typeof o.author === 'object') {
+              author = o.author.name || '';
+            } else {
+              author = String(o.author);
+            }
+          }
+          return {
+            articleBody: String(o.articleBody),
+            headline: o.headline || '',
+            author: author,
+            datePublished: o.datePublished || '',
+          };
+        }
+      }
+    }
+    return null;
+  } catch (e) { return null; }
+}
+"""
+
+
+# Cookie-banner auto-dismiss — covers the most common GDPR/CMP frameworks
+# without requiring the full DuckDuckGo autoconsent bundle (~250KB). Catches
+# OneTrust, Cookiebot, Quantcast, Didomi, TrustArc — covers ~80% of cases.
+# Multilingual: handles English, French, German, Spanish, Italian.
+_AUTOCONSENT_JS = r"""
+() => {
+  try {
+    // Multilingual accept-all button labels.
+    const labels = [
+      'accept all', 'accept all cookies', 'accept cookies', 'i accept',
+      'agree', 'i agree', 'ok', 'got it', 'allow all', 'allow cookies',
+      'tout accepter', 'accepter tout', 'accepter', 'autoriser tout',
+      'alle akzeptieren', 'akzeptieren', 'einverstanden', 'zustimmen',
+      'aceptar todo', 'aceptar', 'aceptar todas',
+      'accetta tutto', 'accetto', 'accetta',
+    ];
+    // Common framework selectors (fast path).
+    const selectors = [
+      '#onetrust-accept-btn-handler',
+      '#CybotCookiebotDialogBodyLevelButtonAccept',
+      'button[id*="accept-all" i]',
+      'button[class*="accept-all" i]',
+      'button[id*="accept" i]:not([id*="reject" i])',
+      'button[class*="accept" i]:not([class*="reject" i])',
+      '[data-testid*="accept" i]:not([data-testid*="reject" i])',
+      'button[aria-label*="accept" i]',
+      'a[id*="accept" i]:not([id*="reject" i])',
+    ];
+    let clicked = false;
+    for (const sel of selectors) {
+      const el = document.querySelector(sel);
+      if (el && el.offsetParent !== null) {
+        try { el.click(); clicked = true; break; } catch (e) {}
+      }
+    }
+    if (clicked) return true;
+    // Text fallback — scan all clickable elements.
+    const candidates = Array.from(document.querySelectorAll('button, a[role="button"], [role="button"]'));
+    for (const el of candidates) {
+      const text = ((el.textContent || '') + ' ' + (el.value || '')).trim().toLowerCase();
+      if (!text || text.length > 40) continue;
+      if (labels.some(l => text === l || text === l + '!' || text.startsWith(l))) {
+        if (el.offsetParent === null) continue;
+        try { el.click(); return true; } catch (e) {}
+      }
+    }
+    return false;
+  } catch (e) { return false; }
+}
+"""
 
 
 # ---------------------------------------------------------------------------
@@ -367,13 +761,13 @@ class ActionLog:
 # OpenRouter client — free-tier fallback chain.
 # ---------------------------------------------------------------------------
 
-# Free-tier models tried in order. The first one available answers the call;
-# if it fails the next is tried. Keep this list short — every retry adds
-# latency to the fallback path.
+# Free-tier models tried in order. Drop gemma-2-9b — known worst paraphrase
+# offender. Prefer instruction-following models that follow REPRODUCE VERBATIM
+# directives. Cap retries at 2 so a sector full of failed URLs doesn't burn
+# the 65min research budget on OpenRouter 429s.
 _OPENROUTER_FALLBACK_MODELS = (
     "meta-llama/llama-3.3-70b-instruct:free",
-    "google/gemma-2-9b-it:free",
-    "openrouter/auto",
+    "qwen/qwen-2.5-72b-instruct:free",
 )
 
 
@@ -456,23 +850,153 @@ any other fence. Do NOT include trailing prose. If you cannot decide, emit
 """
 
 
-_CRYSTALLIZE_SYSTEM_PROMPT = """You are a content-cleaning specialist.
+_CRYSTALLIZE_SYSTEM_PROMPT = """You extract — you do NOT write.
 
-You receive raw HTML from an article page. Output ONLY the article body as
-plain markdown. Drop:
-  - navigation, headers, footers, sidebars
-  - share buttons, comment widgets, newsletter signups, ad blocks
-  - cookie banners, paywall overlays
-  - related-stories rails, tag lists, author bio boxes
+INPUT: HTML of a web page (article + boilerplate mixed together).
 
-Preserve:
-  - the article title (as a top-level # heading)
-  - subheadings (## or ###)
-  - paragraph text in reading order
-  - block quotes and pull quotes (as > prefixed lines)
+OUTPUT: A single JSON object, no prose, no fences:
+{
+  "title": "<exact title text from the page>",
+  "byline": "<exact byline or empty string>",
+  "article_body_markdown": "<article body, paragraphs separated by blank lines>"
+}
 
-Output only the markdown. No commentary. No JSON. No code fences.
+ABSOLUTE RULES:
+1. REPRODUCE VERBATIM. Every sentence in article_body_markdown must appear
+   character-for-character in the input HTML's text nodes. Do not rephrase,
+   summarize, condense, expand, modernize, or "fix" anything. Do not add
+   transitions. Do not drop sentences you find redundant.
+2. If a sentence is not in the input, do NOT emit it. No introductions,
+   no conclusions, no "the article discusses…".
+3. DROP these blocks entirely (do not summarize them, just omit):
+   - navigation, header, footer, sidebar, related-articles rails
+   - share buttons, comment widgets, newsletter sign-ups, paywall overlays
+   - image captions and photo credits (text inside <figcaption> or directly
+     adjacent to an <img>)
+   - author bio boxes at the END (the byline at the top stays)
+   - cookie banners, GDPR overlays
+4. PRESERVE structure: ## / ### for in-body subheads, > for blockquotes and
+   pull quotes, - for list items.
+5. PRESERVE the lead paragraph even if it begins with a single styled
+   capital letter (drop cap). Drop caps belong to the body.
+6. If the input contains no recoverable article body (paywall, 404, captcha,
+   ad page), emit {"title": "", "byline": "", "article_body_markdown": ""}.
+
+OUTPUT THE JSON OBJECT AND NOTHING ELSE.
 """
+
+
+class CrystallizeResult(BaseModel):
+    """Strict shape for the verbatim-extraction LLM call."""
+
+    title: str = Field(default="")
+    byline: str = Field(default="")
+    article_body_markdown: str = Field(default="")
+
+
+def _parse_crystallize(raw: str) -> CrystallizeResult | None:
+    """Parse crystallizer output. Returns None on parse failure."""
+    if not raw:
+        return None
+    candidate = raw.strip()
+    if candidate.startswith("```"):
+        candidate = re.sub(r"^```\w*\s*", "", candidate)
+        candidate = re.sub(r"\s*```\s*$", "", candidate)
+    start = candidate.find("{")
+    end = candidate.rfind("}")
+    if start == -1 or end == -1 or end <= start:
+        return None
+    try:
+        data = json.loads(candidate[start : end + 1])
+        return CrystallizeResult.model_validate(data)
+    except (json.JSONDecodeError, ValidationError) as e:
+        log.debug("crystallizer parse failed: %s", e)
+        return None
+
+
+# ---------------------------------------------------------------------------
+# Page-settle detection — replaces hardcoded wait_for_timeout(1500).
+# Watches the MutationObserver counter installed by _INIT_SCRIPT.
+# ---------------------------------------------------------------------------
+
+
+def _wait_for_settled(page: Any, *, quiet_ms: int = 800, timeout_ms: int = 6000) -> bool:
+    """Wait until the DOM has been quiet for `quiet_ms` ms or `timeout_ms` elapses.
+
+    Returns True if settled, False if timeout reached. Falls back to a fixed
+    short sleep if the MutationObserver counter is unavailable (e.g. JS off).
+    """
+    try:
+        page.wait_for_function(
+            f"() => (Date.now() - (window.__pwLastMutation || Date.now())) > {quiet_ms}",
+            timeout=timeout_ms,
+        )
+        return True
+    except Exception:
+        try:
+            page.wait_for_timeout(min(quiet_ms, 500))
+        except Exception:
+            pass
+        return False
+
+
+# ---------------------------------------------------------------------------
+# Content-quality scoring — soft-failure detection before declaring success.
+# A 600-char "Page not found" boilerplate currently passes len > 500.
+# ---------------------------------------------------------------------------
+
+
+def _score_extraction(text: str, title: str = "") -> tuple[float, str]:
+    """Return (score 0-1, reason). Score < 0.6 means treat as soft-failure."""
+    if not text:
+        return 0.0, "empty"
+    if len(text) < 800:
+        return 0.2, "too_short"
+    sentences = re.split(r"[.!?]+\s", text)
+    if len(sentences) < 6:
+        return 0.3, "too_few_sentences"
+    avg_sentence = sum(map(len, sentences)) / max(len(sentences), 1)
+    if avg_sentence < 25:
+        return 0.4, "fragmented_likely_nav_links"
+    lower = text.lower()
+    boilerplate_hits = sum(1 for t in (
+        "sign in to read", "subscribe to read", "subscribers only",
+        "create a free account", "404 not found", "page not found",
+        "javascript is disabled", "please enable javascript",
+        "verify you are human", "captcha", "access denied",
+    ) if t in lower)
+    if boilerplate_hits >= 2:
+        return 0.3, "boilerplate_heavy"
+    if title and title.lower()[:50] in lower[:500]:
+        return 0.95, "ok_title_in_body"
+    return 0.85, "ok"
+
+
+# ---------------------------------------------------------------------------
+# Trafilatura wrapper — high-quality main-content extraction in pure Python.
+# Already a repo dependency (used by httpx fast path elsewhere).
+# ---------------------------------------------------------------------------
+
+
+def _trafilatura_extract(html: str) -> str:
+    """Run trafilatura on raw HTML, return markdown. Empty string on failure."""
+    if not _trafilatura_available() or not html:
+        return ""
+    try:
+        import trafilatura
+        result = trafilatura.extract(
+            html,
+            favor_recall=True,
+            include_comments=False,
+            include_tables=True,
+            include_links=False,
+            deduplicate=True,
+            output_format="markdown",
+        )
+        return result or ""
+    except Exception as e:
+        log.debug("trafilatura extract failed: %s", e)
+        return ""
 
 
 # ---------------------------------------------------------------------------
@@ -504,34 +1028,25 @@ _COOKIE_CONSENT_TEXTS = (
 
 
 def _dismiss_cookie_consent(page, *, timeout_ms: int = 1500) -> bool:
-    """Try to dismiss a GDPR/cookie-consent banner.
+    """Dismiss GDPR/cookie-consent banner via in-page JS.
 
-    Tries attribute-based selectors first, then role-based text locators.
-    Returns True if a button was successfully clicked, False otherwise.
-    Fail-soft — never raises.
+    Uses the multilingual _AUTOCONSENT_JS function — covers OneTrust,
+    Cookiebot, Quantcast, Didomi, TrustArc, and ~80% of CMPs across
+    English/French/German/Spanish/Italian. ONE evaluate call instead
+    of the prior 7-selector × 1500ms loop (~10s when no banner exists).
+    Fail-soft: never raises.
     """
-    # Attribute-based selectors first.
-    for sel in _COOKIE_CONSENT_SELECTORS:
-        try:
-            el = page.locator(sel).first
-            if el.is_visible(timeout=timeout_ms):
-                el.click(timeout=timeout_ms)
-                page.wait_for_timeout(400)
-                log.debug("cookie consent dismissed via selector %s", sel)
-                return True
-        except Exception:
-            continue
-    # Text-based fallback.
-    for text in _COOKIE_CONSENT_TEXTS:
-        try:
-            el = page.get_by_role("button", name=text, exact=True).first
-            if el.is_visible(timeout=timeout_ms):
-                el.click(timeout=timeout_ms)
-                page.wait_for_timeout(400)
-                log.debug("cookie consent dismissed via text %r", text)
-                return True
-        except Exception:
-            continue
+    try:
+        clicked = page.evaluate(_AUTOCONSENT_JS)
+        if clicked:
+            log.debug("cookie consent dismissed via autoconsent JS")
+            try:
+                page.wait_for_timeout(300)
+            except Exception:
+                pass
+            return True
+    except Exception as e:
+        log.debug("autoconsent JS failed: %s", e)
     return False
 
 
@@ -549,9 +1064,17 @@ def extract_article(
 ) -> dict[str, Any]:
     """Open ``url`` headless, extract main article text, return a dict.
 
-    Tries the following selectors in order: ``article``, ``main``,
-    ``[role="main"]``, ``body``. The first match longer than 500 chars wins.
-    Sanitizes, then optionally crystallizes via OpenRouter (markdown cleanup).
+    Pipeline (first hit wins):
+      1. JSON-LD ``articleBody`` ground truth (zero hallucination risk).
+      2. Trafilatura on full hydrated DOM (Python, fast, reliable).
+      3. Selector race (``article``/``main``/``[role=main]``/``body``)
+         + deterministic html_to_markdown.
+      4. LLM crystallizer ONLY if explicitly requested via
+         ``crystallize=True`` (default: False — saves OpenRouter quota).
+
+    Browser is a module-level singleton — eliminates ~1.5-2s startup cost
+    per fetch. Context-level route blocking drops images/fonts/ads/trackers.
+    Cookie banners auto-dismissed via injected multilingual JS.
 
     Returns::
 
@@ -560,14 +1083,12 @@ def extract_article(
             "title": str,
             "text": str,             # markdown
             "success": bool,
-            "extracted_via": "playwright",
+            "extracted_via": str,    # "json-ld", "trafilatura", "selector", "llm-crystallize"
+            "quality_score": float,  # 0-1 content-quality score
             "error": str (only when success=False),
         }
 
     Fail-soft on every error path — never raises. Caller must check ``success``.
-
-    ``crystallize`` defaults to True when ``OPENROUTER_API_KEY`` is set, else
-    False (skip the LLM cleanup pass).
     """
     base: dict[str, Any] = {
         "url": url,
@@ -575,6 +1096,7 @@ def extract_article(
         "text": "",
         "success": False,
         "extracted_via": "playwright",
+        "quality_score": 0.0,
     }
 
     if not url:
@@ -586,131 +1108,237 @@ def extract_article(
         base["error"] = "playwright not installed"
         return base
 
+    # crystallize default: OFF. Saves OpenRouter calls — most callers (career
+    # sector, enrichment) don't need LLM cleanup once trafilatura runs.
+    if crystallize is None:
+        crystallize = os.environ.get("JEEVES_PW_USE_LLM_CRYSTALLIZE") == "1"
+
     try:
-        from playwright.sync_api import (
-            TimeoutError as PWTimeoutError,
-            sync_playwright,
-        )
+        sync_playwright, PWTimeoutError = _import_sync_playwright()
     except Exception as e:
         log.debug("playwright import failed: %s", e)
         base["error"] = f"playwright import failed: {e}"
         return base
 
+    # Decide JS-on vs JS-off context based on host. Static-render hosts skip
+    # the JS engine entirely → ~200-500ms saved per fetch.
+    js_off_host = any(h in url for h in _NO_JS_HOSTS)
+    page_ctx = _get_shared_context(java_script_enabled=not js_off_host)
+    if page_ctx is None:
+        # Singleton failed — fall through to legacy per-call launch (rare).
+        return _extract_article_legacy(url, timeout_seconds=timeout_seconds,
+                                       max_chars=max_chars, crystallize=crystallize)
+    page, _ctx = page_ctx
+
     try:
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
+        try:
+            page.goto(url, wait_until="domcontentloaded",
+                      timeout=timeout_seconds * 1000)
+        except PWTimeoutError as e:
+            base["error"] = f"goto timeout: {e}"
+            return base
+
+        # Wait for DOM to settle (replaces hardcoded 1500ms sleep).
+        if not js_off_host:
+            _wait_for_settled(page, quiet_ms=600, timeout_ms=4000)
+            # Dismiss cookie/GDPR consent banners (single JS call).
             try:
-                ctx = browser.new_context(
-                    user_agent=(
-                        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                        "AppleWebKit/537.36 (KHTML, like Gecko) "
-                        "Chrome/124.0.0.0 Safari/537.36"
-                    ),
-                    viewport={"width": 1280, "height": 900},
-                    extra_http_headers={
-                        "Accept-Language": "en-US,en;q=0.9",
-                        "Accept": (
-                            "text/html,application/xhtml+xml,application/xml"
-                            ";q=0.9,image/webp,*/*;q=0.8"
-                        ),
-                        "DNT": "1",
-                        "Upgrade-Insecure-Requests": "1",
-                    },
-                    ignore_https_errors=True,
-                )
-                page = ctx.new_page()
-                try:
-                    page.goto(
-                        url,
-                        wait_until="domcontentloaded",
-                        timeout=timeout_seconds * 1000,
-                    )
-                    # Let JS hydrate; many SPAs need a beat after DOMContentLoaded.
-                    page.wait_for_timeout(1500)
-                    # Dismiss cookie/GDPR consent banners before extraction.
-                    _dismiss_cookie_consent(page)
+                _dismiss_cookie_consent(page)
+            except Exception:
+                pass
 
-                    title = ""
-                    try:
-                        title = (page.title() or "").strip()
-                    except Exception:
-                        pass
+        title = ""
+        try:
+            title = (page.title() or "").strip()
+        except Exception:
+            pass
+        base["title"] = title
 
-                    raw_html = ""
-                    for selector in ("article", "main", '[role="main"]', "body"):
-                        try:
-                            el = page.query_selector(selector)
-                        except Exception:
-                            continue
-                        if not el:
-                            continue
-                        try:
-                            html = el.inner_html() or ""
-                        except Exception:
-                            continue
-                        if len(html) > 500:
-                            raw_html = html
-                            break
-
-                    if not raw_html:
-                        base["error"] = "no content selector matched"
+        # ----- 1. JSON-LD articleBody ground truth -----
+        if not js_off_host:
+            try:
+                jsonld = page.evaluate(_JSON_LD_EXTRACT_JS)
+            except Exception:
+                jsonld = None
+            if jsonld and jsonld.get("articleBody"):
+                body_text = str(jsonld["articleBody"]).strip()
+                if len(body_text) > 500:
+                    score, reason = _score_extraction(body_text, title)
+                    base["title"] = jsonld.get("headline", "") or title
+                    base["text"] = body_text[:max_chars]
+                    base["extracted_via"] = "json-ld"
+                    base["quality_score"] = score
+                    if score >= 0.6:
+                        base["success"] = True
                         return base
+                    log.debug("json-ld text scored low (%.2f, %s); trying next strategy", score, reason)
 
-                    sanitized = sanitize_html(raw_html, max_chars=max_chars * 2)
-
-                    # Dead-end check on the sanitized body, not raw HTML, so
-                    # the keyword detection isn't fooled by hidden noise tags.
-                    body_text_for_check = re.sub(r"<[^>]+>", " ", sanitized)
-                    if is_dead_end(body_text_for_check):
-                        base["error"] = "dead-end (paywall/captcha/403/404)"
-                        return base
-
-                    # Crystallize via OpenRouter when available, else fall
-                    # back to the deterministic regex-based markdown converter.
-                    if crystallize is None:
-                        crystallize = bool(os.environ.get("OPENROUTER_API_KEY"))
-
-                    text = ""
-                    if crystallize:
-                        text = _openrouter_chat(
-                            _CRYSTALLIZE_SYSTEM_PROMPT,
-                            sanitized[:12000],
-                            max_tokens=2048,
-                            timeout=timeout_seconds,
-                        )
-                    if not text:
-                        text = html_to_markdown(sanitized)
-
-                    if not text or len(text) < 200:
-                        base["text"] = text
-                        base["title"] = title
-                        base["error"] = "extracted text too short"
-                        return base
-
-                    base["title"] = title
-                    base["text"] = text[:max_chars]
+        # ----- 2. Trafilatura on full hydrated DOM -----
+        try:
+            full_html = page.content() or ""
+        except Exception:
+            full_html = ""
+        if full_html and _trafilatura_available():
+            traf_text = _trafilatura_extract(full_html)
+            if traf_text and len(traf_text) > 500:
+                score, reason = _score_extraction(traf_text, title)
+                if score >= 0.6:
+                    base["text"] = traf_text[:max_chars]
+                    base["extracted_via"] = "trafilatura"
+                    base["quality_score"] = score
                     base["success"] = True
                     return base
-                finally:
-                    try:
-                        page.close()
-                    except Exception:
-                        pass
-                    try:
-                        ctx.close()
-                    except Exception:
-                        pass
-            finally:
-                try:
-                    browser.close()
-                except Exception:
-                    pass
+                log.debug("trafilatura scored low (%.2f, %s); trying next strategy", score, reason)
+
+        # ----- 3. Selector race + deterministic markdown -----
+        raw_html = ""
+        for selector in ("article", "main", '[role="main"]', "body"):
+            try:
+                el = page.query_selector(selector)
+            except Exception:
+                continue
+            if not el:
+                continue
+            try:
+                html = el.inner_html() or ""
+            except Exception:
+                continue
+            # Use textContent length, not HTML length — script-tag-heavy bodies
+            # easily clear 500 chars while having no real content.
+            try:
+                text_len = len(re.sub(r"<[^>]+>", "", html).strip())
+            except Exception:
+                text_len = 0
+            if text_len > 200:
+                raw_html = html
+                break
+
+        if not raw_html:
+            base["error"] = "no content selector matched"
+            return base
+
+        sanitized = sanitize_html(raw_html, max_chars=max_chars * 2)
+        body_text_for_check = re.sub(r"<[^>]+>", " ", sanitized)
+        if is_dead_end(body_text_for_check):
+            base["error"] = "dead-end (paywall/captcha/403/404)"
+            return base
+
+        # ----- 4. Optional LLM crystallizer -----
+        text = ""
+        extraction_method = "selector"
+        if crystallize:
+            raw_llm = _openrouter_chat(
+                _CRYSTALLIZE_SYSTEM_PROMPT,
+                sanitized[:12000],
+                max_tokens=2048,
+                timeout=timeout_seconds,
+            )
+            parsed = _parse_crystallize(raw_llm)
+            if parsed and parsed.article_body_markdown:
+                text = parsed.article_body_markdown
+                extraction_method = "llm-crystallize"
+                if parsed.title and not base["title"]:
+                    base["title"] = parsed.title
+        if not text:
+            text = html_to_markdown(sanitized)
+            extraction_method = "selector"
+
+        if not text or len(text) < 200:
+            base["text"] = text
+            base["error"] = "extracted text too short"
+            return base
+
+        score, reason = _score_extraction(text, base["title"])
+        base["text"] = text[:max_chars]
+        base["extracted_via"] = extraction_method
+        base["quality_score"] = score
+        if score < 0.5:
+            base["error"] = f"low-quality extraction ({reason})"
+            return base
+        base["success"] = True
+        return base
+
     except PWTimeoutError as e:
         log.warning("playwright timeout extracting %s: %s", url, e)
         base["error"] = f"timeout: {e}"
         return base
     except Exception as e:
         log.warning("playwright extraction failed for %s: %s", url, e)
+        base["error"] = str(e)
+        return base
+    finally:
+        try:
+            page.close()
+        except Exception:
+            pass
+
+
+def _extract_article_legacy(
+    url: str,
+    *,
+    timeout_seconds: int = 30,
+    max_chars: int = 12000,
+    crystallize: bool = False,
+) -> dict[str, Any]:
+    """Per-call browser launch fallback used when singleton context is unavailable.
+
+    Should rarely be hit — singleton creation only fails on chromium binary
+    issues. Same return shape as extract_article. No JSON-LD or settle helpers
+    (those need init scripts only the singleton context attaches).
+    """
+    base: dict[str, Any] = {
+        "url": url, "title": "", "text": "", "success": False,
+        "extracted_via": "playwright-legacy", "quality_score": 0.0,
+    }
+    try:
+        sync_playwright, PWTimeoutError = _import_sync_playwright()
+    except Exception as e:
+        base["error"] = f"playwright import failed: {e}"
+        return base
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True, args=_stealth_launch_args())
+            try:
+                ctx = browser.new_context(
+                    viewport={"width": 1366, "height": 900},
+                    ignore_https_errors=True,
+                )
+                page = ctx.new_page()
+                page.set_default_timeout(8000)
+                try:
+                    page.goto(url, wait_until="domcontentloaded",
+                              timeout=timeout_seconds * 1000)
+                    page.wait_for_timeout(800)
+                    full_html = page.content() or ""
+                    text = _trafilatura_extract(full_html) if _trafilatura_available() else ""
+                    if not text:
+                        body_html = page.locator("body").inner_html() or ""
+                        text = html_to_markdown(sanitize_html(body_html, max_chars=max_chars * 2))
+                    title = (page.title() or "").strip()
+                    if text and len(text) > 200:
+                        score, _ = _score_extraction(text, title)
+                        base.update({
+                            "title": title, "text": text[:max_chars],
+                            "extracted_via": "playwright-legacy",
+                            "quality_score": score, "success": score >= 0.5,
+                        })
+                        if not base["success"]:
+                            base["error"] = "low-quality extraction"
+                    else:
+                        base["error"] = "extracted text too short"
+                    return base
+                finally:
+                    try: page.close()
+                    except Exception: pass
+                    try: ctx.close()
+                    except Exception: pass
+            finally:
+                try: browser.close()
+                except Exception: pass
+    except PWTimeoutError as e:
+        base["error"] = f"timeout: {e}"
+        return base
+    except Exception as e:
         base["error"] = str(e)
         return base
 
