@@ -247,7 +247,7 @@ def test_stitch_strips_continuation_wrapper_if_model_leaks_it():
     assert "<p>1</p>" in out and "<p>2</p>" in out and "<p>3</p>" in out
 
 
-def test_nim_refine_is_called_for_each_part(monkeypatch):
+async def test_nim_refine_is_called_for_each_part(monkeypatch):
     """generate_briefing fires a NIM refine pass for every PART_PLAN slot."""
     from jeeves.config import Config
     from jeeves.write import generate_briefing
@@ -276,12 +276,12 @@ def test_nim_refine_is_called_for_each_part(monkeypatch):
     monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
     monkeypatch.setattr(asyncio, "sleep", _noop_sleep)
 
-    html, _warnings, _groq, _nim = asyncio.run(generate_briefing(cfg, session))
+    html, _warnings, _groq, _nim = await generate_briefing(cfg, session)
     assert set(refined_labels) == {name for name, _ in wmod.PART_PLAN}
     assert "refined" in html
 
 
-def test_nim_refine_failure_falls_back_to_raw_draft(monkeypatch):
+async def test_nim_refine_failure_falls_back_to_raw_draft(monkeypatch):
     """If NIM refine raises, generate_briefing uses the raw Groq draft."""
     from jeeves.config import Config
     from jeeves.write import generate_briefing
@@ -308,7 +308,7 @@ def test_nim_refine_failure_falls_back_to_raw_draft(monkeypatch):
     monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
     monkeypatch.setattr(asyncio, "sleep", _noop_sleep)
 
-    html, _warnings, _groq, _nim = asyncio.run(generate_briefing(cfg, session))
+    html, _warnings, _groq, _nim = await generate_briefing(cfg, session)
     # Raw drafts must be in the output even though refine failed.
     assert "raw-part1" in html
 
@@ -361,7 +361,7 @@ def test_nim_write_fallback_does_not_trigger_on_tpm_error(monkeypatch):
         _invoke_write_llm(cfg, "sys", "user", max_tokens=3000, label="part1")
 
 
-def test_nim_fallback_skips_groq_tpm_sleep(monkeypatch):
+async def test_nim_fallback_skips_groq_tpm_sleep(monkeypatch):
     """When NIM handles a draft (Groq TPD exhausted), the 65s sleep is skipped."""
     from jeeves.config import Config
     from jeeves.write import generate_briefing
@@ -391,7 +391,7 @@ def test_nim_fallback_skips_groq_tpm_sleep(monkeypatch):
     monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
     monkeypatch.setattr(asyncio, "sleep", _tracking_sleep)
 
-    asyncio.run(generate_briefing(cfg, session))  # return value unused; checking side-effect
+    await generate_briefing(cfg, session)  # return value unused; checking side-effect
 
     # Only one sleep should have fired: the one between part1 (Groq) and part2 (NIM).
     # Parts 3–9 see last_used_groq=False and skip the sleep.
@@ -762,7 +762,7 @@ def test_narrative_edit_skipped_when_no_key(monkeypatch):
     assert _invoke_openrouter_narrative_edit(cfg, html) == html
 
 
-def test_narrative_edit_called_in_generate_briefing(monkeypatch):
+async def test_narrative_edit_called_in_generate_briefing(monkeypatch):
     """generate_briefing invokes the OpenRouter narrative editor when key is set."""
     from jeeves.config import Config
     from jeeves.write import generate_briefing
@@ -795,7 +795,7 @@ def test_narrative_edit_called_in_generate_briefing(monkeypatch):
     monkeypatch.setattr(wmod, "_invoke_openrouter_narrative_edit", fake_narrative_edit)
     monkeypatch.setattr(asyncio, "sleep", _noop_sleep)
 
-    html, _warnings, _groq, _nim = asyncio.run(generate_briefing(cfg, session))
+    html, _warnings, _groq, _nim = await generate_briefing(cfg, session)
     assert len(edit_calls) == 1, "narrative editor should be called exactly once"
     assert "data-edited='true'" in html
 
