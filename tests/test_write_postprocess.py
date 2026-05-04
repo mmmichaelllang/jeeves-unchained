@@ -995,19 +995,20 @@ def test_system_prompt_injects_run_used_topics():
     assert "Senator Maria Cantwell" in prompt
 
 
-def test_system_prompt_run_used_topics_caps_at_30_newest_first():
-    """Cap is 30, taking the LAST 30 (most recently written — most important
-    to avoid re-narrating in the next part).  With 80 topics Topic00-Topic79
-    the last 30 are Topic50-Topic79; anything before Topic50 is dropped."""
+def test_system_prompt_run_used_topics_caps_at_80_newest_first():
+    """Cap is 80 (raised from 30 in the 2026-05-03 dedup sprint — old cap
+    evicted earlier-part topics, letting the model re-narrate them).
+    With 100 topics Topic000-Topic099 the last 80 are Topic020-Topic099;
+    anything before Topic020 is dropped."""
     from jeeves.write import _system_prompt_for_parts
 
-    topics = [f"Topic{i:02d}" for i in range(80)]
+    topics = [f"Topic{i:03d}" for i in range(100)]
     prompt = _system_prompt_for_parts(run_used_topics=topics)
-    # Last 30 (most recent) must be present.
-    assert "Topic79" in prompt
-    assert "Topic50" in prompt
+    # Last 80 (most recent) must be present.
+    assert "Topic099" in prompt
+    assert "Topic020" in prompt
     # Topics before the cap must be absent.
-    assert "Topic49" not in prompt
+    assert "Topic019" not in prompt
 
 
 def test_system_prompt_no_topics_block_when_empty():

@@ -234,33 +234,15 @@ def test_extract_topics_skips_filler_words():
 
 @pytest.mark.skipif(not _HAS_SCHEMA, reason="pydantic / schema not available")
 def test_trim_session_preserves_cross_sector_dupes():
-    """cross_sector_dupes used to be computed but discarded by write phase."""
+    """cross_sector_dupes used to be computed but discarded by write phase.
+
+    Use minimal SessionModel — only date and dedup matter for this test.
+    Other fields take their defaults from the model.
+    """
     from jeeves.schema import SessionModel
-    session_data = {
-        "date": "2026-05-03",
-        "weather": "",
-        "correspondence": {
-            "found": False,
-            "fallback_used": False,
-            "text": "",
-            "thread_count": 0,
-            "fallback_diagnostic": "",
-        },
-        "career": [],
-        "family": {"choral": [], "toddler": []},
-        "global_news": [],
-        "intellectual_journals": [],
-        "triadic_ontology": {"findings": [], "default_used": True},
-        "ai_systems": {"findings": [], "default_used": True},
-        "uap": {"findings": [], "default_used": True},
-        "wearable_ai": [],
-        "newyorker": {"available": False, "url": "", "title": "", "text": "",
-                      "headline_only": False, "archived_from": ""},
-        "newyorker_hint": "",
-        "literary_pick": {"title": "", "author": "", "url": ""},
-        "vault_insight": "",
-        "enriched_articles": [],
-        "dedup": {
+    session = SessionModel(
+        date="2026-05-03",
+        dedup={
             "covered_urls": ["https://a.com", "https://b.com"],
             "covered_headlines": ["A", "B"],
             "cross_sector_dupes": [
@@ -268,10 +250,7 @@ def test_trim_session_preserves_cross_sector_dupes():
                 "https://shared.com/2",
             ],
         },
-        "uap_has_new": False,
-        "ledger": {},
-    }
-    session = SessionModel(**session_data)
+    )
     payload = _trim_session_for_prompt(session)
     assert "covered_urls" not in payload["dedup"]
     assert payload["dedup"]["cross_sector_dupes"] == [
