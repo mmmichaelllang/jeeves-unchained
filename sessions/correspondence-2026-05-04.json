@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] mmmichaelllang: A GitHub notification about a failed pipeline run for Jeeves.\n- [escalation] mmmichaelllang: A GitHub notification about a failed PR run for Jeeves.\n- [escalation] mmmichaelllang: A GitHub notification about a failed research phase workflow run for Jeeves.\n- [escalation] mmmichaelllang: A GitHub notification about a failed correspondence phase workflow run for Jeeves.\n- [escalation] mmmichaelllang: A GitHub notification about a failed write phase workflow run for Jeeves.\n- [escalation] mmmichaelllang: A GitHub notification about a failed research phase workflow run for Jeeves.\n- [escalation] Google: Security alert for Google Account\n- [reply needed] Jen Manglos: Jen Manglos is providing email addresses and discussing availability for June\n- [reply needed] Monty Owens: Monty Owens reported that there isn't a workaround to get prescriptions covered by insurance.\n- [decision required] \"Anthropic, PBC\": Unsuccessful payment to Anthropic, PBC\n- [scheduling] Vervaeke Foundation: Facilitation Journeys and Aspirations event on May 3\n- [follow up] mmmichaelllang: Jeeves Correspondence Phase workflow run failed\n- [follow up] mmmichaelllang: Jeeves Daily Pipeline workflow run failed",
+  "text": "- [escalation] mmmichaelllang: GitHub Actions daily pipeline for jeeves-unchained failed.\n- [escalation] mmmichaelllang: GitHub Actions CI run for sprint 16 PR failed all jobs.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline for jeeves-unchained failed again.\n- [escalation] mmmichaelllang: GitHub Actions CI run for sprint 15 PR failed all jobs.\n- [escalation] mmmichaelllang: GitHub Actions CI run for sprint 15 PR failed all jobs.\n- [escalation] mmmichaelllang: GitHub Actions CI run for PR with deduplication fixes failed all jobs.\n- [escalation] mmmichaelllang: GitHub Actions write phase workflow for jeeves-memory failed.\n- [escalation] mmmichaelllang: GitHub Actions research phase workflow for jeeves-memory failed.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Correspondence Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions CI failure for jeeves-unchained PR related to Groq token limits.\n- [escalation] mmmichaelllang: GitHub Actions failure for Jeeves Daily Pipeline workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure for Jeeves Daily Pipeline workflow on Saturday.\n- [escalation] mmmichaelllang: GitHub Actions failure for Jeeves Daily Pipeline workflow on Saturday.",
   "counts": {
-    "reply_needed": 2,
-    "decision_required": 1,
+    "reply_needed": 1,
+    "decision_required": 2,
     "scheduling": 1,
-    "follow_up": 7,
-    "escalation": 7,
-    "no_action": 32
+    "follow_up": 0,
+    "escalation": 22,
+    "no_action": 24
   }
 }
