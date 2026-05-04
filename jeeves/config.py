@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 # ---------------------------------------------------------------------------
 DEDUP_PROMPT_HEADLINES_CAP: int = 250   # max prior headlines sent to Groq
 DEDUP_PROMPT_ASIDES_CAP: int = 20       # max aside phrases in Part 4+ prompt
-DEDUP_PROMPT_TOPICS_CAP: int = 30       # max used topics in Part 4+ prompt
+DEDUP_PROMPT_TOPICS_CAP: int = 80       # max used topics in Part 4+ prompt
 
 # ---------------------------------------------------------------------------
 # Research phase tool budgets — injected into per-sector user messages
@@ -106,6 +106,10 @@ class Config:
     google_application_credentials_json: str = ""  # Full JSON content, not a path
     # NIM refine skip flag (JEEVES_SKIP_NIM_REFINE=1 → skip refine even when key is set)
     skip_nim_refine: bool = False
+    # Diagnostic dump flag (JEEVES_DEBUG_DRAFTS=1 → write each part's raw +
+    # refined draft to sessions/debug-<date>-<label>.html for inspection).
+    # Used to triage h3-budget violations and other per-part anomalies.
+    debug_drafts: bool = False
     # Groq inter-part sleep in seconds. Must exceed 60s TPM window. JEEVES_GROQ_SLEEP overrides.
     groq_inter_part_sleep_s: int = 65
     # Recipient
@@ -198,6 +202,8 @@ class Config:
             ),
             recipient_email=os.environ.get("JEEVES_RECIPIENT_EMAIL", "lang.mc@gmail.com"),
             skip_nim_refine=os.environ.get("JEEVES_SKIP_NIM_REFINE", "").lower()
+            in ("1", "true", "yes"),
+            debug_drafts=os.environ.get("JEEVES_DEBUG_DRAFTS", "").lower()
             in ("1", "true", "yes"),
             groq_inter_part_sleep_s=int(os.environ.get("JEEVES_GROQ_SLEEP", "65")),
         )

@@ -283,6 +283,11 @@ def _trim_session_for_prompt(session: SessionModel) -> dict[str, Any]:
         dedup.pop("covered_urls", None)
         if isinstance(dedup.get("covered_headlines"), list):
             dedup["covered_headlines"] = dedup["covered_headlines"][:DEDUP_PROMPT_HEADLINES_CAP]
+        # cross_sector_dupes (URLs appearing in 2+ research sectors) is
+        # computed by research phase. Surface it here so write-phase prompts
+        # can reference it — earlier the field was computed but ignored.
+        if isinstance(dedup.get("cross_sector_dupes"), list):
+            dedup["cross_sector_dupes"] = dedup["cross_sector_dupes"][:50]
     return payload
 
 
@@ -534,6 +539,11 @@ CONTINUATION_RULES = """
     one brief reference is fine if it illuminates today's development.
     Never skip an ongoing story just because it appeared before. Never repeat
     one just because it reappeared in today's findings. Synthesize.
+    CROSS-SECTOR DUPES: `dedup.cross_sector_dupes` is a list of URLs that
+    appear in MORE THAN ONE research sector for today's session. If a URL
+    you are about to cite is in that list AND another part has already cited
+    it (or you are not the first sector that surfaces it), do NOT re-narrate
+    the underlying story. One bridging clause max.
 11. WIT QUOTA. At least one sardonic, wry, or darkly humorous observation per
     part. This may be a short parenthetical, a loaded short sentence after a
     long paragraph, an ironic understatement, or a dry aside about human folly.
@@ -1336,9 +1346,14 @@ def _strip_fences(s: str) -> str:
 def _strip_continuation_wrapper(s: str) -> str:
     """Remove DOCTYPE/head/body/h1/masthead divs that a continuation part leaked.
 
-    Also strips a TRAILING `</div>` (and `</body>`/`</html>`) — continuation parts
-    are forbidden from closing outer tags but the model occasionally emits them
-    anyway, leaving subsequent parts to render outside `.container`.
+    CRITICAL: middle parts that emit a complete briefing (DOCTYPE...</html>)
+    followed by additional content cause Pass 1+Pass 2+Pass 3 concatenation
+    visible to the user. Hard truncate at first embedded `</body>` or `</html>`
+    so a hallucinated full briefing inside a fragment is cut down to the
+    fragment's first section only.
+
+    Also strips a TRAILING `</div>` — continuation parts must not close
+    `.container` since later parts append into it.
     """
     import re as _re
     s = re.sub(r"^<!DOCTYPE[^>]*>", "", s, flags=_re.IGNORECASE).strip()
@@ -1348,6 +1363,23 @@ def _strip_continuation_wrapper(s: str) -> str:
     s = re.sub(r"<h1[^>]*>.*?</h1>", "", s, flags=_re.IGNORECASE | re.DOTALL)
     # Strip masthead divs (mh-label, mh-date) if a continuation part leaks them.
     s = re.sub(r'<div[^>]*class="mh-(?:label|date)"[^>]*>.*?</div>', "", s, flags=_re.IGNORECASE | re.DOTALL)
+
+    # HARD TRUNCATION: any embedded </body> or </html> means the part wrote
+    # past its scope. Cut everything from the first such close-tag onward.
+    body_close = _re.search(r"</body>", s, _re.IGNORECASE)
+    html_close = _re.search(r"</html>", s, _re.IGNORECASE)
+    cuts = [m.start() for m in (body_close, html_close) if m is not None]
+    if cuts:
+        cut_at = min(cuts)
+        before, after = s[:cut_at], s[cut_at:]
+        if re.sub(r"<!--.*?-->", "", after, flags=re.DOTALL).strip(" \t\n\r></bodyhtml"):
+            log.warning(
+                "continuation part contained embedded </body>/</html> — "
+                "truncating %d trailing chars (likely full-briefing hallucination)",
+                len(s) - cut_at,
+            )
+        s = before
+
     # Strip trailing closers — continuation parts must not close outer tags.
     s = s.strip()
     while True:
@@ -1513,11 +1545,29 @@ def _strip_part_zero_premature_close(s: str) -> str:
     Part 1 owns DOCTYPE/head/body/h1 but never the closing tags or signoff.
     A misbehaving model that emits a complete briefing for Part 1 would
     cause Parts 2-9 to land outside </html>. Rip them out.
+
+    HARD TRUNCATION: also truncate at first EMBEDDED </body> or </html> —
+    Part 1 hallucinating a full briefing then writing more content was the
+    root cause of the 3-pass duplication symptom (briefing-2026-05-03).
     """
     s = s.strip()
-    # Strip any </html> closer.
+    # Hard-truncate at any embedded </body> or </html> (not just trailing).
+    body_close = re.search(r"</body>", s, re.IGNORECASE)
+    html_close = re.search(r"</html>", s, re.IGNORECASE)
+    cuts = [m.start() for m in (body_close, html_close) if m is not None]
+    if cuts:
+        cut_at = min(cuts)
+        if cut_at < len(s) - 20:  # something substantive after the close
+            log.warning(
+                "Part 1 contained embedded </body>/</html> with %d trailing chars — "
+                "truncating (likely full-briefing hallucination)",
+                len(s) - cut_at,
+            )
+        s = s[:cut_at]
+    s = s.strip()
+    # Strip any trailing </html> closer.
     s = re.sub(r"\s*</html>\s*$", "", s, flags=re.IGNORECASE).strip()
-    # Strip any </body> closer.
+    # Strip any trailing </body> closer.
     s = re.sub(r"\s*</body>\s*$", "", s, flags=re.IGNORECASE).strip()
     # Strip a standalone .signoff div (only Part 9 owns it).
     s = re.sub(
@@ -1829,11 +1879,30 @@ def _invoke_nim_refine(cfg: Config, draft_html: str, *, label: str) -> str:
         ChatMessage(role=MessageRole.SYSTEM, content=_REFINE_SYSTEM),
         ChatMessage(role=MessageRole.USER, content=user),
     ]
+    raw_h3_count = len(_H3_TAG_RE.findall(draft_html))
+    raw_len = len(draft_html)
     last_exc: Exception | None = None
     for attempt, delay in enumerate((*_NIM_RETRY_DELAYS, None)):
         try:
             resp = llm.chat(messages)
-            return str(resp.message.content or draft_html)
+            edited = str(resp.message.content or draft_html)
+            # Scope guard: refine must not expand the fragment.
+            edited_h3 = len(_H3_TAG_RE.findall(edited))
+            if edited_h3 > raw_h3_count + 1:
+                log.warning(
+                    "NIM refine [%s] expanded h3 count %d→%d — "
+                    "rejecting refined output, using raw draft",
+                    label, raw_h3_count, edited_h3,
+                )
+                return draft_html
+            if len(edited) > int(raw_len * 1.5) and raw_len > 200:
+                log.warning(
+                    "NIM refine [%s] expanded length %d→%d (>1.5x) — "
+                    "rejecting refined output, using raw draft",
+                    label, raw_len, len(edited),
+                )
+                return draft_html
+            return edited
         except Exception as exc:
             last_exc = exc
             if _is_nim_rate_limit(exc) and delay is not None:
@@ -2468,21 +2537,52 @@ def _collapse_adjacent_duplicate_h3(html: str) -> str:
     return html
 
 
-def _dedup_paragraphs_across_blocks(html: str) -> str:
-    """Drop near-duplicate <p> bodies that appear more than once.
+def _shingles(text: str, k: int = 3) -> set[str]:
+    """Return set of k-word shingles (lowercased) for Jaccard comparison.
 
-    Fingerprint each `<p>` body's first 80 chars (lowercased, whitespace
-    collapsed, tags stripped). When the same fingerprint appears more than
-    once, keep the first occurrence and drop subsequent ones.
+    k=3 chosen because k=4 missed near-duplicate paragraphs (jaccard 0.48
+    on near-paraphrases) while k=3 hits 0.55+. Distinct topics still score 0.
+    """
+    words = re.sub(r"\s+", " ", text).strip().lower().split()
+    if len(words) < k:
+        return {" ".join(words)} if words else set()
+    return {" ".join(words[i : i + k]) for i in range(len(words) - k + 1)}
+
+
+def _jaccard(a: set[str], b: set[str]) -> float:
+    if not a or not b:
+        return 0.0
+    inter = len(a & b)
+    union = len(a | b)
+    return inter / union if union else 0.0
+
+
+def _paragraph_quality_score(body: str) -> tuple[int, int, int]:
+    """Quality score for a paragraph: (anchor_count, word_count, char_count).
+
+    Higher anchor_count = richer (cites sources). Word/char tiebreakers.
+    Used to pick the BEST occurrence of a duplicate, not the first.
+    """
+    anchors = len(re.findall(r"<a\s[^>]*href=", body, re.IGNORECASE))
+    plain = re.sub(r"<[^>]+>", " ", body)
+    plain = re.sub(r"\s+", " ", plain).strip()
+    words = len(plain.split())
+    return (anchors, words, len(plain))
+
+
+def _dedup_paragraphs_across_blocks(
+    html: str, *, jaccard_threshold: float = 0.5
+) -> str:
+    """Drop near-duplicate <p> bodies via 4-word shingle Jaccard similarity.
+
+    For each pair of paragraphs with Jaccard ≥ threshold, drop the one with
+    the LOWER quality score (anchors → words → chars). Keeps the richer copy.
 
     Skips:
-    - Paragraphs inside the verbatim TOTT block (`<!-- NEWYORKER_START -->`
-      … `<!-- NEWYORKER_END -->`).
+    - Paragraphs inside the verbatim TOTT block.
     - Paragraphs inside `<div class="signoff">`.
-    - Paragraphs ≤ 6 words (likely intro/outro fragments where exact
-      collision is intentional).
+    - Paragraphs ≤ 6 words.
     """
-    # Extract NEWYORKER block and any signoff divs as "do not touch" zones.
     ny_match = _NY_BLOCK_FENCE_RE.search(html)
     sentinel = "<!--__JEEVES_NY_DEDUP_TMP__-->"
     if ny_match:
@@ -2492,42 +2592,142 @@ def _dedup_paragraphs_across_blocks(html: str) -> str:
         ny_saved = None
         scoped = html
 
-    paragraphs: list[tuple[int, int, str]] = []  # (start, end, body)
+    paragraphs: list[tuple[int, int, str, set[str], tuple[int, int, int]]] = []
     for m in _P_TAG_RE.finditer(scoped):
-        paragraphs.append((m.start(), m.end(), m.group(1)))
+        body = m.group(1)
+        plain = re.sub(r"<[^>]+>", " ", body)
+        plain = re.sub(r"\s+", " ", plain).strip()
+        if len(plain.split()) <= 6:
+            continue
+        sh = _shingles(plain, k=3)
+        if len(sh) < 3:
+            continue
+        score = _paragraph_quality_score(body)
+        paragraphs.append((m.start(), m.end(), body, sh, score))
 
     if len(paragraphs) < 2:
         if ny_saved:
             scoped = scoped.replace(sentinel, ny_saved, 1)
         return scoped
 
-    seen_fingerprints: dict[str, int] = {}  # fingerprint → first paragraph idx
-    drop_indices: list[int] = []
-    for idx, (start, end, body) in enumerate(paragraphs):
-        plain = re.sub(r"<[^>]+>", " ", body)
-        plain = re.sub(r"\s+", " ", plain).strip().lower()
-        if len(plain.split()) <= 6:
+    drop: set[int] = set()
+    for i in range(len(paragraphs)):
+        if i in drop:
             continue
-        fingerprint = plain[:80]
-        if fingerprint in seen_fingerprints:
-            drop_indices.append(idx)
-        else:
-            seen_fingerprints[fingerprint] = idx
+        _, _, _, sh_i, score_i = paragraphs[i]
+        for j in range(i + 1, len(paragraphs)):
+            if j in drop:
+                continue
+            _, _, _, sh_j, score_j = paragraphs[j]
+            if _jaccard(sh_i, sh_j) < jaccard_threshold:
+                continue
+            # Keep richer; drop poorer.
+            if score_j > score_i:
+                drop.add(i)
+                # i is gone — no point comparing further i↔k pairs.
+                break
+            else:
+                drop.add(j)
 
-    if not drop_indices:
+    if not drop:
         if ny_saved:
             scoped = scoped.replace(sentinel, ny_saved, 1)
         return scoped
 
     log.warning(
-        "paragraph dedup: dropping %d duplicate <p> blocks across stitched briefing",
-        len(drop_indices),
+        "paragraph dedup: dropping %d near-duplicate <p> blocks (Jaccard >= %.2f)",
+        len(drop), jaccard_threshold,
     )
 
-    # Apply drops back-to-front so indices stay valid.
-    drop_indices.sort(reverse=True)
-    for idx in drop_indices:
-        start, end, _ = paragraphs[idx]
+    for idx in sorted(drop, reverse=True):
+        start, end, _, _, _ = paragraphs[idx]
+        scoped = scoped[:start] + scoped[end:]
+
+    if ny_saved:
+        scoped = scoped.replace(sentinel, ny_saved, 1)
+    return scoped
+
+
+def _dedup_h3_sections_across_blocks(html: str) -> str:
+    """When the same `<h3>` text appears multiple times non-adjacently, keep
+    the section with the most `<a>` anchors + words; drop the others.
+
+    A "section" is the content from one `<h3>` to the next `<h3>` (or to
+    `<div class="signoff">` / `</div>` of `.container`, whichever comes first).
+
+    Adjacent duplicates are already handled by `_collapse_adjacent_duplicate_h3`.
+    """
+    ny_match = _NY_BLOCK_FENCE_RE.search(html)
+    sentinel = "<!--__JEEVES_H3_DEDUP_TMP__-->"
+    if ny_match:
+        ny_saved = ny_match.group(0)
+        scoped = _NY_BLOCK_FENCE_RE.sub(sentinel, html, count=1)
+    else:
+        ny_saved = None
+        scoped = html
+
+    matches = list(_H3_TAG_RE.finditer(scoped))
+    if len(matches) < 2:
+        if ny_saved:
+            scoped = scoped.replace(sentinel, ny_saved, 1)
+        return scoped
+
+    # Section boundaries: each section runs from h3.start() to next h3.start()
+    # (last section runs to signoff / end).
+    signoff_idx = scoped.lower().find('<div class="signoff"')
+    if signoff_idx < 0:
+        signoff_idx = scoped.lower().rfind("</body>")
+    if signoff_idx < 0:
+        signoff_idx = len(scoped)
+
+    sections: list[tuple[int, int, str, str]] = []  # (start, end, h3_text, body)
+    for i, m in enumerate(matches):
+        start = m.start()
+        if i + 1 < len(matches):
+            end = matches[i + 1].start()
+        else:
+            end = signoff_idx
+        if end <= start:
+            continue
+        h3_text = re.sub(r"\s+", " ", m.group(1)).strip().lower()
+        body = scoped[start:end]
+        sections.append((start, end, h3_text, body))
+
+    # Group by h3 text.
+    by_text: dict[str, list[int]] = {}
+    for idx, (_, _, text, _) in enumerate(sections):
+        by_text.setdefault(text, []).append(idx)
+
+    drop_idxs: set[int] = set()
+    for text, idxs in by_text.items():
+        if len(idxs) < 2:
+            continue
+        # Score each by anchor count + word count.
+        scored = []
+        for idx in idxs:
+            _, _, _, body = sections[idx]
+            anchors = len(re.findall(r"<a\s[^>]*href=", body, re.IGNORECASE))
+            plain = re.sub(r"<[^>]+>", " ", body)
+            words = len(re.sub(r"\s+", " ", plain).strip().split())
+            scored.append((idx, (anchors, words)))
+        scored.sort(key=lambda x: x[1], reverse=True)
+        # Keep the first (best); drop the rest.
+        for idx, _ in scored[1:]:
+            drop_idxs.add(idx)
+
+    if not drop_idxs:
+        if ny_saved:
+            scoped = scoped.replace(sentinel, ny_saved, 1)
+        return scoped
+
+    log.warning(
+        "h3 section dedup: dropping %d duplicate <h3> sections (kept richest copy)",
+        len(drop_idxs),
+    )
+
+    # Drop back-to-front so offsets stay valid.
+    for idx in sorted(drop_idxs, reverse=True):
+        start, end, _, _ = sections[idx]
         scoped = scoped[:start] + scoped[end:]
 
     if ny_saved:
@@ -3165,6 +3365,16 @@ def _editor_quality_gates(
             f"ratio {out_words / in_words:.2f}) — likely echo+edit failure"
         )
 
+    # H3 count must not increase. Editor adding new sections = full-briefing
+    # hallucination (root cause of triple-pass duplication symptom).
+    in_h3 = len(_H3_TAG_RE.findall(input_html))
+    out_h3 = len(_H3_TAG_RE.findall(edited_html))
+    if out_h3 > in_h3:
+        return False, (
+            f"h3-inflation: edited has {out_h3} <h3> headers, input had {in_h3} — "
+            "editor added sections (full-briefing hallucination)"
+        )
+
     orphans = _validate_aside_placement(edited_html)
     if len(orphans) > _EDITOR_MAX_ASIDE_ORPHANS:
         return False, f"aside-orphans: {len(orphans)} > {_EDITOR_MAX_ASIDE_ORPHANS}"
@@ -3386,43 +3596,58 @@ _TOPIC_SKIP = frozenset({
     "sir", "jeeves", "mister", "lang", "the", "and", "or", "of", "a",
     "mister lang", "good morning", "talk of the town", "library stacks",
     "new yorker", "the new yorker",
+    # Caveat words that survive the broader regex but carry no dedup signal.
+    "this", "that", "these", "those", "with", "from", "into", "what", "when",
+    "while", "after", "before", "about", "today", "yesterday", "tomorrow",
+    "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
+    "january", "february", "march", "april", "may", "june", "july", "august",
+    "september", "october", "november", "december",
+    "however", "indeed", "rather", "given", "their", "there", "here",
+    "would", "could", "should", "shall", "will", "must", "have", "been",
+    "part", "page", "vol", "iii", "html", "http", "https",
 })
 
 
 def _extract_written_topics(text: str) -> list[str]:
-    """Extract ~30 recognizable topic slugs from a rendered HTML draft.
+    """Extract recognizable topic slugs from a rendered HTML draft.
 
     Used to build within-run topic coverage so subsequent parts don't repeat
     the same story. Targets:
       - quoted titles (book/article/paper names)
       - capitalized proper-noun sequences (people, places, organisations)
+      - SINGLE proper nouns ≥4 letters (Trump, Iran, Mali, Edmonds, etc.)
+      - All-caps acronyms 2-6 letters (UN, EU, NATO, OFAC, AARO, OPEC)
       - named acts / laws / amendments / bills
-    Returns the original-cased phrases, deduped, capped at 40.
+    Returns the original-cased phrases, deduped, capped at 80.
     """
     import re as _re
 
     plain = re.sub(r"<[^>]+>", " ", text)
     titles = _re.findall(r'"([^"]{5,80})"', plain)
-    proper = _re.findall(
+    multi = _re.findall(
         r'\b([A-Z][a-z]{1,}(?:\s[A-Z][a-z]{1,}){1,3})\b', plain
     )
+    single = _re.findall(r'\b([A-Z][a-z]{3,})\b', plain)
+    acronyms = _re.findall(r'\b([A-Z]{2,6})\b', plain)
     acts = _re.findall(
         r'\b([A-Z][A-Za-z\s]{3,40}(?:Act|Bill|Amendment|Law|Resolution))\b',
         plain,
     )
-    combined = titles + proper + acts
+    combined = titles + multi + single + acronyms + acts
     seen: set[str] = set()
     out: list[str] = []
     for t in combined:
         cleaned = t.strip()
         slug = cleaned.lower()
-        if slug in _TOPIC_SKIP or len(slug) < 5:
+        if slug in _TOPIC_SKIP:
+            continue
+        if len(slug) < 2:
             continue
         if slug in seen:
             continue
         seen.add(slug)
         out.append(cleaned)
-        if len(out) >= 40:
+        if len(out) >= 80:
             break
     return out
 
@@ -3533,6 +3758,35 @@ def _system_prompt_for_parts(
     return base.rstrip() + "\n"
 
 
+# Expected `<h3>` count per part. A part emitting more than 2x the expected
+# count is almost certainly hallucinating a full briefing — its h3 sections
+# will collide with downstream parts and produce the 3-pass duplication bug.
+_PART_H3_EXPECTED: dict[str, int] = {
+    "part1": 0,    # intro + correspondence + weather; some templates use h3
+    "part2": 1,    # Domestic Sphere
+    "part3": 1,    # Calendar
+    "part4": 2,    # family + global news
+    "part5": 1,    # Reading Room (intellectual journals)
+    "part6": 1,    # Specific Enquiries (triadic + ai)
+    "part7": 2,    # UAP Disclosure + Commercial Ledger
+    "part8": 1,    # Library Stacks
+    "part9": 0,    # NEWYORKER block + signoff
+}
+
+
+def _truncate_to_h3_budget(html: str, max_h3: int) -> str:
+    """Cut everything from the (max_h3+1)-th `<h3>` onward.
+
+    A part that emits 7 `<h3>` headers when its budget is 1 has hallucinated
+    a full briefing. Truncate so only the first `max_h3` sections remain.
+    """
+    matches = list(_H3_TAG_RE.finditer(html))
+    if len(matches) <= max_h3:
+        return html
+    cut_at = matches[max_h3].start()
+    return html[:cut_at].rstrip()
+
+
 def _validate_part_fragment(
     part_idx: int, part_label: str, raw_html: str, total_parts: int
 ) -> tuple[str, list[str]]:
@@ -3550,6 +3804,8 @@ def _validate_part_fragment(
       (Part 9's job); MUST NOT contain COVERAGE_LOG (postprocess's job).
     - Last part (Part 9): SHOULD contain `<div class="signoff">`. If missing,
       log a warning — postprocess_html injects a safety signoff.
+    - Every part: `<h3>` count must not exceed 2x the expected budget.
+      Over-budget = part hallucinated downstream sections; truncate to budget.
     """
     warnings: list[str] = []
     is_first = part_idx == 0
@@ -3585,6 +3841,24 @@ def _validate_part_fragment(
     if is_last:
         if 'class="signoff"' not in low:
             warnings.append(f"part_last_missing_signoff:{part_label}")
+
+    # H3-budget enforcement — root cause of 3-pass duplication. A part that
+    # emits 7 `<h3>` headers when its budget is 1 has hallucinated downstream
+    # sections; truncate so only the first `expected` headers survive.
+    expected = _PART_H3_EXPECTED.get(part_label, 1)
+    h3_count = len(_H3_TAG_RE.findall(raw_html))
+    if h3_count > expected * 2 and h3_count > 2:
+        warnings.append(
+            f"h3_budget_exceeded:{part_label}:{h3_count}>{expected}"
+        )
+        log.warning(
+            "[%s] h3 count %d exceeds budget %d (2x ceiling) — "
+            "truncating to first %d sections; downstream parts will fill the rest",
+            part_label, h3_count, expected, max(expected, 1),
+        )
+        # Floor of 1 so part1/part9 (expected=0) still keeps any single
+        # legitimate h3 the prompt occasionally produces.
+        raw_html = _truncate_to_h3_budget(raw_html, max(expected, 1))
 
     if warnings:
         log.warning(
@@ -3642,6 +3916,12 @@ async def generate_briefing(
             )
             quality_warnings.append(f"nim_refine_failed:{label}:{type(exc).__name__}")
             refined[label] = draft
+        if cfg.debug_drafts:
+            try:
+                dbg_path = cfg.sessions_dir / f"debug-{cfg.run_date.isoformat()}-{label}-refined.html"
+                dbg_path.write_text(refined[label], encoding="utf-8")
+            except Exception as exc:
+                log.warning("[%s] refined debug dump failed: %s", label, exc)
 
     for i, (label, sectors) in enumerate(PART_PLAN):
         if i > 0:
@@ -3689,6 +3969,20 @@ async def generate_briefing(
             groq_part_count += 1
         else:
             nim_fallback_part_count += 1
+
+        # Per-part h3 count log for triage of full-briefing-hallucination bugs.
+        h3_count = len(_H3_TAG_RE.findall(raw_part))
+        log.info("[%s] H3 count: %d (budget %d)", label, h3_count,
+                 _PART_H3_EXPECTED.get(label, 1))
+
+        # Optional raw-draft dump for forensic inspection.
+        if cfg.debug_drafts:
+            try:
+                dbg_path = cfg.sessions_dir / f"debug-{cfg.run_date.isoformat()}-{label}-raw.html"
+                dbg_path.write_text(raw_part, encoding="utf-8")
+                log.info("[%s] dumped raw draft to %s", label, dbg_path)
+            except Exception as exc:
+                log.warning("[%s] debug dump failed: %s", label, exc)
 
         # Density diagnostic — log thin parts for triage. Strip HTML tags
         # before counting so word totals reflect actual prose, not markup.
@@ -3788,9 +4082,16 @@ async def generate_briefing(
     # whenever the prompt maps multiple parts to the same canonical header.
     stitched = _collapse_adjacent_duplicate_h3(stitched)
 
+    # Cross-block H3 SECTION dedup. When the same `<h3>` heading appears
+    # in multiple non-adjacent positions (a part hallucinated a full briefing
+    # whose sections collide with other parts), keep the richest section
+    # (most <a> anchors + words) and drop the rest.
+    stitched = _dedup_h3_sections_across_blocks(stitched)
+
     # Cross-block paragraph dedup. When the same paragraph appears more
     # than once outside the verbatim TOTT block (e.g., Part 1 emitted a
     # full briefing then Parts 2-9 repeated material), drop the duplicates.
+    # Uses 4-word shingle Jaccard similarity (≥0.6) — keeps the richer copy.
     stitched = _dedup_paragraphs_across_blocks(stitched)
 
     # Return structured context so callers can forward quality metadata.
