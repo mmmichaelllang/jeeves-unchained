@@ -124,7 +124,8 @@ class QuotaLedger:
         """Raise if caller exceeded a per-provider hard cap."""
         if hard_cap is None:
             return
-        used = self._state["providers"].get(provider, {}).get("used", 0)
+        with self._lock:
+            used = self._state["providers"].get(provider, {}).get("used", 0)
         if used >= hard_cap:
             raise QuotaExceeded(f"{provider} hard cap {hard_cap} reached (used={used})")
 
@@ -144,3 +145,20 @@ class QuotaLedger:
     def snapshot(self) -> dict:
         with self._lock:
             return json.loads(json.dumps(self._state))
+
+    def snapshot_used_counts(self) -> dict[str, int]:
+        """Return {provider: used_count} — the only field callers should reach for.
+
+        Replaces external code that reaches into _state["providers"][name]["used"]
+        directly (encapsulation break). Both monthly providers and daily-tracked
+        ones are merged into one map for convenience.
+        """
+        with self._lock:
+            counts: dict[str, int] = {}
+            for name, p in self._state.get("providers", {}).items():
+                counts[name] = int(p.get("used", 0))
+            for name, used in self._daily().items():
+                if name == "date":
+                    continue
+                counts[name] = int(used)
+            return counts

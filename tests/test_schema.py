@@ -58,19 +58,23 @@ def _make_session_cfg(tmp_path: Path, monkeypatch):
 
 
 def test_load_session_raises_on_empty_file(tmp_path: Path, monkeypatch):
-    """A zero-byte session file must raise FileNotFoundError, not JSONDecodeError."""
+    """A zero-byte session file must raise ValueError (corruption — not absent).
+    Sprint 16: previously raised FileNotFoundError which made write.py print
+    misleading 'no session, run research?' guidance for a file that existed
+    but was broken.
+    """
     from jeeves.session_io import load_session_by_date
 
     cfg = _make_session_cfg(tmp_path, monkeypatch)
     (tmp_path / "sessions").mkdir()
     (tmp_path / "sessions" / "session-2026-04-23.json").write_text("")
 
-    with pytest.raises(FileNotFoundError, match="empty or corrupted"):
+    with pytest.raises(ValueError, match="empty or corrupted"):
         load_session_by_date(cfg, date(2026, 4, 23))
 
 
 def test_load_session_raises_on_truncated_json(tmp_path: Path, monkeypatch):
-    """A truncated session JSON must raise FileNotFoundError, not JSONDecodeError."""
+    """A truncated session JSON must raise ValueError (corruption)."""
     from jeeves.session_io import load_session_by_date
 
     cfg = _make_session_cfg(tmp_path, monkeypatch)
@@ -79,5 +83,5 @@ def test_load_session_raises_on_truncated_json(tmp_path: Path, monkeypatch):
         '{"date": "2026-04-23", "status": "complete", "truncated'  # deliberate truncation
     )
 
-    with pytest.raises(FileNotFoundError, match="empty or corrupted"):
+    with pytest.raises(ValueError, match="empty or corrupted"):
         load_session_by_date(cfg, date(2026, 4, 23))

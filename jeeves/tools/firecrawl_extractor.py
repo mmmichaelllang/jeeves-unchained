@@ -64,12 +64,14 @@ def extract_article(
     max_chars:
         Truncate returned markdown to this many characters (default 12 000).
     ledger:
-        Optional quota ledger object. If provided, ``ledger.increment("firecrawl")``
+        Optional quota ledger object. If provided, ``ledger.record("firecrawl")``
         is called once per successful API call (same pattern as other tools).
 
     Returns
     -------
-    dict with keys: url, title, text, success, extracted_via, and (on failure) error.
+    dict with keys: url, title, text, success, extracted_via, quality_score,
+    and (on failure) error. quality_score matches playwright_extractor's
+    contract — 0.0 on failure, 0.85 default on success.
     """
     base: dict = {
         "url": url,
@@ -77,6 +79,7 @@ def extract_article(
         "text": "",
         "success": False,
         "extracted_via": "firecrawl",
+        "quality_score": 0.0,
     }
 
     api_key = os.environ.get("FIRECRAWL_API_KEY", "").strip()
@@ -118,12 +121,14 @@ def extract_article(
         base["error"] = f"firecrawl api error: {response.status_code}"
         return base
 
-    # Increment quota ledger on a successful HTTP call (regardless of content).
+    # Record on the quota ledger on a successful HTTP call (regardless of content).
+    # QuotaLedger exposes record(), not increment() — common typo trap that
+    # would silently swallow the AttributeError under the broad except below.
     if ledger is not None:
         try:
-            ledger.increment("firecrawl")
+            ledger.record("firecrawl")
         except Exception as exc:
-            log.debug("firecrawl: ledger.increment failed: %s", exc)
+            log.debug("firecrawl: ledger.record failed: %s", exc)
 
     try:
         data = response.json()
@@ -157,6 +162,7 @@ def extract_article(
             "title": title,
             "text": markdown[:max_chars],
             "success": True,
+            "quality_score": 0.85,  # default OK score; firecrawl already filters main content
         }
     )
     log.debug("firecrawl: extracted %d chars from %s", len(markdown), url)

@@ -72,6 +72,71 @@ def load_priority_contacts() -> dict[str, Any]:
 CLASSIFY_BATCH_SIZE = 15
 
 
+# OpenRouter free-tier fallback models. When BOTH NIM AND Groq fail (which
+# happens on bad network days for one provider AND TPD exhaustion for the
+# other), OR is the last line of defense before the entire daily briefing
+# loses the correspondence section. Drop gemma — known paraphrase offender.
+_OPENROUTER_CLASSIFY_MODELS = (
+    "meta-llama/llama-3.3-70b-instruct:free",
+    "qwen/qwen-2.5-72b-instruct:free",
+)
+
+
+def _classify_batch_with_openrouter(
+    cfg: Config,
+    messages: list[Any],
+    *,
+    timeout: int = 60,
+) -> str:
+    """Last-resort classify call when NIM AND Groq both fail.
+
+    Iterates _OPENROUTER_CLASSIFY_MODELS; first model returning content wins.
+    Returns raw response string (caller parses JSON), or "" on total failure.
+    Never raises — caller handles empty-string case.
+    """
+    api_key = (cfg.openrouter_api_key or "").strip()
+    if not api_key:
+        log.debug("openrouter classify fallback skipped — OPENROUTER_API_KEY not set")
+        return ""
+    try:
+        from openai import OpenAI
+    except ImportError:
+        log.debug("openrouter classify fallback skipped — openai SDK not installed")
+        return ""
+
+    client = OpenAI(
+        api_key=api_key,
+        base_url="https://openrouter.ai/api/v1",
+        timeout=timeout,
+    )
+    # Convert LlamaIndex ChatMessage to plain dicts for OpenAI client.
+    payload = []
+    for m in messages:
+        role = getattr(m, "role", None)
+        role_str = role.value if hasattr(role, "value") else str(role or "user").lower()
+        payload.append({"role": role_str, "content": str(m.content or "")})
+
+    last_exc: Exception | None = None
+    for model_id in _OPENROUTER_CLASSIFY_MODELS:
+        try:
+            resp = client.chat.completions.create(
+                model=model_id,
+                messages=payload,
+                max_tokens=2048,
+                temperature=0.1,
+            )
+            text = (resp.choices[0].message.content or "").strip()
+            if text:
+                log.info("openrouter classify fallback succeeded via %s", model_id)
+                return text
+        except Exception as exc:
+            last_exc = exc
+            log.debug("openrouter %s failed: %s", model_id, exc)
+            continue
+    log.warning("openrouter classify fallback exhausted all models: %s", last_exc)
+    return ""
+
+
 def classify_with_kimi(
     cfg: Config,
     previews: list[MessagePreview],
@@ -117,15 +182,30 @@ def classify_with_kimi(
         ]
         raw = ""
 
-        # Circuit-broken: skip NIM, render directly via Groq.
+        # Circuit-broken: skip NIM, render directly via Groq (with OR fallback).
         if nim_dead:
             log.info(
                 "classify batch %d/%d skipping NIM (circuit broken) — using Groq",
                 batch_num, n_batches,
             )
-            groq_llm = build_groq_llm(cfg, temperature=0.1, max_tokens=2048)
-            resp = groq_llm.chat(messages)
-            raw = str(resp.message.content or "").strip()
+            try:
+                groq_llm = build_groq_llm(cfg, temperature=0.1, max_tokens=2048)
+                resp = groq_llm.chat(messages)
+                raw = str(resp.message.content or "").strip()
+            except Exception as groq_exc:
+                log.warning(
+                    "classify batch %d/%d Groq failed (%s) on circuit-broken path "
+                    "— trying OpenRouter fallback",
+                    batch_num, n_batches, groq_exc,
+                )
+                raw = _classify_batch_with_openrouter(cfg, messages)
+                if not raw:
+                    log.error(
+                        "classify batch %d/%d Groq+OR both failed on circuit-broken "
+                        "path; skipping batch",
+                        batch_num, n_batches,
+                    )
+                    continue
             rows = _parse_json_array(raw)
             for row in rows:
                 mid = row.get("id", "")
@@ -202,8 +282,18 @@ def classify_with_kimi(
                         raw = str(resp.message.content or "").strip()
                         break
                     except Exception as groq_exc:
+                        # NIM AND Groq both failed — try OpenRouter as last resort.
+                        log.warning(
+                            "classify batch %d/%d Groq fallback failed (%s) — "
+                            "trying OpenRouter free-tier fallback chain",
+                            batch_num, n_batches, groq_exc,
+                        )
+                        or_raw = _classify_batch_with_openrouter(cfg, messages)
+                        if or_raw:
+                            raw = or_raw
+                            break
                         log.error(
-                            "classify batch %d/%d Groq fallback also failed: %s",
+                            "classify batch %d/%d ALL providers failed (NIM+Groq+OR): %s",
                             batch_num, n_batches, groq_exc,
                         )
                         raise groq_exc from exc
@@ -435,7 +525,18 @@ def postprocess_html(raw: str) -> tuple[str, int, int, list[str], list[str], lis
     word_count = len(body_text.split())
     profane_count = sum(body_text.lower().count(frag) for frag in PROFANE_FRAGMENTS)
     banned_words = [w for w in BANNED_WORDS if w.lower() in body_text.lower()]
-    banned_transitions = [t for t in BANNED_TRANSITIONS if t.lower() in body_text.lower()]
+    # Word-boundary regex (or trailing-comma literal match) — see write.py
+    # for rationale (avoids "Returning" matching "Turning to").
+    body_lower = body_text.lower()
+    banned_transitions: list[str] = []
+    for t in BANNED_TRANSITIONS:
+        t_lower = t.lower()
+        if t_lower.endswith(","):
+            if t_lower in body_lower:
+                banned_transitions.append(t)
+        else:
+            if re.search(r"\b" + re.escape(t_lower) + r"\b", body_lower):
+                banned_transitions.append(t)
     banned_filler = [f for f in BANNED_FILLER if f.lower() in body_text.lower()]
     if banned_filler:
         log.warning("correspondence: banned filler detected: %s", banned_filler)
