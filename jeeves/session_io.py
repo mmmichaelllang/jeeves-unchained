@@ -143,7 +143,11 @@ def load_session_by_date(cfg: Config, d: date) -> SessionModel:
     try:
         raw = json.loads(path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, ValueError) as e:
-        raise FileNotFoundError(
+        # Corruption is a different failure mode than absence — callers should
+        # NOT print "no session for date, run research?" guidance for a file
+        # that exists but failed to parse. Use ValueError so write.py:198 can
+        # distinguish "missing" from "broken" and emit the right message.
+        raise ValueError(
             f"Session file {path} is empty or corrupted ({e})"
         ) from e
     return SessionModel.model_validate(raw)

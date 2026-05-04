@@ -3606,13 +3606,22 @@ def _invoke_openrouter_narrative_edit(
 ASIDES_RECENT_WINDOW_DAYS = 4
 
 
+_ALL_ASIDES_CACHE: list[str] | None = None
+
+
 def _parse_all_asides() -> list[str]:
     """Return the full set of pre-approved profane asides from write_system.md.
 
     The list lives on a single line that starts with `"clusterfuck of
     biblical proportions` and ends before the next blank line. We locate
     that line and extract every quoted phrase on it.
+
+    Result is cached at module level — write_system.md is immutable per run
+    so we parse it ONCE rather than on every part-prompt assembly.
     """
+    global _ALL_ASIDES_CACHE
+    if _ALL_ASIDES_CACHE is not None:
+        return _ALL_ASIDES_CACHE
     import re as _re
 
     base = load_write_system_prompt()
@@ -3622,8 +3631,15 @@ def _parse_all_asides() -> list[str]:
         flags=re.MULTILINE,
     )
     if not m:
-        return []
-    return _re.findall(r'"([^"]+)"', m.group(0))
+        _ALL_ASIDES_CACHE = []
+    else:
+        _ALL_ASIDES_CACHE = _re.findall(r'"([^"]+)"', m.group(0))
+    return _ALL_ASIDES_CACHE
+
+
+# Per-run cache for _recently_used_asides — invalidated when run_date or
+# sessions_dir changes (i.e. between separate generate_briefing invocations).
+_RECENT_ASIDES_CACHE: dict[tuple[str, str, int], list[str]] = {}
 
 
 def _recently_used_asides(cfg: Config, days: int = ASIDES_RECENT_WINDOW_DAYS) -> list[str]:
@@ -3633,11 +3649,20 @@ def _recently_used_asides(cfg: Config, days: int = ASIDES_RECENT_WINDOW_DAYS) ->
     We pass this back into the system prompt so Jeeves can dodge yesterday's
     three favorites. Semantic / thematic matching stays the model's call —
     the full aside pool remains in the prompt, we just flag the ones to avoid.
+
+    Cached per (run_date, sessions_dir, days) — called 9 times per run from
+    _system_prompt_for_parts. Without caching: 9 × N file reads = 36 disk
+    hits / ~5MB of I/O for what should be a single startup scan.
     """
+    cache_key = (cfg.run_date.isoformat(), str(cfg.sessions_dir), days)
+    if cache_key in _RECENT_ASIDES_CACHE:
+        return _RECENT_ASIDES_CACHE[cache_key]
+
     from datetime import timedelta
 
     pool = _parse_all_asides()
     if not pool:
+        _RECENT_ASIDES_CACHE[cache_key] = []
         return []
 
     recent_html: list[str] = []
@@ -3658,10 +3683,12 @@ def _recently_used_asides(cfg: Config, days: int = ASIDES_RECENT_WINDOW_DAYS) ->
                     pass
 
     if not recent_html:
+        _RECENT_ASIDES_CACHE[cache_key] = []
         return []
 
     joined = "\n".join(recent_html)
     used = [phrase for phrase in pool if phrase in joined]
+    _RECENT_ASIDES_CACHE[cache_key] = used
     return used
 
 
@@ -3989,7 +4016,13 @@ async def generate_briefing(
             log.warning(
                 "NIM refine failed for [%s] (%s); using raw draft", label, exc
             )
-            quality_warnings.append(f"nim_refine_failed:{label}:{type(exc).__name__}")
+            # Carry exception type AND message in the warning so the run
+            # manifest preserves enough context for forensic triage. Cap
+            # the message at 120 chars to avoid bloating manifest payloads.
+            exc_msg = str(exc)[:120].replace(":", ";")
+            quality_warnings.append(
+                f"nim_refine_failed:{label}:{type(exc).__name__}:{exc_msg}"
+            )
             refined[label] = draft
         if cfg.debug_drafts:
             try:
@@ -4220,7 +4253,23 @@ def postprocess_html(
     profane_count = sum(body_text.lower().count(frag) for frag in PROFANE_FRAGMENTS)
 
     banned_word_hits = [w for w in BANNED_WORDS if w.lower() in body_text.lower()]
-    banned_transition_hits = [t for t in BANNED_TRANSITIONS if t.lower() in body_text.lower()]
+    # Word-boundary regex match for banned transitions to avoid false positives
+    # like "Returning" matching "Turning to" or "next" matching "Next,". Build
+    # a regex per phrase that requires word boundaries on both ends (or trailing
+    # comma for transitions ending with ",").
+    body_lower = body_text.lower()
+    banned_transition_hits = []
+    for t in BANNED_TRANSITIONS:
+        t_lower = t.lower()
+        # Trailing-comma transitions stay literal — comma already disambiguates.
+        if t_lower.endswith(","):
+            if t_lower in body_lower:
+                banned_transition_hits.append(t)
+            continue
+        # Otherwise enforce word boundaries on both sides.
+        pattern = r"\b" + re.escape(t_lower) + r"\b"
+        if re.search(pattern, body_lower):
+            banned_transition_hits.append(t)
 
     # Wrong-signoff replacement.
     # Covers: "Yours faithfully", "Your faithfully" (typo), with optional
@@ -4549,7 +4598,7 @@ def render_mock_briefing(session: SessionModel) -> str:
 </head>
 <body>
 <div class="container">
-  <img class="banner" src="https://i.imgur.com/UqSFELh.png" alt="">
+  <img class="banner" src="{_BANNER_URL}" alt="">
   <div class="mh-date">DRY RUN</div>
   {body_html}
   <div class="signoff"><p>Your reluctantly faithful Butler,<br/>Jeeves</p></div>

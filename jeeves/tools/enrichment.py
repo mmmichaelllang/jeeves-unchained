@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import atexit
 import json
 import logging
 from urllib.parse import urlparse
@@ -22,6 +23,7 @@ _HTTP_CLIENT = httpx.Client(
     timeout=25.0,
     follow_redirects=True,
 )
+atexit.register(_HTTP_CLIENT.close)
 
 
 def fetch_article_text(url: str) -> str:

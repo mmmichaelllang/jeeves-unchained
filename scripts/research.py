@@ -370,11 +370,20 @@ def _merge_correspondence_handoff(cfg: Config, ctx: ResearchContext) -> None:
         corr["found"] = handoff.found
         corr["fallback_used"] = handoff.fallback_used
         corr["text"] = handoff.text
-        # Fold email thread references into dedup.covered_headlines.
+        # Fold email thread references into dedup.covered_headlines while
+        # PRESERVING recency order. _run_sector_loop puts today's discovered
+        # headlines at the HEAD of the list — sorting alphabetically destroys
+        # that invariant. Append correspondence refs at the tail (oldest)
+        # since they are not "today's discovered headlines".
         dedup = ctx.session.setdefault("dedup", {"covered_urls": [], "covered_headlines": []})
-        existing = set(dedup.get("covered_headlines") or [])
-        existing.update(extract_correspondence_references(handoff.text))
-        dedup["covered_headlines"] = sorted(existing)
+        existing_list = list(dedup.get("covered_headlines") or [])
+        existing_set = set(existing_list)
+        new_refs = extract_correspondence_references(handoff.text)
+        for ref in new_refs:
+            if ref not in existing_set:
+                existing_list.append(ref)
+                existing_set.add(ref)
+        dedup["covered_headlines"] = existing_list
         log.info("merged correspondence handoff from %s (found=%s)", path, handoff.found)
         return
 

@@ -198,6 +198,13 @@ def main(argv: list[str] | None = None) -> int:
         except FileNotFoundError:
             _log_missing_session(cfg)
             return 3
+        except ValueError as exc:
+            log.error(
+                "Session file for %s exists but is corrupted: %s. "
+                "Inspect the JSON manually OR re-run research to regenerate.",
+                cfg.run_date.isoformat(), exc,
+            )
+            return 4
 
     if args.plan_only:
         _plan_only(session)

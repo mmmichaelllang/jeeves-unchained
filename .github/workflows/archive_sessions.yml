@@ -1,0 +1,56 @@
+name: Jeeves — Archive Old Sessions
+
+# Weekly housekeeping: move sessions/ files older than 90 days into
+# sessions/archive/YYYY/MM/. Keeps the working tree small without losing
+# audit trail. load_prior_sessions() only scans recent 7 days so this is safe.
+
+on:
+  schedule:
+    - cron: '0 6 * * 0'  # Sundays 06:00 UTC (well clear of the 12:00 daily run)
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Archive files older than this many days (default 90)"
+        required: false
+        default: "90"
+      dry_run:
+        description: "Preview only — take no action"
+        required: false
+        default: "false"
+
+permissions:
+  contents: write
+
+jobs:
+  archive:
+    name: Archive
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history so the eventual commit can be pushed cleanly
+
+      - name: Run archive script
+        run: |
+          python scripts/archive_old_sessions.py \
+            --days "${{ github.event.inputs.days || '90' }}" \
+            ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
+
+      - name: Commit archived files (if any moved)
+        if: github.event.inputs.dry_run != 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "jeeves-bot"
+          git config user.email "jeeves-bot@users.noreply.github.com"
+          # Stage all rename/move ops in sessions/.
+          git add -A sessions/
+          if ! git diff --cached --quiet; then
+            git commit -m "archive: move sessions older than 90 days $(date -u +%Y-%m-%d)"
+            git pull --rebase --autostash origin "${{ github.ref_name }}" || true
+            git push
+          else
+            echo "no files to archive"
+          fi

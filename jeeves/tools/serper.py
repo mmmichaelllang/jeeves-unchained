@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import atexit
 import json
 import logging
 from typing import Any
@@ -18,6 +19,7 @@ ENDPOINT = "https://google.serper.dev/search"
 # Module-level client reuses the TCP connection across sectors instead of
 # opening a new handshake for every serper_search tool call.
 _HTTP_CLIENT = httpx.Client(timeout=20.0)
+atexit.register(_HTTP_CLIENT.close)
 
 
 def make_serper_search(cfg: Config, ledger: QuotaLedger):
