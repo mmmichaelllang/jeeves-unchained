@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves — Correspondence Phase.\n- [escalation] Google: Google security alert about new sign-in on Mac device.\n- [escalation] Google: Google security alert about Opal accessing Google Account data.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves — Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves Write Phase failed on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves Research Phase failed on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves Daily Pipeline partially failed on main branch.\n- [escalation] Sir Richard: Rich Lang shared a New York Times opinion article about public schools and democracy.\n- [escalation] Anthropic: Anthropic disabled Claude API access due to depleted usage credits.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves Daily Pipeline partially failed on main branch.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failed for sprint 16 PR with forensic audit fixes.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves Daily Pipeline partially failed on main branch.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failed for sprint 15 PR with TOTT silent-loss fix.",
+  "counts": {
+    "reply_needed": 2,
+    "decision_required": 0,
+    "scheduling": 0,
+    "follow_up": 0,
+    "escalation": 23,
+    "no_action": 25
+  }
+}
