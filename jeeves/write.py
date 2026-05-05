@@ -282,7 +282,17 @@ def _trim_session_for_prompt(session: SessionModel) -> dict[str, Any]:
     if isinstance(dedup, dict):
         dedup.pop("covered_urls", None)
         if isinstance(dedup.get("covered_headlines"), list):
-            dedup["covered_headlines"] = dedup["covered_headlines"][:DEDUP_PROMPT_HEADLINES_CAP]
+            # Truncate each headline to 80 chars — research phase pulls "first
+            # two sentences" of findings strings (research_sectors.py:1276) so
+            # individual entries can be 200-300 chars. The write phase only
+            # needs short prefixes to detect "have I covered this?" — verbose
+            # entries blow past the 12k Groq TPM ceiling and force every part
+            # to fall through to NIM. Sprint-17 hotfix 2026-05-04.
+            raw = dedup["covered_headlines"][:DEDUP_PROMPT_HEADLINES_CAP]
+            dedup["covered_headlines"] = [
+                (h[:77] + "…") if isinstance(h, str) and len(h) > 80 else h
+                for h in raw
+            ]
         # cross_sector_dupes (URLs appearing in 2+ research sectors) is
         # computed by research phase. Surface it here so write-phase prompts
         # can reference it — earlier the field was computed but ignored.
@@ -3544,11 +3554,22 @@ def _build_narrative_edit_system(recently_used: list[str]) -> str:
 
 # Fallback chain for the OpenRouter narrative editor.  The primary model is
 # cfg.openrouter_model_id (overridable via OPENROUTER_MODEL_ID env var).
+#
+# Sprint-17 hotfix 2026-05-04: dropped `openrouter/auto` — without OR credits
+# the auto-router 402s ("requires more credits, or fewer max_tokens. You
+# requested up to 16384 tokens, but can only afford 791"). Adding more free
+# fallbacks instead so we ride out upstream 429 storms.
 _OPENROUTER_FALLBACK_MODELS = [
     "meta-llama/llama-3.3-70b-instruct:free",
     "google/gemma-4-31b-it:free",
-    "openrouter/auto",
+    "qwen/qwen-2.5-72b-instruct:free",
+    "mistralai/mistral-small-3.1-24b-instruct:free",
 ]
+
+# OpenRouter editor max_tokens — 8192 (was 16384). Briefings stitch to ~25k chars
+# input; output is roughly 1:1, so 8k generation tokens covers it. Smaller cap
+# also stops paid-tier `openrouter/auto` from 402-ing on insufficient-credit checks.
+_OR_NARRATIVE_MAX_TOKENS = 8192
 
 
 _NY_EDIT_PLACEHOLDER = "<!-- NEWYORKER_EDIT_PLACEHOLDER -->"
@@ -3688,10 +3709,24 @@ def _invoke_openrouter_narrative_edit(
                     {"role": "system", "content": system},
                     {"role": "user", "content": f"Edit the following HTML briefing:\n\n{html_for_edit}"},
                 ],
-                max_tokens=16384,
+                max_tokens=_OR_NARRATIVE_MAX_TOKENS,
                 temperature=0.4,
             )
-            edited = (resp.choices[0].message.content or "").strip()
+            # Defensive extraction: nemotron occasionally returns 200 with
+            # resp.choices=None which crashed the chain with `'NoneType' object
+            # is not subscriptable` (run 2026-05-04 04:15 UTC). Guard every
+            # attribute hop and fall through on any miss.
+            choices = getattr(resp, "choices", None) or []
+            if not choices:
+                log.warning(
+                    "OpenRouter [%s] response had no choices; trying next model",
+                    model,
+                )
+                continue
+            choice0 = choices[0]
+            message = getattr(choice0, "message", None)
+            content = getattr(message, "content", None) if message else None
+            edited = (content or "").strip()
             if not edited:
                 log.warning("OpenRouter [%s] returned empty response; trying next model", model)
                 continue
@@ -3744,6 +3779,13 @@ def _invoke_openrouter_narrative_edit(
             return edited
         except Exception as exc:
             log.warning("OpenRouter [%s] failed (%s); trying next model", model, exc)
+            # When OR upstream throttles (429) the next free model usually
+            # belongs to a different provider but the cluster-wide cool-off
+            # window helps. 4s is enough; we don't want to burn the daily
+            # 60min budget on editor retries.
+            if "429" in str(exc) or "rate" in str(exc).lower():
+                import time as _time
+                _time.sleep(4)
 
     log.warning("All OpenRouter models exhausted; using unedited document")
     return html
