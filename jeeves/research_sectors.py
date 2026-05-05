@@ -374,6 +374,7 @@ CONTEXT_HEADER = """You are researching ONE sector of Mister Michael Lang's dail
 
 Context:
 - Date: {date} (UTC). Treat as authoritative.
+- One week ago: {seven_days_ago} (use this as a freshness floor — see below).
 - Location: Edmonds, Washington (47.810652, -122.377355).
 - Household: Mister Michael Lang, Mrs. Sarah Lang (wife, music teacher, choral),
   Piper (2-year-old daughter).
@@ -384,6 +385,28 @@ Prior coverage URLs (already briefed, do not revisit):
 Dedup guidance: if you encounter any URL in the prior list above, skip it.
 Do not fabricate sources; every URL you include must come from a tool response.
 {story_continuity}
+**FRESHNESS WINDOW — MANDATORY for non-breaking sectors:**
+Default search providers favour evergreen high-authority pages. Without a
+freshness filter, the same articles re-rank into top results day after day,
+producing repetitive briefings. For every search call, bias toward content
+published in the last 7 days:
+  - serper_search: pass tbs='qdr:w' (last 7 days) or tbs='qdr:d' (last 24h
+    for breaking).
+  - tavily_search: pass time_range='week' (or 'day' for breaking).
+  - exa_search: pass start_published_date='{seven_days_ago}'.
+Override this rule ONLY when a sector instruction explicitly asks for
+open-ended results (e.g., literary_pick covers 2004–2024). For all other
+sectors, queries without a freshness parameter are considered defective.
+
+**SOURCE-ROTATION GUIDANCE — read carefully:**
+The user has explicitly asked: when an article from a given source has been
+covered yesterday, prefer the next-most-relevant article from THAT SAME source
+today, not a different source. Apply this rule when a sector hits 4+ candidate
+articles from the same publisher: keep one (the most relevant), and prefer
+articles from publishers NOT yet in `prior_urls_sample` for the rest. Do not
+repeatedly cite an article that you can see (by URL or headline match) is
+already in the prior coverage.
+
 **MANDATORY FIRST STEP — search before you write:**
 Your training-data knowledge is STALE. You MUST call at least one search tool
 and receive live results before writing any findings. Do NOT output your final
@@ -680,6 +703,7 @@ def _build_user_prompt(
     *,
     quota_summary: str = "",
     story_continuity: str = "",
+    prior_sources_by_host: dict[str, list[str]] | None = None,
 ) -> str:
     prior_block = "\n".join(prior_urls_sample) if prior_urls_sample else "(none)"
     quota_block = (
@@ -692,14 +716,44 @@ def _build_user_prompt(
         if story_continuity
         else ""
     )
+    # Freshness floor for the FRESHNESS WINDOW directive in CONTEXT_HEADER.
+    # Computed from run_date so the prompt's date arithmetic stays correct
+    # even when the pipeline runs with --date for a backfill.
+    try:
+        from datetime import date as _date, timedelta as _timedelta
+
+        _rd = _date.fromisoformat(run_date)
+        seven_days_ago = (_rd - _timedelta(days=7)).isoformat()
+    except Exception:
+        seven_days_ago = run_date  # fallback: same date — still better than no anchor
+    # Source-rotation block: per-host titles cited in prior briefings.
+    # Cap to 30 hosts × 3 titles each so the prompt stays under the TPM ceiling.
+    sources_block = ""
+    if prior_sources_by_host:
+        rows: list[str] = []
+        for host, titles in list(prior_sources_by_host.items())[:30]:
+            if not titles:
+                continue
+            sample = "; ".join(titles[:3])
+            rows.append(f"- {host}: {sample}")
+        if rows:
+            sources_block = (
+                "\n**Source-rotation hints** (host → titles already covered):\n"
+                + "\n".join(rows)
+                + "\n\nFor any host listed above, prefer a DIFFERENT article from "
+                "that same host today; do not re-cite the listed titles.\n"
+            )
     base = CONTEXT_HEADER.format(
         date=run_date,
+        seven_days_ago=seven_days_ago,
         prior_urls_sample=prior_block,
         sector_name=spec.name,
         instruction=spec.instruction,
         quota_summary=quota_block,
         story_continuity=continuity_block,
     )
+    if sources_block:
+        base = base + sources_block
     return f"{base}\n\n{extra}" if extra else base
 
 
@@ -935,6 +989,7 @@ async def run_sector(
     extra_user: str = "",
     quota_summary: str = "",
     story_continuity: str = "",
+    prior_sources_by_host: dict[str, list[str]] | None = None,
 ) -> Any:
     """Run one sector's agent and return the parsed sector-shape value."""
 
@@ -1002,6 +1057,7 @@ async def run_sector(
     user_msg = _build_user_prompt(
         spec, cfg.run_date.isoformat(), prior_urls_sample, extra_user,
         quota_summary=quota_summary, story_continuity=story_continuity,
+        prior_sources_by_host=prior_sources_by_host,
     )
     _system_prompt = (
         "You are the per-sector research agent for Jeeves. "

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from typing import Any
 
 from ..config import Config
@@ -19,6 +20,7 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
         category: str | None = None,
         search_type: str = "auto",
         text_max_chars: int = 20000,
+        start_published_date: str | None = None,
     ) -> str:
         """Exa neural semantic search with full-text content.
 
@@ -34,6 +36,10 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
                 'deep-reasoning' (~12-40s, strongest synthesis).
             text_max_chars: cap on per-result full-text (default 20000, ~3000 words
                 per article — enough for synthesis without requiring a follow-up extract).
+            start_published_date: ISO date string (YYYY-MM-DD). Restricts results
+                to content published on or after this date — biases against
+                evergreen pages re-ranking into top results day after day.
+                None = no freshness filter (default Exa ranking).
 
         Returns a JSON string so LlamaIndex's _parse_tool_output() produces valid
         JSON in the NIM context rather than Python repr with single quotes.
@@ -58,6 +64,8 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
             }
             if category:
                 kwargs["category"] = category
+            if start_published_date and re.match(r"^\d{4}-\d{2}-\d{2}$", start_published_date):
+                kwargs["start_published_date"] = start_published_date
             resp = client.search(query, **kwargs)
         except Exception as e:
             log.warning("exa search error: %s", e)
