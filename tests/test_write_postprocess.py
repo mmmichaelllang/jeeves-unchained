@@ -1040,14 +1040,17 @@ def test_system_prompt_run_used_asides_excluded_for_no_aside_parts():
 # Sprint 12 quality fixes — within-run topic dedup + cap raise + PART8 + refine
 # ---------------------------------------------------------------------------
 
-def test_dedup_prompt_headlines_cap_is_250():
-    """Cap raised from 80 → 250 so the model sees full prior coverage."""
+def test_dedup_prompt_headlines_cap_is_150():
+    """Sprint-17 hotfix 2026-05-04: cap dropped from 250 → 150 to keep
+    Groq input under the 12k TPM ceiling. Combined with per-headline
+    truncation (80 chars), prevents the all-parts-fall-through-to-NIM regression.
+    """
     from jeeves.write import DEDUP_PROMPT_HEADLINES_CAP
 
-    assert DEDUP_PROMPT_HEADLINES_CAP == 250
+    assert DEDUP_PROMPT_HEADLINES_CAP == 150
 
 
-def test_trim_session_for_prompt_caps_at_250():
+def test_trim_session_for_prompt_caps_at_150():
     from jeeves.write import _trim_session_for_prompt
 
     sess = SessionModel.model_validate({
@@ -1058,9 +1061,37 @@ def test_trim_session_for_prompt_caps_at_250():
         },
     })
     trimmed = _trim_session_for_prompt(sess)
-    assert len(trimmed["dedup"]["covered_headlines"]) == 250
+    assert len(trimmed["dedup"]["covered_headlines"]) == 150
     # covered_urls is dropped entirely (existing behaviour, unchanged)
     assert "covered_urls" not in trimmed["dedup"]
+
+
+def test_trim_session_truncates_long_headlines():
+    """Sprint-17 hotfix: per-entry headline truncation to 80 chars.
+
+    Research phase pulls "first two sentences" of findings strings, which can
+    push individual headlines past 200 chars. Without truncation, 250 such
+    entries blow past Groq's 12k TPM ceiling.
+    """
+    from jeeves.write import _trim_session_for_prompt
+
+    long_headline = (
+        "Christopher Isabelle's Triadic Relational Ontology paper "
+        "advances the Karl-Alber program by arguing that dyadic structures "
+        "are insufficient for emergence in this very long sentence"
+    )
+    sess = SessionModel.model_validate({
+        "date": "2026-05-02",
+        "dedup": {
+            "covered_headlines": [long_headline, "short headline"],
+        },
+    })
+    trimmed = _trim_session_for_prompt(sess)
+    headlines = trimmed["dedup"]["covered_headlines"]
+    assert len(headlines[0]) <= 80
+    assert headlines[0].endswith("…")
+    # Short ones pass through unchanged.
+    assert headlines[1] == "short headline"
 
 
 def test_extract_written_topics_captures_proper_nouns():
@@ -1126,20 +1157,19 @@ def test_system_prompt_injects_run_used_topics():
     assert "Senator Maria Cantwell" in prompt
 
 
-def test_system_prompt_run_used_topics_caps_at_80_newest_first():
-    """Cap is 80 (raised from 30 in the 2026-05-03 dedup sprint — old cap
-    evicted earlier-part topics, letting the model re-narrate them).
-    With 100 topics Topic000-Topic099 the last 80 are Topic020-Topic099;
-    anything before Topic020 is dropped."""
+def test_system_prompt_run_used_topics_caps_at_60_newest_first():
+    """Cap is 60 (sprint-17 hotfix 2026-05-04: dropped from 80 → 60 to keep
+    Groq input under 12k TPM ceiling). With 100 topics Topic000-Topic099 the
+    last 60 are Topic040-Topic099; anything before Topic040 is dropped."""
     from jeeves.write import _system_prompt_for_parts
 
     topics = [f"Topic{i:03d}" for i in range(100)]
     prompt = _system_prompt_for_parts(run_used_topics=topics)
-    # Last 80 (most recent) must be present.
+    # Last 60 (most recent) must be present.
     assert "Topic099" in prompt
-    assert "Topic020" in prompt
+    assert "Topic040" in prompt
     # Topics before the cap must be absent.
-    assert "Topic019" not in prompt
+    assert "Topic039" not in prompt
 
 
 def test_system_prompt_no_topics_block_when_empty():

@@ -18,9 +18,9 @@ from dotenv import load_dotenv
 # ---------------------------------------------------------------------------
 # Write-phase dedup prompt caps — shared source of truth; imported by write.py
 # ---------------------------------------------------------------------------
-DEDUP_PROMPT_HEADLINES_CAP: int = 250   # max prior headlines sent to Groq
+DEDUP_PROMPT_HEADLINES_CAP: int = 150   # max prior headlines sent to Groq (sprint-17: was 250 — burned 12k TPM)
 DEDUP_PROMPT_ASIDES_CAP: int = 20       # max aside phrases in Part 4+ prompt
-DEDUP_PROMPT_TOPICS_CAP: int = 80       # max used topics in Part 4+ prompt
+DEDUP_PROMPT_TOPICS_CAP: int = 60       # max used topics in Part 4+ prompt (sprint-17: was 80)
 
 # ---------------------------------------------------------------------------
 # Research phase tool budgets — injected into per-sector user messages
