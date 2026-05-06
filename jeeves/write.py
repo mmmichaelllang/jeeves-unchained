@@ -1950,11 +1950,149 @@ _NIM_RETRY_DELAYS = (2, 8, 32)  # seconds between attempts on 429
 # (sprint-15 hotfix). Now write-phase NIM gets the same 60s ceiling.
 _NIM_WRITE_TIMEOUT_S = 60.0
 # OpenRouter free-tier write-fallback chain. Fires when BOTH Groq AND NIM fail.
-# Drop gemma-2-9b — known paraphrase offender per playwright_extractor research.
-_OR_WRITE_FALLBACK_MODELS = (
+#
+# 2026-05-06: replaced hardcoded model lists with a dynamic resolver. Free-tier
+# models on OpenRouter rotate without notice (their own docs say so), and the
+# 2026-05-06 12:00 daily run wedged at Part 9 because qwen-2.5-72b-instruct:free
+# 404'd mid-run. Pinning is brittle; the resolver fetches the live model list,
+# filters to general-purpose :free models with adequate context, ranks by param
+# count + context length, and falls back to a conservative known-stable list
+# when the OR API itself is unreachable. See _resolve_or_free_models().
+#
+# Hardcoded fallback used ONLY when the live fetch fails. Conservative,
+# multi-provider, ordered first-tried-first.
+_OR_FREE_MODELS_FALLBACK: tuple[str, ...] = (
     "meta-llama/llama-3.3-70b-instruct:free",
-    "qwen/qwen-2.5-72b-instruct:free",
+    "mistralai/mistral-small-3.1-24b-instruct:free",
+    "deepseek/deepseek-chat-v3:free",
+    "google/gemma-3-12b-it:free",
+    "meta-llama/llama-3.1-8b-instruct:free",
 )
+
+# Resolver tunables.
+_OR_FREE_MODELS_CACHE_TTL_S = 600        # 10 min per process
+_OR_FREE_MODELS_FETCH_TIMEOUT_S = 5.0
+_OR_FREE_MIN_CONTEXT_LENGTH = 8192
+# Skip patterns — vision / coder / embedding / safety variants don't fit
+# briefing prose. Use lowercase substring match on the model id.
+_OR_FREE_SKIP_PATTERNS: tuple[str, ...] = (
+    "vision",
+    "-vl-",
+    "coder",
+    "-code-",
+    "embed",
+    "guard",
+    "rerank",
+)
+# (timestamp_monotonic, ranked_models). Module-level — a single pipeline run
+# is one process, so this is per-run effectively.
+_OR_FREE_MODELS_CACHE: tuple[float, tuple[str, ...]] | None = None
+
+
+def _parse_param_count_billions(model_id: str) -> float:
+    """Pull the param count out of a model id like '...qwen-2.5-72b-instruct...'.
+
+    Returns 0.0 when unparseable so unknown models sort last under the
+    descending-by-params rank in ``_fetch_or_free_models``.
+    """
+    import re as _re
+
+    m = _re.search(r"(\d+(?:\.\d+)?)\s*b\b", model_id.lower())
+    return float(m.group(1)) if m else 0.0
+
+
+def _fetch_or_free_models() -> tuple[str, ...] | None:
+    """Hit OpenRouter ``/api/v1/models`` and return free-tier general-purpose
+    models ranked by reasoning-proxy quality.
+
+    Returns ``None`` on any failure so the caller can fall back. Five-second
+    timeout keeps the call cheap when OR is up; cached for 10 min per process
+    so we hit the endpoint at most once per run (typically zero times because
+    the resolver is called from the OR write-fallback path, which only fires
+    when Groq AND NIM both fail).
+    """
+    import httpx as _httpx
+
+    try:
+        with _httpx.Client(timeout=_OR_FREE_MODELS_FETCH_TIMEOUT_S) as client:
+            resp = client.get("https://openrouter.ai/api/v1/models")
+            resp.raise_for_status()
+            data = resp.json()
+    except Exception as exc:
+        log.debug("OR model resolver: fetch failed (%s)", exc)
+        return None
+
+    items = data.get("data") if isinstance(data, dict) else None
+    if not isinstance(items, list):
+        log.debug("OR model resolver: unexpected payload shape")
+        return None
+
+    candidates: list[tuple[float, int, str]] = []
+    for m in items:
+        if not isinstance(m, dict):
+            continue
+        mid = str(m.get("id") or "")
+        if not mid.endswith(":free"):
+            continue
+        mid_lower = mid.lower()
+        if any(pat in mid_lower for pat in _OR_FREE_SKIP_PATTERNS):
+            continue
+        try:
+            ctx = int(m.get("context_length") or 0)
+        except (TypeError, ValueError):
+            ctx = 0
+        if ctx < _OR_FREE_MIN_CONTEXT_LENGTH:
+            continue
+        params_b = _parse_param_count_billions(mid)
+        # Negate for descending sort: bigger params first (proxy for reasoning
+        # quality), then longer context, then alphabetical for determinism.
+        candidates.append((-params_b, -ctx, mid))
+
+    if not candidates:
+        return None
+
+    candidates.sort()
+    ranked = tuple(mid for _, _, mid in candidates)
+    log.info(
+        "OR model resolver: %d free-tier candidates ranked, top=%s",
+        len(ranked),
+        ranked[0],
+    )
+    return ranked
+
+
+def _resolve_or_free_models() -> tuple[str, ...]:
+    """Return the active OpenRouter free-tier model chain.
+
+    Resolution order:
+    1. ``JEEVES_OR_FREE_MODELS=a,b,c`` env override (test / pin escape hatch).
+    2. Process-cached result of the last live fetch (10 min TTL).
+    3. Live fetch from OR ``/api/v1/models`` ranked by param count + context.
+    4. ``_OR_FREE_MODELS_FALLBACK`` — conservative, multi-provider list used
+       only when the live fetch fails.
+
+    Production effect: when OR API is healthy the chain auto-rotates as new
+    free models appear and old ones are pulled. When it is down we still
+    have a working chain.
+    """
+    global _OR_FREE_MODELS_CACHE
+    import os as _os
+    import time as _time
+
+    override = _os.environ.get("JEEVES_OR_FREE_MODELS", "").strip()
+    if override:
+        return tuple(m.strip() for m in override.split(",") if m.strip())
+
+    now = _time.monotonic()
+    if _OR_FREE_MODELS_CACHE is not None:
+        ts, cached = _OR_FREE_MODELS_CACHE
+        if now - ts < _OR_FREE_MODELS_CACHE_TTL_S:
+            return cached
+
+    fetched = _fetch_or_free_models()
+    chain = fetched if fetched else _OR_FREE_MODELS_FALLBACK
+    _OR_FREE_MODELS_CACHE = (now, chain)
+    return chain
 # Module-level circuit breaker: once NIM times out for any part during a run,
 # subsequent parts skip NIM and go directly to OR. Reset at module-init time
 # (each pipeline run gets a fresh process). Without this, every Part 2-9
@@ -1984,8 +2122,10 @@ def _invoke_or_write(
 ) -> str:
     """Last-resort write call when BOTH Groq AND NIM fail.
 
-    Iterates _OR_WRITE_FALLBACK_MODELS; first model returning content wins.
-    Returns the assistant message text, or raises RuntimeError on total failure.
+    Iterates the dynamically-resolved free-tier chain (see
+    ``_resolve_or_free_models``); first model returning content wins.
+    Returns the assistant message text, or raises RuntimeError on total
+    failure.
     """
     api_key = (cfg.openrouter_api_key or "").strip()
     if not api_key:
@@ -2011,7 +2151,7 @@ def _invoke_or_write(
         {"role": "user", "content": user},
     ]
     last_exc: Exception | None = None
-    for model_id in _OR_WRITE_FALLBACK_MODELS:
+    for model_id in _resolve_or_free_models():
         try:
             resp = client.chat.completions.create(
                 model=model_id,
@@ -3908,19 +4048,18 @@ def _build_narrative_edit_system(recently_used: list[str]) -> str:
     )
 
 
-# Fallback chain for the OpenRouter narrative editor.  The primary model is
+# Narrative-editor model chain. Primary model comes from
 # cfg.openrouter_model_id (overridable via OPENROUTER_MODEL_ID env var).
+# Fallback chain is the same dynamic resolver the write-tier path uses —
+# so a free-tier model 404'ing in mid-flight self-corrects on the next
+# resolve call (10 min TTL, then re-fetched from OR).
 #
 # Sprint-17 hotfix 2026-05-04: dropped `openrouter/auto` — without OR credits
 # the auto-router 402s ("requires more credits, or fewer max_tokens. You
-# requested up to 16384 tokens, but can only afford 791"). Adding more free
-# fallbacks instead so we ride out upstream 429 storms.
-_OPENROUTER_FALLBACK_MODELS = [
-    "meta-llama/llama-3.3-70b-instruct:free",
-    "google/gemma-4-31b-it:free",
-    "qwen/qwen-2.5-72b-instruct:free",
-    "mistralai/mistral-small-3.1-24b-instruct:free",
-]
+# requested up to 16384 tokens, but can only afford 791").
+#
+# 2026-05-06 hotfix: replaced hardcoded list with the dynamic resolver
+# (_resolve_or_free_models) — see comment block on _OR_FREE_MODELS_FALLBACK.
 
 # OpenRouter editor max_tokens — 8192 (was 16384). Briefings stitch to ~25k chars
 # input; output is roughly 1:1, so 8k generation tokens covers it. Smaller cap
@@ -4051,7 +4190,7 @@ def _invoke_openrouter_narrative_edit(
         log.warning("OpenRouter client init failed (%s); using original", exc)
         return html
 
-    models = [cfg.openrouter_model_id] + _OPENROUTER_FALLBACK_MODELS
+    models = [cfg.openrouter_model_id, *_resolve_or_free_models()]
 
     for model in models:
         log.info(

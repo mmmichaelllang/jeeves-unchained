@@ -1,0 +1,74 @@
+name: Jeeves — Auto-Retry Failed Runs
+
+# Fires whenever a watched workflow finishes. If the conclusion was failure
+# AND we haven't retried too many times yet, we re-run only the failed jobs
+# (not the whole pipeline) so successful early phases don't get re-charged
+# against API quotas.
+#
+# Watched workflows:
+#   - Jeeves — Daily Pipeline       (correspondence → research → write)
+#   - Jeeves — Archive Old Sessions (daily housekeeping)
+#
+# Retry budget: up to 2 automatic re-runs per original run. After that the
+# guard goes silent — manual `workflow_dispatch` is the path forward, since
+# whatever is failing twice in a row is almost certainly a code or quota
+# issue that retrying further will not fix.
+
+on:
+  workflow_run:
+    workflows:
+      - "Jeeves — Daily Pipeline"
+      - "Jeeves — Archive Old Sessions"
+    types:
+      - completed
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  retry:
+    name: Re-run failed jobs
+    if: >-
+      github.event.workflow_run.conclusion == 'failure' &&
+      github.event.workflow_run.run_attempt < 3
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Wait before retry
+        # Brief cool-down before re-running. Lets transient upstream issues
+        # (Groq TPM windows, NIM cold-restart, OR rate-limit windows) clear
+        # without hammering the same minute.
+        run: sleep 60
+
+      - name: Re-run failed jobs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runId = context.payload.workflow_run.id;
+            const attempt = context.payload.workflow_run.run_attempt;
+            const name = context.payload.workflow_run.name;
+            core.info(
+              `Triggering re-run #${attempt + 1} for "${name}" (run ${runId}, ` +
+              `previous conclusion=${context.payload.workflow_run.conclusion})`
+            );
+            try {
+              await github.rest.actions.reRunWorkflowFailedJobs({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: runId,
+              });
+              core.notice(`Re-run requested for "${name}" run ${runId}`);
+            } catch (err) {
+              // Some terminal failures (e.g. job timed out before any logs
+              // were uploaded) reject reRunFailedJobs with 422. Fall back to
+              // a full workflow re-run so the user still gets retried output.
+              core.warning(`reRunWorkflowFailedJobs failed: ${err.message}`);
+              await github.rest.actions.reRunWorkflow({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: runId,
+              });
+              core.notice(`Full re-run requested for "${name}" run ${runId}`);
+            }
