@@ -649,6 +649,35 @@ CONTINUATION_RULES = """
     your payload. If genuinely no URL is provided for a source, write
     unlinked text. But "no URL" does not mean "the urls array is non-empty
     but I didn't use it" — that IS a URL, use it.
+15. NO BARE DOMAINS IN PROSE OR ANCHOR TEXT. The briefing is read aloud
+    by a Kindle e-reader; bare domains are unreadable. NEVER write
+    `myedmondsnews.com reports`, `<a href="…">edmondsbeacon.com</a>`,
+    `bbc.com notes`, or any sentence whose subject is a domain name.
+    USE A PROSE NAME instead — drawn from the item's `source` field, or
+    a natural editorial phrase:
+      - myedmondsnews.com → "My Edmonds News" / "the local news"
+      - edmondsbeacon.com → "the Edmonds Beacon" / "the local paper"
+      - edmondswa.gov     → "the City of Edmonds"
+      - sno-isle.org      → "Sno-Isle Libraries"
+      - bbc.com / bbc.co.uk → "the BBC"
+      - reuters.com       → "Reuters"
+      - theguardian.com   → "The Guardian"
+      - apnews.com        → "the Associated Press"
+      - aljazeera.com     → "Al Jazeera"
+      - propublica.org    → "ProPublica"
+      - nybooks.com       → "the New York Review of Books"
+      - lrb.co.uk         → "the London Review of Books"
+      - themarginalian.org → "The Marginalian"
+      - aeon.co           → "Aeon"
+    Anchor text MUST be the prose name, not the domain. Write
+    `<a href="https://myedmondsnews.com/…">My Edmonds News</a> reports…`
+    or `<a href="…">the local news</a> reports…`. Never let a bare domain
+    serve as the anchor text or the subject of the sentence.
+    ANTI-PATTERN (banned, deletes on sight):
+      - `<a href="…">myedmondsnews.com</a> reports`
+      - `myedmondsnews.com reports that…`
+      - `According to edmondsbeacon.com,`
+      - `bbc.co.uk notes that…`
 """
 
 
@@ -912,7 +941,24 @@ Your scope — write ONLY about these:
   with `enriched_articles` (use enriched article text only if the URL
   appears in `intellectual_journals`).
 
-**Journals synthesis (REQUIRED):**
+**EMPTY FEED RULE (CRITICAL):** If `intellectual_journals` is an empty array,
+or contains zero items with a non-empty `findings` field, output EXACTLY this
+HTML verbatim and STOP — do not invent journals, do not paraphrase prior
+coverage, do not explain the absence:
+
+  <p>The intellectual journals are quiet this morning, Sir — nothing of sufficient weight to detain us.</p>
+
+Then immediately emit `<!-- PART5 END -->`. That is the entire output for
+this case. Do NOT write "the research session does not contain", "the data
+provided", "I was unable to find", or any meta-reference to the payload.
+Do NOT pivot to triadic ontology, AI systems, or any other sector — Part 6
+owns those. One sentence, sentinel, done.
+
+**META-REFERENCE BAN:** Never refer to the session JSON, the research data,
+or your own input payload in the briefing text. Jeeves reads the morning
+papers — he does not narrate his data sources.
+
+**Journals synthesis (REQUIRED when items DO exist):**
 
 Journal pieces are not headlines — they develop ideas across weeks. The
 same essay, the same debate, the same thinker's work may resurface.
@@ -984,40 +1030,55 @@ after day. Follow this exact logic:
    a specific author's monograph, a journal article title).
 
 2. **Check coverage**: for each identified title, look for it (or a close
-   match) in `dedup.covered_headlines`.
+   match) in `dedup.covered_headlines`. Lowercase both sides. A 12+ char
+   substring match (author surname + at least one title word, e.g.
+   "migliorini" + "trinitarian", or "isabelle" + "triadic") = COVERED.
+   `dedup.covered_headlines` entries are truncated to 80 chars in your
+   payload — match on the visible prefix; do NOT require a full title.
 
-3. **If the primary study is already covered**:
-   - Open with a single backward-reference sentence: *"The [series/title]
-     continues, Sir — we reviewed [Volume/Chapter N] last time."*
-   - Then pivot immediately to the NEXT most recent or most notable item
-     from `triadic_ontology.findings` that does NOT appear in
-     `covered_headlines`. Cover that one in full depth (250–350 words).
-   - If the findings discuss only the one already-covered study: write two
-     sentences of context ("The series advances but nothing materially new
-     has surfaced since our last review") and move on to `ai_systems`.
+3. **REPEAT-DETECTION HARD RULE (NEW, CRITICAL — replaces all prior dedup
+   guidance for this section):**
+   - Tag every paper named in `triadic_ontology.findings` as COVERED or NEW
+     using the rule above.
+   - **If EVERY paper is COVERED**: output EXACTLY this single paragraph and
+     STOP — proceed directly to `ai_systems`:
+     *"The triadic-ontology series continues, Sir, though nothing has surfaced
+     since our last review that materially advances the argument."*
+     Do NOT summarise any covered paper. Do NOT restate the thesis. Do NOT
+     paraphrase. The reader has the full treatment from a prior briefing.
+   - **If at least one paper is NEW**: write ONE clause acknowledging covered
+     work ("Migliorini's volume, which we examined last time, is unchanged —
+     ") and then cover the NEW paper(s) in full (250–350 words each).
+   - **If the study is genuinely new across the board**: cover in full
+     (300–400 words) — argument, method, stakes for Mister Lang.
 
-4. **If the study is genuinely new**: cover it in full (300-400 words) —
-   the argument, the method, the stakes for Mister Lang's research interests.
-
-5. **Never re-explain a covered study from scratch.** A reader who already
+4. **Never re-explain a covered study from scratch.** A reader who already
    knows the Karl-Alber series does not need the abstract again. Give them
-   the delta, not the whole thing.
+   the delta, not the whole thing. Writing a full-paragraph summary of a
+   COVERED paper is the single most common failure mode for this section.
 
-**AI systems — same advancement protocol:**
+**AI systems — same advancement protocol (CRITICAL):**
 
 AI research announcements recur just as reliably as the triadic series —
-the same model, benchmark, or lab's paper appearing in the feed for days.
+the same model, benchmark, framework, or lab's paper appearing in the feed
+for days. Apply the SAME REPEAT-DETECTION HARD RULE used above:
 
-1. Identify the specific model name, paper title, or lab announcement from
-   `ai_systems.findings`.
-2. Check `dedup.covered_headlines` for a match.
-3. If already covered: one backward-reference sentence, then pivot to the
-   NEXT distinct development in `ai_systems.findings` not in
-   `covered_headlines`. Cover it in 200-300 words.
-4. If genuinely new: cover fully (300-400 words) — what the model does,
-   what's significant, what's hype.
-5. If everything is repeat: two sentences, then STOP. Do NOT fill space
-   with general AI commentary.
+1. Tag every model / paper / framework in `ai_systems.findings` as COVERED
+   or NEW via 12+ char substring match against `dedup.covered_headlines`
+   (lowercase both sides; match the 80-char visible prefix).
+2. **If EVERY item is COVERED**: output EXACTLY this single paragraph and
+   STOP — do NOT summarise any covered framework, do NOT restate features,
+   do NOT explain implications:
+   *"The autonomous-research front advances, Sir, but nothing fresh has
+   surfaced since our last review."*
+3. **If at least one item is NEW**: write ONE bridging clause about the
+   covered item and cover the NEW one(s) in 200–300 words.
+4. **If genuinely new across the board**: 300–400 words — what the model
+   does, the benchmark result, what's hype.
+
+DO NOT WRITE FULL-PARAGRAPH SUMMARIES OF COVERED ITEMS, even when findings
+contains rich detail. Writing about Enoch / FlowHunt / ASI-Evolve / Gemini
+Ultra a second time after a prior briefing covered them = critical failure.
 
 **SYNTHESIS CLOSE (REQUIRED):**
 End each sub-section (triadic ontology and AI systems) with a short closing
@@ -1138,25 +1199,35 @@ Write the UAP sub-section per the strict rules below.
 4. **No "As we await further developments"** — if there is nothing new, say
    so in one sentence and stop.
 
-**Wearable AI — dedup with advancement:**
+**Wearable AI — dedup with advancement (CRITICAL):**
 
-Product launches and EdTech tools recur heavily. The same device or tool
-may appear for days before Jeeves has covered it.
+Product launches and EdTech tools recur heavily. Same REPEAT-DETECTION HARD
+RULE as triadic / AI systems applies — 12+ char substring match against
+`dedup.covered_headlines` (lowercased; 80-char prefix is fine).
 
 For EACH of the three subcategories in `wearable_ai`:
-1. Identify the specific product name, tool name, or announcement from the
-   subcategory's findings.
-2. Check `dedup.covered_headlines` for that product/tool name.
-3. If already covered: one backward-reference clause (*"[Product] remains
-   available, Sir, as previously noted"*), then pivot to the next distinct
-   device or tool in the subcategory that is NOT in `covered_headlines`.
-   Cover that one fully (100-150 words per subcategory).
-4. If genuinely new: cover fully — what it does, the price/availability,
-   why it is relevant to Mister Lang (teacher tools) or Mrs. Lang (wearables).
-5. **If an entire subcategory is all repeats or empty**: ONE sentence, period.
-   Do NOT write about the sector's "potential to revolutionise" anything.
-   Do NOT write "it is essential to continue monitoring this sector."
-   Do NOT write about future developments you are awaiting.
+1. Tag every product, tool, or announcement as COVERED or NEW.
+2. **If EVERY item in a subcategory is COVERED**: ONE sentence per
+   subcategory, period. Example: *"The voice-pendant front is unchanged
+   since our last review."* Do NOT name covered products. Do NOT
+   re-describe what they do. Do NOT add price/feature lines.
+3. **If at least one item is NEW**: ONE bridging clause about covered work,
+   then cover the NEW item(s) (100–150 words per subcategory).
+4. **If genuinely new across the board**: full treatment — what it does,
+   price/availability, relevance to Mister Lang (teacher tools) or Mrs. Lang
+   (wearables).
+
+ABSOLUTE BANS for this section, regardless of repeat status:
+- "the wearable AI market is witnessing a surge"
+- "the market is becoming increasingly crowded"
+- "it is necessary to distinguish between genuinely innovative products"
+- "the sector continues to evolve"
+- "potential to revolutionise"
+- "it is essential to continue monitoring"
+- Any sentence that re-describes Friend AI Pendant, Humane AI Pin,
+  MagicSchool, LightMind, LUCI, or any other product previously covered.
+  Reciting product specs that already shipped in a prior briefing is the
+  single most common failure mode for this section.
 
 Aim for ~600-800 words total for this part. No profane asides in draft.
 
@@ -2443,7 +2514,117 @@ _DOMAIN_NICE_NAMES: dict[str, list[str]] = {
     "newsweek.com": ["Newsweek"],
     "bigthink.com": ["Big Think"],
     "frontline": ["FRONTLINE", "Frontline"],
+    # Local Edmonds + Snohomish County publications. Sprint-19: e-reader
+    # listening exposed `myedmondsnews.com reports` as poor TTS material.
+    "myedmondsnews.com": ["My Edmonds News"],
+    "edmondsbeacon.com": ["the Edmonds Beacon"],
+    "edmondswa.gov": ["the City of Edmonds"],
+    "fox13seattle.com": ["FOX 13 Seattle"],
+    "komonews.com": ["KOMO News"],
+    "kiro7.com": ["KIRO 7"],
+    "king5.com": ["KING 5"],
+    "seattletimes.com": ["The Seattle Times"],
+    "heraldnet.com": ["The Daily Herald"],
+    "sno-isle.org": ["Sno-Isle Libraries"],
+    "sno-isle.bibliocommons.com": ["Sno-Isle Libraries"],
+    "snoco.org": ["Snohomish County"],
+    "soundtransit.org": ["Sound Transit"],
+    "seattlepromusica.org": ["Seattle Pro Musica"],
 }
+
+
+# Sprint-19: bare-domain anchor-text and prose are read aloud by an
+# e-reader as "my-edmonds-news-dot-com" — unusable. This map drives a
+# deterministic rewrite of any anchor text or bare prose that exactly
+# matches a known domain. Distinct from _DOMAIN_NICE_NAMES (which expands
+# Kimi's source field into prose names so _inject_source_links can find
+# match candidates) — this one operates on the model's OUTPUT.
+_DOMAIN_PROSE_NAMES: dict[str, str] = {
+    "myedmondsnews.com": "My Edmonds News",
+    "www.myedmondsnews.com": "My Edmonds News",
+    "edmondsbeacon.com": "the Edmonds Beacon",
+    "www.edmondsbeacon.com": "the Edmonds Beacon",
+    "edmondswa.gov": "the City of Edmonds",
+    "www.edmondswa.gov": "the City of Edmonds",
+    "fox13seattle.com": "FOX 13 Seattle",
+    "www.fox13seattle.com": "FOX 13 Seattle",
+    "komonews.com": "KOMO News",
+    "kiro7.com": "KIRO 7",
+    "king5.com": "KING 5",
+    "seattletimes.com": "The Seattle Times",
+    "heraldnet.com": "The Daily Herald",
+    "sno-isle.org": "Sno-Isle Libraries",
+    "sno-isle.bibliocommons.com": "Sno-Isle Libraries",
+    "snoco.org": "Snohomish County",
+    "soundtransit.org": "Sound Transit",
+    "seattlepromusica.org": "Seattle Pro Musica",
+    "bbc.co.uk": "the BBC",
+    "bbc.com": "the BBC",
+    "reuters.com": "Reuters",
+    "theguardian.com": "The Guardian",
+    "nytimes.com": "The New York Times",
+    "apnews.com": "the Associated Press",
+    "aljazeera.com": "Al Jazeera",
+    "propublica.org": "ProPublica",
+    "newyorker.com": "The New Yorker",
+    "nybooks.com": "the New York Review of Books",
+    "lrb.co.uk": "the London Review of Books",
+    "themarginalian.org": "The Marginalian",
+    "aeon.co": "Aeon",
+}
+
+
+def _rewrite_bare_domain_anchors(html: str) -> str:
+    """Replace bare-domain anchor text and bare-domain prose with prose names.
+
+    Two passes:
+
+    1. Anchor-text pass — when the model wrote
+       ``<a href="…">myedmondsnews.com</a>`` the anchor text reads as a URL
+       to TTS. Rewrite to ``<a href="…">My Edmonds News</a>`` while keeping
+       the href intact.
+    2. Outside-anchor pass — bare ``myedmondsnews.com`` mentions in prose
+       (no anchor wrap) are replaced with the prose name in plain text.
+
+    Sprint-19. Idempotent. Safe to run after ``_inject_source_links``.
+    """
+    if not html:
+        return html
+
+    # Pass 1: anchor text equals a known domain.
+    for domain, prose in _DOMAIN_PROSE_NAMES.items():
+        # Match the anchor text exactly (allow leading "https://" or "http://"
+        # since some models leak the scheme into the text). Preserve the
+        # href + any other attributes verbatim.
+        pat = re.compile(
+            r'(<a\b[^>]*>)\s*(?:https?://)?'
+            + re.escape(domain)
+            + r'/?\s*(</a>)',
+            re.IGNORECASE,
+        )
+        html = pat.sub(rf'\1{prose}\2', html)
+
+    # Pass 2: bare-domain mentions outside anchors. Split on anchor tags so
+    # we never touch href URLs.
+    _A_SPLIT = re.compile(r'(<a\b[^>]*>.*?</a>)', re.IGNORECASE | re.DOTALL)
+    parts = _A_SPLIT.split(html)
+    for i in range(0, len(parts), 2):  # even indices are non-anchor segments
+        segment = parts[i]
+        if not segment:
+            continue
+        for domain, prose in _DOMAIN_PROSE_NAMES.items():
+            # Word boundary on each side. Allow trailing slash and optional
+            # scheme prefix. Negative-lookahead to avoid matching inside
+            # leftover href fragments (defensive — split should have removed
+            # those already, but cheap to enforce).
+            pattern = (
+                r'(?<![\w/.])(?:https?://)?'
+                + re.escape(domain)
+                + r'/?(?![\w./])'
+            )
+            segment = re.sub(pattern, prose, segment, flags=re.IGNORECASE)
+        parts[i] = segment
+    return ''.join(parts)
 
 # Prose aliases that may differ from how Kimi names the source in session JSON.
 _SOURCE_ALIASES: dict[str, list[str]] = {
@@ -4378,6 +4559,11 @@ async def generate_briefing(
     stitched = _inject_source_links(stitched, source_map)
     log.info("source link injection: %d source→url pairs applied", len(source_map))
 
+    # Sprint-19: rewrite bare-domain anchor text and bare-domain prose to
+    # prose names ("myedmondsnews.com" → "My Edmonds News"). User reads the
+    # briefing on a Kindle TTS — bare domains read aloud as nonsense.
+    stitched = _rewrite_bare_domain_anchors(stitched)
+
     # Final narrative quality + profane-asides pass via OpenRouter.
     # Pass the day-over-day recently-used list so OpenRouter picks fresh phrases.
     recently_used = _recently_used_asides(cfg) if cfg else []
@@ -4385,6 +4571,10 @@ async def generate_briefing(
 
     # Re-inject banner after OpenRouter (idempotent guard against editor stripping it).
     stitched = _inject_banner(stitched)
+
+    # Sprint-19: second bare-domain rewrite pass — OpenRouter occasionally
+    # re-introduces bare domain prose. Idempotent.
+    stitched = _rewrite_bare_domain_anchors(stitched)
 
     # Repair any structural breakage (orphan paragraphs outside container,
     # stray </div>, profane asides emitted as standalone paragraphs).

@@ -548,6 +548,117 @@ class _ParseFailed:
         return f"_ParseFailed(raw_len={len(self.raw)})"
 
 
+# NIM stream-drop / tool-call-leak markers that occasionally land inside
+# `findings` strings when the streaming response is truncated mid tool-call.
+# Sprint-19 hardening: truncate at the first match before _parse_sector_output
+# returns so the corrupt suffix never reaches the write phase.
+#
+# Two-tier detection:
+#   * literal markers — explicit tool-call delimiters (NIM Hermes-style).
+#   * regex markers   — catch partial-word merges produced by streaming drops
+#     (e.g. ``...pieces thatily_extract:5`` from the 2026-05-04 corruption).
+_NIM_TOOL_CALL_MARKERS: tuple[str, ...] = (
+    "<|tool_call_argument_begin|>",
+    "<|tool_call_argument_end|>",
+    "<|tool_call",
+    "<|tool ",
+    "functions.tavily_extract:",
+    "functions.tavily_search:",
+    "functions.serper_search:",
+    "functions.exa_search:",
+    "functions.gemini_grounded",
+    "functions.fetch_article_text",
+    "functions.playwright_extract",
+    "functions.tinyfish_extract",
+    "functions.vertex_grounded",
+)
+
+# Bare tool-name regex — catches ``tavily_extract:``, ``...thatily_extract:5``
+# (streaming drop ate the leading consonants), ``functions.tavily_extract``,
+# and ``<|tool…``. The suffix ``_(extract|search|grounded|synthesize)`` is
+# unlikely in normal prose but a reliable fingerprint of leaked tool-call
+# JSON.
+_NIM_TOOL_CALL_REGEX = re.compile(
+    r"\w*_(?:extract|search|grounded|synthesize)\s*[:=]"
+    r"|functions\.[a-z_]+\s*[:=]?"
+    r"|<\|tool",
+    re.IGNORECASE,
+)
+
+
+def _strip_tool_call_markup(text: str) -> str:
+    """Truncate at the first NIM tool-call leak marker; preserve clean prefix."""
+    if not isinstance(text, str) or not text:
+        return text
+    earliest = -1
+    for marker in _NIM_TOOL_CALL_MARKERS:
+        idx = text.find(marker)
+        if idx != -1 and (earliest == -1 or idx < earliest):
+            earliest = idx
+    m = _NIM_TOOL_CALL_REGEX.search(text)
+    if m is not None and (earliest == -1 or m.start() < earliest):
+        earliest = m.start()
+    if earliest == -1:
+        return text
+    cleaned = text[:earliest].rstrip()
+    # Don't return a sentence-fragment ending mid-clause — drop a trailing
+    # incomplete final sentence if we cut mid-stream.
+    if cleaned and cleaned[-1] not in ".!?\"'”’":
+        cut = max(
+            cleaned.rfind("."),
+            cleaned.rfind("!"),
+            cleaned.rfind("?"),
+        )
+        if cut > 50:  # keep at least one full prior sentence
+            cleaned = cleaned[: cut + 1]
+    return cleaned
+
+
+def _sanitise_findings_markup(parsed: Any, spec: SectorSpec) -> Any:
+    """Scrub NIM tool-call leak from ``findings`` strings.
+
+    Only items whose findings were ACTUALLY modified (i.e. contained tool-call
+    markup that got stripped) are subject to the post-strip 20-char quality
+    floor — items with naturally-short findings are left to the existing
+    list-shape quality filter so behaviour stays additive.
+    """
+    def _scrub_dict(d: dict) -> tuple[dict, bool]:
+        modified = False
+        if isinstance(d.get("findings"), str):
+            cleaned = _strip_tool_call_markup(d["findings"])
+            if cleaned != d["findings"]:
+                modified = True
+                log.warning(
+                    "sector %s: stripped NIM tool-call markup from findings (%d → %d chars)",
+                    spec.name, len(d["findings"]), len(cleaned),
+                )
+                d["findings"] = cleaned
+        return d, modified
+
+    if isinstance(parsed, list):
+        scrubbed: list = []
+        for item in parsed:
+            if isinstance(item, dict):
+                item, modified = _scrub_dict(item)
+                if (
+                    modified
+                    and isinstance(item.get("findings"), str)
+                    and len(item["findings"].strip()) < 20
+                ):
+                    log.warning(
+                        "sector %s: dropping item — findings collapsed below "
+                        "20 chars after tool-call markup strip.",
+                        spec.name,
+                    )
+                    continue
+            scrubbed.append(item)
+        return scrubbed
+    if isinstance(parsed, dict):
+        scrubbed_dict, _ = _scrub_dict(parsed)
+        return scrubbed_dict
+    return parsed
+
+
 def _parse_sector_output(raw: str, spec: SectorSpec) -> Any:
     """Coerce the agent's final text into the sector-shape value.
 
@@ -615,6 +726,14 @@ def _parse_sector_output(raw: str, spec: SectorSpec) -> Any:
             if isinstance(entry, dict) and isinstance(entry.get("text"), str):
                 if len(entry["text"]) > 500:
                     entry["text"] = entry["text"][:500]
+
+    # Sprint-19: sanitise NIM tool-call markup leaking into prose. When NIM's
+    # streaming output is truncated mid tool-call (e.g. ``functions.tavily_extract:5
+    # <|tool_call_argument_begin|>{...``) the partial markup ends up inside a
+    # `findings` string and ships verbatim into the briefing. Detect and
+    # truncate at the first marker, then drop any item whose findings collapses
+    # below 20 chars after sanitisation.
+    parsed = _sanitise_findings_markup(parsed, spec)
 
     # For list sectors, drop any item that carries a "urls" key but has an
     # empty list — that is the fingerprint of Kimi answering from training

@@ -1055,7 +1055,7 @@ def _dismiss_cookie_consent(page, *, timeout_ms: int = 1500) -> bool:
 # ---------------------------------------------------------------------------
 
 
-def extract_article(
+def _extract_article_core(
     url: str,
     *,
     timeout_seconds: int = 30,
@@ -1341,6 +1341,419 @@ def _extract_article_legacy(
     except Exception as e:
         base["error"] = str(e)
         return base
+
+
+# ---------------------------------------------------------------------------
+# Public extract_article — wraps _extract_article_core with optional TinyFish
+# shadow capture. Sprint-18 rollout (week 1): JEEVES_TINYFISH_SHADOW=1 fires
+# TinyFish in a background thread alongside Playwright and appends both
+# results to sessions/shadow-tinyfish-<date>.jsonl. Production output is
+# always the Playwright result — TinyFish never affects the briefing.
+# ---------------------------------------------------------------------------
+
+
+def _shadow_tinyfish_enabled() -> bool:
+    return (
+        os.environ.get("JEEVES_TINYFISH_SHADOW", "").strip() == "1"
+        and bool(os.environ.get("TINYFISH_API_KEY", "").strip())
+    )
+
+
+def _append_shadow_record(record: dict[str, Any]) -> None:
+    """Append a single jsonl line to ``sessions/shadow-tinyfish-<date>.jsonl``.
+
+    Best-effort. Silently swallows any IO error — shadow capture must never
+    affect production output.
+    """
+    try:
+        from datetime import datetime, timezone
+        from pathlib import Path
+
+        sessions_dir = Path.cwd() / "sessions"
+        sessions_dir.mkdir(parents=True, exist_ok=True)
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        path = sessions_dir / f"shadow-tinyfish-{today}.jsonl"
+        with path.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception as exc:
+        log.debug("shadow capture write failed: %s", exc)
+
+
+# ---------------------------------------------------------------------------
+# Sprint-19: Playwright as a search agent — zero-API-cost SERP scraper.
+#
+# Uses the no-JS singleton context (~1.2s/call after warm). Return shape
+# mirrors serper.make_serper_search so callers can swap providers freely.
+# ---------------------------------------------------------------------------
+
+
+_SEARCH_ENGINES = {
+    "ddg": "https://html.duckduckgo.com/html/?q={q}",
+    "bing": "https://www.bing.com/search?q={q}",
+    "brave": "https://search.brave.com/search?q={q}&source=web",
+}
+
+
+def _decode_ddg_link(href: str) -> str:
+    """DDG HTML wraps every result in /l/?uddg=<encoded>. Unwrap to the real URL."""
+    from urllib.parse import parse_qs, unquote, urlparse
+
+    if not href:
+        return href
+    try:
+        parsed = urlparse(href)
+        if parsed.path == "/l/" or "uddg=" in (parsed.query or ""):
+            qs = parse_qs(parsed.query or "")
+            target = (qs.get("uddg") or [""])[0]
+            if target:
+                return unquote(target)
+    except Exception:
+        pass
+    return href
+
+
+def _parse_ddg(page: Any, max_results: int) -> list[dict[str, str]]:
+    out: list[dict[str, str]] = []
+    try:
+        rows = page.eval_on_selector_all(
+            "div.result, div.result__body",
+            """rows => rows.slice(0, 30).map(r => {
+                const a = r.querySelector('a.result__a, h2 a');
+                const s = r.querySelector('.result__snippet, .result-snippet');
+                return {
+                    title: (a && a.innerText) || '',
+                    url: (a && a.getAttribute('href')) || '',
+                    snippet: (s && s.innerText) || ''
+                };
+            })""",
+        )
+    except Exception as exc:
+        log.warning("playwright_search ddg parse error: %s", exc)
+        return out
+    for row in rows or []:
+        if not isinstance(row, dict):
+            continue
+        u = _decode_ddg_link(str(row.get("url") or ""))
+        if not u:
+            continue
+        out.append(
+            {
+                "title": str(row.get("title") or "")[:300],
+                "url": u,
+                "snippet": str(row.get("snippet") or "")[:600],
+            }
+        )
+        if len(out) >= max_results:
+            break
+    return out
+
+
+def _parse_bing(page: Any, max_results: int) -> list[dict[str, str]]:
+    out: list[dict[str, str]] = []
+    try:
+        rows = page.eval_on_selector_all(
+            "li.b_algo",
+            """rows => rows.slice(0, 30).map(r => {
+                const a = r.querySelector('h2 a');
+                const s = r.querySelector('.b_caption p, p');
+                return {
+                    title: (a && a.innerText) || '',
+                    url: (a && a.getAttribute('href')) || '',
+                    snippet: (s && s.innerText) || ''
+                };
+            })""",
+        )
+    except Exception as exc:
+        log.warning("playwright_search bing parse error: %s", exc)
+        return out
+    for row in rows or []:
+        if not isinstance(row, dict):
+            continue
+        u = str(row.get("url") or "")
+        if not u:
+            continue
+        out.append(
+            {
+                "title": str(row.get("title") or "")[:300],
+                "url": u,
+                "snippet": str(row.get("snippet") or "")[:600],
+            }
+        )
+        if len(out) >= max_results:
+            break
+    return out
+
+
+def _parse_brave(page: Any, max_results: int) -> list[dict[str, str]]:
+    out: list[dict[str, str]] = []
+    try:
+        rows = page.eval_on_selector_all(
+            "div.snippet, div[data-type='web']",
+            """rows => rows.slice(0, 30).map(r => {
+                const a = r.querySelector('a');
+                const t = r.querySelector('.title, .heading-serpresult');
+                const s = r.querySelector('.snippet-description, .description, .snippet');
+                return {
+                    title: (t && t.innerText) || (a && a.innerText) || '',
+                    url: (a && a.getAttribute('href')) || '',
+                    snippet: (s && s.innerText) || ''
+                };
+            })""",
+        )
+    except Exception as exc:
+        log.warning("playwright_search brave parse error: %s", exc)
+        return out
+    for row in rows or []:
+        if not isinstance(row, dict):
+            continue
+        u = str(row.get("url") or "")
+        if not u or u.startswith("/"):
+            continue
+        out.append(
+            {
+                "title": str(row.get("title") or "")[:300],
+                "url": u,
+                "snippet": str(row.get("snippet") or "")[:600],
+            }
+        )
+        if len(out) >= max_results:
+            break
+    return out
+
+
+_PARSERS = {"ddg": _parse_ddg, "bing": _parse_bing, "brave": _parse_brave}
+
+
+def search(
+    query: str,
+    *,
+    engine: str = "ddg",
+    num: int = 10,
+    timeout_seconds: int = 12,
+    ledger: Any = None,
+) -> dict[str, Any]:
+    """Headless SERP scrape — Serper peer at zero API cost.
+
+    Parameters
+    ----------
+    query:
+        Non-empty search string.
+    engine:
+        One of ``"ddg" | "bing" | "brave"``. DDG default; least bot-detection
+        friction on GitHub Actions runners.
+    num:
+        Max number of organic results (default 10).
+    timeout_seconds:
+        Per-call wall-clock cap (default 12s; warm singleton typically 1-2s).
+    ledger:
+        Optional ``QuotaLedger``. Records the call under
+        ``"playwright_search"`` so the research-sectors quota guard sees real
+        work and the wall-clock cap (``DAILY_HARD_CAPS["playwright_search"]``)
+        bites before runaway.
+
+    Returns
+    -------
+    dict
+        ``{provider, query, engine, success, results: [{title, url, snippet,
+        provider}], error?}``. Fail-soft: every error path returns
+        ``success=False`` with an empty ``results`` list.
+    """
+    base: dict[str, Any] = {
+        "provider": "playwright_search",
+        "query": query,
+        "engine": engine,
+        "success": False,
+        "results": [],
+    }
+
+    if not (query or "").strip():
+        base["error"] = "empty query"
+        return base
+
+    if engine not in _SEARCH_ENGINES:
+        base["error"] = f"unsupported engine: {engine}"
+        return base
+
+    if ledger is not None:
+        try:
+            from .quota import DAILY_HARD_CAPS, QuotaExceeded  # noqa: F401
+
+            cap = DAILY_HARD_CAPS.get("playwright_search")
+            if cap is not None:
+                ledger.check_daily_allow("playwright_search", hard_cap=cap)
+        except Exception as exc:
+            if exc.__class__.__name__ == "QuotaExceeded":
+                base["error"] = f"playwright_search daily cap: {exc}"
+                return base
+
+    if not _playwright_available():
+        base["error"] = "playwright not installed"
+        return base
+
+    from urllib.parse import quote_plus
+
+    target_url = _SEARCH_ENGINES[engine].format(q=quote_plus(query))
+
+    # Local imports — module-level imports would create a cycle
+    # (rate_limits → telemetry → playwright_extractor) only at first call.
+    import time as _time
+
+    from .rate_limits import acquire as _rl_acquire
+    from .telemetry import emit as _emit
+
+    page_ctx = _get_shared_context(java_script_enabled=True)
+    if page_ctx is None:
+        base["error"] = "playwright context unavailable"
+        return base
+    page, _ctx = page_ctx
+
+    t0 = _time.monotonic()
+    try:
+        with _rl_acquire("playwright_search"):
+            try:
+                page.goto(target_url, timeout=timeout_seconds * 1000, wait_until="domcontentloaded")
+            except Exception as exc:
+                base["error"] = f"navigation error: {exc}"
+                _emit(
+                    "tool_call",
+                    provider="playwright_search",
+                    query=query,
+                    engine=engine,
+                    ok=False,
+                    latency_ms=int((_time.monotonic() - t0) * 1000),
+                    error=str(exc)[:200],
+                )
+                return base
+
+            # Settle briefly — DDG/Brave inject results progressively.
+            try:
+                _wait_for_settled(page, quiet_ms=500, timeout_ms=2500)
+            except Exception:
+                pass
+
+            parser = _PARSERS[engine]
+            results = parser(page, max_results=num)
+    finally:
+        try:
+            page.close()
+        except Exception:
+            pass
+
+    if ledger is not None:
+        try:
+            ledger.record("playwright_search", 1)
+            ledger.record_daily("playwright_search", 1)
+        except Exception:
+            pass
+
+    if not results:
+        base["error"] = f"playwright_search empty results from {engine}"
+        _emit(
+            "tool_call",
+            provider="playwright_search",
+            query=query,
+            engine=engine,
+            ok=False,
+            results=0,
+            latency_ms=int((_time.monotonic() - t0) * 1000),
+            error="empty results",
+        )
+        return base
+
+    annotated = [
+        {**r, "provider": f"playwright_{engine}"} for r in results
+    ]
+    base.update({"success": True, "results": annotated})
+    _emit(
+        "tool_call",
+        provider="playwright_search",
+        query=query,
+        engine=engine,
+        ok=True,
+        results=len(annotated),
+        latency_ms=int((_time.monotonic() - t0) * 1000),
+    )
+    return base
+
+
+def extract_article(
+    url: str,
+    *,
+    timeout_seconds: int = 30,
+    max_chars: int = 12000,
+    crystallize: bool | None = None,
+) -> dict[str, Any]:
+    """Public wrapper around ``_extract_article_core``.
+
+    Behaviour identical to the core implementation. When
+    ``JEEVES_TINYFISH_SHADOW=1`` and ``TINYFISH_API_KEY`` is set, fires
+    TinyFish on the same URL in a background thread and writes a comparison
+    record to ``sessions/shadow-tinyfish-<date>.jsonl``. The Playwright
+    result is always returned; TinyFish output is never substituted.
+    """
+    if not _shadow_tinyfish_enabled():
+        return _extract_article_core(
+            url,
+            timeout_seconds=timeout_seconds,
+            max_chars=max_chars,
+            crystallize=crystallize,
+        )
+
+    import time as _time
+    from concurrent.futures import ThreadPoolExecutor
+
+    def _shadow_call() -> dict[str, Any]:
+        from .tinyfish import extract_article as _tf_extract
+
+        t0 = _time.monotonic()
+        try:
+            res = _tf_extract(url, timeout_seconds=timeout_seconds, max_chars=max_chars)
+        except Exception as exc:
+            res = {"success": False, "error": f"shadow exception: {exc}", "text": ""}
+        res["_latency_ms"] = int((_time.monotonic() - t0) * 1000)
+        return res
+
+    pw_t0 = _time.monotonic()
+    with ThreadPoolExecutor(max_workers=1) as ex:
+        future = ex.submit(_shadow_call)
+        pw_result = _extract_article_core(
+            url,
+            timeout_seconds=timeout_seconds,
+            max_chars=max_chars,
+            crystallize=crystallize,
+        )
+        pw_latency_ms = int((_time.monotonic() - pw_t0) * 1000)
+        try:
+            tf_result = future.result(timeout=timeout_seconds + 5)
+        except Exception as exc:
+            tf_result = {"success": False, "error": f"shadow timeout: {exc}", "text": "", "_latency_ms": -1}
+
+    pw_text = pw_result.get("text") or ""
+    tf_text = tf_result.get("text") or ""
+    record = {
+        "url": url,
+        "playwright": {
+            "success": bool(pw_result.get("success")),
+            "char_count": len(pw_text),
+            "extracted_via": pw_result.get("extracted_via"),
+            "quality_score": pw_result.get("quality_score"),
+            "latency_ms": pw_latency_ms,
+            "title": (pw_result.get("title") or "")[:200],
+            "error": pw_result.get("error"),
+            "text_sha16": hashlib.sha256(pw_text.encode("utf-8", "replace")).hexdigest()[:16],
+        },
+        "tinyfish": {
+            "success": bool(tf_result.get("success")),
+            "char_count": len(tf_text),
+            "quality_score": tf_result.get("quality_score"),
+            "latency_ms": tf_result.get("_latency_ms"),
+            "title": (tf_result.get("title") or "")[:200],
+            "error": tf_result.get("error"),
+            "text_sha16": hashlib.sha256(tf_text.encode("utf-8", "replace")).hexdigest()[:16],
+        },
+    }
+    _append_shadow_record(record)
+    return pw_result
 
 
 # ---------------------------------------------------------------------------

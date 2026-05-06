@@ -5,12 +5,16 @@ from __future__ import annotations
 import atexit
 import json
 import logging
+import time
 from typing import Any
 
 import httpx
 
 from ..config import Config
 from .quota import QuotaLedger
+from .rate_limits import acquire as _rl_acquire
+from .search_shadow import maybe_run_shadows as _maybe_run_shadows
+from .telemetry import emit as _emit
 
 log = logging.getLogger(__name__)
 
@@ -45,12 +49,26 @@ def make_serper_search(cfg: Config, ledger: QuotaLedger):
         if tbs:
             payload["tbs"] = tbs
 
+        t0 = time.monotonic()
+        status_code: int | None = None
         try:
-            r = _HTTP_CLIENT.post(ENDPOINT, json=payload, headers=headers)
-            r.raise_for_status()
-            data = r.json()
+            with _rl_acquire("serper"):
+                r = _HTTP_CLIENT.post(ENDPOINT, json=payload, headers=headers)
+                status_code = r.status_code
+                r.raise_for_status()
+                data = r.json()
         except Exception as e:
             log.warning("serper error: %s", e)
+            _emit(
+                "tool_call",
+                provider="serper",
+                query=query,
+                ok=False,
+                status=status_code,
+                results=0,
+                latency_ms=int((time.monotonic() - t0) * 1000),
+                error=str(e)[:200],
+            )
             return json.dumps({"provider": "serper", "error": str(e), "results": []})
 
         ledger.record("serper", 1)
@@ -66,6 +84,32 @@ def make_serper_search(cfg: Config, ledger: QuotaLedger):
             }
             for o in organic
         ]
+        latency_ms = int((time.monotonic() - t0) * 1000)
+        _emit(
+            "tool_call",
+            provider="serper",
+            query=query,
+            ok=True,
+            status=status_code,
+            results=len(results),
+            latency_ms=latency_ms,
+        )
+
+        # Shadow flags (sprint-19 slice E): fire any opt-in shadows in
+        # parallel and write per-shadow JSONL. Production output (this
+        # function's return value) is unchanged regardless of shadow result.
+        try:
+            _maybe_run_shadows(
+                primary="serper",
+                query=query,
+                primary_results=results,
+                primary_latency_ms=latency_ms,
+                cfg=cfg,
+                ledger=ledger,
+            )
+        except Exception as exc:  # belt-and-braces — shadows must never break primary
+            log.debug("shadow runner failed: %s", exc)
+
         return json.dumps({"provider": "serper", "query": query, "results": results})
 
     return serper_search

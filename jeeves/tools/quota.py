@@ -23,7 +23,36 @@ DEFAULT_STATE = {
     "tavily": {"used": 0, "free_cap": 1000, "overage_per_1k_usd": 8.00},
     "exa": {"used": 0, "free_cap": 500, "overage_per_1k_usd": 5.00},
     "gemini": {"used": 0, "free_cap": 1500, "overage_per_1k_usd": 35.00},
+    # TinyFish (sprint-18): canary fetch-chain peer to playwright. Free tier
+    # assumed at 100/mo; overage rate is a placeholder until pricing settles.
+    "tinyfish": {"used": 0, "free_cap": 100, "overage_per_1k_usd": 12.00},
+    # Sprint-19 search-agent canary entries. All start opt-in via JEEVES_USE_*
+    # flags in tools/__init__.py; ledger entries exist so the quota guard at
+    # research_sectors._quota_snapshot recognises a sector that called only
+    # one of these as having performed real work.
+    "tinyfish_search": {"used": 0, "free_cap": 250, "overage_per_1k_usd": 24.00},
+    "jina_search": {"used": 0, "free_cap": 6000, "overage_per_1k_usd": 0.20},
+    "jina_deepsearch": {"used": 0, "free_cap": 300, "overage_per_1k_usd": 5.00},
+    "jina_rerank": {"used": 0, "free_cap": 3000, "overage_per_1k_usd": 0.20},
+    "playwright_search": {"used": 0, "free_cap": 9999, "overage_per_1k_usd": 0.00},
 }
+
+# Sprint-19: auxiliary providers are tracked in the ledger (so usage counts
+# show up in snapshots and quota guards work) but excluded from
+# ``cheapest_with_capacity`` — that picker is meant to choose among the
+# primary general-purpose search providers (serper/tavily/exa/gemini).
+# These canary tools are surfaced via opt-in env flags; the agent picks
+# them by description, not by overage price.
+_AUX_PROVIDERS: set[str] = {
+    "tinyfish",
+    "tinyfish_search",
+    "jina_search",
+    "jina_deepsearch",
+    "jina_rerank",
+    "playwright",
+    "playwright_search",
+}
+
 
 # Hard daily limits for providers billed on a per-day free tier.
 # gemini_grounded uses gemini-2.5-flash whose free tier allows 20
@@ -35,6 +64,17 @@ DEFAULT_STATE = {
 DAILY_HARD_CAPS: dict[str, int] = {
     "gemini_grounded": 12,     # Gemini 2.5 Flash: 20 RPD free tier; we cap at 12
     "vertex_grounded": 12,     # Same underlying quota
+    # TinyFish (sprint-18): canary cap. Roughly $0.36/day at the placeholder
+    # overage rate — well under any plausible budget. Bump after eval shows
+    # genuine recall/latency win.
+    "tinyfish": 30,
+    # Sprint-19 search-agent caps (per /plan synthesis). All conservative —
+    # promote via EVAL_GATE shadow-window thresholds before relaxing.
+    "tinyfish_search": 8,        # weighted ~2 credits/call; 8/day = 16 credits
+    "jina_search": 200,          # free key allows ~100 RPM; 200 calls/day fits
+    "jina_deepsearch": 20,       # token-heavy, 30s+ latency — tight cap
+    "jina_rerank": 100,          # cheap, ~1ms/pair; cap = pair-call ceiling
+    "playwright_search": 60,     # zero-API-cost; cap = wall-clock guardrail
 }
 
 
@@ -130,12 +170,14 @@ class QuotaLedger:
             raise QuotaExceeded(f"{provider} hard cap {hard_cap} reached (used={used})")
 
     def cheapest_with_capacity(self) -> str | None:
-        """Return the name of the cheapest provider that still has free capacity."""
+        """Return the name of the cheapest primary provider that still has
+        free capacity. Auxiliary canary providers (sprint-19 search-agent
+        upgrades) are excluded — see ``_AUX_PROVIDERS``."""
 
         candidates = [
             (name, p["overage_per_1k_usd"])
             for name, p in self._state["providers"].items()
-            if self.remaining_free(name) > 0
+            if name not in _AUX_PROVIDERS and self.remaining_free(name) > 0
         ]
         if not candidates:
             return None

@@ -33,6 +33,31 @@ Call tools to cover all eight sectors listed below, then call `emit_session` exa
 - `fetch_new_yorker_talk_of_the_town()` — scrapes The New Yorker's Talk of the Town index, picks the newest article not in the prior-coverage set, returns `{available, title, section, dek, text, url, source}`. Call exactly **once** per run.
 - `emit_session(session_json)` — terminator. Call once when everything is covered.
 
+### Sprint-19 search-agent canaries (only present when env-flag enabled)
+
+These tools register only when their `JEEVES_USE_*` flag is set. When present, they are usually superior to Serper/Tavily for their stated niche — read the descriptions carefully.
+
+- `jina_search(query, num=8, site=None)` — Jina AI search. CHOOSE WHEN you need ranked URLs WITH clean extracted snippets in one call. PREFER OVER `serper_search` when you'll also need article text — Jina's snippets often eliminate the follow-up `tavily_extract`. Hard cap 200/day.
+- `jina_deepsearch(question, reasoning_effort='low')` — agentic multi-hop search-read-reason. CHOOSE WHEN a deep sector needs 5+ citations across multiple sources. PREFER OVER `gemini_grounded_synthesize` when you want a deeper citation set. Slow (15-90s) but ONE call replaces 5+ chained Serper/Tavily/extract operations. Hard cap 20/day.
+- `jina_rerank(query, documents, top_n=8)` — semantic reranker. CHOOSE WHEN you have ≥10 candidates from 2+ search calls and want to pick the best subset before extraction. Cheap (~ms/pair). Hard cap 100/day.
+- `tinyfish_search(query, num=10, include_raw_content=False, site=None)` — managed-browser search. CHOOSE WHEN target is a JS-heavy site (LinkedIn, X, paywalled SPAs) where Serper returns thin metadata, OR for site-scoped queries. Set `include_raw_content=True` to get SERP + full markdown in one call. Hard cap 8/day.
+- `playwright_search(query, engine='ddg', num=10)` — headless SERP scrape (DuckDuckGo/Bing/Brave). CHOOSE WHEN you need a free Serper peer for diversity OR when Serper quota is exhausted. Zero API cost. Hard cap 60/day.
+
+### Naming taxonomy (sprint-19 slice E)
+
+Tools are grouped by *role*. New peers register under an existing role rather than introducing a new tool surface. The eval harness, rate-limit tiers, and your own selection logic all key off these roles:
+
+| Role             | Tools (registered when flagged)                                                    |
+|------------------|------------------------------------------------------------------------------------|
+| `web_search`     | `serper_search`, `tavily_search`, `jina_search`*, `tinyfish_search`*, `playwright_search`* |
+| `semantic_search`| `exa_search`                                                                       |
+| `deep_research`  | `gemini_grounded_synthesize`, `vertex_grounded_search`, `jina_deepsearch`*         |
+| `rerank`         | `jina_rerank`*                                                                     |
+| `extract`        | `tavily_extract`, `fetch_article_text`, `tinyfish_extract`*, `playwright_extract`  |
+| `curated_feed`   | `fetch_new_yorker_talk_of_the_town`                                                |
+
+(* = behind `JEEVES_USE_*` flag.) When two tools share a role, prefer the one whose description matches the query niche. The full registry lives in `jeeves/tools/__init__.py:TOOL_TAXONOMY`.
+
 ### Provider-selection decision tree
 
 Pick the cheapest tool that fits the query type:
@@ -117,6 +142,11 @@ These are per-run ceilings — not targets. Use the cheapest adequate tool first
 | `playwright_extract` | 5 | LAST RESORT only; ~5–15s each; skip if `success=false` |
 | `fetch_new_yorker_talk_of_the_town` | 1 | Call exactly once |
 | `emit_session` | 1 | Call exactly once when all sectors complete |
+| `jina_search` (if registered) | 10 | Often replaces serper+tavily_extract pair |
+| `jina_deepsearch` (if registered) | 3 | Reserve for deep sectors only |
+| `jina_rerank` (if registered) | 8 | Use after unioning 2+ search providers |
+| `tinyfish_search` (if registered) | 8 | Site-scoped or JS-heavy queries only |
+| `playwright_search` (if registered) | 20 | Free; pair with serper for diversity |
 
 **Quota exhaustion:** if a tool returns a quota/429 error, switch immediately to the next
 cheapest alternative. Do not retry the same provider more than once per sector.

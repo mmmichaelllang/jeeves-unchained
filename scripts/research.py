@@ -42,6 +42,7 @@ from jeeves.schema import CorrespondenceHandoff  # noqa: E402
 from jeeves.session_io import load_prior_sessions, save_session  # noqa: E402
 from jeeves.tools.emit_session import ResearchContext  # noqa: E402
 from jeeves.tools.quota import QuotaLedger  # noqa: E402
+from jeeves.vault import populate_vault_insight  # noqa: E402
 
 log = logging.getLogger("jeeves.research")
 
@@ -474,6 +475,15 @@ def main(argv: list[str] | None = None) -> int:
         session = _force_fallback_session(cfg, "no_emit_session_call")
     else:
         session = ctx.session
+
+    # Sprint-19: populate Library Stacks (PART 8) from a local vault when
+    # JEEVES_VAULT_PATH is set. No-op when env var is empty — preserves
+    # pre-sprint behaviour of an empty Library Stacks section.
+    try:
+        wrote = populate_vault_insight(session)
+        log.info("vault_insight populated: %s", wrote)
+    except Exception as exc:  # vault must never break a research run
+        log.warning("vault_insight population failed: %s", exc)
 
     path = save_session(session, cfg)
     ledger.save()

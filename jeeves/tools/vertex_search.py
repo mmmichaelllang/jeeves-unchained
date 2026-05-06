@@ -30,10 +30,13 @@ import json
 import logging
 import os
 import tempfile
+import time
 from typing import Any
 
 from ..config import Config
 from .quota import QuotaExceeded, QuotaLedger
+from .rate_limits import acquire as _rl_acquire
+from .telemetry import emit as _emit
 
 log = logging.getLogger(__name__)
 
@@ -96,6 +99,7 @@ def make_vertex_grounded(cfg: Config, ledger: QuotaLedger):
 
         creds_path: str | None = None
         original_creds_env: str | None = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+        t0 = time.monotonic()
 
         try:
             # Write credentials to temp file if JSON content was provided.
@@ -135,16 +139,33 @@ def make_vertex_grounded(cfg: Config, ledger: QuotaLedger):
                 tools=[search_tool],
                 generation_config=GenerationConfig(temperature=0.2),
             )
-            resp = model.generate_content(question)
+            with _rl_acquire("vertex_grounded"):
+                resp = model.generate_content(question)
 
         except ImportError:
             log.warning(
                 "vertex_search: google-cloud-aiplatform not installed. "
                 "Run: uv sync --extra vertex"
             )
+            _emit(
+                "tool_call",
+                provider="vertex_grounded",
+                question=question,
+                ok=False,
+                latency_ms=int((time.monotonic() - t0) * 1000),
+                error="package not installed",
+            )
             return json.dumps({"provider": "vertex", "error": "package not installed", "answer": "", "citations": []})
         except Exception as exc:
             log.warning("vertex_grounded error: %s", exc)
+            _emit(
+                "tool_call",
+                provider="vertex_grounded",
+                question=question,
+                ok=False,
+                latency_ms=int((time.monotonic() - t0) * 1000),
+                error=str(exc)[:200],
+            )
             return json.dumps({"provider": "vertex", "error": str(exc), "answer": "", "citations": []})
         finally:
             # Clean up temp credentials file and restore env.
@@ -166,6 +187,15 @@ def make_vertex_grounded(cfg: Config, ledger: QuotaLedger):
         log.info(
             "vertex_grounded: answered (%d chars, %d citations) [daily=%d/1490]",
             len(answer), len(citations), ledger.daily_used("vertex_grounded"),
+        )
+        _emit(
+            "tool_call",
+            provider="vertex_grounded",
+            question=question,
+            ok=True,
+            answer_chars=len(answer),
+            citations=len(citations),
+            latency_ms=int((time.monotonic() - t0) * 1000),
         )
         return json.dumps({
             "provider": "vertex",

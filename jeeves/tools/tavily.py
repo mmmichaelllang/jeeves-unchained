@@ -4,10 +4,13 @@ from __future__ import annotations
 
 import json
 import logging
+import time
 from typing import Any
 
 from ..config import Config
 from .quota import QuotaLedger
+from .rate_limits import acquire as _rl_acquire
+from .telemetry import emit as _emit
 
 log = logging.getLogger(__name__)
 
@@ -34,18 +37,29 @@ def make_tavily_search(cfg: Config, ledger: QuotaLedger):
                 "ERROR: tavily_search requires a non-empty 'query' argument. "
                 "Example: tavily_search(query='Edmonds WA local news today')"
             )
+        t0 = time.monotonic()
         try:
             from tavily import TavilyClient  # type: ignore
 
             client = TavilyClient(api_key=cfg.tavily_api_key)
-            resp = client.search(
-                query=query,
-                max_results=max_results,
-                search_depth=depth,
-                include_answer=True,
-            )
+            with _rl_acquire("tavily"):
+                resp = client.search(
+                    query=query,
+                    max_results=max_results,
+                    search_depth=depth,
+                    include_answer=True,
+                )
         except Exception as e:
             log.warning("tavily search error: %s", e)
+            _emit(
+                "tool_call",
+                provider="tavily",
+                query=query,
+                ok=False,
+                results=0,
+                latency_ms=int((time.monotonic() - t0) * 1000),
+                error=str(e)[:200],
+            )
             return json.dumps({"provider": "tavily", "error": str(e), "results": []})
 
         ledger.record("tavily", 2 if depth == "advanced" else 1)
@@ -61,6 +75,15 @@ def make_tavily_search(cfg: Config, ledger: QuotaLedger):
             }
             for r in (resp.get("results") or [])
         ]
+        _emit(
+            "tool_call",
+            provider="tavily",
+            query=query,
+            depth=depth,
+            ok=True,
+            results=len(results),
+            latency_ms=int((time.monotonic() - t0) * 1000),
+        )
         return json.dumps({
             "provider": "tavily",
             "query": query,
@@ -98,15 +121,24 @@ def make_tavily_extract(cfg: Config, ledger: QuotaLedger):
 
         results: list[dict[str, Any]] = []
         tavily_failed_completely = False
+        t0 = time.monotonic()
         try:
             from tavily import TavilyClient  # type: ignore
 
             client = TavilyClient(api_key=cfg.tavily_api_key)
-            resp = client.extract(urls=urls)
+            with _rl_acquire("tavily"):
+                resp = client.extract(urls=urls)
         except Exception as e:
             log.warning("tavily extract error: %s", e)
             tavily_failed_completely = True
             resp = {"results": []}
+        _emit(
+            "tool_call",
+            provider="tavily_extract",
+            urls=len(urls),
+            ok=not tavily_failed_completely,
+            latency_ms=int((time.monotonic() - t0) * 1000),
+        )
 
         if not tavily_failed_completely:
             ledger.record("tavily", len(urls))
