@@ -3,10 +3,38 @@
   "status": "complete",
   "dedup": {
     "covered_urls": [
-      "https://www.newyorker.com/magazine/2026/05/11/two-hundred-and-fifty-years-of-complicated-commemorations"
+      "http://arxiv.org/abs/2602.08990v1",
+      "https://arxiv.org/abs/2603.27008v1",
+      "https://arxiv.org/pdf/2602.02660",
+      "https://arxiv.org/pdf/2603.13327",
+      "https://audria.tech/",
+      "https://compasswearable.com/",
+      "https://ersearch2.cvtisr.sk/vufind/EdsRecord/edsair,edsair.doi.dedup.....448a95726a3e08715423b148d8dee692",
+      "https://getbuddi.ai/",
+      "https://hellohistory.ai/",
+      "https://humy.ai/",
+      "https://immersioned.org/",
+      "https://nirva.life/",
+      "https://nunatechnology.com/",
+      "https://philarchive.org/archive/ISATRO-4",
+      "https://philpapers.org/archive/HAMATC-5.pdf",
+      "https://sureprompts.com/blog/prompting-reasoning-models-guide",
+      "https://wareit.ai/",
+      "https://www.harpercollins.com/products/the-known-world-edward-p-jones",
+      "https://www.newyorker.com/magazine/2026/05/11/two-hundred-and-fifty-years-of-complicated-commemorations",
+      "https://www.theguardian.com/world/2026/may/02/dark-era-trump-creating-new-approach-global-politics",
+      "https://www.theguardian.com/world/2026/may/04/monday-briefing-will-a-new-alliance-of-nations-be-able-to-guide-the-world-towards-a-post-fossil-fuel-future"
     ],
     "covered_headlines": [
+      "Two new papers advance the triadic-ontology program beyond the prior coverage.",
+      "Three major advances define the autonomous-research stack this week. DOVA (arXiv 2603.",
+      "Three new voice-first AI wearables launched in 2026, each targeting different use-cases. Audria (audria.",
+      "English and History teachers gained three specialized AI co-workers this spring. Humy.",
+      "The lifelogging pendant category split into two clear camps in 2026. Nirva (nirva.",
       "Two Hundred and Fifty Years of Complicated Commemorations",
+      "The Known World",
+      "Monday briefing: Will a new alliance of nations be able to guide the world towards a post-fossil fuel future?",
+      "Hope out of chaos: how the dark era of Trump is creating a new approach to global politics",
       "**Friend AI Pendant** (MyTabAI, Inc): $99 wearable voice companion with 15-hour battery life, always-listening mic for conversations, and $7.",
       "**MagicSchool AI**: April 2026 updates include Educational Song Generator (turns lessons into music) and Studio Mode in Raina for document editing.",
       "**Nirva AI Jewelry**: Fashion-forward pendant that combines AI sensing with jewelry design, tracks emotions and auto-journals life experiences.",
@@ -238,7 +266,6 @@
       "The House Oversight subcommittee on National Security held a closed-door UAP briefing on April 24, 2026, but issued no public readout, frustrating tra",
       "The IMF has downgraded global growth forecasts to 3.",
       "The Immortal Life of Henrietta Lacks",
-      "The Known World",
       "The Kremlin has criticized Ukraine's response to Vladimir Putin's offer of a three-day ceasefire as \"ambiguous\" and demanded clarity.",
       "The Line of Beauty",
       "The New Normal",
@@ -311,31 +338,71 @@
       "functions.tavily_search:2",
       "‘The Music of What Happens’ | Nick Laird | The New York Review of Books",
       "email | Andrew Lang",
-      "email | lang.mc@gmail.com",
-      "email | Edmonds Patch",
-      "email | Mistral AI"
+      "email | Jacky Bishop",
+      "email | Mark Peng",
+      "email | \"QFC Savings & Sales\"",
+      "email | CARFAX Car Care",
+      "email | lang.mc@gmail.com"
     ],
     "cross_sector_dupes": []
   },
   "triadic_ontology": {
-    "findings": "",
-    "urls": []
+    "findings": "Two new papers advance the triadic-ontology program beyond the prior coverage. Christopher Isabelle’s \"Triadic Relational Ontology: From Primordial Separation to Relational Field\" (PhilArchive, 2026) extends his earlier Primordial Separation Ontology by arguing that dyadic structures (self/other, true/false) are necessary but insufficient for emergence and meaning; a third, actively-maintained “relational field” must be posited or intelligibility itself vanishes. Language, being dyadic, can only compress this triadic structure and never recover its origin. Separately, Trent Slade’s \"A Triadic Ontology with SU(3) Invariants\" (Zenodo, 2025) constructs a minimal, computationally-tractable ontic kernel grounded in the qutrit representation of SU(3). States, operators and constraints are all triadically organized while preserving Casimir invariants; a mandatory ℤ₃ rotation operator enforces closure without collapsing the third state, yielding an executable 3-8-2 schema (three basis stances, [TRUNCATED]",
+    "urls": [
+      "https://philarchive.org/archive/ISATRO-4",
+      "https://ersearch2.cvtisr.sk/vufind/EdsRecord/edsair,edsair.doi.dedup.....448a95726a3e08715423b148d8dee692",
+      "https://philpapers.org/archive/HAMATC-5.pdf"
+    ]
   },
   "ai_systems": {
-    "findings": "",
-    "urls": []
+    "findings": "Three major advances define the autonomous-research stack this week. DOVA (arXiv 2603.13327) introduces deliberation-first orchestration: a meta-reasoning layer that models the user, deliberates on tool need, and then dispatches a three-phase ensemble-blackboard-refinement pipeline, cutting inference cost 40–60 % on routine queries while preserving depth for hard ones. MARS (arXiv 2602.02660) tackles AI-research automation specifically; its Budget-Aware MCTS planner balances performance vs. compute cost, modular “Design-Decompose-Implement” code generation, and a Comparative Reflective Memory that mines prior branches for reusable insights—63 % of its later “Aha!” moments come from cross-branch transfer. InternAgent-1.5 (arXiv 2602.08990) scales the paradigm to full scientific discovery, unifying generation, verification, and evolution subsystems so the same agent can both design ML algorithms and run wet-lab experiments end-to-end. Prompt-engineering practice is catching up: RASPRef ( [TRUNCATED]",
+    "urls": [
+      "https://arxiv.org/pdf/2603.13327",
+      "https://arxiv.org/pdf/2602.02660",
+      "http://arxiv.org/abs/2602.08990v1",
+      "https://arxiv.org/abs/2603.27008v1",
+      "https://sureprompts.com/blog/prompting-reasoning-models-guide"
+    ]
   },
   "uap": {
     "findings": "",
     "urls": []
   },
-  "weather": "",
+  "weather": "Mostly cloudy and cool today in Edmonds. Current temp 57°F, peaking near 62-66°F this afternoon. Light southwest winds 5-10 mph. Rain chance stays low—10-17%—so any showers will be brief. Evening turns cloudy with lows around 50-52°F and only a slight chance of drizzle. Good day for a walk before the marine layer thickens tonight.",
   "local_news": [],
   "career": {},
   "family": {},
   "global_news": [],
   "intellectual_journals": [],
-  "wearable_ai": [],
+  "wearable_ai": [
+    {
+      "category": "ai_voice_hardware",
+      "findings": "Three new voice-first AI wearables launched in 2026, each targeting different use-cases. Audria (audria.tech) is a behind-the-ear device focused on proactive assistance—listening to conversations and surfacing contextual reminders, smart scheduling, and suggestions for both professional and personal productivity. Buddi AI (getbuddi.ai) is a versatile brooch/pen/pendant that transcribes and summari [TRUNCATED]",
+      "urls": [
+        "https://audria.tech/",
+        "https://getbuddi.ai/",
+        "https://compasswearable.com/"
+      ]
+    },
+    {
+      "category": "teacher_ai_tools",
+      "findings": "English and History teachers gained three specialized AI co-workers this spring. Humy.ai (humy.ai) offers 1,200+ interactive historical figures plus 90+ planning, differentiation, and auto-graded assessment tools; it now supports 50 languages and is FERPA/COPPA-compliant, already used by 60k+ teachers. immersionED (immersioned.org) delivers a complete US History curriculum via game-based “Pick You [TRUNCATED]",
+      "urls": [
+        "https://humy.ai/",
+        "https://immersioned.org/",
+        "https://hellohistory.ai/"
+      ]
+    },
+    {
+      "category": "wearable_devices",
+      "findings": "The lifelogging pendant category split into two clear camps in 2026. Nirva (nirva.life) is jewelry-grade AI that passively journals your entire day—building a \"living library of your life\" with mood tracking and 24/7 emotional coaching; it won six CES awards in January. Nuna (nunatechnology.com) is an emotion-tracking pendant that uses biometric sensors to visualize daily stress and calm patterns, [TRUNCATED]",
+      "urls": [
+        "https://nirva.life/",
+        "https://nunatechnology.com/",
+        "https://wareit.ai/"
+      ]
+    }
+  ],
   "newyorker": {
     "available": true,
     "title": "Two Hundred and Fifty Years of Complicated Commemorations ",
@@ -350,17 +417,32 @@
     "error": null
   },
   "literary_pick": {
-    "available": false,
-    "title": "",
-    "author": "",
-    "year": null,
-    "summary": "",
-    "url": ""
+    "available": true,
+    "title": "The Known World",
+    "author": "Edward P. Jones",
+    "year": 2003,
+    "summary": "Winner of the 2004 Pulitzer Prize and hailed by The New York Times as the best novel of the 21st century, Edward P. Jones’s debut is a sweeping, morally intricate portrait of antebellum Virginia. Henry Townsend, a former slave turned landowner, becomes the unlikely master of his own plantation—and his own slaves. After Henry’s death, the fragile order of the Townsend estate unravels, revealing the corrosive paradox of freedom built on bondage. Through a chorus of unforgettable voices, Jones explores the tangled lives of the enslaved and the enslavers, crafting a luminous meditation on power, m [TRUNCATED]",
+    "url": "https://www.harpercollins.com/products/the-known-world-edward-p-jones"
   },
-  "enriched_articles": [],
+  "enriched_articles": [
+    {
+      "url": "https://www.theguardian.com/world/2026/may/04/monday-briefing-will-a-new-alliance-of-nations-be-able-to-guide-the-world-towards-a-post-fossil-fuel-future",
+      "source": "www.theguardian.com",
+      "title": "Monday briefing: Will a new alliance of nations be able to guide the world towards a post-fossil fuel future?",
+      "fetch_failed": false,
+      "text": "# Monday briefing: Will a new alliance of nations be able to guide the world towards a post-fossil fuel future? | Donald Trump | The Guardian\n[Skip to main content](https://www.theguardian.com/world/2026/may/04/monday-briefing-will-a-new-alliance-of-nations-be-able-to-guide-the-world-towards-a-post-fossil-fuel-future#maincontent)[Skip to navigation](https://www.theguardian.com/world/2026/may/04/monday-briefing-will-a-new-alliance-of-nations-be-able-to-guide-the-world-towards-a-post-fossil-fuel-f"
+    },
+    {
+      "url": "https://www.theguardian.com/world/2026/may/02/dark-era-trump-creating-new-approach-global-politics",
+      "source": "www.theguardian.com",
+      "title": "Hope out of chaos: how the dark era of Trump is creating a new approach to global politics",
+      "fetch_failed": false,
+      "text": "[Skip to navigation](#navigation)[Skip to navigation](#navigation)\n\n[Print subscriptions](https://support.theguardian.com/subscribe/weekly?REFPVID=undefined&INTCMP=undefined&acquisitionData=%7B%22source%22%3A%22GUARDIAN_WEB%22%2C%22componentId%22%3A%22PrintSubscriptionsHeaderLink%22%2C%22componentType%22%3A%22ACQUISITIONS_HEADER%22%2C%22referrerUrl%22%3A%22%22%7D)\n\n\n\n[Sign in](https://profile.theguardian.com/signin?INTCMP=DOTCOM_NEWHEADER_SIGNIN&ABCMP=ab-sign-in&componentEventParams=componentTyp"
+    }
+  ],
   "correspondence": {
     "found": true,
     "fallback_used": false,
-    "text": "- [reply needed] Andrew Lang: Andrew Lang invites Mister Lang to join the newest group effort: Make Care Visible!\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Write Phase\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Research Phase\n- [no action] lang.mc@gmail.com: Correspondence from lang.mc@gmail.com with a greeting and no specific request\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Correspondence Phase\n- [no action] Edmonds Patch: Newsletter from Edmonds Patch about local events and news\n- [no action] lang.mc@gmail.com: Correspondence from lang.mc@gmail.com with a greeting and no specific request\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for CI\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for CI\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Daily Pipeline\n- [no action] Mistral AI: Notification from Mistral AI about an active subscription\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Daily Pipeline"
+    "text": "- [escalation] Andrew Lang: Andrew Lang invites Mister Lang to join a group effort\n- [reply needed] Jacky Bishop: Email from Jacky Bishop regarding car scanning, with pictures of vehicles.\n- [reply needed] Anthropic: The Claude API access has been disabled due to the organization being out of usage credits.\n- [follow up] mmmichaelllang: Jeeves Daily Pipeline workflow run failed\n- [follow up] mmmichaelllang: Jeeves Daily Pipeline workflow run failed\n- [follow up] mmmichaelllang: Jeeves Research Phase workflow run failed\n- [follow up] mmmichaelllang: Jeeves Daily Pipeline workflow run failed\n- [follow up] mmmichaelllang: Jeeves Correspondence Phase workflow run failed\n- [no action] Mark Peng: Mark Peng sent an email about competitor pricing updates.\n- [no action] \"QFC Savings & Sales\": QFC sent a newsletter about weekly deals.\n- [no action] CARFAX Car Care: CARFAX sent a reminder about a recommended service for Mister Lang's car.\n- [no action] mmmichaelllang: GitHub sent a notification about a failed workflow run for Jeeves-memory.\n- [no action] mmmichaelllang: GitHub sent a notification about a failed workflow run for Jeeves-memory.\n- [no action] lang.mc@gmail.com: Lang.mc sent a correspondence email to Mister Lang."
   }
 }
