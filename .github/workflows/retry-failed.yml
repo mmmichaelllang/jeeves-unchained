@@ -19,6 +19,9 @@ on:
     workflows:
       - "Jeeves — Daily Pipeline"
       - "Jeeves — Archive Old Sessions"
+      # Auditor lives inside the Daily Pipeline as a job, not its own
+      # workflow — Daily Pipeline failure already covers auditor failure.
+
     types:
       - completed
 

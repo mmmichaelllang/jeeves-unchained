@@ -244,3 +244,109 @@ jobs:
           path: sessions/briefing-*.html
           if-no-files-found: ignore
           retention-days: 14
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Phase 5 — Auditor  (sprint-21: detect + optionally fix + optionally re-send)
+  #
+  # Runs after write completes. Always runs the detector and commits
+  # sessions/audit-<date>.json. When JEEVES_AUDITOR_AUTO_FIX=1 is set in
+  # repo Variables, also runs the fixer (deterministic + LLM-backed) and
+  # commits the revised briefing. When JEEVES_AUDITOR_RESEND=1 is set,
+  # re-sends the email after fixes.
+  #
+  # Default posture: detection-only + commit audit JSON. Fixes off.
+  # Re-send off. Promote step-by-step after the audit JSON shows clean
+  # records for 7 days.
+  # ─────────────────────────────────────────────────────────────────────────
+  auditor:
+    name: Auditor
+    needs: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Don't block the run if write was retried — we still want to audit
+    # whatever briefing landed.
+    if: always() && needs.write.result != 'cancelled'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.8.17"
+
+      - name: Sync dependencies
+        run: uv sync --no-dev
+
+      - name: Run audit (detection)
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          # Reasoning-first model picker overrides; both optional.
+          JEEVES_AUDIT_MODEL: ${{ vars.JEEVES_AUDIT_MODEL || '' }}
+          JEEVES_AUDIT_MODELS: ${{ vars.JEEVES_AUDIT_MODELS || '' }}
+        run: |
+          DATE="${{ github.event.inputs.date || '' }}"
+          if [ -z "$DATE" ]; then DATE=$(date -u +%Y-%m-%d); fi
+          echo "Auditing date: $DATE"
+          uv run python scripts/audit.py --date "$DATE" || echo "audit non-zero — continuing"
+
+      - name: Run audit fix (gated)
+        if: ${{ vars.JEEVES_AUDITOR_AUTO_FIX == '1' }}
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          JEEVES_AUDIT_MODEL: ${{ vars.JEEVES_AUDIT_MODEL || '' }}
+          JEEVES_AUDIT_MODELS: ${{ vars.JEEVES_AUDIT_MODELS || '' }}
+        run: |
+          DATE="${{ github.event.inputs.date || '' }}"
+          if [ -z "$DATE" ]; then DATE=$(date -u +%Y-%m-%d); fi
+          echo "Fixing date: $DATE"
+          uv run python scripts/audit_fix.py --date "$DATE" || echo "fix non-zero — continuing"
+
+      - name: Re-run audit on revised briefing (gated)
+        if: ${{ vars.JEEVES_AUDITOR_AUTO_FIX == '1' }}
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          DATE="${{ github.event.inputs.date || '' }}"
+          if [ -z "$DATE" ]; then DATE=$(date -u +%Y-%m-%d); fi
+          # Overwrites audit-<date>.json with post-fix counts.
+          uv run python scripts/audit.py --date "$DATE" --no-llm || true
+
+      - name: Re-send revised briefing (gated)
+        if: ${{ vars.JEEVES_AUDITOR_RESEND == '1' && vars.JEEVES_AUDITOR_AUTO_FIX == '1' }}
+        env:
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          JEEVES_RECIPIENT_EMAIL: ${{ vars.JEEVES_RECIPIENT_EMAIL || 'lang.mc@gmail.com' }}
+        run: |
+          DATE="${{ github.event.inputs.date || '' }}"
+          if [ -z "$DATE" ]; then DATE=$(date -u +%Y-%m-%d); fi
+          uv run python scripts/audit_resend.py --date "$DATE" || echo "re-send non-zero — continuing"
+
+      - name: Commit audit + revised briefing artifacts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "jeeves-bot"
+          git config user.email "jeeves-bot@users.noreply.github.com"
+          git add sessions/audit-*.json sessions/briefing-*.html 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "auditor: $(date -u +%Y-%m-%d) records"
+            git pull --rebase --autostash origin "${{ github.ref_name }}" || true
+            git push
+          else
+            echo "no audit changes to commit"
+          fi
+
+      - name: Upload audit artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-artifacts
+          path: |
+            sessions/audit-*.json
+            sessions/audit-fix-*.json
+            sessions/briefing-*.html
+          if-no-files-found: ignore
+          retention-days: 14
