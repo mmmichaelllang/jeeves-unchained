@@ -3,78 +3,29 @@
   "status": "complete",
   "dedup": {
     "covered_urls": [
-      "http://www.seattlepromusica.org/auditions",
-      "https://aeon.co/essays/medieval-art-makes-the-body-a-site-of-theology-and-politics",
-      "https://aeon.co/essays/the-many-lives-of-eurasian-daimonology",
-      "https://aeon.co/essays/who-needs-ai-text-generation-when-theres-erasmus-of-rotterdam",
-      "https://arxiv.org/abs/2603.28986v1",
-      "https://arxiv.org/pdf/2602.02660",
-      "https://arxiv.org/pdf/2604.09621",
-      "https://audria.tech/",
-      "https://bleequp.com/",
-      "https://chalkie.ai/",
-      "https://compasswearable.com/",
-      "https://friend.com/",
-      "https://ganance.com/",
-      "https://getbuddi.ai/",
-      "https://humy.ai/",
-      "https://immersioned.org/",
-      "https://lumilife.online/",
+      "https://aeon.co/essays/sure-ai-can-do-writing-but-memoir-not-so-much",
+      "https://jewishcurrents.org/issue/spring-2026",
       "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/",
       "https://myedmondsnews.com/2026/05/council-postpones-vote-on-city-administrator-advances-measure-on-salary-commission/",
-      "https://nirva.life/",
-      "https://philarchive.org/archive/ISATRO-4",
-      "https://philarchive.org/rec/ISATRO-4",
-      "https://propublica.org/article/when-the-coast-guard-intercepts-unaccompanied-kids",
-      "https://skugga.com/",
-      "https://sno-isle.bibliocommons.com/v2/events?types=5ecfd46304cef73a006d8c2f",
-      "https://socraeducation.com/",
-      "https://tepy.ai/",
-      "https://twee.com/",
-      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
-      "https://www.bbc.com/news/articles/c0q9xq7knq2o",
-      "https://www.bbc.com/news/articles/c8jv8xl17l8o",
+      "https://us.macmillan.com/books/9780374706098",
       "https://www.edmondsbeacon.com/stories/city-council-adopts-safety-action-plan,175444",
-      "https://www.facebook.com/photo.php?fbid=1392184282944046&set=a.462662199229597&id=100064574628409",
-      "https://www.harpercollins.com/products/the-known-world-edward-p-jones",
-      "https://www.instagram.com/p/DX0nR_sjIuZ/",
       "https://www.newyorker.com/magazine/2026/05/11/two-hundred-and-fifty-years-of-complicated-commemorations",
-      "https://www.nybooks.com/articles/2026/03/12/a-bitter-winter-in-ukraine-tim-judah/",
-      "https://www.nybooks.com/articles/2026/05/28/irans-new-winter-christopher-de-bellaigue/",
-      "https://www.reuters.com/world/africa/tigray-party-restores-pre-war-government-threat-northern-ethiopia-peace-2026-05-05/",
-      "https://www.reuters.com/world/china/us-bahrain-push-un-backed-action-hormuz-washington-seeks-maritime-coalition-2026-05-05/",
-      "https://www.reuters.com/world/iran-war-live-struggle-control-strait-hormuz-puts-strain-us-iran-ceasefire-2026-05-05/",
-      "https://www.theguardian.com/world/2026/may/02/dark-era-trump-creating-new-approach-global-politics",
-      "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/",
-      "https://www.wareable.com/wearable-tech/mwc-2026-best-wearables-ai-hardware-announcements-of-the-show"
+      "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
+      "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/"
     ],
     "covered_headlines": [
-      "Two recent papers advance triadic-relational metaphysics. Christopher Isabelle’s “Triadic Relational Ontology” argues that after the primordial separation of “here/not-here,” intelligibility demands an irreducible third relational field sustained by active tension between poles;",
-      "Three 2026 arXiv papers showcase next-gen autonomous research agents. MARS introduces Budget-Aware MCTS and Reflective Memory to cut compute costs while discovering cross-task insights.",
-      "The Edmonds City Council voted 5-1 on Tuesday (May 5) to postpone confirmation of Mayor Mike Rosen’s nominee Stephanie Lucash as the new city administrator until next week’s meeting.",
-      "At its April 28 meeting the council formally adopted Edmonds’ first-ever Comprehensive Safety Action Plan, a $300,000 roadmap funded by a federal Safe Streets grant.",
-      "Police Chief Loi Dawkins updated the council on the department’s progress toward accessing $210,000 in new public-safety sales-tax revenue. Edmonds has collected the 0.",
-      "Seattle Pro Musica has concluded auditions for the 2025-26 season, but is already preparing for next year. Email auditions@seattlepromusica.",
-      "Sno-Isle Libraries has released its May 2026 calendars. Edmonds Library (650 Main St) continues toddler storytimes on Tuesday and Thursday mornings at 10:30 am, plus a Saturday family storytime at 11 am.",
-      "President Trump has paused the US military escort operation 'Project Freedom' in the Strait of Hormuz, citing diplomatic progress toward a potential deal with Iran. This comes as Iran seized two cargo ships in the strait and continues to threaten commercial shipping.",
-      "The Strait of Hormuz remains effectively closed to commercial shipping, creating the largest global oil supply disruption since the 1970s energy crisis.",
-      "The Tigray People's Liberation Front (TPLF) has restored its pre-war government structure in northern Ethiopia, creating rival political administrations and threatening to reignite the devastating civil war that killed hundreds of thousands from 2020-2022.",
-      "Reform UK leader Nigel Farage faces scrutiny over a £5 million gift from billionaire donor Christopher Harborne that he failed to declare before becoming an MP.",
-      "US Secretary of State Marco Rubio has proposed a UN Security Council resolution demanding Iran cease attacks in the Strait of Hormuz, calling it a 'test of the utility of the United Nations.' The draft resolution could lead to sanctions or potentially authorize force if Iran fails to comply.",
-      "Medieval art transforms the human body into a political and theological battleground, as seen in the 13th-century mosaics of Saint Mark’s Basilica.",
-      "Tim Judah reports from Kyiv on the third winter of Russia’s full-scale invasion, finding a populace locked in a temporal stasis. Ukrainian novelist Andrey Kurkov, once hopeful about weekends at his country house, now tells him, “the future is just too far away.",
-      "Seth Freed Wessler reconstructs the five-day ordeal of Tcherry, a 10-year-old Haitian boy intercepted alone by the U.S.",
-      "Maria Popova revisits Oliver Sacks’s posthumous essay collection “The River of Consciousness,” focusing on his meditation on the 100-millisecond lag between external event and conscious perception.",
-      "Friend AI Pendant (MyTabAI, Inc) – $99 pre-order, 15-hour battery, always-listening voice companion that texts you throughout the day; $7.",
-      "Humy.ai – 1,200+ interactive AI historical figures + 90 teacher tools for English/History;",
-      "Nirva – jewelry-grade AI pendant that journals your life, builds a \"living library of memories\"; 4-person SF startup, 6 CES 2026 awards.",
+      "The Edmonds City Council postponed until next week its vote on confirming Mayor Mike Rosen’s appointment of Stephanie Lucash as the city’s new administrator. Lucash, currently Kenmore’s deputy city manager, would earn $226,068 in 2026 if approved.",
+      "On April 28 the council unanimously adopted Edmonds’ first-ever Comprehensive Safety Action Plan, a $300,000 roadmap funded by a federal Safe Streets grant.",
+      "The same April 28 meeting featured annual reports from the city’s contract prosecutor (Walls Law Firm) and the Snohomish County Public Defender Association.",
+      "Police Chief Loi Dawkins updated the council on House Bill 2015 compliance requirements the department must meet by June 30 to access $210,000 in public-safety sales-tax revenue collected since February.",
+      "A sweeping investigation by ProPublica and FRONTLINE finds that more than 300 U.S.",
+      "In a pair of recent essays, The Marginalian explores the porous boundaries of mind and perception.",
+      "Aeon’s latest essays take on time, creativity and human nature.",
+      "The Spring 2026 issue of Jewish Currents devotes its pages to the politics of refuge and the fractures within the Jewish left. Tanvi Misra’s opening essay, “The Death of Asylum,” traces how centuries of legal maneuvers to deny sanctuary—from the 19th-century British Aliens Act to contemporary U.",
       "Two Hundred and Fifty Years of Complicated Commemorations",
-      "The Known World",
-      "Iran's New Winter | Christopher de Bellaigue | The New York Review of Books",
-      "Who needs AI text-generation when there's Erasmus of Rotterdam | Aeon Essays",
-      "The many lives of Eurasian daimonology | Aeon Essays",
-      "Hope out of chaos: how the dark era of Trump is creating a new approach to global politics",
-      "MWC 2026: Best wearables and AI hardware announcements",
+      "Gilead",
+      "Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny — ProPublica",
+      "The One Hundred Milliseconds Between the World and You: Oliver Sacks on Perception – The Marginalian",
       "**Friend AI Pendant** (MyTabAI, Inc): $99 wearable voice companion with 15-hour battery life, always-listening mic for conversations, and $7.",
       "**MagicSchool AI**: April 2026 updates include Educational Song Generator (turns lessons into music) and Studio Mode in Raina for document editing.",
       "**Nirva AI Jewelry**: Fashion-forward pendant that combines AI sensing with jewelry design, tracks emotions and auto-journals life experiences.",
@@ -166,7 +117,6 @@
       "Friend and Tab pendants represent the new wave of lifelogging wearables that continuously record audio for AI analysis.",
       "Friendship Schools",
       "From the Rooftops of Tehran | Anonymous | The New York Review of Books",
-      "Gilead",
       "Global diplomatic efforts are fraying as the Iran conflict shows no resolution and new crises emerge.",
       "Gold and silver bullion seized in anti-slavery raid in Hull",
       "Hallucinations | Oliver Sacks",
@@ -306,6 +256,7 @@
       "The House Oversight subcommittee on National Security held a closed-door UAP briefing on April 24, 2026, but issued no public readout, frustrating tra",
       "The IMF has downgraded global growth forecasts to 3.",
       "The Immortal Life of Henrietta Lacks",
+      "The Known World",
       "The Kremlin has criticized Ukraine's response to Vladimir Putin's offer of a three-day ceasefire as \"ambiguous\" and demanded clarity.",
       "The Line of Beauty",
       "The New Normal",
@@ -376,44 +327,51 @@
       "email | mmmichaelllang",
       "functions.tavily_extract:5{\"urls\": [\"https://www.",
       "functions.tavily_search:2",
-      "‘The Music of What Happens’ | Nick Laird | The New York Review of Books"
+      "‘The Music of What Happens’ | Nick Laird | The New York Review of Books",
+      "email | Mistral AI",
+      "email | Cerebras Systems",
+      "email | My Edmonds News",
+      "email | JD from Autohive",
+      "email | GitHub"
     ],
-    "cross_sector_dupes": []
+    "cross_sector_dupes": [
+      "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/"
+    ]
   },
   "triadic_ontology": {
-    "findings": "Two recent papers advance triadic-relational metaphysics. Christopher Isabelle’s “Triadic Relational Ontology” argues that after the primordial separation of “here/not-here,” intelligibility demands an irreducible third relational field sustained by active tension between poles; dyadic language alone cannot recover this structure. Damiano Migliorini’s “Relational Ontologies and Trinitarian Metaphysics” proposes a speculative trinitarian model in which relationality and multiplicity are transcendental features of being, integrating quantum-structural realism with analytic philosophy of religion to move beyond substance metaphysics.",
-    "urls": [
-      "https://philarchive.org/archive/ISATRO-4",
-      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
-      "https://philarchive.org/rec/ISATRO-4"
-    ]
+    "findings": "",
+    "urls": []
   },
   "ai_systems": {
-    "findings": "Three 2026 arXiv papers showcase next-gen autonomous research agents. MARS introduces Budget-Aware MCTS and Reflective Memory to cut compute costs while discovering cross-task insights. Mimosa presents an evolving multi-agent framework that auto-synthesizes and refines scientific workflows via MCP tool discovery, scoring 43.1% on ScienceAgentBench. Finally, Cmbagent demonstrates a semi-autonomous astrophysics pipeline that, with human guidance, won the FAIR Universe weak-lensing challenge, proving hybrid human-agent systems can outperform experts.",
-    "urls": [
-      "https://arxiv.org/pdf/2602.02660",
-      "https://arxiv.org/abs/2603.28986v1",
-      "https://arxiv.org/pdf/2604.09621"
-    ]
+    "findings": "",
+    "urls": []
   },
   "uap": {
     "findings": "",
     "urls": []
   },
-  "weather": "Clear start to the day at 54°F, rising to a pleasant 63-64°F under partly sunny skies. Light south-southwest winds 3-10 mph. Only a 10-14% chance of a brief sprinkle. Evening turns mostly cloudy, cooling to the low 50s with light northerly breezes—perfect for a stroll or outdoor dinner without the need for an umbrella.",
+  "weather": "Mostly cloudy this morning with increasing afternoon sunshine. High 66°F, light south winds shifting northwest. Just a 10% chance of a brief shower. Tonight stays mostly cloudy, low 52°F with light north breeze. Pleasant spring day—jacket weather early, comfortable by afternoon.",
   "local_news": [
     {
       "category": "municipal",
       "source": "myedmondsnews.com",
-      "findings": "The Edmonds City Council voted 5-1 on Tuesday (May 5) to postpone confirmation of Mayor Mike Rosen’s nominee Stephanie Lucash as the new city administrator until next week’s meeting. Council President Michelle Dotsch said the “very high-level and high-profile position” deserved more public and council scrutiny. If confirmed, Lucash—currently Kenmore’s deputy city manager—will earn an annual base salary of $226,068 for 2026. Separately, the council deadlocked 3-3 on whether to “unpause” the volunteer Salary Commission; Mayor Rosen broke the tie, sending the item to next week’s consent agenda. The commission would set binding pay for elected officials for the 2027-2028 biennium. Planning Director Mike Clugston reported that 15 detached-accessory-dwelling-unit (DADU) permits were issued in 20 [TRUNCATED]",
+      "findings": "The Edmonds City Council postponed until next week its vote on confirming Mayor Mike Rosen’s appointment of Stephanie Lucash as the city’s new administrator. Lucash, currently Kenmore’s deputy city manager, would earn $226,068 in 2026 if approved. Council President Michelle Dotsch said the high-profile post deserves more public and council scrutiny. In the same May 5 session the council: voted 3-3 on restarting the volunteer Salary Commission (Mayor Rosen broke the tie to advance it); moved to the May 12 consent agenda an ordinance clarifying that council meetings scheduled on election days will instead be held the preceding day; and heard a Planning Department update showing 15 detached-ADU permits issued last year and major projects nearing approval, including the 411-unit Edmonds Green  [TRUNCATED]",
       "urls": [
         "https://myedmondsnews.com/2026/05/council-postpones-vote-on-city-administrator-advances-measure-on-salary-commission/"
       ]
     },
     {
       "category": "municipal",
+      "source": "myedmondsnews.com",
+      "findings": "On April 28 the council unanimously adopted Edmonds’ first-ever Comprehensive Safety Action Plan, a $300,000 roadmap funded by a federal Safe Streets grant. The plan identifies 11 priority traffic-safety projects citywide—ranging from Highway 99 corridor upgrades to downtown-core intersection redesigns—that can now compete for future federal grants. Transportation engineer Bertrand Haus said the study pinpoints locations with the highest crash rates and perceived danger for pedestrians, cyclists and drivers. Adoption keeps Edmonds eligible for additional Safe Streets and Roads for All funding.",
+      "urls": [
+        "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/"
+      ]
+    },
+    {
+      "category": "municipal",
       "source": "edmondsbeacon.com",
-      "findings": "At its April 28 meeting the council formally adopted Edmonds’ first-ever Comprehensive Safety Action Plan, a $300,000 roadmap funded by a federal Safe Streets grant. The plan identifies 11 priority traffic-safety projects citywide—ranging from Highway 99 corridor improvements to downtown-core intersection upgrades—positioning the city to compete for future implementation grants. Annual reports from the city’s contract prosecutor (Walls Law Group) and the Snohomish County Public Defender Association were also presented; the prosecutor noted a new attorney has eliminated last year’s case backlog, while the public defender reported misdemeanor theft (median loss $37.66) remains the top charge in Edmonds.",
+      "findings": "The same April 28 meeting featured annual reports from the city’s contract prosecutor (Walls Law Firm) and the Snohomish County Public Defender Association. Prosecutor Aaron Walls told the council his firm has hired an additional attorney, eliminating a case backlog that had drawn council concern last fall. Public-defender director Kathleen Kyle reported misdemeanor theft remains the top charge in Edmonds (median value $37.66) and urged local retailers to adopt stronger anti-theft measures.",
       "urls": [
         "https://www.edmondsbeacon.com/stories/city-council-adopts-safety-action-plan,175444"
       ]
@@ -421,122 +379,38 @@
     {
       "category": "public_safety",
       "source": "myedmondsnews.com",
-      "findings": "Police Chief Loi Dawkins updated the council on the department’s progress toward accessing $210,000 in new public-safety sales-tax revenue. Edmonds has collected the 0.1% tax since February, but state rules require six policy updates by June 30: alignment with the Keep Washington Working Act, revised use-of-force policies, enhanced use-of-force data reporting, firearms-relinquishment procedures, related training compliance, and overall state-mandated training standards. Dawkins said EPD is “100 % compliant” with control-tactics training and expects to meet the deadline, after which the city can spend the earmarked funds.",
+      "findings": "Police Chief Loi Dawkins updated the council on House Bill 2015 compliance requirements the department must meet by June 30 to access $210,000 in public-safety sales-tax revenue collected since February. Six policy areas still need work: alignment with the Keep Washington Working Act, use-of-force policy updates, improved use-of-force data collection, firearms-relinquishment procedures, related training mandates, and state training-standard compliance. Dawkins said EPD is collaborating with the Criminal Justice Training Center and expects to meet the deadline; she will then pursue a new $100 million state staffing-capacity grant.",
       "urls": [
         "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/"
       ]
     }
   ],
   "career": {},
-  "family": {
-    "choir": "Seattle Pro Musica has concluded auditions for the 2025-26 season, but is already preparing for next year. Email auditions@seattlepromusica.org to join the 2026-27 audition mailing list; all voice parts are heard each August at Epiphany Parish Seattle (1805 38th Ave). Requirements: a two-minute prepared solo, sight-reading two short choral excerpts in quartet, and ear-repeating a phrase. Tuesday 6:30-9:30 pm rehearsals, $75 annual dues, full COVID vaccination required. Small ensembles Vox, Chroma, and Orpheon hold additional auditions after the main choir starts.",
-    "toddler": "Sno-Isle Libraries has released its May 2026 calendars. Edmonds Library (650 Main St) continues toddler storytimes on Tuesday and Thursday mornings at 10:30 am, plus a Saturday family storytime at 11 am. Lynnwood Library offers Baby Storytime on Wednesdays at 10:30 am and Toddler Storytime on Fridays at 10:30 am. Both locations add special events: Lynnwood hosts \"Incredible Arthropods with The Bug Chicks\" on May 7 at 4 pm, while Edmonds presents a drop-in art-making day with storytime on May 16. All programs are free and first-come, first-served.",
-    "urls": [
-      "http://www.seattlepromusica.org/auditions",
-      "https://sno-isle.bibliocommons.com/v2/events?types=5ecfd46304cef73a006d8c2f",
-      "https://www.facebook.com/photo.php?fbid=1392184282944046&set=a.462662199229597&id=100064574628409",
-      "https://www.instagram.com/p/DX0nR_sjIuZ/"
-    ]
-  },
-  "global_news": [
-    {
-      "category": "Middle East Crisis",
-      "source": "BBC",
-      "findings": "President Trump has paused the US military escort operation 'Project Freedom' in the Strait of Hormuz, citing diplomatic progress toward a potential deal with Iran. This comes as Iran seized two cargo ships in the strait and continues to threaten commercial shipping. The move represents a significant de-escalation effort after weeks of heightened tensions that have driven global oil prices past $100 per barrel.",
-      "urls": [
-        "https://www.bbc.com/news/articles/c0q9xq7knq2o"
-      ]
-    },
-    {
-      "category": "Global Energy Crisis",
-      "source": "Reuters",
-      "findings": "The Strait of Hormuz remains effectively closed to commercial shipping, creating the largest global oil supply disruption since the 1970s energy crisis. The EU has approved a €90 billion loan for Ukraine as the Druzhba pipeline resumes operations, ending months of deadlock over oil supplies to Hungary. Oil prices have eased slightly following Trump's announcement of paused military operations.",
-      "urls": [
-        "https://www.reuters.com/world/iran-war-live-struggle-control-strait-hormuz-puts-strain-us-iran-ceasefire-2026-05-05/"
-      ]
-    },
-    {
-      "category": "Ethiopia Conflict",
-      "source": "Reuters",
-      "findings": "The Tigray People's Liberation Front (TPLF) has restored its pre-war government structure in northern Ethiopia, creating rival political administrations and threatening to reignite the devastating civil war that killed hundreds of thousands from 2020-2022. The move violates key provisions of the Pretoria peace agreement and has prompted warnings of 'catastrophic conflict' from the Ethiopian government.",
-      "urls": [
-        "https://www.reuters.com/world/africa/tigray-party-restores-pre-war-government-threat-northern-ethiopia-peace-2026-05-05/"
-      ]
-    },
-    {
-      "category": "UK Politics",
-      "source": "BBC",
-      "findings": "Reform UK leader Nigel Farage faces scrutiny over a £5 million gift from billionaire donor Christopher Harborne that he failed to declare before becoming an MP. Farage claims the money was for personal security and argues there was 'no obligation' to declare it as it was an unconditional, non-political gift. The Conservatives have referred the matter to the parliamentary standards commissioner.",
-      "urls": [
-        "https://www.bbc.com/news/articles/c8jv8xl17l8o"
-      ]
-    },
-    {
-      "category": "UN Diplomacy",
-      "source": "Reuters",
-      "findings": "US Secretary of State Marco Rubio has proposed a UN Security Council resolution demanding Iran cease attacks in the Strait of Hormuz, calling it a 'test of the utility of the United Nations.' The draft resolution could lead to sanctions or potentially authorize force if Iran fails to comply. Russia and China previously vetoed similar measures, but the US hopes adjusted language will secure passage.",
-      "urls": [
-        "https://www.reuters.com/world/china/us-bahrain-push-un-backed-action-hormuz-washington-seeks-maritime-coalition-2026-05-05/"
-      ]
-    }
-  ],
+  "family": {},
+  "global_news": [],
   "intellectual_journals": [
     {
-      "source": "aeon.co",
-      "findings": "Medieval art transforms the human body into a political and theological battleground, as seen in the 13th-century mosaics of Saint Mark’s Basilica. The cycle depicting Saint Mark’s life—his arrest, dragging, and martyrdom—does not dramatize pain through facial contortion but instead stages a silent contest between violence and composure. Mark’s body remains serene while his tormentors strain, a visual grammar that turns physical suffering into proof of spiritual mastery. A Black executioner appears as the agent of violence, embedding racial hierarchy into sacred narrative. Repeated across medi [TRUNCATED]",
-      "url": "https://aeon.co/essays/medieval-art-makes-the-body-a-site-of-theology-and-politics"
+      "source": "ProPublica",
+      "findings": "A sweeping investigation by ProPublica and FRONTLINE finds that more than 300 U.S. citizens—protesters, by-standers and even family members—have been swept up in Trump-era immigration raids and charged with assaulting or obstructing federal agents. Yet in over a third of the cases prosecutors quietly dismissed the charges after video evidence contradicted officers’ sworn statements, revealing a pattern of legally shaky arrests whose primary effect is to chill dissent. The report centers on Alejandro Orellana, a Marine veteran arrested in an East L.A. raid that was staged for Fox News cameras;  [TRUNCATED]",
+      "url": "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions"
     },
     {
-      "source": "nybooks.com",
-      "findings": "Tim Judah reports from Kyiv on the third winter of Russia’s full-scale invasion, finding a populace locked in a temporal stasis. Ukrainian novelist Andrey Kurkov, once hopeful about weekends at his country house, now tells him, “the future is just too far away.” With 60 % of Ukrainians dependent on power stations for heat and hot water, rolling blackouts and lukewarm radiators have become the texture of daily life. Kurkov’s nonfiction trilogy chronicling the war captures soldiers campaigning against gambling addiction and tropical-farm owners coaxing frost-resistant bananas—small acts of impro [TRUNCATED]",
-      "url": "https://www.nybooks.com/articles/2026/03/12/a-bitter-winter-in-ukraine-tim-judah/"
-    },
-    {
-      "source": "propublica.org",
-      "findings": "Seth Freed Wessler reconstructs the five-day ordeal of Tcherry, a 10-year-old Haitian boy intercepted alone by the U.S. Coast Guard in Florida waters. Detained aboard a cutter with 15 other children, Tcherry spent nights on a steel deck in 50-degree weather, rationed to one bottle of water and two sandwiches a day. Officers logged his name phonetically—“Cherry”—and photographed him for biometric entry into a growing database of child migrants. When a sister ship finally transferred the group to Bahamian authorities, Tcherry’s mother in Canada received a two-line WhatsApp: “They took him back.” [TRUNCATED]",
-      "url": "https://propublica.org/article/when-the-coast-guard-intercepts-unaccompanied-kids"
-    },
-    {
-      "source": "themarginalian.org",
-      "findings": "Maria Popova revisits Oliver Sacks’s posthumous essay collection “The River of Consciousness,” focusing on his meditation on the 100-millisecond lag between external event and conscious perception. Using neurological case studies of patients who experience temporal “standstills,” Sacks argues that perception is not passive reception but an active creative act—a coalition of neural assemblies that must cross an intensity threshold to reach awareness. This reframes consciousness as a mirror reflecting the perceiver’s own history and desires rather than a transparent window onto the world. Popova [TRUNCATED]",
+      "source": "The Marginalian",
+      "findings": "In a pair of recent essays, The Marginalian explores the porous boundaries of mind and perception. First, drawing on Oliver Sacks’s posthumous collection The River of Consciousness, it traces how 100-millisecond delays in neural processing create the felt continuity of experience—showing that perception is less a window on reality than a creative act that “marshals all that we are and reflects us back to ourselves.” A companion piece on plant intelligence reviews Zoë Schlanger’s The Light Eaters, arguing that new findings about plant memory, problem-solving and communication demand a wider def [TRUNCATED]",
       "url": "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/"
-    }
-  ],
-  "wearable_ai": [
-    {
-      "category": "ai_voice_hardware",
-      "findings": "Friend AI Pendant (MyTabAI, Inc) – $99 pre-order, 15-hour battery, always-listening voice companion that texts you throughout the day; $7.9 M raised, shipping \"Spring 2026\".  Audria – discreet behind-the-ear voice computer that proactively listens and offers contextual reminders; founded 2025, 7-person team, Delaware/India.  Compass – SF-based necklace that turns conversations into reminders & sum [TRUNCATED]",
-      "urls": [
-        "https://friend.com/",
-        "https://audria.tech/",
-        "https://compasswearable.com/",
-        "https://getbuddi.ai/"
-      ]
     },
     {
-      "category": "teacher_ai_tools",
-      "findings": "Humy.ai – 1,200+ interactive AI historical figures + 90 teacher tools for English/History; auto-graded debates, essays, simulations; FERPA/COPPA compliant, 60 k teachers.  Twee – rapid English-teacher generator for questions, dialogues, vocab, levelled texts; 8-person Hallandale/Israel team, 309 k monthly visits.  immersionED – game-based US History curriculum with \"Pick Your Path\" adaptive simula [TRUNCATED]",
-      "urls": [
-        "https://humy.ai/",
-        "https://twee.com/",
-        "https://immersioned.org/",
-        "https://socraeducation.com/",
-        "https://chalkie.ai/"
-      ]
+      "source": "Aeon",
+      "findings": "Aeon’s latest essays take on time, creativity and human nature. Emily Thomas shows how the 19th-century invention of the linear timeline—popularized by Sebastian Adams’s 1881 “Synchronological Chart”—fundamentally altered Western consciousness, replacing cyclical and mythic temporality with an arrow that marches from past to future. Richard Beard argues that AI can now produce competent sonnets yet remains constitutionally incapable of memoir, because the genre’s power lies not in craft but in the irreducible surprise of lived experience. Jonathan Goodman complicates Beard’s claim, surveying n [TRUNCATED]",
+      "url": "https://aeon.co/essays/sure-ai-can-do-writing-but-memoir-not-so-much"
     },
     {
-      "category": "wearable_devices",
-      "findings": "Nirva – jewelry-grade AI pendant that journals your life, builds a \"living library of memories\"; 4-person SF startup, 6 CES 2026 awards.  Ganance Heir – modular sensor that clips to any watch/bracelet, adds activity tracking & haptics; 9-person Chicago team, 1 k pre-orders shipped.  BleeqUp Ranger – AI sports glasses with 4-in-1 action cam, open-ear audio, smart nav, intercom; 7-person Hong Kong/C [TRUNCATED]",
-      "urls": [
-        "https://nirva.life/",
-        "https://ganance.com/",
-        "https://bleequp.com/",
-        "https://skugga.com/",
-        "https://lumilife.online/",
-        "https://tepy.ai/"
-      ]
+      "source": "Jewish Currents",
+      "findings": "The Spring 2026 issue of Jewish Currents devotes its pages to the politics of refuge and the fractures within the Jewish left. Tanvi Misra’s opening essay, “The Death of Asylum,” traces how centuries of legal maneuvers to deny sanctuary—from the 19th-century British Aliens Act to contemporary U.S. policies—laid the groundwork for today’s authoritarian resurgence. A symposium on Gaza gathers twenty-three Palestinian voices reflecting on lives lost and futures foreclosed, while Jon Danforth-Appell questions whether trauma can fully explain attachment to Zionism or whether what is called trauma i [TRUNCATED]",
+      "url": "https://jewishcurrents.org/issue/spring-2026"
     }
   ],
+  "wearable_ai": [],
   "newyorker": {
     "available": true,
     "title": "Two Hundred and Fifty Years of Complicated Commemorations ",
@@ -552,52 +426,31 @@
   },
   "literary_pick": {
     "available": true,
-    "title": "The Known World",
-    "author": "Edward P. Jones",
+    "title": "Gilead",
+    "author": "Marilynne Robinson",
     "year": 2004,
-    "summary": "Winner of the 2004 Pulitzer Prize and hailed as one of the best books of the 21st century by The New York Times, Edward P. Jones's debut novel is a masterwork of historical fiction set in antebellum Virginia. It tells the story of Henry Townsend, a former slave who becomes a plantation owner and slaveholder himself. After his death, the plantation begins to unravel as his widow Caldonia grieves and the enslaved people seek freedom. The novel explores the complex and morally intricate world of slavery, weaving together the lives of the freed and the enslaved, and offering a profound understandi [TRUNCATED]",
-    "url": "https://www.harpercollins.com/products/the-known-world-edward-p-jones"
+    "summary": "In 1956, Reverend John Ames, a 76-year-old Iowa preacher, begins a letter to his young son, recounting his life and the lives of his father and grandfather—both also ministers. The novel explores the tensions between pacifism and violence, faith and doubt, and the legacy of fathers and sons. Through Ames’s meditative voice, Robinson crafts a quiet, luminous story that has been hailed as a modern classic for its spiritual depth and lyrical prose.",
+    "url": "https://us.macmillan.com/books/9780374706098"
   },
   "enriched_articles": [
     {
-      "url": "https://www.nybooks.com/articles/2026/05/28/irans-new-winter-christopher-de-bellaigue/",
-      "source": "www.nybooks.com",
-      "title": "Iran's New Winter | Christopher de Bellaigue | The New York Review of Books",
+      "url": "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
+      "source": "www.propublica.org",
+      "title": "Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny — ProPublica",
       "fetch_failed": false,
-      "text": "In 1953 Iran's prime minister, Mohammad Mossadegh, was toppled in a coup planned by MI6 and the CIA and carried out by Iranian army units and hoodlums supportive of Shah Mohammad Reza Pahlavi. Mossadegh had nationalized Iran's British-run oil industry and allowed Iranians more freedom than they had ever known; the constitutional monarchy he favored was a path between the extremes of royal tyranny and popular radicalism that had beset the country for the previous three quarters of a century. In t"
+      "text": "![In a hectic scene, three officers with guns, helmets and camouflage gear are a blur of motion on a sidewalk, and all three are moving in different directions. Behind and beside them are people in street clothes, including one person who has fallen on the sidewalk. They are holding a phone and an agent is standing over them.](https://www.propublica.org/wp-content/uploads/2026/03/GettyImages-2219290205_maxHeight_3000_maxWidth_3000.jpg?w=1149)\n\n# Caught in the Crackdown: As Arrests at Anti-ICE Pr"
     },
     {
-      "url": "https://aeon.co/essays/who-needs-ai-text-generation-when-theres-erasmus-of-rotterdam",
-      "source": "aeon.co",
-      "title": "Who needs AI text-generation when there's Erasmus of Rotterdam | Aeon Essays",
+      "url": "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/",
+      "source": "www.themarginalian.org",
+      "title": "The One Hundred Milliseconds Between the World and You: Oliver Sacks on Perception – The Marginalian",
       "fetch_failed": false,
-      "text": "The Renaissance scholar and educator Erasmus of Rotterdam opens his polemical treatise The Ciceronian (1528) by describing the utterly dysfunctional writing process of a character named Nosoponus. The Ciceronian is structured as a dialogue, with two mature writers, Bulephorus and Hypologus, trying to talk Nosoponus out of his paralysing obsession with stylistic perfection. Nosoponus explains that it would take him weeks of fruitless writing and rewriting to produce a casual letter in which he as"
-    },
-    {
-      "url": "https://aeon.co/essays/the-many-lives-of-eurasian-daimonology",
-      "source": "aeon.co",
-      "title": "The many lives of Eurasian daimonology | Aeon Essays",
-      "fetch_failed": false,
-      "text": "Back in my student days in late 1970s Paris, one of my favourite walks would take me to the fabulous Père Lachaise cemetery near the eastern edge of the French capital. A miniature city of monumental tombs and crypts in a lush garden setting, it has long been 'home' to the remains of no small number of the very special dead: Molière, Oscar Wilde, Colette, Sarah Bernhardt, Chopin … and Jim Morrison. Morrison's gravesite was always part of my itinerary, because it was a gathering place for a colou"
-    },
-    {
-      "url": "https://www.theguardian.com/world/2026/may/02/dark-era-trump-creating-new-approach-global-politics",
-      "source": "www.theguardian.com",
-      "title": "Hope out of chaos: how the dark era of Trump is creating a new approach to global politics",
-      "fetch_failed": false,
-      "text": "There is cautious optimism that 'a majority of multilateralists' may be able to enduringly reshape the world order. Antonio de Aguiar Patriota, Brazil's ambassador to London, had no difficulty joining the dystopians describing the modern world in a recent speech, a world suffering from 'global warming and environmental degradation, multiple conflicts, rising military budgets, disregard for international law and international humanitarian law, disruptions to trade, erosion of democratic governanc"
-    },
-    {
-      "url": "https://www.wareable.com/wearable-tech/mwc-2026-best-wearables-ai-hardware-announcements-of-the-show",
-      "source": "www.wareable.com",
-      "title": "MWC 2026: Best wearables and AI hardware announcements",
-      "fetch_failed": false,
-      "text": "After several days of packed halls at MWC 2026—where the Wareable team dodged everything from back-flipping robots to King Felipe VI—the Barcelona show is officially in the books. There were undeniably fewer hardware launches in wearables than in previous years, with much of the focus this time fixed on 6G and AI infrastructure. Yet, the telco-first nature of the conference didn't stop a few exciting wearable tech announcements from breaking through. While most brands are clearly waiting for the"
+      "text": "[The Marginalian](https://www.themarginalian.org/)\n\n[The Marginalian](https://www.themarginalian.org/)\n\n![The Marginalian](https://www.themarginalian.org/wp-content/themes/themarginalian/images/the_marginalian_logo_print.png?20251109a)\n\n### [ABOUT](/about/)\n\n### [CONTACT](/contact/)\n\n### [SUPPORT](/donate/)\n\n### SUBSCRIBE\n\n[Newsletter](/newsletter/)\n\n[RSS](https://feeds.feedburner.com/brainpickings/rss)\n\n### CONNECT\n\n[Facebook](https://www.facebook.com/TheMarginalian/)\n\n[Twitter](https://twitter"
     }
   ],
   "correspondence": {
     "found": true,
     "fallback_used": false,
-    "text": "- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Research Phase\" failed in repository jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Daily Pipeline\" failed in repository jeeves-unchained.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Correspondence Phase\" failed in repository jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions failure in Jeeves Daily Pipeline workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure in Jeeves Write Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure in Jeeves Research Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure in Jeeves Daily Pipeline workflow.\n- [escalation] Sir Richard: Rich Lang shared a New York Times opinion article about public schools and democracy.\n- [escalation] Anthropic: Claude API access disabled due to depleted usage credits.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow failed.\n- [escalation] mmmichaelllang: GitHub notification that the CI workflow for sprint 16 failed.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow failed."
+    "text": "- [escalation] Andy: Email from Andrew Lang about taking action and an invitation to join a group effort\n- [escalation] Mrs. Lang: Correspondence email from lang.mc@gmail.com\n- [escalation] Mrs. Lang: Correspondence email from lang.mc@gmail.com\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves\n- [no action] Mistral AI: Mistral AI subscription activation notification\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves\n- [no action] Mistral AI: Mistral AI welcome email\n- [no action] Cerebras Systems: Cerebras welcome email\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves\n- [no action] My Edmonds News: My Edmonds News newsletter\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves\n- [no action] JD from Autohive: Email from JD about a conversation\n- [no action] GitHub: GitHub notification about a regenerated personal access token\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves Memory\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves"
   }
 }
