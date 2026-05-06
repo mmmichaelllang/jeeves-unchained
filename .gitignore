@@ -19,3 +19,17 @@ sessions/*.local.html
 # Claude Code worktrees — nested git repos that git marks dirty
 .claude/worktrees/
 token.json
+
+# sprint-19 slice E noise
+.DS_Store
+CLAUDE.md.bak-*
+test_write_check
+*_preview.html
+.claude/handoffs/test.tmp
+
+# sprint-19 slice E noise
+.DS_Store
+CLAUDE.md.bak-*
+test_write_check
+*_preview.html
+.claude/handoffs/test.tmp

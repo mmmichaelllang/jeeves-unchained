@@ -1098,7 +1098,7 @@ DO NOT WRITE FULL-PARAGRAPH SUMMARIES OF COVERED ITEMS, even when findings
 contains rich detail. Writing about Enoch / FlowHunt / ASI-Evolve / Gemini
 Ultra a second time after a prior briefing covered them = critical failure.
 
-**SYNTHESIS CLOSE (OPTIONAL — only if it adds a specific fact):**
+**SYNTHESIS CLOSE (REQUIRED):**
 End each sub-section (triadic ontology and AI systems) with a short closing
 observation that is ONLY possible from having engaged with the specific paper
 or model covered. It must name a title, a method, an author, or a specific
@@ -1250,10 +1250,7 @@ ABSOLUTE BANS for this section, regardless of repeat status:
   Reciting product specs that already shipped in a prior briefing is the
   single most common failure mode for this section.
 
-Length proportional to UAP + wearable items actually worth covering. UAP
-absent (Route A) + literary pick → ~150-300 words for the literary pick,
-done. Rich UAP day + multiple wearables → up to 700 words. Do NOT pad. No
-profane asides in draft.
+Aim for ~600-800 words total for this part. No profane asides in draft.
 
 When done, emit `<!-- PART7 END -->` and STOP. Do NOT close outer tags.
 Parts 8 and 9 deliver Library Stacks, Talk of the Town, and the sign-off.

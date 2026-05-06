@@ -571,7 +571,6 @@ class _ParseFailed:
         return f"_ParseFailed(raw_len={len(self.raw)})"
 
 
-
 # NIM stream-drop / tool-call-leak markers that occasionally land inside
 # `findings` strings when the streaming response is truncated mid tool-call.
 # Sprint-19 hardening: truncate at the first match before _parse_sector_output
@@ -627,7 +626,7 @@ def _strip_tool_call_markup(text: str) -> str:
     cleaned = text[:earliest].rstrip()
     # Don't return a sentence-fragment ending mid-clause — drop a trailing
     # incomplete final sentence if we cut mid-stream.
-    if cleaned and cleaned[-1] not in ".!?\"\'”’":
+    if cleaned and cleaned[-1] not in ".!?\"'”’":
         cut = max(
             cleaned.rfind("."),
             cleaned.rfind("!"),

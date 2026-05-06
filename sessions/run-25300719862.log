@@ -1,0 +1,1638 @@
+Correspondence	UNKNOWN STEP	﻿2026-05-04T04:15:53.8643283Z Current runner version: '2.334.0'
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8670844Z ##[group]Runner Image Provisioner
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8671889Z Hosted Compute Agent
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8672974Z Version: 20260213.493
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8673840Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8674909Z Build Date: 2026-02-13T00:28:41Z
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8675878Z Worker ID: ***c56d179e-9ba0-4ff7-b60c-790ac08313a8***
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8677255Z Azure Region: northcentralus
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8678095Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8679946Z ##[group]Operating System
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8680829Z Ubuntu
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8681557Z 24.04.4
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8682368Z LTS
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8683088Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8683889Z ##[group]Runner Image
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8684668Z Image: ubuntu-24.04
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8685487Z Version: 20260413.86.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8687327Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260413.86/images/ubuntu/Ubuntu2404-Readme.md
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8689115Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260413.86
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8690350Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8691889Z ##[group]GITHUB_TOKEN Permissions
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8694212Z Actions: write
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8695071Z Contents: write
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8695767Z Metadata: read
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8696506Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8699298Z Secret source: Actions
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.8700538Z Prepare workflow directory
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.9034466Z Prepare all required actions
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:53.9072246Z Getting action download info
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:54.3143199Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:54.4442350Z Download action repository 'astral-sh/setup-uv@v3' (SHA:caf0cab7a618c569241d31dcd442f54681755d39)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:54.9860089Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.2109202Z Complete job name: Correspondence
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.3013082Z ##[group]Run actions/checkout@v4
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.3014832Z with:
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.3015995Z   repository: mmmichaelllang/jeeves-unchained
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.3017944Z   token: ***
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.3019043Z   ssh-strict: true
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.3020125Z   ssh-user: git
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.3021240Z   persist-credentials: true
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.3022436Z   clean: true
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.3023562Z   sparse-checkout-cone-mode: true
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.3024864Z   fetch-depth: 1
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.3025937Z   fetch-tags: false
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.3027201Z   show-progress: true
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.3028311Z   lfs: false
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.3029347Z   submodules: false
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.3030482Z   set-safe-directory: true
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.3031961Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4144414Z Syncing repository: mmmichaelllang/jeeves-unchained
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4147784Z ##[group]Getting Git version info
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4149700Z Working directory is '/home/runner/work/jeeves-unchained/jeeves-unchained'
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4152239Z [command]/usr/bin/git version
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4186432Z git version 2.53.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4213415Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4227447Z Temporarily overriding HOME='/home/runner/work/_temp/6f691443-101f-4b88-9c13-8974e4ab69c6' before making global git config changes
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4230502Z Adding repository directory to the temporary git global config as a safe directory
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4240379Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/jeeves-unchained/jeeves-unchained
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4270100Z Deleting the contents of '/home/runner/work/jeeves-unchained/jeeves-unchained'
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4273464Z ##[group]Initializing the repository
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4277612Z [command]/usr/bin/git init /home/runner/work/jeeves-unchained/jeeves-unchained
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4368090Z hint: Using 'master' as the name for the initial branch. This default branch name
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4371157Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4373700Z hint: to use in all of your new repositories, which will suppress this warning,
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4375906Z hint: call:
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4377302Z hint:
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4378558Z hint: 	git config --global init.defaultBranch <name>
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4380498Z hint:
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4381913Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4384273Z hint: 'development'. The just-created branch can be renamed via this command:
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4386010Z hint:
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4387324Z hint: 	git branch -m <name>
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4388514Z hint:
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4390011Z hint: Disable this message with "git config set advice.defaultBranchName false"
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4392496Z Initialized empty Git repository in /home/runner/work/jeeves-unchained/jeeves-unchained/.git/
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4396756Z [command]/usr/bin/git remote add origin https://github.com/mmmichaelllang/jeeves-unchained
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4413284Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4416458Z ##[group]Disabling automatic garbage collection
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4419631Z [command]/usr/bin/git config --local gc.auto 0
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4447109Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4448929Z ##[group]Setting up auth
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4452717Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4482172Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4778561Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.4875260Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.5024845Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.5052977Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.5275083Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.5309249Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.5311079Z ##[group]Fetching the repository
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.5318102Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +a55e584e752a3c96e2056886cadb61969bbef5b0:refs/remotes/origin/main
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.9650462Z From https://github.com/mmmichaelllang/jeeves-unchained
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.9676936Z  * [new ref]         a55e584e752a3c96e2056886cadb61969bbef5b0 -> origin/main
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.9683693Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.9686881Z ##[group]Determining the checkout info
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.9689075Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.9690316Z [command]/usr/bin/git sparse-checkout disable
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.9724825Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.9750173Z ##[group]Checking out the ref
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:55.9752816Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.0032720Z Switched to a new branch 'main'
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.0035053Z branch 'main' set up to track 'origin/main'.
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.0043055Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.0075916Z [command]/usr/bin/git log -1 --format=%H
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.0098607Z a55e584e752a3c96e2056886cadb61969bbef5b0
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.0410913Z ##[group]Run astral-sh/setup-uv@v3
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.0412192Z with:
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.0413177Z   version: 0.8.17
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.0414560Z   github-token: ***
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.0415644Z   enable-cache: false
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.0417037Z   cache-dependency-glob: **/uv.lock
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.0418543Z   prune-cache: true
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.0419605Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.2071367Z Downloading uv from "https://github.com/astral-sh/uv/releases/download/0.8.17/uv-x86_64-unknown-linux-gnu.tar.gz" ...
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.5189984Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/0352aa78-4f75-4656-97cf-3ba768c46ca8 -f /home/runner/work/_temp/7ea9c2b1-0ce5-443c-9ce8-93dfb5ac740c
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.9404625Z Added /opt/hostedtoolcache/uv/0.8.17/x86_64 to the path
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.9405800Z Added /home/runner/.local/bin to the path
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.9409867Z Successfully installed uv version 0.8.17
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.9429789Z Set UV_CACHE_DIR to /home/runner/work/_temp/setup-uv-cache
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.9533220Z ##[group]Run uv sync --no-dev
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.9533994Z ^[[36;1muv sync --no-dev^[[0m
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.9562085Z shell: /usr/bin/bash -e ***0***
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.9562553Z env:
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.9563009Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:56.9563489Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:57.2119894Z Downloading cpython-3.11.13-linux-x86_64-gnu (download) (27.7MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.0663508Z  Downloading cpython-3.11.13-linux-x86_64-gnu (download)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.6674948Z Using CPython 3.11.13
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.6675692Z Creating virtual environment at: .venv
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.6741520Z Resolved 134 packages in 0.89ms
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.6858540Z    Building jeeves-unchained @ file:///home/runner/work/jeeves-unchained/jeeves-unchained
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7136705Z Downloading tiktoken (1.1MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7139876Z Downloading aiohttp (1.7MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7157362Z Downloading pydantic-core (2.0MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7158213Z Downloading nltk (1.5MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7158769Z Downloading sqlalchemy (3.2MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7170289Z Downloading hf-xet (4.0MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7173135Z Downloading tokenizers (3.1MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7176250Z Downloading cryptography (4.3MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7182879Z Downloading pynacl (1.3MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7186918Z Downloading networkx (2.0MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7189841Z Downloading pillow (6.8MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7200351Z Downloading google-api-python-client (14.3MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7207720Z Downloading lxml (5.0MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7215677Z Downloading numpy (16.1MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7223747Z Downloading babel (9.7MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7233064Z Downloading openai (1.1MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7236711Z Downloading llama-index-core (11.4MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:58.7241141Z Downloading transformers (11.4MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:59.2754856Z  Downloading tiktoken
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:59.3795999Z  Downloading pynacl
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:59.4197175Z  Downloading aiohttp
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:59.4653882Z  Downloading pydantic-core
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:59.6438479Z  Downloading tokenizers
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:59.7340701Z  Downloading sqlalchemy
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:59.7489370Z  Downloading hf-xet
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:59.7751800Z  Downloading nltk
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:59.8682255Z       Built jeeves-unchained @ file:///home/runner/work/jeeves-unchained/jeeves-unchained
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:59.8847601Z  Downloading cryptography
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:59.9627549Z  Downloading networkx
+Correspondence	UNKNOWN STEP	2026-05-04T04:15:59.9966175Z  Downloading lxml
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.0981389Z  Downloading pillow
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.2870710Z  Downloading openai
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.3595788Z  Downloading babel
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.4531750Z  Downloading google-api-python-client
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.5519150Z  Downloading numpy
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.5941592Z  Downloading llama-index-core
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.7371163Z  Downloading transformers
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.7374478Z Prepared 114 packages in 2.06s
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.8999478Z Installed 114 packages in 162ms
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9000864Z  + aiohappyeyeballs==2.6.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9001441Z  + aiohttp==3.13.5
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9001955Z  + aiosignal==1.4.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9002452Z  + aiosqlite==0.22.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9003534Z  + annotated-types==0.7.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9004085Z  + anyio==4.13.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9004968Z  + attrs==26.1.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9005553Z  + babel==2.18.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9006067Z  + banks==2.4.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9006455Z  + certifi==2026.4.22
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9007042Z  + cffi==2.0.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9007568Z  + charset-normalizer==3.4.7
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9008102Z  + click==8.3.3
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9008551Z  + colorama==0.4.6
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9009030Z  + courlan==1.3.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9009501Z  + cryptography==46.0.7
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9010091Z  + dataclasses-json==0.6.7
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9010626Z  + dateparser==1.4.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9011111Z  + deprecated==1.3.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9011576Z  + dirtyjson==1.0.8
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9012201Z  + distro==1.9.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9012477Z  + exa-py==2.12.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9012940Z  + filelock==3.29.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9013400Z  + filetype==1.2.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9013951Z  + frozenlist==1.8.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9014452Z  + fsspec==2026.3.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9014924Z  + google-api-core==2.30.3
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9015537Z  + google-api-python-client==2.194.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9016155Z  + google-auth==2.49.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9016897Z  + google-auth-httplib2==0.3.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9017505Z  + google-auth-oauthlib==1.3.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9018135Z  + google-genai==1.73.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9018689Z  + googleapis-common-protos==1.74.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9019267Z  + greenlet==3.4.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9019718Z  + griffe==2.0.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9020163Z  + griffecli==2.0.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9020725Z  + griffelib==2.0.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9021189Z  + h11==0.16.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9021644Z  + hf-xet==1.4.3
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9022177Z  + htmldate==1.9.4
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9022665Z  + httpcore==1.0.9
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9023113Z  + httplib2==0.31.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9023660Z  + httpx==0.28.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9024148Z  + huggingface-hub==0.36.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9024661Z  + idna==3.13
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9025415Z  + jeeves-unchained==0.1.0 (from file:///home/runner/work/jeeves-unchained/jeeves-unchained)
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9026078Z  + jinja2==3.1.6
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9026549Z  + jiter==0.14.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9027728Z  + joblib==1.5.3
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9028194Z  + justext==3.0.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9028677Z  + llama-index-core==0.14.21
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9029263Z  + llama-index-instrumentation==0.5.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9029885Z  + llama-index-llms-groq==0.5.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9030456Z  + llama-index-llms-nvidia==0.5.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9031044Z  + llama-index-llms-openai==0.6.26
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9031594Z  + llama-index-llms-openai-like==0.5.3
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9031957Z  + llama-index-workflows==2.19.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9032268Z  + lxml==6.1.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9032545Z  + lxml-html-clean==0.4.4
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9032837Z  + markupsafe==3.0.3
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9033114Z  + marshmallow==3.26.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9033392Z  + multidict==6.7.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9033672Z  + mypy-extensions==1.1.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9033960Z  + nest-asyncio==1.6.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9034263Z  + networkx==3.6.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9034610Z  + nltk==3.9.4
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9034857Z  + numpy==2.4.4
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9035109Z  + oauthlib==3.3.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9035363Z  + openai==2.32.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9035629Z  + packaging==26.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9035885Z  + pillow==12.2.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9036150Z  + platformdirs==4.9.6
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9036443Z  + propcache==0.4.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9037029Z  + proto-plus==1.27.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9037490Z  + protobuf==5.29.6
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9037932Z  + pyasn1==0.6.3
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9038223Z  + pyasn1-modules==0.4.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9038503Z  + pycparser==3.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9038796Z  + pydantic==2.13.3
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9039075Z  + pydantic-core==2.46.3
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9039354Z  + pygithub==2.9.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9039608Z  + pyjwt==2.12.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9039865Z  + pynacl==1.6.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9040319Z  + pyparsing==3.3.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9040594Z  + python-dateutil==2.9.0.post0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9040901Z  + python-dotenv==1.2.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9041179Z  + pytz==2026.1.post1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9041452Z  + pyyaml==6.0.3
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9041707Z  + regex==2026.4.4
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9041961Z  + requests==2.33.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9042231Z  + requests-oauthlib==2.0.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9042526Z  + safetensors==0.7.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9042802Z  + setuptools==82.0.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9043062Z  + six==1.17.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9043309Z  + sniffio==1.3.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9043566Z  + sqlalchemy==2.0.49
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9043842Z  + tavily-python==0.7.23
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9044127Z  + tenacity==9.1.4
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9044385Z  + tiktoken==0.12.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9044772Z  + tinytag==2.2.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9045032Z  + tld==0.13.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9045293Z  + tokenizers==0.22.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9045553Z  + tqdm==4.67.3
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9045808Z  + trafilatura==2.0.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9046090Z  + transformers==4.57.6
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9046381Z  + typing-extensions==4.15.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9047025Z  + typing-inspect==0.9.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9047325Z  + typing-inspection==0.4.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9047616Z  + tzlocal==5.3.1
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9047873Z  + uritemplate==4.2.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9048138Z  + urllib3==2.6.3
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9048397Z  + websockets==16.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9048666Z  + wrapt==2.1.2
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9048920Z  + yarl==1.23.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9232438Z ##[group]Run uv run python scripts/correspondence.py \
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9232961Z ^[[36;1muv run python scripts/correspondence.py \^[[0m
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9233344Z ^[[36;1m   \^[[0m
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9233601Z ^[[36;1m  ^[[0m
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9254900Z shell: /usr/bin/bash -e ***0***
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9275906Z env:
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9276425Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9277800Z   NVIDIA_API_KEY: ***
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9278584Z   GROQ_API_KEY: ***
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9279470Z   OPENROUTER_API_KEY: ***
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9285264Z   GMAIL_OAUTH_TOKEN_JSON: ***
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9285923Z   GMAIL_APP_PASSWORD: ***
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9286887Z   GITHUB_TOKEN: ***
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9287479Z   GITHUB_REPOSITORY: mmmichaelllang/jeeves-unchained
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9288216Z   GITHUB_REF_NAME: main
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9288790Z   JEEVES_RECIPIENT_EMAIL: lang.mc@gmail.com
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:00.9289343Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:01.0067272Z Downloading pygments (1.2MiB)
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:01.0743838Z  Downloading pygments
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:01.0838697Z Installed 5 packages in 8ms
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:06.0822266Z 2026-05-04 04:16:06,081 jeeves.gmail INFO gmail sweep (unread-only): 50 messages
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:09.4686508Z None of PyTorch, TensorFlow >= 2.0, or Flax have been found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:09.4689028Z 2026-05-04 04:16:09,468 transformers WARNING None of PyTorch, TensorFlow >= 2.0, or Flax have been found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:10.3986322Z 2026-05-04 04:16:10,398 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Correspondence	UNKNOWN STEP	2026-05-04T04:16:10.4044259Z 2026-05-04 04:16:10,404 jeeves.correspondence INFO classify batch 1/4 (15 msgs)
+Correspondence	UNKNOWN STEP	2026-05-04T04:17:10.4144079Z 2026-05-04 04:17:10,414 jeeves.correspondence WARNING classify batch 1/4 timeout (attempt 1/2) — sleeping 30s: Request timed out.
+Correspondence	UNKNOWN STEP	2026-05-04T04:18:40.4708418Z 2026-05-04 04:18:40,470 jeeves.correspondence WARNING classify batch 1/4 NIM exhausted — falling back to Groq and tripping circuit breaker: Request timed out.
+Correspondence	UNKNOWN STEP	2026-05-04T04:18:42.6673169Z 2026-05-04 04:18:42,666 httpx INFO HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+Correspondence	UNKNOWN STEP	2026-05-04T04:18:42.6738292Z 2026-05-04 04:18:42,673 jeeves.correspondence INFO classify batch 1/4 done — sleeping 15s before next batch (NIM rate-limit guard)
+Correspondence	UNKNOWN STEP	2026-05-04T04:18:57.6742421Z 2026-05-04 04:18:57,673 jeeves.correspondence INFO classify batch 2/4 (15 msgs)
+Correspondence	UNKNOWN STEP	2026-05-04T04:18:57.6744489Z 2026-05-04 04:18:57,674 jeeves.correspondence INFO classify batch 2/4 skipping NIM (circuit broken) — using Groq
+Correspondence	UNKNOWN STEP	2026-05-04T04:18:59.6874388Z 2026-05-04 04:18:59,687 httpx INFO HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+Correspondence	UNKNOWN STEP	2026-05-04T04:18:59.6884587Z 2026-05-04 04:18:59,688 jeeves.correspondence INFO classify batch 3/4 (15 msgs)
+Correspondence	UNKNOWN STEP	2026-05-04T04:18:59.6885848Z 2026-05-04 04:18:59,688 jeeves.correspondence INFO classify batch 3/4 skipping NIM (circuit broken) — using Groq
+Correspondence	UNKNOWN STEP	2026-05-04T04:18:59.7432587Z 2026-05-04 04:18:59,743 httpx INFO HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Correspondence	UNKNOWN STEP	2026-05-04T04:18:59.7434821Z 2026-05-04 04:18:59,743 openai._base_client INFO Retrying request to /chat/completions in 4.000000 seconds
+Correspondence	UNKNOWN STEP	2026-05-04T04:19:05.6836518Z 2026-05-04 04:19:05,683 httpx INFO HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+Correspondence	UNKNOWN STEP	2026-05-04T04:19:05.6846517Z 2026-05-04 04:19:05,684 jeeves.correspondence INFO classify batch 4/4 (5 msgs)
+Correspondence	UNKNOWN STEP	2026-05-04T04:19:05.6847761Z 2026-05-04 04:19:05,684 jeeves.correspondence INFO classify batch 4/4 skipping NIM (circuit broken) — using Groq
+Correspondence	UNKNOWN STEP	2026-05-04T04:19:05.7417479Z 2026-05-04 04:19:05,741 httpx INFO HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Correspondence	UNKNOWN STEP	2026-05-04T04:19:05.7419197Z 2026-05-04 04:19:05,741 openai._base_client INFO Retrying request to /chat/completions in 18.000000 seconds
+Correspondence	UNKNOWN STEP	2026-05-04T04:19:24.5397092Z 2026-05-04 04:19:24,539 httpx INFO HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+Correspondence	UNKNOWN STEP	2026-05-04T04:19:24.5972376Z 2026-05-04 04:19:24,596 httpx INFO HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Correspondence	UNKNOWN STEP	2026-05-04T04:19:24.5973982Z 2026-05-04 04:19:24,597 openai._base_client INFO Retrying request to /chat/completions in 50.000000 seconds
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:19.3440404Z 2026-05-04 04:20:19,343 httpx INFO HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:19.3478600Z 2026-05-04 04:20:19,347 jeeves.correspondence WARNING correspondence: banned filler detected: ['it is essential to', 'In conclusion,']
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:19.3482569Z 2026-05-04 04:20:19,347 jeeves.correspondence INFO correspondence: 50 classified, 1095 words, 0 profane asides, handoff_found=True
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:19.3483794Z 2026-05-04 04:20:19,347 jeeves.correspondence WARNING briefing is under 1500 words (1095).
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:19.3485787Z 2026-05-04 04:20:19,348 jeeves.correspondence INFO handoff JSON -> /home/runner/work/jeeves-unchained/jeeves-unchained/sessions/correspondence-2026-05-04.json, briefing HTML -> /home/runner/work/jeeves-unchained/jeeves-unchained/sessions/correspondence-2026-05-04.html
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.5720686Z 2026-05-04 04:20:20,571 jeeves.email INFO briefing sent to lang.mc@gmail.com (7645 bytes HTML)
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.8832248Z ##[group]Run if ls sessions/correspondence-*.json >/dev/null 2>&1 || ls sessions/correspondence-*.html >/dev/null 2>&1; then
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.8833198Z ^[[36;1mif ls sessions/correspondence-*.json >/dev/null 2>&1 || ls sessions/correspondence-*.html >/dev/null 2>&1; then^[[0m
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.8833807Z ^[[36;1m  git config user.name "jeeves-bot"^[[0m
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.8834255Z ^[[36;1m  git config user.email "jeeves-bot@users.noreply.github.com"^[[0m
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.8834876Z ^[[36;1m  git add sessions/correspondence-*.json sessions/correspondence-*.html 2>/dev/null || true^[[0m
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.8835440Z ^[[36;1m  if ! git diff --cached --quiet; then^[[0m
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.8835870Z ^[[36;1m    git commit -m "correspondence $(date -u +%Y-%m-%d)"^[[0m
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.8836335Z ^[[36;1m    git pull --rebase --autostash origin "main" || true^[[0m
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.8836977Z ^[[36;1m    git push^[[0m
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.8837474Z ^[[36;1m  fi^[[0m
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.8837758Z ^[[36;1mfi^[[0m
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.8858292Z shell: /usr/bin/bash -e ***0***
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.8858622Z env:
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.8858946Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.8859449Z   GITHUB_TOKEN: ***
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.8859726Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.9048247Z [main 1018633] correspondence 2026-05-04
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.9048966Z  2 files changed, 46 insertions(+)
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.9049724Z  create mode 100644 sessions/correspondence-2026-05-04.html
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:20.9050491Z  create mode 100644 sessions/correspondence-2026-05-04.json
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.0960352Z From https://github.com/mmmichaelllang/jeeves-unchained
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.0961262Z  * branch            main       -> FETCH_HEAD
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.1033757Z Current branch main is up to date.
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.9816445Z To https://github.com/mmmichaelllang/jeeves-unchained
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.9817444Z    a55e584..1018633  main -> main
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.9927867Z ##[group]Run actions/upload-artifact@v4
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.9928241Z with:
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.9928513Z   name: correspondence-html
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.9928848Z   path: sessions/correspondence-*.html
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.9929197Z   if-no-files-found: ignore
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.9929491Z   retention-days: 14
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.9929774Z   compression-level: 6
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.9930047Z   overwrite: false
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.9930324Z   include-hidden-files: false
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.9930620Z env:
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.9930922Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:21.9931284Z ##[endgroup]
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:22.2144874Z With the provided path, there will be 12 files uploaded
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:22.2150737Z Artifact name is valid!
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:22.2151612Z Root directory input is valid!
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:22.3773203Z Beginning upload of artifact content to blob storage
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:22.5610361Z Uploaded bytes 30005
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:22.5973267Z Finished uploading artifact content to blob storage!
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:22.5976561Z SHA256 digest of uploaded artifact zip is 5041a8a46412c3091444d9433ff22db3a3736e7d570593e04c8d1582108b89a0
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:22.5978536Z Finalizing artifact upload
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:22.7213598Z Artifact correspondence-html.zip successfully finalized. Artifact ID 6776593253
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:22.7215079Z Artifact correspondence-html has been successfully uploaded! Final size is 30005 bytes. Artifact ID is 6776593253
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:22.7222778Z Artifact download URL: https://github.com/mmmichaelllang/jeeves-unchained/actions/runs/25300719862/artifacts/6776593253
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:22.7384054Z Post job cleanup.
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:22.9019339Z Post job cleanup.
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:23.0003027Z [command]/usr/bin/git version
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:23.0043393Z git version 2.53.0
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:23.0087901Z Temporarily overriding HOME='/home/runner/work/_temp/9f45e678-771c-4283-a5b3-d6d18bc30b9a' before making global git config changes
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:23.0089560Z Adding repository directory to the temporary git global config as a safe directory
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:23.0094734Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/jeeves-unchained/jeeves-unchained
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:23.0139599Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:23.0178071Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:23.0421926Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:23.0444412Z http.https://github.com/.extraheader
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:23.0460245Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:23.0495024Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:23.0728453Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:23.0761722Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:23.1100635Z Cleaning up orphan processes
+Correspondence	UNKNOWN STEP	2026-05-04T04:20:23.1381421Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v4, actions/upload-artifact@v4, astral-sh/setup-uv@v3. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Node.js 20 will be removed from the runner on September 16th, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Research	Set up job	﻿2026-05-04T04:20:33.5220310Z Current runner version: '2.334.0'
+Research	Set up job	2026-05-04T04:20:33.5254887Z ##[group]Runner Image Provisioner
+Research	Set up job	2026-05-04T04:20:33.5256108Z Hosted Compute Agent
+Research	Set up job	2026-05-04T04:20:33.5257043Z Version: 20260213.493
+Research	Set up job	2026-05-04T04:20:33.5258046Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+Research	Set up job	2026-05-04T04:20:33.5259266Z Build Date: 2026-02-13T00:28:41Z
+Research	Set up job	2026-05-04T04:20:33.5260319Z Worker ID: {81205eb7-b22e-4f1d-89dd-bd7d168cb18c}
+Research	Set up job	2026-05-04T04:20:33.5261393Z Azure Region: eastus
+Research	Set up job	2026-05-04T04:20:33.5262517Z ##[endgroup]
+Research	Set up job	2026-05-04T04:20:33.5264672Z ##[group]Operating System
+Research	Set up job	2026-05-04T04:20:33.5265693Z Ubuntu
+Research	Set up job	2026-05-04T04:20:33.5266519Z 24.04.4
+Research	Set up job	2026-05-04T04:20:33.5267278Z LTS
+Research	Set up job	2026-05-04T04:20:33.5268135Z ##[endgroup]
+Research	Set up job	2026-05-04T04:20:33.5268954Z ##[group]Runner Image
+Research	Set up job	2026-05-04T04:20:33.5269847Z Image: ubuntu-24.04
+Research	Set up job	2026-05-04T04:20:33.5270837Z Version: 20260413.86.1
+Research	Set up job	2026-05-04T04:20:33.5272716Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260413.86/images/ubuntu/Ubuntu2404-Readme.md
+Research	Set up job	2026-05-04T04:20:33.5275972Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260413.86
+Research	Set up job	2026-05-04T04:20:33.5277611Z ##[endgroup]
+Research	Set up job	2026-05-04T04:20:33.5279401Z ##[group]GITHUB_TOKEN Permissions
+Research	Set up job	2026-05-04T04:20:33.5282623Z Actions: write
+Research	Set up job	2026-05-04T04:20:33.5283533Z Contents: write
+Research	Set up job	2026-05-04T04:20:33.5284295Z Metadata: read
+Research	Set up job	2026-05-04T04:20:33.5285238Z ##[endgroup]
+Research	Set up job	2026-05-04T04:20:33.5288157Z Secret source: Actions
+Research	Set up job	2026-05-04T04:20:33.5289548Z Prepare workflow directory
+Research	Set up job	2026-05-04T04:20:33.5737876Z Prepare all required actions
+Research	Set up job	2026-05-04T04:20:33.5790233Z Getting action download info
+Research	Set up job	2026-05-04T04:20:33.8612634Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+Research	Set up job	2026-05-04T04:20:34.0098634Z Download action repository 'astral-sh/setup-uv@v3' (SHA:caf0cab7a618c569241d31dcd442f54681755d39)
+Research	Set up job	2026-05-04T04:20:34.3580264Z Complete job name: Research
+Research	Run actions/checkout@v4	﻿2026-05-04T04:20:34.4285166Z ##[group]Run actions/checkout@v4
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.4286011Z with:
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.4286445Z   ref: main
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.4286915Z   repository: mmmichaelllang/jeeves-unchained
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.4287673Z   token: ***
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.4288100Z   ssh-strict: true
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.4288545Z   ssh-user: git
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.4288984Z   persist-credentials: true
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.4289465Z   clean: true
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.4289898Z   sparse-checkout-cone-mode: true
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.4290406Z   fetch-depth: 1
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.4290831Z   fetch-tags: false
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.4291259Z   show-progress: true
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.4291698Z   lfs: false
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.4292099Z   submodules: false
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.4292729Z   set-safe-directory: true
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.4293440Z ##[endgroup]
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5430820Z Syncing repository: mmmichaelllang/jeeves-unchained
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5433877Z ##[group]Getting Git version info
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5435174Z Working directory is '/home/runner/work/jeeves-unchained/jeeves-unchained'
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5437012Z [command]/usr/bin/git version
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5460928Z git version 2.53.0
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5486195Z ##[endgroup]
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5500516Z Temporarily overriding HOME='/home/runner/work/_temp/1d0c0c0b-528f-42dd-84ab-72868b16b782' before making global git config changes
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5502969Z Adding repository directory to the temporary git global config as a safe directory
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5515608Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/jeeves-unchained/jeeves-unchained
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5551389Z Deleting the contents of '/home/runner/work/jeeves-unchained/jeeves-unchained'
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5555355Z ##[group]Initializing the repository
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5559500Z [command]/usr/bin/git init /home/runner/work/jeeves-unchained/jeeves-unchained
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5617965Z hint: Using 'master' as the name for the initial branch. This default branch name
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5619892Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5622393Z hint: to use in all of your new repositories, which will suppress this warning,
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5623915Z hint: call:
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5624788Z hint:
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5625741Z hint: 	git config --global init.defaultBranch <name>
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5626870Z hint:
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5628391Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5637260Z hint: 'development'. The just-created branch can be renamed via this command:
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5638785Z hint:
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5639679Z hint: 	git branch -m <name>
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5640685Z hint:
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5641895Z hint: Disable this message with "git config set advice.defaultBranchName false"
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5644277Z Initialized empty Git repository in /home/runner/work/jeeves-unchained/jeeves-unchained/.git/
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5647650Z [command]/usr/bin/git remote add origin https://github.com/mmmichaelllang/jeeves-unchained
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5662894Z ##[endgroup]
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5664450Z ##[group]Disabling automatic garbage collection
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5665897Z [command]/usr/bin/git config --local gc.auto 0
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5697924Z ##[endgroup]
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5699069Z ##[group]Setting up auth
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5705667Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.5739452Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.6044624Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.6076646Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.6327187Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.6361146Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.6617003Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.6652089Z ##[endgroup]
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.6653203Z ##[group]Fetching the repository
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.6660851Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +refs/heads/main*:refs/remotes/origin/main* +refs/tags/main*:refs/tags/main*
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.9795134Z From https://github.com/mmmichaelllang/jeeves-unchained
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.9796340Z  * [new branch]      main       -> origin/main
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.9825811Z ##[endgroup]
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.9827347Z ##[group]Determining the checkout info
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.9832481Z [command]/usr/bin/git branch --list --remote origin/main
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.9859365Z   origin/main
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.9868516Z ##[endgroup]
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.9870739Z [command]/usr/bin/git sparse-checkout disable
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.9910779Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.9945309Z ##[group]Checking out the ref
+Research	Run actions/checkout@v4	2026-05-04T04:20:34.9946492Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+Research	Run actions/checkout@v4	2026-05-04T04:20:35.0142372Z Switched to a new branch 'main'
+Research	Run actions/checkout@v4	2026-05-04T04:20:35.0144763Z branch 'main' set up to track 'origin/main'.
+Research	Run actions/checkout@v4	2026-05-04T04:20:35.0152774Z ##[endgroup]
+Research	Run actions/checkout@v4	2026-05-04T04:20:35.0190122Z [command]/usr/bin/git log -1 --format=%H
+Research	Run actions/checkout@v4	2026-05-04T04:20:35.0213282Z 10186336be9b6a5f05f3fb0762e85aa797eefa10
+Research	Set up uv	﻿2026-05-04T04:20:35.0511889Z ##[group]Run astral-sh/setup-uv@v3
+Research	Set up uv	2026-05-04T04:20:35.0513362Z with:
+Research	Set up uv	2026-05-04T04:20:35.0514259Z   version: 0.8.17
+Research	Set up uv	2026-05-04T04:20:35.0515641Z   github-token: ***
+Research	Set up uv	2026-05-04T04:20:35.0516662Z   enable-cache: false
+Research	Set up uv	2026-05-04T04:20:35.0517742Z   cache-dependency-glob: **/uv.lock
+Research	Set up uv	2026-05-04T04:20:35.0519202Z   prune-cache: true
+Research	Set up uv	2026-05-04T04:20:35.0520186Z ##[endgroup]
+Research	Set up uv	2026-05-04T04:20:35.2209411Z Downloading uv from "https://github.com/astral-sh/uv/releases/download/0.8.17/uv-x86_64-unknown-linux-gnu.tar.gz" ...
+Research	Set up uv	2026-05-04T04:20:35.4868893Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/12196483-26e0-4f15-af2c-53801ea866cb -f /home/runner/work/_temp/d70872ef-7de4-4639-9458-0ccfb35a8c63
+Research	Set up uv	2026-05-04T04:20:35.9129881Z Added /opt/hostedtoolcache/uv/0.8.17/x86_64 to the path
+Research	Set up uv	2026-05-04T04:20:35.9130695Z Added /home/runner/.local/bin to the path
+Research	Set up uv	2026-05-04T04:20:35.9133518Z Successfully installed uv version 0.8.17
+Research	Set up uv	2026-05-04T04:20:35.9156089Z Set UV_CACHE_DIR to /home/runner/work/_temp/setup-uv-cache
+Research	Sync dependencies	﻿2026-05-04T04:20:35.9251227Z ##[group]Run uv sync --no-dev --extra vertex --extra playwright
+Research	Sync dependencies	2026-05-04T04:20:35.9251868Z ^[[36;1muv sync --no-dev --extra vertex --extra playwright^[[0m
+Research	Sync dependencies	2026-05-04T04:20:35.9280358Z shell: /usr/bin/bash -e {0}
+Research	Sync dependencies	2026-05-04T04:20:35.9280735Z env:
+Research	Sync dependencies	2026-05-04T04:20:35.9281050Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+Research	Sync dependencies	2026-05-04T04:20:35.9281416Z ##[endgroup]
+Research	Sync dependencies	2026-05-04T04:20:36.1562692Z Downloading cpython-3.11.13-linux-x86_64-gnu (download) (27.7MiB)
+Research	Sync dependencies	2026-05-04T04:20:36.9539779Z  Downloading cpython-3.11.13-linux-x86_64-gnu (download)
+Research	Sync dependencies	2026-05-04T04:20:37.0862595Z Using CPython 3.11.13
+Research	Sync dependencies	2026-05-04T04:20:37.0863174Z Creating virtual environment at: .venv
+Research	Sync dependencies	2026-05-04T04:20:37.0933632Z Resolved 134 packages in 0.88ms
+Research	Sync dependencies	2026-05-04T04:20:37.1064559Z    Building jeeves-unchained @ file:///home/runner/work/jeeves-unchained/jeeves-unchained
+Research	Sync dependencies	2026-05-04T04:20:37.1257000Z Downloading lxml (5.0MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1260254Z Downloading cryptography (4.3MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1263514Z Downloading numpy (16.1MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1265768Z Downloading hf-xet (4.0MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1312416Z Downloading playwright (45.0MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1314744Z Downloading pydantic-core (2.0MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1324432Z Downloading google-api-python-client (14.3MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1326379Z Downloading transformers (11.4MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1328831Z Downloading tokenizers (3.1MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1332653Z Downloading babel (9.7MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1340226Z Downloading google-cloud-aiplatform (8.0MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1343142Z Downloading aiohttp (1.7MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1350631Z Downloading pynacl (1.3MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1353582Z Downloading tiktoken (1.1MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1356484Z Downloading nltk (1.5MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1359372Z Downloading sqlalchemy (3.2MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1362374Z Downloading networkx (2.0MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1365514Z Downloading openai (1.1MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1374445Z Downloading pillow (6.8MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1407481Z Downloading llama-index-core (11.4MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.1615990Z Downloading grpcio (6.5MiB)
+Research	Sync dependencies	2026-05-04T04:20:37.8296061Z  Downloading tiktoken
+Research	Sync dependencies	2026-05-04T04:20:37.9293458Z  Downloading pynacl
+Research	Sync dependencies	2026-05-04T04:20:37.9385707Z  Downloading aiohttp
+Research	Sync dependencies	2026-05-04T04:20:37.9834289Z  Downloading pydantic-core
+Research	Sync dependencies	2026-05-04T04:20:38.1339301Z       Built jeeves-unchained @ file:///home/runner/work/jeeves-unchained/jeeves-unchained
+Research	Sync dependencies	2026-05-04T04:20:38.2046608Z  Downloading nltk
+Research	Sync dependencies	2026-05-04T04:20:38.2348808Z  Downloading tokenizers
+Research	Sync dependencies	2026-05-04T04:20:38.2778022Z  Downloading sqlalchemy
+Research	Sync dependencies	2026-05-04T04:20:38.3502994Z  Downloading hf-xet
+Research	Sync dependencies	2026-05-04T04:20:38.3540742Z  Downloading networkx
+Research	Sync dependencies	2026-05-04T04:20:38.4781360Z  Downloading cryptography
+Research	Sync dependencies	2026-05-04T04:20:38.5546287Z  Downloading lxml
+Research	Sync dependencies	2026-05-04T04:20:38.6860511Z  Downloading openai
+Research	Sync dependencies	2026-05-04T04:20:38.7355214Z  Downloading grpcio
+Research	Sync dependencies	2026-05-04T04:20:38.7613448Z  Downloading pillow
+Research	Sync dependencies	2026-05-04T04:20:39.0830155Z  Downloading babel
+Research	Sync dependencies	2026-05-04T04:20:39.5164317Z  Downloading numpy
+Research	Sync dependencies	2026-05-04T04:20:39.5282635Z  Downloading google-api-python-client
+Research	Sync dependencies	2026-05-04T04:20:39.5358591Z  Downloading google-cloud-aiplatform
+Research	Sync dependencies	2026-05-04T04:20:39.5836873Z  Downloading llama-index-core
+Research	Sync dependencies	2026-05-04T04:20:39.6386765Z  Downloading playwright
+Research	Sync dependencies	2026-05-04T04:20:39.6863199Z  Downloading transformers
+Research	Sync dependencies	2026-05-04T04:20:39.6866513Z Prepared 127 packages in 2.59s
+Research	Sync dependencies	2026-05-04T04:20:39.8511083Z Installed 127 packages in 164ms
+Research	Sync dependencies	2026-05-04T04:20:39.8522984Z  + aiohappyeyeballs==2.6.1
+Research	Sync dependencies	2026-05-04T04:20:39.8523569Z  + aiohttp==3.13.5
+Research	Sync dependencies	2026-05-04T04:20:39.8523891Z  + aiosignal==1.4.0
+Research	Sync dependencies	2026-05-04T04:20:39.8524216Z  + aiosqlite==0.22.1
+Research	Sync dependencies	2026-05-04T04:20:39.8524602Z  + annotated-types==0.7.0
+Research	Sync dependencies	2026-05-04T04:20:39.8524958Z  + anyio==4.13.0
+Research	Sync dependencies	2026-05-04T04:20:39.8525262Z  + attrs==26.1.0
+Research	Sync dependencies	2026-05-04T04:20:39.8525559Z  + babel==2.18.0
+Research	Sync dependencies	2026-05-04T04:20:39.8525847Z  + banks==2.4.1
+Research	Sync dependencies	2026-05-04T04:20:39.8526154Z  + certifi==2026.4.22
+Research	Sync dependencies	2026-05-04T04:20:39.8526477Z  + cffi==2.0.0
+Research	Sync dependencies	2026-05-04T04:20:39.8526803Z  + charset-normalizer==3.4.7
+Research	Sync dependencies	2026-05-04T04:20:39.8527178Z  + click==8.3.3
+Research	Sync dependencies	2026-05-04T04:20:39.8527865Z  + colorama==0.4.6
+Research	Sync dependencies	2026-05-04T04:20:39.8528179Z  + courlan==1.3.2
+Research	Sync dependencies	2026-05-04T04:20:39.8528490Z  + cryptography==46.0.7
+Research	Sync dependencies	2026-05-04T04:20:39.8528876Z  + dataclasses-json==0.6.7
+Research	Sync dependencies	2026-05-04T04:20:39.8529247Z  + dateparser==1.4.0
+Research	Sync dependencies	2026-05-04T04:20:39.8529575Z  + deprecated==1.3.1
+Research	Sync dependencies	2026-05-04T04:20:39.8529891Z  + dirtyjson==1.0.8
+Research	Sync dependencies	2026-05-04T04:20:39.8530202Z  + distro==1.9.0
+Research	Sync dependencies	2026-05-04T04:20:39.8530534Z  + docstring-parser==0.18.0
+Research	Sync dependencies	2026-05-04T04:20:39.8530906Z  + exa-py==2.12.1
+Research	Sync dependencies	2026-05-04T04:20:39.8531225Z  + filelock==3.29.0
+Research	Sync dependencies	2026-05-04T04:20:39.8531541Z  + filetype==1.2.0
+Research	Sync dependencies	2026-05-04T04:20:39.8531854Z  + frozenlist==1.8.0
+Research	Sync dependencies	2026-05-04T04:20:39.8532326Z  + fsspec==2026.3.0
+Research	Sync dependencies	2026-05-04T04:20:39.8532658Z  + google-api-core==2.30.3
+Research	Sync dependencies	2026-05-04T04:20:39.8533062Z  + google-api-python-client==2.194.0
+Research	Sync dependencies	2026-05-04T04:20:39.8533488Z  + google-auth==2.49.2
+Research	Sync dependencies	2026-05-04T04:20:39.8534052Z  + google-auth-httplib2==0.3.1
+Research	Sync dependencies	2026-05-04T04:20:39.8534489Z  + google-auth-oauthlib==1.3.1
+Research	Sync dependencies	2026-05-04T04:20:39.8534906Z  + google-cloud-aiplatform==1.148.1
+Research	Sync dependencies	2026-05-04T04:20:39.8535338Z  + google-cloud-bigquery==3.41.0
+Research	Sync dependencies	2026-05-04T04:20:39.8535744Z  + google-cloud-core==2.5.1
+Research	Sync dependencies	2026-05-04T04:20:39.8536168Z  + google-cloud-resource-manager==1.17.0
+Research	Sync dependencies	2026-05-04T04:20:39.8536624Z  + google-cloud-storage==3.10.1
+Research	Sync dependencies	2026-05-04T04:20:39.8537009Z  + google-crc32c==1.8.0
+Research	Sync dependencies	2026-05-04T04:20:39.8537359Z  + google-genai==1.73.1
+Research	Sync dependencies	2026-05-04T04:20:39.8537714Z  + google-resumable-media==2.8.2
+Research	Sync dependencies	2026-05-04T04:20:39.8538120Z  + googleapis-common-protos==1.74.0
+Research	Sync dependencies	2026-05-04T04:20:39.8538522Z  + greenlet==3.4.0
+Research	Sync dependencies	2026-05-04T04:20:39.8538835Z  + griffe==2.0.2
+Research	Sync dependencies	2026-05-04T04:20:39.8539145Z  + griffecli==2.0.2
+Research	Sync dependencies	2026-05-04T04:20:39.8539459Z  + griffelib==2.0.2
+Research	Sync dependencies	2026-05-04T04:20:39.8539794Z  + grpc-google-iam-v1==0.14.4
+Research	Sync dependencies	2026-05-04T04:20:39.8540159Z  + grpcio==1.80.0
+Research	Sync dependencies	2026-05-04T04:20:39.8540473Z  + grpcio-status==1.71.2
+Research	Sync dependencies	2026-05-04T04:20:39.8540809Z  + h11==0.16.0
+Research	Sync dependencies	2026-05-04T04:20:39.8541100Z  + hf-xet==1.4.3
+Research	Sync dependencies	2026-05-04T04:20:39.8541407Z  + htmldate==1.9.4
+Research	Sync dependencies	2026-05-04T04:20:39.8541722Z  + httpcore==1.0.9
+Research	Sync dependencies	2026-05-04T04:20:39.8542039Z  + httplib2==0.31.2
+Research	Sync dependencies	2026-05-04T04:20:39.8542500Z  + httpx==0.28.1
+Research	Sync dependencies	2026-05-04T04:20:39.8542823Z  + huggingface-hub==0.36.2
+Research	Sync dependencies	2026-05-04T04:20:39.8543182Z  + idna==3.13
+Research	Sync dependencies	2026-05-04T04:20:39.8543766Z  + jeeves-unchained==0.1.0 (from file:///home/runner/work/jeeves-unchained/jeeves-unchained)
+Research	Sync dependencies	2026-05-04T04:20:39.8544461Z  + jinja2==3.1.6
+Research	Sync dependencies	2026-05-04T04:20:39.8544782Z  + jiter==0.14.0
+Research	Sync dependencies	2026-05-04T04:20:39.8545083Z  + joblib==1.5.3
+Research	Sync dependencies	2026-05-04T04:20:39.8545389Z  + justext==3.0.2
+Research	Sync dependencies	2026-05-04T04:20:39.8545721Z  + llama-index-core==0.14.21
+Research	Sync dependencies	2026-05-04T04:20:39.8546134Z  + llama-index-instrumentation==0.5.0
+Research	Sync dependencies	2026-05-04T04:20:39.8546580Z  + llama-index-llms-groq==0.5.0
+Research	Sync dependencies	2026-05-04T04:20:39.8547045Z  + llama-index-llms-nvidia==0.5.0
+Research	Sync dependencies	2026-05-04T04:20:39.8547578Z  + llama-index-llms-openai==0.6.26
+Research	Sync dependencies	2026-05-04T04:20:39.8548023Z  + llama-index-llms-openai-like==0.5.3
+Research	Sync dependencies	2026-05-04T04:20:39.8548527Z  + llama-index-workflows==2.19.1
+Research	Sync dependencies	2026-05-04T04:20:39.8548918Z  + lxml==6.1.0
+Research	Sync dependencies	2026-05-04T04:20:39.8549239Z  + lxml-html-clean==0.4.4
+Research	Sync dependencies	2026-05-04T04:20:39.8549618Z  + markupsafe==3.0.3
+Research	Sync dependencies	2026-05-04T04:20:39.8549954Z  + marshmallow==3.26.2
+Research	Sync dependencies	2026-05-04T04:20:39.8550565Z  + multidict==6.7.1
+Research	Sync dependencies	2026-05-04T04:20:39.8550894Z  + mypy-extensions==1.1.0
+Research	Sync dependencies	2026-05-04T04:20:39.8551262Z  + nest-asyncio==1.6.0
+Research	Sync dependencies	2026-05-04T04:20:39.8551607Z  + networkx==3.6.1
+Research	Sync dependencies	2026-05-04T04:20:39.8551927Z  + nltk==3.9.4
+Research	Sync dependencies	2026-05-04T04:20:39.8552455Z  + numpy==2.4.4
+Research	Sync dependencies	2026-05-04T04:20:39.8552793Z  + oauthlib==3.3.1
+Research	Sync dependencies	2026-05-04T04:20:39.8553123Z  + openai==2.32.0
+Research	Sync dependencies	2026-05-04T04:20:39.8553448Z  + packaging==26.1
+Research	Sync dependencies	2026-05-04T04:20:39.8553761Z  + pillow==12.2.0
+Research	Sync dependencies	2026-05-04T04:20:39.8554085Z  + platformdirs==4.9.6
+Research	Sync dependencies	2026-05-04T04:20:39.8554429Z  + playwright==1.59.0
+Research	Sync dependencies	2026-05-04T04:20:39.8554774Z  + propcache==0.4.1
+Research	Sync dependencies	2026-05-04T04:20:39.8555114Z  + proto-plus==1.27.2
+Research	Sync dependencies	2026-05-04T04:20:39.8555443Z  + protobuf==5.29.6
+Research	Sync dependencies	2026-05-04T04:20:39.8555760Z  + pyasn1==0.6.3
+Research	Sync dependencies	2026-05-04T04:20:39.8556077Z  + pyasn1-modules==0.4.2
+Research	Sync dependencies	2026-05-04T04:20:39.8556658Z  + pycparser==3.0
+Research	Sync dependencies	2026-05-04T04:20:39.8556989Z  + pydantic==2.13.3
+Research	Sync dependencies	2026-05-04T04:20:39.8557320Z  + pydantic-core==2.46.3
+Research	Sync dependencies	2026-05-04T04:20:39.8557668Z  + pyee==13.0.1
+Research	Sync dependencies	2026-05-04T04:20:39.8557984Z  + pygithub==2.9.1
+Research	Sync dependencies	2026-05-04T04:20:39.8558294Z  + pyjwt==2.12.1
+Research	Sync dependencies	2026-05-04T04:20:39.8558605Z  + pynacl==1.6.2
+Research	Sync dependencies	2026-05-04T04:20:39.8558907Z  + pyparsing==3.3.2
+Research	Sync dependencies	2026-05-04T04:20:39.8559258Z  + python-dateutil==2.9.0.post0
+Research	Sync dependencies	2026-05-04T04:20:39.8559650Z  + python-dotenv==1.2.2
+Research	Sync dependencies	2026-05-04T04:20:39.8559998Z  + pytz==2026.1.post1
+Research	Sync dependencies	2026-05-04T04:20:39.8560329Z  + pyyaml==6.0.3
+Research	Sync dependencies	2026-05-04T04:20:39.8560630Z  + regex==2026.4.4
+Research	Sync dependencies	2026-05-04T04:20:39.8560945Z  + requests==2.33.1
+Research	Sync dependencies	2026-05-04T04:20:39.8561273Z  + requests-oauthlib==2.0.0
+Research	Sync dependencies	2026-05-04T04:20:39.8561665Z  + safetensors==0.7.0
+Research	Sync dependencies	2026-05-04T04:20:39.8561982Z  + setuptools==82.0.1
+Research	Sync dependencies	2026-05-04T04:20:39.8562453Z  + six==1.17.0
+Research	Sync dependencies	2026-05-04T04:20:39.8562757Z  + sniffio==1.3.1
+Research	Sync dependencies	2026-05-04T04:20:39.8563079Z  + sqlalchemy==2.0.49
+Research	Sync dependencies	2026-05-04T04:20:39.8563412Z  + tavily-python==0.7.23
+Research	Sync dependencies	2026-05-04T04:20:39.8563754Z  + tenacity==9.1.4
+Research	Sync dependencies	2026-05-04T04:20:39.8564074Z  + tiktoken==0.12.0
+Research	Sync dependencies	2026-05-04T04:20:39.8564371Z  + tinytag==2.2.1
+Research	Sync dependencies	2026-05-04T04:20:39.8564684Z  + tld==0.13.2
+Research	Sync dependencies	2026-05-04T04:20:39.8564990Z  + tokenizers==0.22.2
+Research	Sync dependencies	2026-05-04T04:20:39.8565315Z  + tqdm==4.67.3
+Research	Sync dependencies	2026-05-04T04:20:39.8565623Z  + trafilatura==2.0.0
+Research	Sync dependencies	2026-05-04T04:20:39.8565953Z  + transformers==4.57.6
+Research	Sync dependencies	2026-05-04T04:20:39.8566324Z  + typing-extensions==4.15.0
+Research	Sync dependencies	2026-05-04T04:20:39.8566579Z  + typing-inspect==0.9.0
+Research	Sync dependencies	2026-05-04T04:20:39.8566807Z  + typing-inspection==0.4.2
+Research	Sync dependencies	2026-05-04T04:20:39.8567037Z  + tzlocal==5.3.1
+Research	Sync dependencies	2026-05-04T04:20:39.8567235Z  + uritemplate==4.2.0
+Research	Sync dependencies	2026-05-04T04:20:39.8567439Z  + urllib3==2.6.3
+Research	Sync dependencies	2026-05-04T04:20:39.8567633Z  + websockets==16.0
+Research	Sync dependencies	2026-05-04T04:20:39.8567828Z  + wrapt==2.1.2
+Research	Sync dependencies	2026-05-04T04:20:39.8568071Z  + yarl==1.23.0
+Research	Install Playwright Chromium	﻿2026-05-04T04:20:39.8705083Z ##[group]Run uv run python -m playwright install --with-deps chromium
+Research	Install Playwright Chromium	2026-05-04T04:20:39.8705598Z ^[[36;1muv run python -m playwright install --with-deps chromium^[[0m
+Research	Install Playwright Chromium	2026-05-04T04:20:39.8729524Z shell: /usr/bin/bash -e {0}
+Research	Install Playwright Chromium	2026-05-04T04:20:39.8729802Z env:
+Research	Install Playwright Chromium	2026-05-04T04:20:39.8730060Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+Research	Install Playwright Chromium	2026-05-04T04:20:39.8730386Z ##[endgroup]
+Research	Install Playwright Chromium	2026-05-04T04:20:39.9505352Z Downloading pygments (1.2MiB)
+Research	Install Playwright Chromium	2026-05-04T04:20:40.0021224Z  Downloading pygments
+Research	Install Playwright Chromium	2026-05-04T04:20:40.0114359Z Installed 5 packages in 8ms
+Research	Install Playwright Chromium	2026-05-04T04:20:40.2903517Z Installing dependencies...
+Research	Install Playwright Chromium	2026-05-04T04:20:40.3037561Z Switching to root user to install dependencies...
+Research	Install Playwright Chromium	2026-05-04T04:20:40.3896933Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.4323824Z Hit:6 https://packages.microsoft.com/repos/azure-cli noble InRelease
+Research	Install Playwright Chromium	2026-05-04T04:20:40.4343146Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.4344044Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+Research	Install Playwright Chromium	2026-05-04T04:20:40.4373171Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.4391483Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.4433311Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.4453225Z Get:8 https://dl.google.com/linux/chrome-stable/deb stable InRelease [1825 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.5470860Z Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [107 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.5581735Z Get:10 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [11.6 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.5609958Z Get:11 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [132 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.6566531Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1946 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.6693645Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [348 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.6720702Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Components [177 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.6728708Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 c-n-f Metadata [17.1 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.6754269Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1685 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.6858313Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [324 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.6884089Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Components [386 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.6918307Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 c-n-f Metadata [34.5 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.6943153Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [3095 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.7145065Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [715 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.7595778Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Components [212 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.7607148Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 c-n-f Metadata [480 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.7629323Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [44.4 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.7640901Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [10.2 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.7649223Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Components [940 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.7676775Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 c-n-f Metadata [656 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.7680314Z Get:28 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Packages [64.5 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.7687384Z Get:29 http://azure.archive.ubuntu.com/ubuntu noble-backports/main Translation-en [9172 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.7696544Z Get:30 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Components [5748 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.7704991Z Get:31 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 c-n-f Metadata [368 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.7716251Z Get:32 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Packages [34.1 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.7726253Z Get:33 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe Translation-en [18.2 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.7735628Z Get:34 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Components [10.5 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.7744662Z Get:35 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 c-n-f Metadata [1484 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.8192680Z Get:36 http://azure.archive.ubuntu.com/ubuntu noble-backports/restricted amd64 Components [212 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.8220566Z Get:37 http://azure.archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Packages [748 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.8247599Z Get:38 http://azure.archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Components [212 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.8273658Z Get:39 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1625 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.8387116Z Get:40 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [259 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.8400370Z Get:41 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Components [21.9 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.8409332Z Get:42 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 c-n-f Metadata [11.0 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.8449045Z Get:43 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1182 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.8505068Z Get:44 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [227 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.8530072Z Get:45 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Components [74.2 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.8554337Z Get:46 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 c-n-f Metadata [23.1 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.8561908Z Get:47 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [2844 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.8631627Z Get:53 https://dl.google.com/linux/chrome-stable/deb stable/main amd64 Packages [1216 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.8703640Z Get:48 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [666 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.8745085Z Get:49 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Components [212 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.8755293Z Get:50 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [28.8 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.9191382Z Get:51 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse Translation-en [7172 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:40.9203013Z Get:52 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 Components [208 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:49.6492155Z Fetched 16.5 MB in 2s (8249 kB/s)
+Research	Install Playwright Chromium	2026-05-04T04:20:50.4308118Z Reading package lists...
+Research	Install Playwright Chromium	2026-05-04T04:20:50.4568527Z Reading package lists...
+Research	Install Playwright Chromium	2026-05-04T04:20:50.6586339Z Building dependency tree...
+Research	Install Playwright Chromium	2026-05-04T04:20:50.6593643Z Reading state information...
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8332355Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.2).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8333013Z libasound2t64 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8333577Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8334136Z libatk-bridge2.0-0t64 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8334633Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8335105Z libatk1.0-0t64 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8335579Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8336064Z libatspi2.0-0t64 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8336534Z libcairo2 is already the newest version (1.18.0-3build1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8337110Z libcairo2 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8338189Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.9).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8338562Z libcups2t64 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8338892Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8339242Z libdbus-1-3 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8339810Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8340174Z libdrm2 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8340494Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8340841Z libgbm1 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8341284Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.8).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8341655Z libglib2.0-0t64 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8341990Z libnspr4 is already the newest version (2:4.35-1.1build1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8342624Z libnspr4 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8342944Z libnss3 is already the newest version (2:3.98-1ubuntu0.1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8343259Z libnss3 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8343578Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8343925Z libpango-1.0-0 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8344242Z libx11-6 is already the newest version (2:1.8.7-1build1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8344759Z libx11-6 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8345054Z libxcb1 is already the newest version (1.15-1ubuntu2).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8345359Z libxcb1 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8345683Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8346035Z libxcomposite1 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8346369Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8346789Z libxdamage1 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8347104Z libxext6 is already the newest version (2:1.3.4-1build2).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8347415Z libxext6 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8347729Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8348052Z libxfixes3 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8348371Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8348697Z libxkbcommon0 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8349014Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8349405Z libxrandr2 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8349714Z xvfb is already the newest version (2:21.1.12-1ubuntu1.5).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8350146Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8350611Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8350973Z libfontconfig1 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8351325Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.1).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8351686Z libfreetype6 set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8352030Z fonts-liberation is already the newest version (1:2.1.5-3).
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8352486Z fonts-liberation set to manually installed.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8352832Z The following additional packages will be installed:
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8353165Z   xfonts-encodings xfonts-utils
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8353417Z Recommended packages:
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8353676Z   fonts-ipafont-mincho fonts-tlwg-loma
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8533738Z The following NEW packages will be installed:
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8534481Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8540739Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8541318Z   xfonts-utils
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8728417Z 0 upgraded, 9 newly installed, 0 to remove and 53 not upgraded.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8729033Z Need to get 21.1 MB of archives.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8729397Z After this operation, 79.5 MB of additional disk space will be used.
+Research	Install Playwright Chromium	2026-05-04T04:20:50.8729830Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+Research	Install Playwright Chromium	2026-05-04T04:20:50.9071388Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:50.9372601Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:50.9845202Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:50.9927147Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:51.0219923Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:51.0803264Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:51.0925546Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:51.1019741Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:51.1125035Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+Research	Install Playwright Chromium	2026-05-04T04:20:51.3744699Z Fetched 21.1 MB in 0s (83.4 MB/s)
+Research	Install Playwright Chromium	2026-05-04T04:20:51.3965004Z Selecting previously unselected package fonts-ipafont-gothic.
+Research	Install Playwright Chromium	2026-05-04T04:20:51.4178180Z (Reading database ... 
+Research	Install Playwright Chromium	2026-05-04T04:20:51.4178790Z (Reading database ... 5%
+Research	Install Playwright Chromium	2026-05-04T04:20:51.4179200Z (Reading database ... 10%
+Research	Install Playwright Chromium	2026-05-04T04:20:51.4179442Z (Reading database ... 15%
+Research	Install Playwright Chromium	2026-05-04T04:20:51.4179659Z (Reading database ... 20%
+Research	Install Playwright Chromium	2026-05-04T04:20:51.4179871Z (Reading database ... 25%
+Research	Install Playwright Chromium	2026-05-04T04:20:51.4180083Z (Reading database ... 30%
+Research	Install Playwright Chromium	2026-05-04T04:20:51.4180295Z (Reading database ... 35%
+Research	Install Playwright Chromium	2026-05-04T04:20:51.4180504Z (Reading database ... 40%
+Research	Install Playwright Chromium	2026-05-04T04:20:51.4180713Z (Reading database ... 45%
+Research	Install Playwright Chromium	2026-05-04T04:20:51.4180931Z (Reading database ... 50%
+Research	Install Playwright Chromium	2026-05-04T04:20:51.4246992Z (Reading database ... 55%
+Research	Install Playwright Chromium	2026-05-04T04:20:51.5093904Z (Reading database ... 60%
+Research	Install Playwright Chromium	2026-05-04T04:20:51.6659796Z (Reading database ... 65%
+Research	Install Playwright Chromium	2026-05-04T04:20:51.8533402Z (Reading database ... 70%
+Research	Install Playwright Chromium	2026-05-04T04:20:52.0231030Z (Reading database ... 75%
+Research	Install Playwright Chromium	2026-05-04T04:20:52.2056380Z (Reading database ... 80%
+Research	Install Playwright Chromium	2026-05-04T04:20:52.4107381Z (Reading database ... 85%
+Research	Install Playwright Chromium	2026-05-04T04:20:52.6647488Z (Reading database ... 90%
+Research	Install Playwright Chromium	2026-05-04T04:20:52.9600135Z (Reading database ... 95%
+Research	Install Playwright Chromium	2026-05-04T04:20:52.9609096Z (Reading database ... 100%
+Research	Install Playwright Chromium	2026-05-04T04:20:52.9609658Z (Reading database ... 220764 files and directories currently installed.)
+Research	Install Playwright Chromium	2026-05-04T04:20:52.9655477Z Preparing to unpack .../0-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+Research	Install Playwright Chromium	2026-05-04T04:20:53.0168064Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:53.3092858Z Selecting previously unselected package fonts-freefont-ttf.
+Research	Install Playwright Chromium	2026-05-04T04:20:53.3244704Z Preparing to unpack .../1-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+Research	Install Playwright Chromium	2026-05-04T04:20:53.3575077Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:53.7669817Z Selecting previously unselected package fonts-tlwg-loma-otf.
+Research	Install Playwright Chromium	2026-05-04T04:20:53.7825126Z Preparing to unpack .../2-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+Research	Install Playwright Chromium	2026-05-04T04:20:53.8146122Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:54.0111712Z Selecting previously unselected package fonts-unifont.
+Research	Install Playwright Chromium	2026-05-04T04:20:54.0268529Z Preparing to unpack .../3-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+Research	Install Playwright Chromium	2026-05-04T04:20:54.1170681Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:54.8257929Z Selecting previously unselected package fonts-wqy-zenhei.
+Research	Install Playwright Chromium	2026-05-04T04:20:54.8401256Z Preparing to unpack .../4-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+Research	Install Playwright Chromium	2026-05-04T04:20:54.8507055Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.3241681Z Selecting previously unselected package xfonts-encodings.
+Research	Install Playwright Chromium	2026-05-04T04:20:55.3386708Z Preparing to unpack .../5-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.3395378Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.3696547Z Selecting previously unselected package xfonts-utils.
+Research	Install Playwright Chromium	2026-05-04T04:20:55.3840393Z Preparing to unpack .../6-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.3847888Z Unpacking xfonts-utils (1:7.7+6build3) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.4185133Z Selecting previously unselected package xfonts-cyrillic.
+Research	Install Playwright Chromium	2026-05-04T04:20:55.4329455Z Preparing to unpack .../7-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.4337746Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.4696377Z Selecting previously unselected package xfonts-scalable.
+Research	Install Playwright Chromium	2026-05-04T04:20:55.4841481Z Preparing to unpack .../8-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.4849642Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.5293442Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.5413459Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.5431591Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.5448349Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.5465563Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.5532812Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+Research	Install Playwright Chromium	2026-05-04T04:20:55.5549642Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.5567699Z Setting up xfonts-utils (1:7.7+6build3) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.5606850Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.5896356Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.6176113Z Processing triggers for man-db (2.12.0-4build2) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:55.6196346Z Not building database; man-db/auto-update is not 'true'.
+Research	Install Playwright Chromium	2026-05-04T04:20:55.6210203Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+Research	Install Playwright Chromium	2026-05-04T04:20:56.2858790Z 
+Research	Install Playwright Chromium	2026-05-04T04:20:56.2859453Z Running kernel seems to be up-to-date.
+Research	Install Playwright Chromium	2026-05-04T04:20:56.2859859Z 
+Research	Install Playwright Chromium	2026-05-04T04:20:56.2860006Z No services need to be restarted.
+Research	Install Playwright Chromium	2026-05-04T04:20:56.2860281Z 
+Research	Install Playwright Chromium	2026-05-04T04:20:56.2860441Z No containers need to be restarted.
+Research	Install Playwright Chromium	2026-05-04T04:20:56.2860632Z 
+Research	Install Playwright Chromium	2026-05-04T04:20:56.2860784Z No user sessions are running outdated binaries.
+Research	Install Playwright Chromium	2026-05-04T04:20:56.2861021Z 
+Research	Install Playwright Chromium	2026-05-04T04:20:56.2861226Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+Research	Install Playwright Chromium	2026-05-04T04:20:57.2734603Z Downloading Chrome for Testing 147.0.7727.15 (playwright chromium v1217) from https://cdn.playwright.dev/builds/cft/147.0.7727.15/linux64/chrome-linux64.zip
+Research	Install Playwright Chromium	2026-05-04T04:20:58.0883465Z |                                                                                |   0% of 170.4 MiB
+Research	Install Playwright Chromium	2026-05-04T04:20:58.2463893Z |■■■■■■■■                                                                        |  10% of 170.4 MiB
+Research	Install Playwright Chromium	2026-05-04T04:20:58.3368481Z |■■■■■■■■■■■■■■■■                                                                |  20% of 170.4 MiB
+Research	Install Playwright Chromium	2026-05-04T04:20:58.4214041Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 170.4 MiB
+Research	Install Playwright Chromium	2026-05-04T04:20:58.4906494Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 170.4 MiB
+Research	Install Playwright Chromium	2026-05-04T04:20:58.5579427Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 170.4 MiB
+Research	Install Playwright Chromium	2026-05-04T04:20:58.6405737Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 170.4 MiB
+Research	Install Playwright Chromium	2026-05-04T04:20:58.7246395Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 170.4 MiB
+Research	Install Playwright Chromium	2026-05-04T04:20:58.7938101Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 170.4 MiB
+Research	Install Playwright Chromium	2026-05-04T04:20:58.8885032Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 170.4 MiB
+Research	Install Playwright Chromium	2026-05-04T04:20:58.9652691Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 170.4 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:01.4822770Z Chrome for Testing 147.0.7727.15 (playwright chromium v1217) downloaded to /home/runner/.cache/ms-playwright/chromium-1217
+Research	Install Playwright Chromium	2026-05-04T04:21:01.4827070Z Downloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+Research	Install Playwright Chromium	2026-05-04T04:21:02.2273377Z |                                                                                |   0% of 2.3 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:02.2322770Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:02.2363328Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:02.2382340Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:02.2402790Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:02.2419638Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:02.2441595Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:02.2494610Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:02.2510657Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:02.2533180Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:02.2543689Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:02.3165970Z FFmpeg (playwright ffmpeg v1011) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1011
+Research	Install Playwright Chromium	2026-05-04T04:21:02.3169555Z Downloading Chrome Headless Shell 147.0.7727.15 (playwright chromium-headless-shell v1217) from https://cdn.playwright.dev/builds/cft/147.0.7727.15/linux64/chrome-headless-shell-linux64.zip
+Research	Install Playwright Chromium	2026-05-04T04:21:03.0717318Z |                                                                                |   0% of 112 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:03.1748897Z |■■■■■■■■                                                                        |  10% of 112 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:03.2269271Z |■■■■■■■■■■■■■■■■                                                                |  20% of 112 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:03.2767537Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 112 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:03.3221463Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 112 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:03.3678451Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 112 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:03.4148389Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 112 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:03.4518941Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 112 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:03.4845232Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 112 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:03.5222431Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 112 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:03.5629824Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 112 MiB
+Research	Install Playwright Chromium	2026-05-04T04:21:05.4083802Z Chrome Headless Shell 147.0.7727.15 (playwright chromium-headless-shell v1217) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1217
+Research	Run research phase	﻿2026-05-04T04:21:05.4339556Z ##[group]Run uv run python scripts/research.py
+Research	Run research phase	2026-05-04T04:21:05.4339935Z ^[[36;1muv run python scripts/research.py^[[0m
+Research	Run research phase	2026-05-04T04:21:05.4362679Z shell: /usr/bin/bash -e {0}
+Research	Run research phase	2026-05-04T04:21:05.4362939Z env:
+Research	Run research phase	2026-05-04T04:21:05.4363191Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+Research	Run research phase	2026-05-04T04:21:05.4363840Z   NVIDIA_API_KEY: ***
+Research	Run research phase	2026-05-04T04:21:05.4364132Z   SERPER_API_KEY: ***
+Research	Run research phase	2026-05-04T04:21:05.4364427Z   TAVILY_API_KEY: ***
+Research	Run research phase	2026-05-04T04:21:05.4364678Z   EXA_API_KEY: ***
+Research	Run research phase	2026-05-04T04:21:05.4364951Z   GOOGLE_API_KEY: ***
+Research	Run research phase	2026-05-04T04:21:05.4365170Z   GOOGLE_CLOUD_PROJECT: 
+Research	Run research phase	2026-05-04T04:21:05.4365410Z   GOOGLE_CLOUD_REGION: us-central1
+Research	Run research phase	2026-05-04T04:21:05.4365710Z   GOOGLE_APPLICATION_CREDENTIALS_JSON: 
+Research	Run research phase	2026-05-04T04:21:05.4366119Z   JINA_API_KEY: ***
+Research	Run research phase	2026-05-04T04:21:05.4366329Z   FIRECRAWL_API_KEY: 
+Research	Run research phase	2026-05-04T04:21:05.4366742Z   OPENROUTER_API_KEY: ***
+Research	Run research phase	2026-05-04T04:21:05.4367104Z   GITHUB_TOKEN: ***
+Research	Run research phase	2026-05-04T04:21:05.4367368Z   GITHUB_REPOSITORY: mmmichaelllang/jeeves-unchained
+Research	Run research phase	2026-05-04T04:21:05.4367726Z   GITHUB_REF_NAME: main
+Research	Run research phase	2026-05-04T04:21:05.4367949Z ##[endgroup]
+Research	Run research phase	2026-05-04T04:21:05.9981661Z 2026-05-04 04:21:05,997 jeeves.research INFO COVERAGE_LOG feedback: 20 URLs added from /home/runner/work/jeeves-unchained/jeeves-unchained/sessions/briefing-2026-05-03.html
+Research	Run research phase	2026-05-04T04:21:05.9982887Z 2026-05-04 04:21:05,997 jeeves.research INFO 7 prior sessions loaded: 231 URLs (ordered), 264 headlines in rolling dedup set.
+Research	Run research phase	2026-05-04T04:21:05.9985952Z 2026-05-04 04:21:05,998 jeeves.research INFO running 12 non-enriched sectors: 3 deep (sequential), 9 light (pairs)…
+Research	Run research phase	2026-05-04T04:21:09.7693295Z None of PyTorch, TensorFlow >= 2.0, or Flax have been found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Research	Run research phase	2026-05-04T04:21:09.7695216Z 2026-05-04 04:21:09,768 transformers WARNING None of PyTorch, TensorFlow >= 2.0, or Flax have been found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Research	Run research phase	2026-05-04T04:21:10.5628401Z 2026-05-04 04:21:10,562 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:21:10.5860222Z 2026-05-04 04:21:10,585 jeeves.research_sectors INFO sector triadic_ontology: agent starting.
+Research	Run research phase	2026-05-04T04:23:36.0210422Z 2026-05-04 04:23:36,020 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:25:45.5377898Z 2026-05-04 04:25:45,537 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:28:49.0990275Z 2026-05-04 04:28:49,098 jeeves.research_sectors WARNING sector triadic_ontology: agent crashed (Request timed out.); returning default
+Research	Run research phase	2026-05-04T04:28:49.1488320Z 2026-05-04 04:28:49,148 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:28:49.1541147Z 2026-05-04 04:28:49,153 jeeves.research_sectors INFO sector ai_systems: agent starting.
+Research	Run research phase	2026-05-04T04:30:46.9774445Z 2026-05-04 04:30:46,977 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:32:47.1203860Z 2026-05-04 04:32:47,120 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:34:15.4080383Z 2026-05-04 04:34:15,407 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:35:00.7244113Z 2026-05-04 04:35:00,724 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:37:02.6651734Z 2026-05-04 04:37:02,664 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:37:25.9537470Z 2026-05-04 04:37:25,953 jeeves.research_sectors INFO sector ai_systems: parsed dict (len=2)
+Research	Run research phase	2026-05-04T04:37:25.9942026Z 2026-05-04 04:37:25,993 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:37:25.9992064Z 2026-05-04 04:37:25,999 jeeves.research_sectors INFO sector uap: agent starting.
+Research	Run research phase	2026-05-04T04:39:59.5463375Z 2026-05-04 04:39:59,546 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:40:02.5967013Z 2026-05-04 04:40:02,596 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:41:49.8208312Z 2026-05-04 04:41:49,820 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:43:35.6075910Z 2026-05-04 04:43:35,607 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:45:38.8065126Z 2026-05-04 04:45:38,806 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:48:48.2166425Z 2026-05-04 04:48:48,216 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:49:11.4575487Z 2026-05-04 04:49:11,457 jeeves.research_sectors INFO sector uap: parsed dict (len=2)
+Research	Run research phase	2026-05-04T04:49:11.5267772Z 2026-05-04 04:49:11,526 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:49:11.5317627Z 2026-05-04 04:49:11,531 jeeves.research_sectors INFO sector weather: agent starting.
+Research	Run research phase	2026-05-04T04:49:11.5772567Z 2026-05-04 04:49:11,577 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:49:11.5818956Z 2026-05-04 04:49:11,581 jeeves.research_sectors INFO sector local_news: agent starting.
+Research	Run research phase	2026-05-04T04:51:29.2901400Z 2026-05-04 04:51:29,289 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:51:30.1377571Z 2026-05-04 04:51:30,137 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:51:31.9086431Z 2026-05-04 04:51:31,908 jeeves.llm WARNING kimi tool call tavily_search returned None/empty arguments; coercing to {}
+Research	Run research phase	2026-05-04T04:51:36.1591288Z 2026-05-04 04:51:36,158 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:51:36.2693247Z 2026-05-04 04:51:36,269 google_genai.models INFO AFC is enabled with max remote calls: 10.
+Research	Run research phase	2026-05-04T04:51:40.4346158Z 2026-05-04 04:51:40,434 httpx INFO HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:51:40.4349784Z 2026-05-04 04:51:40,434 google_genai.models INFO AFC is enabled with max remote calls: 10.
+Research	Run research phase	2026-05-04T04:51:40.4373356Z 2026-05-04 04:51:40,437 jeeves.tools.gemini_grounded INFO gemini_grounded: answered (747 chars, 6 citations) [daily=1/12]
+Research	Run research phase	2026-05-04T04:51:40.8525223Z 2026-05-04 04:51:40,852 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:51:40.9140841Z 2026-05-04 04:51:40,913 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:51:47.1541202Z 2026-05-04 04:51:47,153 httpx INFO HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:51:47.1559358Z 2026-05-04 04:51:47,155 jeeves.tools.gemini_grounded INFO gemini_grounded: answered (3051 chars, 10 citations) [daily=2/12]
+Research	Run research phase	2026-05-04T04:53:47.5110145Z 2026-05-04 04:53:47,510 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:54:22.5511400Z 2026-05-04 04:54:22,550 jeeves.research_sectors INFO sector local_news: parsed list (len=4)
+Research	Run research phase	2026-05-04T04:54:37.6342776Z 2026-05-04 04:54:37,633 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:54:41.5630687Z 2026-05-04 04:54:41,562 jeeves.research_sectors INFO sector weather: parsed str (len=229)
+Research	Run research phase	2026-05-04T04:54:41.6041017Z 2026-05-04 04:54:41,603 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:54:41.6091298Z 2026-05-04 04:54:41,608 jeeves.research_sectors INFO sector career: agent starting.
+Research	Run research phase	2026-05-04T04:54:41.6778337Z 2026-05-04 04:54:41,677 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:54:41.6824440Z 2026-05-04 04:54:41,682 jeeves.research_sectors INFO sector family: agent starting.
+Research	Run research phase	2026-05-04T04:56:27.0270451Z 2026-05-04 04:56:27,026 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:56:27.3369993Z 2026-05-04 04:56:27,336 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:56:35.0731067Z 2026-05-04 04:56:35,072 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:56:35.5334333Z 2026-05-04 04:56:35,533 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:58:38.5652465Z 2026-05-04 04:58:38,564 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T04:59:08.6200164Z 2026-05-04 04:59:08,619 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:01:02.7350930Z 2026-05-04 05:01:02,734 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:01:47.2730626Z 2026-05-04 05:01:47,272 jeeves.research_sectors WARNING sector family: agent crashed (Request timed out.); returning default
+Research	Run research phase	2026-05-04T05:02:59.7199509Z 2026-05-04 05:02:59,719 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:04:43.7865116Z 2026-05-04 05:04:43,786 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:05:00.9148330Z 2026-05-04 05:05:00,914 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	Run research phase	2026-05-04T05:05:00.9150067Z 2026-05-04 05:05:00,914 openai._base_client INFO Retrying request to /chat/completions in 0.399989 seconds
+Research	Run research phase	2026-05-04T05:05:01.4021369Z 2026-05-04 05:05:01,401 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	Run research phase	2026-05-04T05:05:01.4023003Z 2026-05-04 05:05:01,402 openai._base_client INFO Retrying request to /chat/completions in 0.989795 seconds
+Research	Run research phase	2026-05-04T05:05:02.4679263Z 2026-05-04 05:05:02,467 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	Run research phase	2026-05-04T05:05:02.4811538Z 2026-05-04 05:05:02,480 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 404 Not Found"
+Research	Run research phase	2026-05-04T05:05:03.2232715Z 2026-05-04 05:05:03,222 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:05:35.9759688Z 2026-05-04 05:05:35,975 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	Run research phase	2026-05-04T05:05:35.9761438Z 2026-05-04 05:05:35,976 openai._base_client INFO Retrying request to /chat/completions in 0.411650 seconds
+Research	Run research phase	2026-05-04T05:05:36.4569057Z 2026-05-04 05:05:36,456 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	Run research phase	2026-05-04T05:05:36.4570650Z 2026-05-04 05:05:36,456 openai._base_client INFO Retrying request to /chat/completions in 0.866536 seconds
+Research	Run research phase	2026-05-04T05:05:37.4004550Z 2026-05-04 05:05:37,400 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	Run research phase	2026-05-04T05:05:37.4110682Z 2026-05-04 05:05:37,410 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 404 Not Found"
+Research	Run research phase	2026-05-04T05:05:37.6966643Z 2026-05-04 05:05:37,696 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:05:42.5773681Z 2026-05-04 05:05:42,577 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	Run research phase	2026-05-04T05:05:42.5778623Z 2026-05-04 05:05:42,577 openai._base_client INFO Retrying request to /chat/completions in 0.418981 seconds
+Research	Run research phase	2026-05-04T05:05:43.0883269Z 2026-05-04 05:05:43,088 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	Run research phase	2026-05-04T05:05:43.0885368Z 2026-05-04 05:05:43,088 openai._base_client INFO Retrying request to /chat/completions in 0.960432 seconds
+Research	Run research phase	2026-05-04T05:05:44.0812012Z 2026-05-04 05:05:44,080 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	Run research phase	2026-05-04T05:05:44.1000368Z 2026-05-04 05:05:44,099 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 404 Not Found"
+Research	Run research phase	2026-05-04T05:05:44.4640092Z 2026-05-04 05:05:44,463 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:08:54.2662800Z 2026-05-04 05:08:54,265 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:09:36.9134387Z 2026-05-04 05:09:36,913 jeeves.research_sectors INFO sector career: parsed dict (len=2)
+Research	Run research phase	2026-05-04T05:09:36.9837211Z 2026-05-04 05:09:36,983 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:09:36.9887658Z 2026-05-04 05:09:36,988 jeeves.research_sectors INFO sector global_news: agent starting.
+Research	Run research phase	2026-05-04T05:09:37.0373406Z 2026-05-04 05:09:37,037 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:09:37.0419369Z 2026-05-04 05:09:37,041 jeeves.research_sectors INFO sector intellectual_journals: agent starting.
+Research	Run research phase	2026-05-04T05:11:34.6259685Z 2026-05-04 05:11:34,625 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:11:35.7762942Z 2026-05-04 05:11:35,775 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:11:37.8985055Z 2026-05-04 05:11:37,898 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	Run research phase	2026-05-04T05:11:48.0559453Z 2026-05-04 05:11:48,055 google_genai.models INFO AFC is enabled with max remote calls: 10.
+Research	Run research phase	2026-05-04T05:11:49.1050289Z 2026-05-04 05:11:49,104 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:11:55.5190894Z 2026-05-04 05:11:55,518 httpx INFO HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:11:55.5211025Z 2026-05-04 05:11:55,520 jeeves.tools.gemini_grounded INFO gemini_grounded: answered (3525 chars, 16 citations) [daily=3/12]
+Research	Run research phase	2026-05-04T05:13:17.9181528Z 2026-05-04 05:13:17,917 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:14:00.1365534Z 2026-05-04 05:14:00,136 jeeves.research_sectors INFO sector intellectual_journals: parsed list (len=5)
+Research	Run research phase	2026-05-04T05:14:04.9016161Z 2026-05-04 05:14:04,901 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:14:12.8659312Z 2026-05-04 05:14:12,865 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	Run research phase	2026-05-04T05:14:14.8927927Z 2026-05-04 05:14:14,892 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:14:15.3351410Z 2026-05-04 05:14:15,334 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:14:15.4779419Z 2026-05-04 05:14:15,477 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:16:04.0028872Z 2026-05-04 05:16:04,002 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:16:33.1994205Z 2026-05-04 05:16:33,199 jeeves.research_sectors INFO sector global_news: parsed list (len=5)
+Research	Run research phase	2026-05-04T05:16:33.2681779Z 2026-05-04 05:16:33,267 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:16:33.2736418Z 2026-05-04 05:16:33,273 jeeves.research_sectors INFO sector wearable_ai: agent starting.
+Research	Run research phase	2026-05-04T05:16:33.2752449Z 2026-05-04 05:16:33,275 jeeves.research_sectors INFO sector newyorker: direct Python fetch (no agent).
+Research	Run research phase	2026-05-04T05:16:33.9745649Z 2026-05-04 05:16:33,974 jeeves.research_sectors INFO sector newyorker: direct fetch done (available=True).
+Research	Run research phase	2026-05-04T05:16:52.4878372Z 2026-05-04 05:16:52,487 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:17:20.9680210Z 2026-05-04 05:17:20,967 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:17:56.7980291Z 2026-05-04 05:17:56,797 jeeves.research_sectors INFO sector wearable_ai: parsed list (len=3)
+Research	Run research phase	2026-05-04T05:17:56.8455396Z 2026-05-04 05:17:56,845 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:17:56.8501562Z 2026-05-04 05:17:56,850 jeeves.research_sectors INFO sector literary_pick: agent starting.
+Research	Run research phase	2026-05-04T05:18:21.2204579Z 2026-05-04 05:18:21,220 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:18:50.8449342Z 2026-05-04 05:18:50,844 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:18:58.8678292Z 2026-05-04 05:18:58,867 jeeves.research_sectors INFO sector literary_pick: parsed dict (len=6)
+Research	Run research phase	2026-05-04T05:18:58.8679638Z 2026-05-04 05:18:58,867 jeeves.research INFO running enriched_articles sector (seeded with 51 URLs)…
+Research	Run research phase	2026-05-04T05:18:58.9176978Z 2026-05-04 05:18:58,917 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:18:58.9224235Z 2026-05-04 05:18:58,922 jeeves.research_sectors INFO sector enriched_articles: agent starting.
+Research	Run research phase	2026-05-04T05:19:12.7798742Z 2026-05-04 05:19:12,779 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:19:34.1886822Z 2026-05-04 05:19:34,188 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:19:37.1104789Z 2026-05-04 05:19:37,110 jeeves.research_sectors WARNING sector enriched_articles: no JSON array found in output; will attempt repair retry
+Research	Run research phase	2026-05-04T05:19:37.1106257Z 2026-05-04 05:19:37,110 jeeves.research_sectors WARNING sector enriched_articles: triggering JSON repair retry (raw_len=141).
+Research	Run research phase	2026-05-04T05:19:37.1108063Z 2026-05-04 05:19:37,110 jeeves.research_sectors INFO sector enriched_articles: repair retry — reformatting malformed output (141 chars).
+Research	Run research phase	2026-05-04T05:19:37.1757563Z 2026-05-04 05:19:37,175 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:19:49.2246923Z 2026-05-04 05:19:49,224 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	Run research phase	2026-05-04T05:19:55.7502121Z 2026-05-04 05:19:55,749 jeeves.research_sectors INFO sector enriched_articles: repair retry succeeded — parsed list
+Research	Run research phase	2026-05-04T05:19:55.7503146Z 2026-05-04 05:19:55,750 jeeves.research_sectors INFO sector enriched_articles: parsed list (len=1)
+Research	Run research phase	2026-05-04T05:19:55.7517627Z 2026-05-04 05:19:55,751 jeeves.research INFO merged correspondence handoff from /home/runner/work/jeeves-unchained/jeeves-unchained/sessions/correspondence-2026-05-04.json (found=True)
+Research	Run research phase	2026-05-04T05:19:55.7528676Z 2026-05-04 05:19:55,752 jeeves.session_io INFO session written to /home/runner/work/jeeves-unchained/jeeves-unchained/sessions/session-2026-05-04.json
+Research	Run research phase	2026-05-04T05:19:55.8513961Z 2026-05-04 05:19:55,851 httpx INFO HTTP Request: GET https://api.github.com/repos/mmmichaelllang/jeeves-unchained/contents/sessions/session-2026-05-04.json "HTTP/1.1 404 Not Found"
+Research	Run research phase	2026-05-04T05:19:56.7163055Z 2026-05-04 05:19:56,715 httpx INFO HTTP Request: PUT https://api.github.com/repos/mmmichaelllang/jeeves-unchained/contents/sessions/session-2026-05-04.json "HTTP/1.1 201 Created"
+Research	Run research phase	2026-05-04T05:19:56.7165314Z 2026-05-04 05:19:56,716 jeeves.session_io INFO committed sessions/session-2026-05-04.json to mmmichaelllang/jeeves-unchained
+Research	Run research phase	2026-05-04T05:19:56.7170301Z 2026-05-04 05:19:56,716 jeeves.research INFO session saved: /home/runner/work/jeeves-unchained/jeeves-unchained/sessions/session-2026-05-04.json (quota state: /home/runner/work/jeeves-unchained/jeeves-unchained/.quota-state.json)
+Research	Commit quota ledger	﻿2026-05-04T05:19:57.3784148Z ##[group]Run if [ -f .quota-state.json ] && ! git diff --quiet .quota-state.json; then
+Research	Commit quota ledger	2026-05-04T05:19:57.3784793Z ^[[36;1mif [ -f .quota-state.json ] && ! git diff --quiet .quota-state.json; then^[[0m
+Research	Commit quota ledger	2026-05-04T05:19:57.3785208Z ^[[36;1m  git config user.name "jeeves-bot"^[[0m
+Research	Commit quota ledger	2026-05-04T05:19:57.3785582Z ^[[36;1m  git config user.email "jeeves-bot@users.noreply.github.com"^[[0m
+Research	Commit quota ledger	2026-05-04T05:19:57.3785946Z ^[[36;1m  git add .quota-state.json^[[0m
+Research	Commit quota ledger	2026-05-04T05:19:57.3786296Z ^[[36;1m  git commit -m "quota: update counters $(date -u +%Y-%m-%d)"^[[0m
+Research	Commit quota ledger	2026-05-04T05:19:57.3786771Z ^[[36;1m  # The research script commits session-*.json to GitHub via the Contents API,^[[0m
+Research	Commit quota ledger	2026-05-04T05:19:57.3787313Z ^[[36;1m  # leaving untracked copies in the working tree. Remove them before rebase so^[[0m
+Research	Commit quota ledger	2026-05-04T05:19:57.3787845Z ^[[36;1m  # git-pull --rebase can checkout the remote's session commit without aborting.^[[0m
+Research	Commit quota ledger	2026-05-04T05:19:57.3788319Z ^[[36;1m  git clean -fd sessions/ 2>/dev/null || true^[[0m
+Research	Commit quota ledger	2026-05-04T05:19:57.3788675Z ^[[36;1m  git pull --rebase --autostash origin "main" || true^[[0m
+Research	Commit quota ledger	2026-05-04T05:19:57.3789031Z ^[[36;1m  git push^[[0m
+Research	Commit quota ledger	2026-05-04T05:19:57.3789276Z ^[[36;1mfi^[[0m
+Research	Commit quota ledger	2026-05-04T05:19:57.3811827Z shell: /usr/bin/bash -e {0}
+Research	Commit quota ledger	2026-05-04T05:19:57.3812096Z env:
+Research	Commit quota ledger	2026-05-04T05:19:57.3812481Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+Research	Commit quota ledger	2026-05-04T05:19:57.3813047Z   GITHUB_TOKEN: ***
+Research	Commit quota ledger	2026-05-04T05:19:57.3813270Z ##[endgroup]
+Research	Commit quota ledger	2026-05-04T05:19:57.4056862Z [main d89ccca] quota: update counters 2026-05-04
+Research	Commit quota ledger	2026-05-04T05:19:57.4057364Z  1 file changed, 6 insertions(+), 6 deletions(-)
+Research	Commit quota ledger	2026-05-04T05:19:57.4074286Z Removing sessions/session-2026-05-04.json
+Research	Commit quota ledger	2026-05-04T05:19:57.6112369Z From https://github.com/mmmichaelllang/jeeves-unchained
+Research	Commit quota ledger	2026-05-04T05:19:57.6113052Z  * branch            main       -> FETCH_HEAD
+Research	Commit quota ledger	2026-05-04T05:19:57.6113529Z    1018633..7ea3225  main       -> origin/main
+Research	Commit quota ledger	2026-05-04T05:19:57.6235554Z Rebasing (1/1)
+Research	Commit quota ledger	2026-05-04T05:19:57.6236064Z Successfully rebased and updated refs/heads/main.
+Research	Commit quota ledger	2026-05-04T05:19:58.4544973Z To https://github.com/mmmichaelllang/jeeves-unchained
+Research	Commit quota ledger	2026-05-04T05:19:58.4545571Z    7ea3225..325b369  main -> main
+Research	Post Set up uv	﻿2026-05-04T05:19:58.4668835Z Post job cleanup.
+Research	Post Run actions/checkout@v4	﻿2026-05-04T05:19:58.6273751Z Post job cleanup.
+Research	Post Run actions/checkout@v4	2026-05-04T05:19:58.7231053Z [command]/usr/bin/git version
+Research	Post Run actions/checkout@v4	2026-05-04T05:19:58.7275380Z git version 2.53.0
+Research	Post Run actions/checkout@v4	2026-05-04T05:19:58.7315893Z Temporarily overriding HOME='/home/runner/work/_temp/303369c8-eab9-4717-9e6e-265a46a11719' before making global git config changes
+Research	Post Run actions/checkout@v4	2026-05-04T05:19:58.7317041Z Adding repository directory to the temporary git global config as a safe directory
+Research	Post Run actions/checkout@v4	2026-05-04T05:19:58.7321527Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/jeeves-unchained/jeeves-unchained
+Research	Post Run actions/checkout@v4	2026-05-04T05:19:58.7358359Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Research	Post Run actions/checkout@v4	2026-05-04T05:19:58.7391431Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Research	Post Run actions/checkout@v4	2026-05-04T05:19:58.7631444Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Research	Post Run actions/checkout@v4	2026-05-04T05:19:58.7656040Z http.https://github.com/.extraheader
+Research	Post Run actions/checkout@v4	2026-05-04T05:19:58.7671981Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+Research	Post Run actions/checkout@v4	2026-05-04T05:19:58.7707997Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Research	Post Run actions/checkout@v4	2026-05-04T05:19:58.7955907Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Research	Post Run actions/checkout@v4	2026-05-04T05:19:58.7990219Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Research	Complete job	﻿2026-05-04T05:19:58.8373336Z Cleaning up orphan processes
+Research	Complete job	2026-05-04T05:19:58.8679932Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v4, astral-sh/setup-uv@v3. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Node.js 20 will be removed from the runner on September 16th, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Write	Set up job	﻿2026-05-04T05:20:02.9017357Z Current runner version: '2.334.0'
+Write	Set up job	2026-05-04T05:20:02.9040624Z ##[group]Runner Image Provisioner
+Write	Set up job	2026-05-04T05:20:02.9041518Z Hosted Compute Agent
+Write	Set up job	2026-05-04T05:20:02.9042021Z Version: 20260213.493
+Write	Set up job	2026-05-04T05:20:02.9042578Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+Write	Set up job	2026-05-04T05:20:02.9043275Z Build Date: 2026-02-13T00:28:41Z
+Write	Set up job	2026-05-04T05:20:02.9043875Z Worker ID: {f08ef1ab-011b-4f3d-8bdb-71940a7f98dc}
+Write	Set up job	2026-05-04T05:20:02.9044513Z Azure Region: northcentralus
+Write	Set up job	2026-05-04T05:20:02.9045026Z ##[endgroup]
+Write	Set up job	2026-05-04T05:20:02.9046550Z ##[group]Operating System
+Write	Set up job	2026-05-04T05:20:02.9047179Z Ubuntu
+Write	Set up job	2026-05-04T05:20:02.9047664Z 24.04.4
+Write	Set up job	2026-05-04T05:20:02.9048098Z LTS
+Write	Set up job	2026-05-04T05:20:02.9048539Z ##[endgroup]
+Write	Set up job	2026-05-04T05:20:02.9048982Z ##[group]Runner Image
+Write	Set up job	2026-05-04T05:20:02.9049497Z Image: ubuntu-24.04
+Write	Set up job	2026-05-04T05:20:02.9050058Z Version: 20260413.86.1
+Write	Set up job	2026-05-04T05:20:02.9051010Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260413.86/images/ubuntu/Ubuntu2404-Readme.md
+Write	Set up job	2026-05-04T05:20:02.9052514Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260413.86
+Write	Set up job	2026-05-04T05:20:02.9053332Z ##[endgroup]
+Write	Set up job	2026-05-04T05:20:02.9054391Z ##[group]GITHUB_TOKEN Permissions
+Write	Set up job	2026-05-04T05:20:02.9056671Z Actions: write
+Write	Set up job	2026-05-04T05:20:02.9057168Z Contents: write
+Write	Set up job	2026-05-04T05:20:02.9057920Z Metadata: read
+Write	Set up job	2026-05-04T05:20:02.9058652Z ##[endgroup]
+Write	Set up job	2026-05-04T05:20:02.9061629Z Secret source: Actions
+Write	Set up job	2026-05-04T05:20:02.9062742Z Prepare workflow directory
+Write	Set up job	2026-05-04T05:20:02.9444304Z Prepare all required actions
+Write	Set up job	2026-05-04T05:20:02.9498725Z Getting action download info
+Write	Set up job	2026-05-04T05:20:03.3314541Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+Write	Set up job	2026-05-04T05:20:03.4442120Z Download action repository 'astral-sh/setup-uv@v3' (SHA:caf0cab7a618c569241d31dcd442f54681755d39)
+Write	Set up job	2026-05-04T05:20:03.8936886Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+Write	Set up job	2026-05-04T05:20:04.0654148Z Complete job name: Write
+Write	Run actions/checkout@v4	﻿2026-05-04T05:20:04.1280170Z ##[group]Run actions/checkout@v4
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.1281304Z with:
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.1281850Z   ref: main
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.1282348Z   repository: mmmichaelllang/jeeves-unchained
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.1283138Z   token: ***
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.1283731Z   ssh-strict: true
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.1284396Z   ssh-user: git
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.1284896Z   persist-credentials: true
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.1285381Z   clean: true
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.1285858Z   sparse-checkout-cone-mode: true
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.1286528Z   fetch-depth: 1
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.1287016Z   fetch-tags: false
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.1287470Z   show-progress: true
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.1287977Z   lfs: false
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.1288384Z   submodules: false
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.1288833Z   set-safe-directory: true
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.1290023Z ##[endgroup]
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.2438794Z Syncing repository: mmmichaelllang/jeeves-unchained
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.2440716Z ##[group]Getting Git version info
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.2441491Z Working directory is '/home/runner/work/jeeves-unchained/jeeves-unchained'
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.2442494Z [command]/usr/bin/git version
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.2476377Z git version 2.53.0
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.2499081Z ##[endgroup]
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.2511736Z Temporarily overriding HOME='/home/runner/work/_temp/d179726e-daad-441a-857b-8860b24683a7' before making global git config changes
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.2513514Z Adding repository directory to the temporary git global config as a safe directory
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.2524554Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/jeeves-unchained/jeeves-unchained
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.2551004Z Deleting the contents of '/home/runner/work/jeeves-unchained/jeeves-unchained'
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.2553965Z ##[group]Initializing the repository
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.2557957Z [command]/usr/bin/git init /home/runner/work/jeeves-unchained/jeeves-unchained
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4126521Z hint: Using 'master' as the name for the initial branch. This default branch name
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4128590Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4130042Z hint: to use in all of your new repositories, which will suppress this warning,
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4131085Z hint: call:
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4131692Z hint:
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4132384Z hint: 	git config --global init.defaultBranch <name>
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4133263Z hint:
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4134028Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4135325Z hint: 'development'. The just-created branch can be renamed via this command:
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4136610Z hint:
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4137232Z hint: 	git branch -m <name>
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4137941Z hint:
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4138811Z hint: Disable this message with "git config set advice.defaultBranchName false"
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4140459Z Initialized empty Git repository in /home/runner/work/jeeves-unchained/jeeves-unchained/.git/
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4143236Z [command]/usr/bin/git remote add origin https://github.com/mmmichaelllang/jeeves-unchained
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4168186Z ##[endgroup]
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4169360Z ##[group]Disabling automatic garbage collection
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4173135Z [command]/usr/bin/git config --local gc.auto 0
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4196646Z ##[endgroup]
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4197701Z ##[group]Setting up auth
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4203910Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4228990Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4806028Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4830896Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.4995723Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.5018954Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.5192356Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.5219263Z ##[endgroup]
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.5220394Z ##[group]Fetching the repository
+Write	Run actions/checkout@v4	2026-05-04T05:20:04.5228392Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +refs/heads/main*:refs/remotes/origin/main* +refs/tags/main*:refs/tags/main*
+Write	Run actions/checkout@v4	2026-05-04T05:20:05.0318901Z From https://github.com/mmmichaelllang/jeeves-unchained
+Write	Run actions/checkout@v4	2026-05-04T05:20:05.0321050Z  * [new branch]      main       -> origin/main
+Write	Run actions/checkout@v4	2026-05-04T05:20:05.0342944Z ##[endgroup]
+Write	Run actions/checkout@v4	2026-05-04T05:20:05.0345791Z ##[group]Determining the checkout info
+Write	Run actions/checkout@v4	2026-05-04T05:20:05.0350633Z [command]/usr/bin/git branch --list --remote origin/main
+Write	Run actions/checkout@v4	2026-05-04T05:20:05.0369265Z   origin/main
+Write	Run actions/checkout@v4	2026-05-04T05:20:05.0374668Z ##[endgroup]
+Write	Run actions/checkout@v4	2026-05-04T05:20:05.0379212Z [command]/usr/bin/git sparse-checkout disable
+Write	Run actions/checkout@v4	2026-05-04T05:20:05.0409205Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+Write	Run actions/checkout@v4	2026-05-04T05:20:05.0430807Z ##[group]Checking out the ref
+Write	Run actions/checkout@v4	2026-05-04T05:20:05.0435101Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+Write	Run actions/checkout@v4	2026-05-04T05:20:05.0594714Z Switched to a new branch 'main'
+Write	Run actions/checkout@v4	2026-05-04T05:20:05.0596682Z branch 'main' set up to track 'origin/main'.
+Write	Run actions/checkout@v4	2026-05-04T05:20:05.0601683Z ##[endgroup]
+Write	Run actions/checkout@v4	2026-05-04T05:20:05.0628705Z [command]/usr/bin/git log -1 --format=%H
+Write	Run actions/checkout@v4	2026-05-04T05:20:05.0645886Z 325b369a2eb82ca8cb029bd0f12d8dc720f3e147
+Write	Set up uv	﻿2026-05-04T05:20:05.0907427Z ##[group]Run astral-sh/setup-uv@v3
+Write	Set up uv	2026-05-04T05:20:05.0908495Z with:
+Write	Set up uv	2026-05-04T05:20:05.0909215Z   version: 0.8.17
+Write	Set up uv	2026-05-04T05:20:05.0910548Z   github-token: ***
+Write	Set up uv	2026-05-04T05:20:05.0911347Z   enable-cache: false
+Write	Set up uv	2026-05-04T05:20:05.0912221Z   cache-dependency-glob: **/uv.lock
+Write	Set up uv	2026-05-04T05:20:05.0913210Z   prune-cache: true
+Write	Set up uv	2026-05-04T05:20:05.0913985Z ##[endgroup]
+Write	Set up uv	2026-05-04T05:20:05.2491077Z Downloading uv from "https://github.com/astral-sh/uv/releases/download/0.8.17/uv-x86_64-unknown-linux-gnu.tar.gz" ...
+Write	Set up uv	2026-05-04T05:20:05.5572252Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/a43d5a32-f230-461b-87dd-a1ca0ad17054 -f /home/runner/work/_temp/97f9d73b-6915-4e71-aaab-8fd092cecf49
+Write	Set up uv	2026-05-04T05:20:05.9480500Z Added /opt/hostedtoolcache/uv/0.8.17/x86_64 to the path
+Write	Set up uv	2026-05-04T05:20:05.9481369Z Added /home/runner/.local/bin to the path
+Write	Set up uv	2026-05-04T05:20:05.9485287Z Successfully installed uv version 0.8.17
+Write	Set up uv	2026-05-04T05:20:05.9510064Z Set UV_CACHE_DIR to /home/runner/work/_temp/setup-uv-cache
+Write	Sync dependencies	﻿2026-05-04T05:20:05.9591330Z ##[group]Run uv sync --no-dev
+Write	Sync dependencies	2026-05-04T05:20:05.9591975Z ^[[36;1muv sync --no-dev^[[0m
+Write	Sync dependencies	2026-05-04T05:20:05.9611821Z shell: /usr/bin/bash -e {0}
+Write	Sync dependencies	2026-05-04T05:20:05.9612305Z env:
+Write	Sync dependencies	2026-05-04T05:20:05.9612742Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+Write	Sync dependencies	2026-05-04T05:20:05.9613238Z ##[endgroup]
+Write	Sync dependencies	2026-05-04T05:20:06.2133104Z Downloading cpython-3.11.13-linux-x86_64-gnu (download) (27.7MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.8255776Z  Downloading cpython-3.11.13-linux-x86_64-gnu (download)
+Write	Sync dependencies	2026-05-04T05:20:06.9455850Z Using CPython 3.11.13
+Write	Sync dependencies	2026-05-04T05:20:06.9456778Z Creating virtual environment at: .venv
+Write	Sync dependencies	2026-05-04T05:20:06.9521294Z Resolved 134 packages in 1ms
+Write	Sync dependencies	2026-05-04T05:20:06.9652426Z    Building jeeves-unchained @ file:///home/runner/work/jeeves-unchained/jeeves-unchained
+Write	Sync dependencies	2026-05-04T05:20:06.9905140Z Downloading pynacl (1.3MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9907529Z Downloading networkx (2.0MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9910260Z Downloading tiktoken (1.1MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9914971Z Downloading aiohttp (1.7MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9917671Z Downloading sqlalchemy (3.2MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9927033Z Downloading pillow (6.8MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9928771Z Downloading babel (9.7MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9931296Z Downloading nltk (1.5MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9939131Z Downloading pydantic-core (2.0MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9943440Z Downloading tokenizers (3.1MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9945832Z Downloading google-api-python-client (14.3MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9950637Z Downloading hf-xet (4.0MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9955180Z Downloading cryptography (4.3MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9957883Z Downloading numpy (16.1MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9961351Z Downloading openai (1.1MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9964114Z Downloading lxml (5.0MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9972931Z Downloading transformers (11.4MiB)
+Write	Sync dependencies	2026-05-04T05:20:06.9975734Z Downloading llama-index-core (11.4MiB)
+Write	Sync dependencies	2026-05-04T05:20:07.5590813Z  Downloading tiktoken
+Write	Sync dependencies	2026-05-04T05:20:07.6529471Z  Downloading pynacl
+Write	Sync dependencies	2026-05-04T05:20:07.6773381Z  Downloading aiohttp
+Write	Sync dependencies	2026-05-04T05:20:07.7173650Z  Downloading pydantic-core
+Write	Sync dependencies	2026-05-04T05:20:07.8670674Z  Downloading tokenizers
+Write	Sync dependencies	2026-05-04T05:20:07.9394292Z  Downloading sqlalchemy
+Write	Sync dependencies	2026-05-04T05:20:07.9895311Z  Downloading hf-xet
+Write	Sync dependencies	2026-05-04T05:20:08.0007997Z  Downloading nltk
+Write	Sync dependencies	2026-05-04T05:20:08.0698705Z  Downloading cryptography
+Write	Sync dependencies	2026-05-04T05:20:08.0975575Z       Built jeeves-unchained @ file:///home/runner/work/jeeves-unchained/jeeves-unchained
+Write	Sync dependencies	2026-05-04T05:20:08.1345670Z  Downloading networkx
+Write	Sync dependencies	2026-05-04T05:20:08.1710142Z  Downloading lxml
+Write	Sync dependencies	2026-05-04T05:20:08.2589326Z  Downloading pillow
+Write	Sync dependencies	2026-05-04T05:20:08.4899733Z  Downloading openai
+Write	Sync dependencies	2026-05-04T05:20:08.5581954Z  Downloading babel
+Write	Sync dependencies	2026-05-04T05:20:08.7243379Z  Downloading google-api-python-client
+Write	Sync dependencies	2026-05-04T05:20:08.7322328Z  Downloading numpy
+Write	Sync dependencies	2026-05-04T05:20:08.7686526Z  Downloading llama-index-core
+Write	Sync dependencies	2026-05-04T05:20:08.8788988Z  Downloading transformers
+Write	Sync dependencies	2026-05-04T05:20:08.8790943Z Prepared 114 packages in 1.92s
+Write	Sync dependencies	2026-05-04T05:20:08.9887295Z Installed 114 packages in 109ms
+Write	Sync dependencies	2026-05-04T05:20:08.9888317Z  + aiohappyeyeballs==2.6.1
+Write	Sync dependencies	2026-05-04T05:20:08.9889096Z  + aiohttp==3.13.5
+Write	Sync dependencies	2026-05-04T05:20:08.9889412Z  + aiosignal==1.4.0
+Write	Sync dependencies	2026-05-04T05:20:08.9889715Z  + aiosqlite==0.22.1
+Write	Sync dependencies	2026-05-04T05:20:08.9890045Z  + annotated-types==0.7.0
+Write	Sync dependencies	2026-05-04T05:20:08.9890388Z  + anyio==4.13.0
+Write	Sync dependencies	2026-05-04T05:20:08.9890662Z  + attrs==26.1.0
+Write	Sync dependencies	2026-05-04T05:20:08.9890930Z  + babel==2.18.0
+Write	Sync dependencies	2026-05-04T05:20:08.9891264Z  + banks==2.4.1
+Write	Sync dependencies	2026-05-04T05:20:08.9891524Z  + certifi==2026.4.22
+Write	Sync dependencies	2026-05-04T05:20:08.9891817Z  + cffi==2.0.0
+Write	Sync dependencies	2026-05-04T05:20:08.9892142Z  + charset-normalizer==3.4.7
+Write	Sync dependencies	2026-05-04T05:20:08.9894249Z  + click==8.3.3
+Write	Sync dependencies	2026-05-04T05:20:08.9894716Z  + colorama==0.4.6
+Write	Sync dependencies	2026-05-04T05:20:08.9895077Z  + courlan==1.3.2
+Write	Sync dependencies	2026-05-04T05:20:08.9895438Z  + cryptography==46.0.7
+Write	Sync dependencies	2026-05-04T05:20:08.9895858Z  + dataclasses-json==0.6.7
+Write	Sync dependencies	2026-05-04T05:20:08.9896384Z  + dateparser==1.4.0
+Write	Sync dependencies	2026-05-04T05:20:08.9896748Z  + deprecated==1.3.1
+Write	Sync dependencies	2026-05-04T05:20:08.9897099Z  + dirtyjson==1.0.8
+Write	Sync dependencies	2026-05-04T05:20:08.9897464Z  + distro==1.9.0
+Write	Sync dependencies	2026-05-04T05:20:08.9898026Z  + exa-py==2.12.1
+Write	Sync dependencies	2026-05-04T05:20:08.9898344Z  + filelock==3.29.0
+Write	Sync dependencies	2026-05-04T05:20:08.9898644Z  + filetype==1.2.0
+Write	Sync dependencies	2026-05-04T05:20:08.9898954Z  + frozenlist==1.8.0
+Write	Sync dependencies	2026-05-04T05:20:08.9899262Z  + fsspec==2026.3.0
+Write	Sync dependencies	2026-05-04T05:20:08.9899591Z  + google-api-core==2.30.3
+Write	Sync dependencies	2026-05-04T05:20:08.9899985Z  + google-api-python-client==2.194.0
+Write	Sync dependencies	2026-05-04T05:20:08.9900398Z  + google-auth==2.49.2
+Write	Sync dependencies	2026-05-04T05:20:08.9900754Z  + google-auth-httplib2==0.3.1
+Write	Sync dependencies	2026-05-04T05:20:08.9901143Z  + google-auth-oauthlib==1.3.1
+Write	Sync dependencies	2026-05-04T05:20:08.9901512Z  + google-genai==1.73.1
+Write	Sync dependencies	2026-05-04T05:20:08.9901999Z  + googleapis-common-protos==1.74.0
+Write	Sync dependencies	2026-05-04T05:20:08.9902481Z  + greenlet==3.4.0
+Write	Sync dependencies	2026-05-04T05:20:08.9902770Z  + griffe==2.0.2
+Write	Sync dependencies	2026-05-04T05:20:08.9903092Z  + griffecli==2.0.2
+Write	Sync dependencies	2026-05-04T05:20:08.9903401Z  + griffelib==2.0.2
+Write	Sync dependencies	2026-05-04T05:20:08.9903703Z  + h11==0.16.0
+Write	Sync dependencies	2026-05-04T05:20:08.9903989Z  + hf-xet==1.4.3
+Write	Sync dependencies	2026-05-04T05:20:08.9904278Z  + htmldate==1.9.4
+Write	Sync dependencies	2026-05-04T05:20:08.9904579Z  + httpcore==1.0.9
+Write	Sync dependencies	2026-05-04T05:20:08.9904885Z  + httplib2==0.31.2
+Write	Sync dependencies	2026-05-04T05:20:08.9905190Z  + httpx==0.28.1
+Write	Sync dependencies	2026-05-04T05:20:08.9905505Z  + huggingface-hub==0.36.2
+Write	Sync dependencies	2026-05-04T05:20:08.9905848Z  + idna==3.13
+Write	Sync dependencies	2026-05-04T05:20:08.9906522Z  + jeeves-unchained==0.1.0 (from file:///home/runner/work/jeeves-unchained/jeeves-unchained)
+Write	Sync dependencies	2026-05-04T05:20:08.9907210Z  + jinja2==3.1.6
+Write	Sync dependencies	2026-05-04T05:20:08.9907529Z  + jiter==0.14.0
+Write	Sync dependencies	2026-05-04T05:20:08.9907843Z  + joblib==1.5.3
+Write	Sync dependencies	2026-05-04T05:20:08.9908136Z  + justext==3.0.2
+Write	Sync dependencies	2026-05-04T05:20:08.9908455Z  + llama-index-core==0.14.21
+Write	Sync dependencies	2026-05-04T05:20:08.9908860Z  + llama-index-instrumentation==0.5.0
+Write	Sync dependencies	2026-05-04T05:20:08.9909307Z  + llama-index-llms-groq==0.5.0
+Write	Sync dependencies	2026-05-04T05:20:08.9909711Z  + llama-index-llms-nvidia==0.5.0
+Write	Sync dependencies	2026-05-04T05:20:08.9910125Z  + llama-index-llms-openai==0.6.26
+Write	Sync dependencies	2026-05-04T05:20:08.9910557Z  + llama-index-llms-openai-like==0.5.3
+Write	Sync dependencies	2026-05-04T05:20:08.9910985Z  + llama-index-workflows==2.19.1
+Write	Sync dependencies	2026-05-04T05:20:08.9911356Z  + lxml==6.1.0
+Write	Sync dependencies	2026-05-04T05:20:08.9911663Z  + lxml-html-clean==0.4.4
+Write	Sync dependencies	2026-05-04T05:20:08.9912027Z  + markupsafe==3.0.3
+Write	Sync dependencies	2026-05-04T05:20:08.9912358Z  + marshmallow==3.26.2
+Write	Sync dependencies	2026-05-04T05:20:08.9912674Z  + multidict==6.7.1
+Write	Sync dependencies	2026-05-04T05:20:08.9912996Z  + mypy-extensions==1.1.0
+Write	Sync dependencies	2026-05-04T05:20:08.9913337Z  + nest-asyncio==1.6.0
+Write	Sync dependencies	2026-05-04T05:20:08.9913654Z  + networkx==3.6.1
+Write	Sync dependencies	2026-05-04T05:20:08.9913950Z  + nltk==3.9.4
+Write	Sync dependencies	2026-05-04T05:20:08.9914227Z  + numpy==2.4.4
+Write	Sync dependencies	2026-05-04T05:20:08.9914530Z  + oauthlib==3.3.1
+Write	Sync dependencies	2026-05-04T05:20:08.9914831Z  + openai==2.32.0
+Write	Sync dependencies	2026-05-04T05:20:08.9915133Z  + packaging==26.1
+Write	Sync dependencies	2026-05-04T05:20:08.9915436Z  + pillow==12.2.0
+Write	Sync dependencies	2026-05-04T05:20:08.9915745Z  + platformdirs==4.9.6
+Write	Sync dependencies	2026-05-04T05:20:08.9916068Z  + propcache==0.4.1
+Write	Sync dependencies	2026-05-04T05:20:08.9916482Z  + proto-plus==1.27.2
+Write	Sync dependencies	2026-05-04T05:20:08.9916807Z  + protobuf==5.29.6
+Write	Sync dependencies	2026-05-04T05:20:08.9917116Z  + pyasn1==0.6.3
+Write	Sync dependencies	2026-05-04T05:20:08.9917436Z  + pyasn1-modules==0.4.2
+Write	Sync dependencies	2026-05-04T05:20:08.9917775Z  + pycparser==3.0
+Write	Sync dependencies	2026-05-04T05:20:08.9918087Z  + pydantic==2.13.3
+Write	Sync dependencies	2026-05-04T05:20:08.9918410Z  + pydantic-core==2.46.3
+Write	Sync dependencies	2026-05-04T05:20:08.9918943Z  + pygithub==2.9.1
+Write	Sync dependencies	2026-05-04T05:20:08.9919254Z  + pyjwt==2.12.1
+Write	Sync dependencies	2026-05-04T05:20:08.9919553Z  + pynacl==1.6.2
+Write	Sync dependencies	2026-05-04T05:20:08.9919847Z  + pyparsing==3.3.2
+Write	Sync dependencies	2026-05-04T05:20:08.9920183Z  + python-dateutil==2.9.0.post0
+Write	Sync dependencies	2026-05-04T05:20:08.9920567Z  + python-dotenv==1.2.2
+Write	Sync dependencies	2026-05-04T05:20:08.9920908Z  + pytz==2026.1.post1
+Write	Sync dependencies	2026-05-04T05:20:08.9921225Z  + pyyaml==6.0.3
+Write	Sync dependencies	2026-05-04T05:20:08.9921511Z  + regex==2026.4.4
+Write	Sync dependencies	2026-05-04T05:20:08.9921810Z  + requests==2.33.1
+Write	Sync dependencies	2026-05-04T05:20:08.9922144Z  + requests-oauthlib==2.0.0
+Write	Sync dependencies	2026-05-04T05:20:08.9922511Z  + safetensors==0.7.0
+Write	Sync dependencies	2026-05-04T05:20:08.9922841Z  + setuptools==82.0.1
+Write	Sync dependencies	2026-05-04T05:20:08.9923158Z  + six==1.17.0
+Write	Sync dependencies	2026-05-04T05:20:08.9923440Z  + sniffio==1.3.1
+Write	Sync dependencies	2026-05-04T05:20:08.9923749Z  + sqlalchemy==2.0.49
+Write	Sync dependencies	2026-05-04T05:20:08.9924091Z  + tavily-python==0.7.23
+Write	Sync dependencies	2026-05-04T05:20:08.9924584Z  + tenacity==9.1.4
+Write	Sync dependencies	2026-05-04T05:20:08.9924911Z  + tiktoken==0.12.0
+Write	Sync dependencies	2026-05-04T05:20:08.9925201Z  + tinytag==2.2.1
+Write	Sync dependencies	2026-05-04T05:20:08.9925691Z  + tld==0.13.2
+Write	Sync dependencies	2026-05-04T05:20:08.9926014Z  + tokenizers==0.22.2
+Write	Sync dependencies	2026-05-04T05:20:08.9926408Z  + tqdm==4.67.3
+Write	Sync dependencies	2026-05-04T05:20:08.9926855Z  + trafilatura==2.0.0
+Write	Sync dependencies	2026-05-04T05:20:08.9927213Z  + transformers==4.57.6
+Write	Sync dependencies	2026-05-04T05:20:08.9927578Z  + typing-extensions==4.15.0
+Write	Sync dependencies	2026-05-04T05:20:08.9927962Z  + typing-inspect==0.9.0
+Write	Sync dependencies	2026-05-04T05:20:08.9928326Z  + typing-inspection==0.4.2
+Write	Sync dependencies	2026-05-04T05:20:08.9928672Z  + tzlocal==5.3.1
+Write	Sync dependencies	2026-05-04T05:20:08.9929107Z  + uritemplate==4.2.0
+Write	Sync dependencies	2026-05-04T05:20:08.9929494Z  + urllib3==2.6.3
+Write	Sync dependencies	2026-05-04T05:20:08.9929791Z  + websockets==16.0
+Write	Sync dependencies	2026-05-04T05:20:08.9930184Z  + wrapt==2.1.2
+Write	Sync dependencies	2026-05-04T05:20:08.9930494Z  + yarl==1.23.0
+Write	Run write phase	﻿2026-05-04T05:20:09.0059682Z ##[group]Run uv run python scripts/write.py \
+Write	Run write phase	2026-05-04T05:20:09.0060056Z ^[[36;1muv run python scripts/write.py \^[[0m
+Write	Run write phase	2026-05-04T05:20:09.0060315Z ^[[36;1m   \^[[0m
+Write	Run write phase	2026-05-04T05:20:09.0060486Z ^[[36;1m  ^[[0m
+Write	Run write phase	2026-05-04T05:20:09.0074094Z shell: /usr/bin/bash -e {0}
+Write	Run write phase	2026-05-04T05:20:09.0074341Z env:
+Write	Run write phase	2026-05-04T05:20:09.0074578Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+Write	Run write phase	2026-05-04T05:20:09.0075145Z   GROQ_API_KEY: ***
+Write	Run write phase	2026-05-04T05:20:09.0075544Z   NVIDIA_API_KEY: ***
+Write	Run write phase	2026-05-04T05:20:09.0075941Z   OPENROUTER_API_KEY: ***
+Write	Run write phase	2026-05-04T05:20:09.0076452Z   GMAIL_APP_PASSWORD: ***
+Write	Run write phase	2026-05-04T05:20:09.0076808Z   GITHUB_TOKEN: ***
+Write	Run write phase	2026-05-04T05:20:09.0077057Z   GITHUB_REPOSITORY: mmmichaelllang/jeeves-unchained
+Write	Run write phase	2026-05-04T05:20:09.0077347Z   GITHUB_REF_NAME: main
+Write	Run write phase	2026-05-04T05:20:09.0077567Z   JEEVES_RECIPIENT_EMAIL: lang.mc@gmail.com
+Write	Run write phase	2026-05-04T05:20:09.0077811Z ##[endgroup]
+Write	Run write phase	2026-05-04T05:20:09.0736324Z Downloading pygments (1.2MiB)
+Write	Run write phase	2026-05-04T05:20:09.1286835Z  Downloading pygments
+Write	Run write phase	2026-05-04T05:20:09.1386555Z Installed 5 packages in 9ms
+Write	Run write phase	2026-05-04T05:20:09.6763666Z 2026-05-04 05:20:09,676 jeeves.write WARNING Groq skipped for [part1]: input ~12127 tokens exceeds TPM ceiling 12000 (available=-727); routing directly to NIM.
+Write	Run write phase	2026-05-04T05:20:12.8082376Z None of PyTorch, TensorFlow >= 2.0, or Flax have been found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Write	Run write phase	2026-05-04T05:20:12.8083555Z 2026-05-04 05:20:12,807 transformers WARNING None of PyTorch, TensorFlow >= 2.0, or Flax have been found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Write	Run write phase	2026-05-04T05:20:13.6169125Z 2026-05-04 05:20:13,616 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:20:13.6221243Z 2026-05-04 05:20:13,621 jeeves.write INFO invoking NIM write fallback meta/llama-3.3-70b-instruct [part1] (max_tokens=4096, system=20139 chars, user=28168 chars)
+Write	Run write phase	2026-05-04T05:21:34.1319242Z 2026-05-04 05:21:34,131 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:21:34.1382151Z 2026-05-04 05:21:34,137 jeeves.write WARNING [part1] h3 count 8 exceeds budget 0 (2x ceiling) — truncating to first 1 sections; downstream parts will fill the rest
+Write	Run write phase	2026-05-04T05:21:34.1384606Z 2026-05-04 05:21:34,138 jeeves.write WARNING [part1] fragment validation: part0_premature_html_close:part1, part0_premature_body_close:part1, part0_premature_signoff:part1, part0_premature_coverage_log:part1, h3_budget_exceeded:part1:8>0
+Write	Run write phase	2026-05-04T05:21:34.1386700Z 2026-05-04 05:21:34,138 jeeves.write INFO [part1] H3 count: 1 (budget 0)
+Write	Run write phase	2026-05-04T05:21:34.1387493Z 2026-05-04 05:21:34,138 jeeves.write INFO [part1] draft: 232 words (target 200)
+Write	Run write phase	2026-05-04T05:21:34.1395429Z 2026-05-04 05:21:34,139 jeeves.write INFO NIM fallback active — skipping TPM sleep before part2
+Write	Run write phase	2026-05-04T05:21:34.1430136Z 2026-05-04 05:21:34,142 jeeves.write WARNING Groq skipped for [part2]: input ~14213 tokens exceeds TPM ceiling 12000 (available=-2813); routing directly to NIM.
+Write	Run write phase	2026-05-04T05:21:34.2466669Z 2026-05-04 05:21:34,246 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:21:34.2508804Z 2026-05-04 05:21:34,250 jeeves.write INFO invoking NIM write fallback meta/llama-3.3-70b-instruct [part2] (max_tokens=4096, system=27233 chars, user=29415 chars)
+Write	Run write phase	2026-05-04T05:21:57.7840681Z 2026-05-04 05:21:57,783 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:21:57.7848428Z 2026-05-04 05:21:57,784 jeeves.write WARNING [part2] fragment validation: middle_part_doctype_leak:part2
+Write	Run write phase	2026-05-04T05:21:57.7848999Z 2026-05-04 05:21:57,784 jeeves.write INFO [part2] H3 count: 1 (budget 1)
+Write	Run write phase	2026-05-04T05:21:57.7851119Z 2026-05-04 05:21:57,785 jeeves.write INFO [part2] draft: 372 words (target 60)
+Write	Run write phase	2026-05-04T05:21:57.7856690Z 2026-05-04 05:21:57,785 jeeves.write INFO NIM fallback active — skipping TPM sleep before part3
+Write	Run write phase	2026-05-04T05:21:57.7892327Z 2026-05-04 05:21:57,789 jeeves.write WARNING Groq skipped for [part3]: input ~14509 tokens exceeds TPM ceiling 12000 (available=-3109); routing directly to NIM.
+Write	Run write phase	2026-05-04T05:21:57.8771717Z 2026-05-04 05:21:57,876 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:21:57.8834121Z 2026-05-04 05:21:57,883 jeeves.write INFO invoking NIM write fallback meta/llama-3.3-70b-instruct [part3] (max_tokens=4096, system=27945 chars, user=29886 chars)
+Write	Run write phase	2026-05-04T05:22:15.2456936Z 2026-05-04 05:22:15,245 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:22:15.2463956Z 2026-05-04 05:22:15,246 jeeves.write WARNING [part3] fragment validation: middle_part_doctype_leak:part3
+Write	Run write phase	2026-05-04T05:22:15.2464529Z 2026-05-04 05:22:15,246 jeeves.write INFO [part3] H3 count: 0 (budget 1)
+Write	Run write phase	2026-05-04T05:22:15.2466385Z 2026-05-04 05:22:15,246 jeeves.write INFO [part3] draft: 446 words (target 60)
+Write	Run write phase	2026-05-04T05:22:15.2470857Z 2026-05-04 05:22:15,246 jeeves.write INFO NIM fallback active — skipping TPM sleep before part4
+Write	Run write phase	2026-05-04T05:22:15.2505431Z 2026-05-04 05:22:15,250 jeeves.write WARNING Groq skipped for [part4]: input ~14891 tokens exceeds TPM ceiling 12000 (available=-3491); routing directly to NIM.
+Write	Run write phase	2026-05-04T05:22:15.3884940Z 2026-05-04 05:22:15,388 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:22:15.3927339Z 2026-05-04 05:22:15,392 jeeves.write INFO invoking NIM write fallback meta/llama-3.3-70b-instruct [part4] (max_tokens=4096, system=30118 chars, user=29241 chars)
+Write	Run write phase	2026-05-04T05:22:50.2749251Z 2026-05-04 05:22:50,274 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:22:50.2757290Z 2026-05-04 05:22:50,275 jeeves.write WARNING [part4] fragment validation: middle_part_doctype_leak:part4, middle_part_coverage_log_leak:part4
+Write	Run write phase	2026-05-04T05:22:50.2760471Z 2026-05-04 05:22:50,275 jeeves.write INFO [part4] H3 count: 1 (budget 2)
+Write	Run write phase	2026-05-04T05:22:50.2761276Z 2026-05-04 05:22:50,275 jeeves.write INFO [part4] draft: 501 words (target 350)
+Write	Run write phase	2026-05-04T05:22:50.2766504Z 2026-05-04 05:22:50,276 jeeves.write INFO NIM fallback active — skipping TPM sleep before part5
+Write	Run write phase	2026-05-04T05:22:50.2802257Z 2026-05-04 05:22:50,280 jeeves.write WARNING Groq skipped for [part5]: input ~14692 tokens exceeds TPM ceiling 12000 (available=-3292); routing directly to NIM.
+Write	Run write phase	2026-05-04T05:22:50.4248151Z 2026-05-04 05:22:50,424 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:22:50.4289352Z 2026-05-04 05:22:50,428 jeeves.write INFO invoking NIM write fallback meta/llama-3.3-70b-instruct [part5] (max_tokens=4096, system=27699 chars, user=30867 chars)
+Write	Run write phase	2026-05-04T05:23:26.9500928Z 2026-05-04 05:23:26,949 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:23:26.9508059Z 2026-05-04 05:23:26,950 jeeves.write WARNING [part5] fragment validation: middle_part_doctype_leak:part5, middle_part_coverage_log_leak:part5
+Write	Run write phase	2026-05-04T05:23:26.9508911Z 2026-05-04 05:23:26,950 jeeves.write INFO [part5] H3 count: 1 (budget 1)
+Write	Run write phase	2026-05-04T05:23:26.9511895Z 2026-05-04 05:23:26,951 jeeves.write INFO [part5] draft: 579 words (target 350)
+Write	Run write phase	2026-05-04T05:23:26.9517992Z 2026-05-04 05:23:26,951 jeeves.write INFO NIM fallback active — skipping TPM sleep before part6
+Write	Run write phase	2026-05-04T05:23:26.9553935Z 2026-05-04 05:23:26,955 jeeves.write WARNING Groq skipped for [part6]: input ~14204 tokens exceeds TPM ceiling 12000 (available=-2804); routing directly to NIM.
+Write	Run write phase	2026-05-04T05:23:27.0330663Z 2026-05-04 05:23:27,032 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:23:27.0369561Z 2026-05-04 05:23:27,036 jeeves.write INFO invoking NIM write fallback meta/llama-3.3-70b-instruct [part6] (max_tokens=4096, system=28554 chars, user=28060 chars)
+Write	Run write phase	2026-05-04T05:23:55.2498788Z 2026-05-04 05:23:55,249 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:23:55.2506375Z 2026-05-04 05:23:55,250 jeeves.write WARNING [part6] fragment validation: middle_part_doctype_leak:part6, middle_part_coverage_log_leak:part6
+Write	Run write phase	2026-05-04T05:23:55.2507844Z 2026-05-04 05:23:55,250 jeeves.write INFO [part6] H3 count: 1 (budget 1)
+Write	Run write phase	2026-05-04T05:23:55.2509871Z 2026-05-04 05:23:55,250 jeeves.write INFO [part6] draft: 587 words (target 350)
+Write	Run write phase	2026-05-04T05:23:55.2515892Z 2026-05-04 05:23:55,251 jeeves.write INFO NIM fallback active — skipping TPM sleep before part7
+Write	Run write phase	2026-05-04T05:23:55.2553535Z 2026-05-04 05:23:55,255 jeeves.write WARNING Groq skipped for [part7]: input ~15445 tokens exceeds TPM ceiling 12000 (available=-4045); routing directly to NIM.
+Write	Run write phase	2026-05-04T05:23:55.3534366Z 2026-05-04 05:23:55,353 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:23:55.3574504Z 2026-05-04 05:23:55,357 jeeves.write INFO invoking NIM write fallback meta/llama-3.3-70b-instruct [part7] (max_tokens=4096, system=30485 chars, user=31092 chars)
+Write	Run write phase	2026-05-04T05:24:27.7827724Z 2026-05-04 05:24:27,782 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:24:27.7833598Z 2026-05-04 05:24:27,783 jeeves.write WARNING [part7] fragment validation: middle_part_doctype_leak:part7
+Write	Run write phase	2026-05-04T05:24:27.7834652Z 2026-05-04 05:24:27,783 jeeves.write INFO [part7] H3 count: 1 (budget 2)
+Write	Run write phase	2026-05-04T05:24:27.7835703Z 2026-05-04 05:24:27,783 jeeves.write INFO [part7] draft: 370 words (target 250)
+Write	Run write phase	2026-05-04T05:24:27.7841448Z 2026-05-04 05:24:27,783 jeeves.write INFO NIM fallback active — skipping TPM sleep before part8
+Write	Run write phase	2026-05-04T05:24:27.7880208Z 2026-05-04 05:24:27,787 jeeves.write WARNING Groq skipped for [part8]: input ~13552 tokens exceeds TPM ceiling 12000 (available=-2152); routing directly to NIM.
+Write	Run write phase	2026-05-04T05:24:27.8816526Z 2026-05-04 05:24:27,881 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:24:27.8855982Z 2026-05-04 05:24:27,885 jeeves.write INFO invoking NIM write fallback meta/llama-3.3-70b-instruct [part8] (max_tokens=4096, system=27304 chars, user=26704 chars)
+Write	Run write phase	2026-05-04T05:24:29.1364622Z 2026-05-04 05:24:29,136 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:24:29.1370295Z 2026-05-04 05:24:29,136 jeeves.write INFO [part8] H3 count: 0 (budget 1)
+Write	Run write phase	2026-05-04T05:24:29.1370820Z 2026-05-04 05:24:29,136 jeeves.write INFO [part8] draft: 0 words (target 0)
+Write	Run write phase	2026-05-04T05:24:29.1371652Z 2026-05-04 05:24:29,137 jeeves.write INFO NIM fallback active — skipping TPM sleep before part9
+Write	Run write phase	2026-05-04T05:24:29.1380318Z 2026-05-04 05:24:29,137 jeeves.write WARNING Groq skipped for [part9]: input ~12949 tokens exceeds TPM ceiling 12000 (available=-1549); routing directly to NIM.
+Write	Run write phase	2026-05-04T05:24:29.2747437Z 2026-05-04 05:24:29,274 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:24:29.2785794Z 2026-05-04 05:24:29,278 jeeves.write INFO invoking NIM write fallback meta/llama-3.3-70b-instruct [part9] (max_tokens=4096, system=24525 chars, user=27066 chars)
+Write	Run write phase	2026-05-04T05:25:26.6590626Z 2026-05-04 05:25:26,658 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:25:26.6598446Z 2026-05-04 05:25:26,659 jeeves.write WARNING [part9] h3 count 8 exceeds budget 0 (2x ceiling) — truncating to first 1 sections; downstream parts will fill the rest
+Write	Run write phase	2026-05-04T05:25:26.6599751Z 2026-05-04 05:25:26,659 jeeves.write WARNING [part9] fragment validation: middle_part_doctype_leak:part9, middle_part_html_tag_leak:part9, middle_part_head_tag_leak:part9, middle_part_body_tag_leak:part9, h3_budget_exceeded:part9:8>0
+Write	Run write phase	2026-05-04T05:25:26.6600769Z 2026-05-04 05:25:26,659 jeeves.write INFO [part9] H3 count: 1 (budget 0)
+Write	Run write phase	2026-05-04T05:25:26.6601180Z 2026-05-04 05:25:26,659 jeeves.write INFO [part9] draft: 148 words (target 30)
+Write	Run write phase	2026-05-04T05:25:26.6602461Z 2026-05-04 05:25:26,659 jeeves.write INFO waiting for NIM quality-editor passes to complete…
+Write	Run write phase	2026-05-04T05:25:26.8123978Z 2026-05-04 05:25:26,812 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:25:26.8161776Z 2026-05-04 05:25:26,816 jeeves.write INFO NIM refine [part1] (3842 chars draft)
+Write	Run write phase	2026-05-04T05:25:26.8184152Z 2026-05-04 05:25:26,818 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:25:26.8222998Z 2026-05-04 05:25:26,822 jeeves.write INFO NIM refine [part5] (5464 chars draft)
+Write	Run write phase	2026-05-04T05:25:26.8264873Z 2026-05-04 05:25:26,826 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:25:26.8304759Z 2026-05-04 05:25:26,830 jeeves.write INFO NIM refine [part3] (3436 chars draft)
+Write	Run write phase	2026-05-04T05:25:26.8673838Z 2026-05-04 05:25:26,867 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:25:26.8702097Z 2026-05-04 05:25:26,870 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:25:26.8706919Z 2026-05-04 05:25:26,870 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:25:26.8743738Z 2026-05-04 05:25:26,874 jeeves.write INFO NIM refine [part7] (2918 chars draft)
+Write	Run write phase	2026-05-04T05:25:26.8799686Z 2026-05-04 05:25:26,879 jeeves.write INFO NIM refine [part2] (3227 chars draft)
+Write	Run write phase	2026-05-04T05:25:26.8874896Z 2026-05-04 05:25:26,887 jeeves.write INFO NIM refine [part6] (5126 chars draft)
+Write	Run write phase	2026-05-04T05:25:26.8891113Z 2026-05-04 05:25:26,888 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:25:26.8894178Z 2026-05-04 05:25:26,889 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:25:26.8934689Z 2026-05-04 05:25:26,893 jeeves.write INFO NIM refine [part4] (4955 chars draft)
+Write	Run write phase	2026-05-04T05:25:26.8984101Z 2026-05-04 05:25:26,898 jeeves.write INFO NIM refine [part8] (26 chars draft)
+Write	Run write phase	2026-05-04T05:25:27.7245376Z 2026-05-04 05:25:27,724 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:25:27.8347692Z 2026-05-04 05:25:27,834 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:25:27.8385719Z 2026-05-04 05:25:27,838 jeeves.write INFO NIM refine [part9] (1098 chars draft)
+Write	Run write phase	2026-05-04T05:25:31.4999810Z 2026-05-04 05:25:31,499 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:25:45.4423418Z 2026-05-04 05:25:45,442 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:25:59.1757596Z 2026-05-04 05:25:59,175 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:25:59.6793502Z 2026-05-04 05:25:59,679 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:26:10.2883250Z 2026-05-04 05:26:10,288 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:26:10.4718132Z 2026-05-04 05:26:10,471 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:26:29.9896602Z 2026-05-04 05:26:29,989 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:26:39.3491637Z 2026-05-04 05:26:39,348 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:26:39.3534280Z 2026-05-04 05:26:39,353 jeeves.write INFO stitched briefing: 24912 chars across 9 parts (3433, 3233, 3412, 4742, 5135, 4306, 2753, 26, 1106)
+Write	Run write phase	2026-05-04T05:26:39.3536524Z 2026-05-04 05:26:39,353 jeeves.write WARNING NEWYORKER_CONTENT_PLACEHOLDER missing from Part 9 output — excising hallucinated content and injecting verbatim article text.
+Write	Run write phase	2026-05-04T05:26:39.3537942Z 2026-05-04 05:26:39,353 jeeves.write WARNING Talk of the Town intro sentence also missing — verbatim article text will not appear in this briefing.
+Write	Run write phase	2026-05-04T05:26:39.3695786Z 2026-05-04 05:26:39,369 jeeves.write INFO source link injection: 24 source→url pairs applied
+Write	Run write phase	2026-05-04T05:26:39.3890118Z 2026-05-04 05:26:39,388 jeeves.write INFO OpenRouter narrative edit [nvidia/nemotron-3-super-120b-a12b:free] (25809 chars input, TOTT absent)
+Write	Run write phase	2026-05-04T05:26:49.5163755Z 2026-05-04 05:26:49,516 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+Write	Run write phase	2026-05-04T05:28:39.6217297Z 2026-05-04 05:28:39,621 jeeves.write WARNING OpenRouter [nvidia/nemotron-3-super-120b-a12b:free] failed ('NoneType' object is not subscriptable); trying next model
+Write	Run write phase	2026-05-04T05:28:39.6218272Z 2026-05-04 05:28:39,621 jeeves.write INFO OpenRouter narrative edit [meta-llama/llama-3.3-70b-instruct:free] (25809 chars input, TOTT absent)
+Write	Run write phase	2026-05-04T05:28:39.8384683Z 2026-05-04 05:28:39,838 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Write	Run write phase	2026-05-04T05:28:39.8387116Z 2026-05-04 05:28:39,838 openai._base_client INFO Retrying request to /chat/completions in 0.441089 seconds
+Write	Run write phase	2026-05-04T05:28:40.3982147Z 2026-05-04 05:28:40,398 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Write	Run write phase	2026-05-04T05:28:40.3984340Z 2026-05-04 05:28:40,398 openai._base_client INFO Retrying request to /chat/completions in 0.859986 seconds
+Write	Run write phase	2026-05-04T05:28:41.3984860Z 2026-05-04 05:28:41,398 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Write	Run write phase	2026-05-04T05:28:41.3991424Z 2026-05-04 05:28:41,398 jeeves.write WARNING OpenRouter [meta-llama/llama-3.3-70b-instruct:free] failed (Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'meta-llama/llama-3.3-70b-instruct:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'Venice', 'is_byok': False}}, 'user_id': 'user_38f5yfJDjzzrSHId7As96OzI9Mf'}); trying next model
+Write	Run write phase	2026-05-04T05:28:41.3995266Z 2026-05-04 05:28:41,398 jeeves.write INFO OpenRouter narrative edit [google/gemma-4-31b-it:free] (25809 chars input, TOTT absent)
+Write	Run write phase	2026-05-04T05:28:41.4848754Z 2026-05-04 05:28:41,484 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Write	Run write phase	2026-05-04T05:28:41.4851203Z 2026-05-04 05:28:41,484 openai._base_client INFO Retrying request to /chat/completions in 0.405395 seconds
+Write	Run write phase	2026-05-04T05:28:42.2587613Z 2026-05-04 05:28:42,258 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Write	Run write phase	2026-05-04T05:28:42.2590195Z 2026-05-04 05:28:42,258 openai._base_client INFO Retrying request to /chat/completions in 0.901530 seconds
+Write	Run write phase	2026-05-04T05:28:43.2602877Z 2026-05-04 05:28:43,259 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Write	Run write phase	2026-05-04T05:28:43.2609128Z 2026-05-04 05:28:43,260 jeeves.write WARNING OpenRouter [google/gemma-4-31b-it:free] failed (Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'google/gemma-4-31b-it:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'Google AI Studio', 'is_byok': False}}, 'user_id': 'user_38f5yfJDjzzrSHId7As96OzI9Mf'}); trying next model
+Write	Run write phase	2026-05-04T05:28:43.2612799Z 2026-05-04 05:28:43,260 jeeves.write INFO OpenRouter narrative edit [openrouter/auto] (25809 chars input, TOTT absent)
+Write	Run write phase	2026-05-04T05:28:43.6274662Z 2026-05-04 05:28:43,627 httpx INFO HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 402 Payment Required"
+Write	Run write phase	2026-05-04T05:28:43.6280949Z 2026-05-04 05:28:43,627 jeeves.write WARNING OpenRouter [openrouter/auto] failed (Error code: 402 - {'error': {'message': 'This request requires more credits, or fewer max_tokens. You requested up to 16384 tokens, but can only afford 791. To increase, visit https://openrouter.ai/settings/credits and add more credits', 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_38f5yfJDjzzrSHId7As96OzI9Mf'}); trying next model
+Write	Run write phase	2026-05-04T05:28:43.6284274Z 2026-05-04 05:28:43,627 jeeves.write WARNING All OpenRouter models exhausted; using unedited document
+Write	Run write phase	2026-05-04T05:28:43.6286413Z 2026-05-04 05:28:43,628 jeeves.write WARNING structural repair: 23569 chars orphaned outside .container — splicing inside
+Write	Run write phase	2026-05-04T05:28:43.6308983Z 2026-05-04 05:28:43,630 jeeves.write WARNING h3 section dedup: dropping 2 duplicate <h3> sections (kept richest copy)
+Write	Run write phase	2026-05-04T05:28:43.6437952Z 2026-05-04 05:28:43,643 jeeves.write ERROR SIGNOFF MISSING after postprocess; injecting safety signoff. Investigate Part 9 output.
+Write	Run write phase	2026-05-04T05:28:43.6460597Z 2026-05-04 05:28:43,645 jeeves.write INFO run manifest written: run-manifest-2026-05-04.json (score=40, warnings=19)
+Write	Run write phase	2026-05-04T05:28:43.6461763Z 2026-05-04 05:28:43,645 jeeves.write INFO briefing: 2702 words, 0 profane asides, 32 coverage entries
+Write	Run write phase	2026-05-04T05:28:43.6462978Z 2026-05-04 05:28:43,645 jeeves.write WARNING briefing is under 5000 words (2702) — model undershot.
+Write	Run write phase	2026-05-04T05:28:43.6463856Z 2026-05-04 05:28:43,645 jeeves.write WARNING fewer than 5 profane asides detected (0).
+Write	Run write phase	2026-05-04T05:28:43.6465072Z 2026-05-04 05:28:43,646 jeeves.write INFO briefing written to /home/runner/work/jeeves-unchained/jeeves-unchained/sessions/briefing-2026-05-04.html
+Write	Run write phase	2026-05-04T05:28:44.8757992Z 2026-05-04 05:28:44,875 jeeves.email INFO briefing sent to lang.mc@gmail.com (28892 bytes HTML)
+Write	Run write phase	2026-05-04T05:28:45.7147002Z 2026-05-04 05:28:45,714 jeeves.write INFO briefing archived to /home/runner/work/jeeves-unchained/jeeves-unchained/sessions/briefing-2026-05-04.html
+Write	Upload briefing HTML	﻿2026-05-04T05:28:46.0027790Z ##[group]Run actions/upload-artifact@v4
+Write	Upload briefing HTML	2026-05-04T05:28:46.0028068Z with:
+Write	Upload briefing HTML	2026-05-04T05:28:46.0028239Z   name: briefing-html
+Write	Upload briefing HTML	2026-05-04T05:28:46.0028450Z   path: sessions/briefing-*.html
+Write	Upload briefing HTML	2026-05-04T05:28:46.0028687Z   if-no-files-found: ignore
+Write	Upload briefing HTML	2026-05-04T05:28:46.0028907Z   retention-days: 14
+Write	Upload briefing HTML	2026-05-04T05:28:46.0029231Z   compression-level: 6
+Write	Upload briefing HTML	2026-05-04T05:28:46.0029420Z   overwrite: false
+Write	Upload briefing HTML	2026-05-04T05:28:46.0029614Z   include-hidden-files: false
+Write	Upload briefing HTML	2026-05-04T05:28:46.0029822Z env:
+Write	Upload briefing HTML	2026-05-04T05:28:46.0030029Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+Write	Upload briefing HTML	2026-05-04T05:28:46.0030305Z ##[endgroup]
+Write	Upload briefing HTML	2026-05-04T05:28:46.2102533Z With the provided path, there will be 9 files uploaded
+Write	Upload briefing HTML	2026-05-04T05:28:46.2109243Z Artifact name is valid!
+Write	Upload briefing HTML	2026-05-04T05:28:46.2178503Z Root directory input is valid!
+Write	Upload briefing HTML	2026-05-04T05:28:46.3694179Z Beginning upload of artifact content to blob storage
+Write	Upload briefing HTML	2026-05-04T05:28:46.6327177Z Uploaded bytes 106596
+Write	Upload briefing HTML	2026-05-04T05:28:46.6757161Z Finished uploading artifact content to blob storage!
+Write	Upload briefing HTML	2026-05-04T05:28:46.6758788Z SHA256 digest of uploaded artifact zip is 93b22b207d3255d810b10a5f0b58973de472266e8dac48a259f7ba2718c73f8b
+Write	Upload briefing HTML	2026-05-04T05:28:46.6761229Z Finalizing artifact upload
+Write	Upload briefing HTML	2026-05-04T05:28:46.8088796Z Artifact briefing-html.zip successfully finalized. Artifact ID 6777151988
+Write	Upload briefing HTML	2026-05-04T05:28:46.8089910Z Artifact briefing-html has been successfully uploaded! Final size is 106596 bytes. Artifact ID is 6777151988
+Write	Upload briefing HTML	2026-05-04T05:28:46.8098518Z Artifact download URL: https://github.com/mmmichaelllang/jeeves-unchained/actions/runs/25300719862/artifacts/6777151988
+Write	Post Set up uv	﻿2026-05-04T05:28:46.8211983Z Post job cleanup.
+Write	Post Run actions/checkout@v4	﻿2026-05-04T05:28:46.9682196Z Post job cleanup.
+Write	Post Run actions/checkout@v4	2026-05-04T05:28:47.0580368Z [command]/usr/bin/git version
+Write	Post Run actions/checkout@v4	2026-05-04T05:28:47.0612966Z git version 2.53.0
+Write	Post Run actions/checkout@v4	2026-05-04T05:28:47.0653610Z Temporarily overriding HOME='/home/runner/work/_temp/5d5df53c-beae-4bc1-9778-0cdcd7433cf1' before making global git config changes
+Write	Post Run actions/checkout@v4	2026-05-04T05:28:47.0654861Z Adding repository directory to the temporary git global config as a safe directory
+Write	Post Run actions/checkout@v4	2026-05-04T05:28:47.0667117Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/jeeves-unchained/jeeves-unchained
+Write	Post Run actions/checkout@v4	2026-05-04T05:28:47.0698846Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Write	Post Run actions/checkout@v4	2026-05-04T05:28:47.0725067Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Write	Post Run actions/checkout@v4	2026-05-04T05:28:47.0904184Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Write	Post Run actions/checkout@v4	2026-05-04T05:28:47.0920255Z http.https://github.com/.extraheader
+Write	Post Run actions/checkout@v4	2026-05-04T05:28:47.0930470Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+Write	Post Run actions/checkout@v4	2026-05-04T05:28:47.0956317Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Write	Post Run actions/checkout@v4	2026-05-04T05:28:47.1123322Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Write	Post Run actions/checkout@v4	2026-05-04T05:28:47.1147763Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Write	Complete job	﻿2026-05-04T05:28:47.1440202Z Cleaning up orphan processes
+Write	Complete job	2026-05-04T05:28:47.1662805Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v4, actions/upload-artifact@v4, astral-sh/setup-uv@v3. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Node.js 20 will be removed from the runner on September 16th, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

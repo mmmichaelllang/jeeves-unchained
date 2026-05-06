@@ -82,6 +82,31 @@ def fetch_article_text(url: str) -> str:
         base.update({"title": title, "text": text[:3000], "fetch_failed": False})
         return json.dumps(base)
 
+    # TinyFish fallback (sprint-18, opt-in) — managed extractor sits between
+    # trafilatura and playwright when JEEVES_USE_TINYFISH=1 AND TINYFISH_API_KEY
+    # is set. Cheaper-than-Playwright on minute-billed CI; better than Jina on
+    # JS-heavy SPAs. Soft-fails on every error path so playwright still runs.
+    import os as _os
+
+    if (
+        _os.environ.get("JEEVES_USE_TINYFISH", "").strip() == "1"
+        and _os.environ.get("TINYFISH_API_KEY", "").strip()
+    ):
+        try:
+            from .tinyfish import extract_article as _tf_extract
+
+            tf_result = _tf_extract(url, timeout_seconds=30, max_chars=3000)
+            if tf_result.get("success"):
+                base.update({
+                    "title": tf_result.get("title", ""),
+                    "text": tf_result.get("text", "")[:3000],
+                    "fetch_failed": False,
+                    "extracted_via": "tinyfish",
+                })
+                return json.dumps(base)
+        except Exception as e:
+            log.debug("tinyfish fallback failed for %s: %s", url, e)
+
     # Playwright fallback — last resort when httpx returned nothing OR
     # trafilatura couldn't extract enough body text.
     try:

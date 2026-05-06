@@ -1,0 +1,118 @@
+# Extractor eval set — 15 representative URLs for the sprint-18 TinyFish
+# rollout. Categories chosen to mirror the kinds of articles the research
+# phase actually feeds to the enrichment fallback chain.
+#
+# Each entry:
+#   id:           short slug, used as CSV row key
+#   category:     fixture taxonomy — see _CATEGORIES below
+#   url:          live URL. Replace with archived snapshot if rot is a problem.
+#   golden_text:  five short, distinctive sentence-fragments that MUST appear
+#                 in any good extraction. Used to compute content_recall.
+#                 Prefer fragments unlikely to appear in nav/sidebar.
+#
+# Run with:
+#   uv run python scripts/eval_extractors.py \
+#       --fixture tests/fixtures/extractor_eval_set.yaml \
+#       --extractors httpx,playwright,tinyfish \
+#       --out sessions/eval-tinyfish-$(date -u +%Y-%m-%d).csv
+#
+# `golden_text` fragments are placeholders — fill in by hand on first run from
+# the best-of-three extractions, then commit so future runs measure regression.
+
+categories_legend:
+  - soft_paywall            # NYT/WaPo/FT-style metered access
+  - hard_paywall            # LRB/New Yorker behind login
+  - cloudflare_substack     # Substack with CF challenge
+  - js_heavy_spa            # Talk of the Town / NYer interactive
+  - static_blog             # plain HTML
+  - arxiv_landing           # JS-light, PDF-link page
+  - jsonld_news             # has structured articleBody
+  - infinite_scroll         # twitter-like feeds
+  - geoblocked              # FT or similar
+  - slow_render             # heavy JS but eventually settles
+  - reddit_thread           # reddit.com new-style
+  - github_readme           # github.com/org/repo
+  - youtube_transcript      # youtube.com/watch transcript page
+  - bluesky_post            # bsky.app posts
+  - plain_correspondence    # an Obsidian-published note or similar
+
+cases:
+  - id: nyt_metered
+    category: soft_paywall
+    url: https://www.nytimes.com/2024/01/15/technology/openai-altman-board.html
+    golden_text:
+      - ""
+      - ""
+      - ""
+      - ""
+      - ""
+
+  - id: lrb_login
+    category: hard_paywall
+    url: https://www.lrb.co.uk/the-paper/v45/n21/jenny-turner/why-do-people-keep-doing-this
+    golden_text: ["", "", "", "", ""]
+
+  - id: substack_cf
+    category: cloudflare_substack
+    url: https://www.honest-broker.com/p/the-state-of-the-culture-2025
+    golden_text: ["", "", "", "", ""]
+
+  - id: nyer_talk_of_town
+    category: js_heavy_spa
+    url: https://www.newyorker.com/magazine/2024/01/22/talk-of-the-town
+    golden_text: ["", "", "", "", ""]
+
+  - id: simon_willison_blog
+    category: static_blog
+    url: https://simonwillison.net/2024/Mar/8/gpt-4-barrier/
+    golden_text: ["", "", "", "", ""]
+
+  - id: arxiv_landing
+    category: arxiv_landing
+    url: https://arxiv.org/abs/2305.10601
+    golden_text: ["", "", "", "", ""]
+
+  - id: ap_news
+    category: jsonld_news
+    url: https://apnews.com/article/openai-microsoft-ai-research-d3b91d3a3a3a3a3a3a3a3a3a3a3a3a3a
+    golden_text: ["", "", "", "", ""]
+
+  - id: hackernews_thread
+    category: infinite_scroll
+    url: https://news.ycombinator.com/item?id=39000000
+    golden_text: ["", "", "", "", ""]
+
+  - id: ft_geoblocked
+    category: geoblocked
+    url: https://www.ft.com/content/somelongguidstring
+    golden_text: ["", "", "", "", ""]
+
+  - id: stratechery_long
+    category: slow_render
+    url: https://stratechery.com/2024/the-state-of-ai/
+    golden_text: ["", "", "", "", ""]
+
+  - id: reddit_discussion
+    category: reddit_thread
+    url: https://www.reddit.com/r/MachineLearning/comments/abcdef/discussion_thread/
+    golden_text: ["", "", "", "", ""]
+
+  - id: github_readme
+    category: github_readme
+    url: https://github.com/anthropics/claude-code
+    golden_text: ["", "", "", "", ""]
+
+  - id: youtube_transcript
+    category: youtube_transcript
+    url: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+    golden_text: ["", "", "", "", ""]
+
+  - id: bluesky_post
+    category: bluesky_post
+    url: https://bsky.app/profile/karpathy.bsky.social/post/somepost
+    golden_text: ["", "", "", "", ""]
+
+  - id: obsidian_publish
+    category: plain_correspondence
+    url: https://publish.obsidian.md/andymatuschak/_/About+these+notes
+    golden_text: ["", "", "", "", ""]

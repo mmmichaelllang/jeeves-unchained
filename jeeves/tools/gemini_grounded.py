@@ -17,10 +17,13 @@ from __future__ import annotations
 
 import json
 import logging
+import time
 from typing import Any
 
 from ..config import Config
 from .quota import DAILY_HARD_CAPS, QuotaExceeded, QuotaLedger
+from .rate_limits import acquire as _rl_acquire
+from .telemetry import emit as _emit
 
 log = logging.getLogger(__name__)
 
@@ -58,21 +61,31 @@ def make_gemini_grounded(cfg: Config, ledger: QuotaLedger):
                 "citations": [],
             })
 
+        t0 = time.monotonic()
         try:
             from google import genai  # type: ignore
             from google.genai import types  # type: ignore
 
             client = genai.Client(api_key=cfg.google_api_key)
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=question,
-                config=types.GenerateContentConfig(
-                    tools=[types.Tool(google_search=types.GoogleSearch())],
-                    temperature=0.2,
-                ),
-            )
+            with _rl_acquire("gemini_grounded"):
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=question,
+                    config=types.GenerateContentConfig(
+                        tools=[types.Tool(google_search=types.GoogleSearch())],
+                        temperature=0.2,
+                    ),
+                )
         except Exception as e:
             log.warning("gemini grounded error: %s", e)
+            _emit(
+                "tool_call",
+                provider="gemini_grounded",
+                question=question,
+                ok=False,
+                latency_ms=int((time.monotonic() - t0) * 1000),
+                error=str(e)[:200],
+            )
             # On 429, exhaust our daily counter so subsequent sectors skip
             # Gemini rather than re-hitting the rate limit.
             if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
@@ -93,6 +106,15 @@ def make_gemini_grounded(cfg: Config, ledger: QuotaLedger):
         log.info(
             "gemini_grounded: answered (%d chars, %d citations) [daily=%d/%d]",
             len(answer), len(citations), ledger.daily_used("gemini_grounded"), cap,
+        )
+        _emit(
+            "tool_call",
+            provider="gemini_grounded",
+            question=question,
+            ok=True,
+            answer_chars=len(answer),
+            citations=len(citations),
+            latency_ms=int((time.monotonic() - t0) * 1000),
         )
         return json.dumps({
             "provider": "gemini",

@@ -1,4 +1,15 @@
-"""Tool registry — exposes search/enrichment tools to the research FunctionAgent."""
+"""Tool registry — exposes search/enrichment tools to the research FunctionAgent.
+
+Naming taxonomy (sprint-19 slice E)
+-----------------------------------
+
+Tools are grouped by *role*. Roles are stable; concrete tool names may grow
+as canaries promote. Prompts reference roles ("dispatch a web_search +
+deep_research pair") but agent tool-pick is description-keyed, so renames
+are deliberately avoided — see ``TOOL_TAXONOMY`` below for the role → tools
+map. New peers register under an existing role rather than introducing a
+new tool surface.
+"""
 
 from __future__ import annotations
 
@@ -9,6 +20,47 @@ if TYPE_CHECKING:
 
     from ..config import Config
     from .quota import QuotaLedger
+
+
+# ---------------------------------------------------------------------------
+# Role taxonomy — keep flat. One row per registered tool name. Role choice
+# tells the eval harness, the rate_limits tier table, and the research
+# prompt's budget block what each tool is *for*. Adding a new tool means
+# adding a row here AND updating jeeves/prompts/research_system.md.
+# ---------------------------------------------------------------------------
+
+TOOL_TAXONOMY: dict[str, dict[str, str]] = {
+    # -- web_search: ranked SERP, possibly with snippet text --
+    "serper_search":          {"role": "web_search",     "tier": "1", "billing": "monthly"},
+    "tavily_search":          {"role": "web_search",     "tier": "2", "billing": "monthly"},
+    "jina_search":            {"role": "web_search",     "tier": "1", "billing": "daily"},
+    "tinyfish_search":        {"role": "web_search",     "tier": "3", "billing": "daily"},
+    "playwright_search":      {"role": "web_search",     "tier": "3", "billing": "free"},
+    # -- semantic_search: neural / long-form discovery --
+    "exa_search":             {"role": "semantic_search","tier": "1", "billing": "monthly"},
+    # -- deep_research: synthesis + grounding --
+    "gemini_grounded_synthesize": {"role": "deep_research", "tier": "2", "billing": "daily"},
+    "vertex_grounded_search":     {"role": "deep_research", "tier": "2", "billing": "daily"},
+    "jina_deepsearch":            {"role": "deep_research", "tier": "3", "billing": "daily"},
+    # -- rerank: reorder candidate union --
+    "jina_rerank":            {"role": "rerank",         "tier": "2", "billing": "daily"},
+    # -- extract: full-text fetch --
+    "tavily_extract":         {"role": "extract",        "tier": "2", "billing": "monthly"},
+    "fetch_article_text":     {"role": "extract",        "tier": "1", "billing": "free"},
+    "tinyfish_extract":       {"role": "extract",        "tier": "3", "billing": "daily"},
+    "playwright_extract":     {"role": "extract",        "tier": "3", "billing": "free"},
+    # -- curated_feed: single-source publication scraper --
+    "fetch_new_yorker_talk_of_the_town": {"role": "curated_feed", "tier": "1", "billing": "free"},
+}
+
+
+def tools_for_role(role: str) -> list[str]:
+    """Return the registered tool names that fulfil *role*.
+
+    Used by the eval harness to enumerate web_search providers without
+    re-listing them and by the research prompt's budget table.
+    """
+    return [name for name, meta in TOOL_TAXONOMY.items() if meta.get("role") == role]
 
 
 def all_search_tools(
@@ -134,7 +186,262 @@ def all_search_tools(
             ),
         ),
     ]
+
+    # ---- Optional: TinyFish managed extractor (sprint-18 canary) ----
+    # Registered only when BOTH the secret is present AND the explicit opt-in
+    # flag is set. Mirrors the JEEVES_PW_USE_LLM_CRYSTALLIZE pattern so the
+    # agent surface is unchanged on default runs while we collect comparison
+    # data via the shadow path.
+    import os as _os
+
+    if (
+        _os.environ.get("JEEVES_USE_TINYFISH", "").strip() == "1"
+        and _os.environ.get("TINYFISH_API_KEY", "").strip()
+    ):
+        tools.append(
+            FunctionTool.from_defaults(
+                fn=_make_tinyfish_extract_tool(ledger),
+                name="tinyfish_extract",
+                description=(
+                    "Managed-browser extractor (TinyFish). Use as a peer to "
+                    "playwright_extract on JS-heavy SPAs, soft paywalls, and "
+                    "Cloudflare-fronted hosts when tavily_extract and "
+                    "fetch_article_text both fail. Faster cold-start than "
+                    "playwright; counts against a 30/day hard cap. Args: "
+                    "url (str). Returns JSON string with "
+                    "{url, title, text, success, extracted_via, error?}."
+                ),
+            )
+        )
+
+    # ---- Sprint-19: search-agent canaries (Jina suite + tinyfish_search +
+    # playwright_search). All default-off, individually flagged so each can
+    # promote independently per EVAL_GATE thresholds. Ordering is descriptive
+    # — the agent picks tools by description text (see CLAUDE.md sprint-19
+    # rationale), not list order.
+    if (
+        _os.environ.get("JEEVES_USE_JINA_SEARCH", "").strip() == "1"
+        and cfg.jina_api_key
+    ):
+        from .jina import make_jina_search
+
+        tools.append(
+            FunctionTool.from_defaults(
+                fn=make_jina_search(cfg, ledger),
+                name="jina_search",
+                description=(
+                    "Jina AI search (s.jina.ai). CHOOSE WHEN you need ranked "
+                    "URLs WITH clean extracted snippets in one call. PREFER "
+                    "OVER serper_search when the same query also wants "
+                    "follow-up text — Jina's snippets often eliminate a "
+                    "tavily_extract follow-up. DO NOT USE for navigational "
+                    "lookups (use serper_search). Args: query (str), "
+                    "num (int=8), site (str|None for site-scope filter). "
+                    "Hard cap: 200/day. Returns JSON {provider, query, "
+                    "results: [{title, url, snippet, published_at, source, "
+                    "provider}]}."
+                ),
+            )
+        )
+
+    if (
+        _os.environ.get("JEEVES_USE_JINA_DEEPSEARCH", "").strip() == "1"
+        and cfg.jina_api_key
+    ):
+        from .jina import make_jina_deepsearch
+
+        tools.append(
+            FunctionTool.from_defaults(
+                fn=make_jina_deepsearch(cfg, ledger),
+                name="jina_deepsearch",
+                description=(
+                    "Jina DeepSearch — agentic multi-hop search-read-reason. "
+                    "CHOOSE WHEN a single question needs 5+ citations from "
+                    "multiple sources (e.g. 'state of triadic ontology in "
+                    "2026'). PREFER OVER gemini_grounded_synthesize when "
+                    "you need a deeper citation set than a 3-paragraph "
+                    "narrative. Slow (15-90s) but ONE call replaces 5+ "
+                    "Serper/Tavily/extract chains. Hard cap: 20/day. "
+                    "Args: question (str), reasoning_effort "
+                    "('low'|'medium'|'high'='low'). Returns JSON "
+                    "{provider, question, answer, citations: "
+                    "[{url,title}], visited_urls}."
+                ),
+            )
+        )
+
+    if (
+        _os.environ.get("JEEVES_USE_JINA_RERANK", "").strip() == "1"
+        and cfg.jina_api_key
+    ):
+        from .jina import make_jina_rerank
+
+        tools.append(
+            FunctionTool.from_defaults(
+                fn=make_jina_rerank(cfg, ledger),
+                name="jina_rerank",
+                description=(
+                    "Jina semantic reranker. CHOOSE WHEN you have ≥10 "
+                    "candidate results unioned from 2+ search_* calls and "
+                    "want to pick the top N before extraction. Cheap "
+                    "(~ms/pair). Args: query (str), documents "
+                    "(list[str] — 'title || url || snippet' joined per "
+                    "candidate works), top_n (int=8). Hard cap: 100/day. "
+                    "Returns JSON {provider, query, ranked: "
+                    "[{index, score, document}]}."
+                ),
+            )
+        )
+
+    if (
+        _os.environ.get("JEEVES_USE_TINYFISH_SEARCH", "").strip() == "1"
+        and _os.environ.get("TINYFISH_API_KEY", "").strip()
+    ):
+        tools.append(
+            FunctionTool.from_defaults(
+                fn=_make_tinyfish_search_tool(ledger),
+                name="tinyfish_search",
+                description=(
+                    "TinyFish managed-browser search. CHOOSE WHEN the "
+                    "target is a JS-heavy site (LinkedIn, X, Instagram, "
+                    "paywalled SPAs) where serper_search returns thin "
+                    "metadata, OR when site-scoped queries need real "
+                    "rendering. PREFER OVER serper_search for "
+                    "site:linkedin.com / site:x.com queries. Set "
+                    "include_raw_content=True to return SERP + full "
+                    "rendered markdown in ONE call. Hard cap: 8/day "
+                    "(weighted ~2 credits each, raw=5). Args: query (str), "
+                    "num (int=10), include_raw_content (bool=False), "
+                    "site (str|None). Returns JSON {provider, query, "
+                    "success, results: [{title, url, snippet, content?}]}."
+                ),
+            )
+        )
+
+    if _os.environ.get("JEEVES_USE_PLAYWRIGHT_SEARCH", "").strip() == "1":
+        tools.append(
+            FunctionTool.from_defaults(
+                fn=_make_playwright_search_tool(ledger),
+                name="playwright_search",
+                description=(
+                    "Headless-browser SERP scrape (DuckDuckGo/Bing/Brave). "
+                    "CHOOSE WHEN you need a free Serper peer for diversity "
+                    "(union with serper_search before jina_rerank) or when "
+                    "Serper quota is exhausted. Zero API cost; ~1.2s/call "
+                    "on warm singleton. Args: query (str), engine "
+                    "('ddg'|'bing'|'brave'='ddg'), num (int=10). "
+                    "Hard cap: 60/day (wall-clock guard). Returns JSON "
+                    "{provider, query, engine, success, results: "
+                    "[{title, url, snippet, provider}]}."
+                ),
+            )
+        )
+
     return tools
+
+
+def _make_tinyfish_extract_tool(ledger: "QuotaLedger"):
+    """Build a TinyFish extractor tool that records quota usage.
+
+    Records monthly + daily counters per call so the research_sectors quota
+    guard recognises a TinyFish-only sector as having performed real work
+    AND so the daily 30-call hard cap fires before runaway spend.
+    """
+    def _tinyfish_extract_tool(url: str) -> str:
+        """FunctionTool wrapper around tinyfish.extract_article.
+
+        Returns a JSON string so LlamaIndex's _parse_tool_output() produces
+        a valid JSON TextBlock in the NIM context (matching the contract
+        enforced on every other tool — see notes in research_sectors.py).
+        """
+        import json as _json
+
+        try:
+            from .tinyfish import extract_article
+
+            result = extract_article(
+                url, timeout_seconds=30, max_chars=4000, ledger=ledger
+            )
+        except Exception as e:
+            return _json.dumps({
+                "url": url,
+                "success": False,
+                "title": "",
+                "text": "",
+                "extracted_via": "tinyfish",
+                "error": f"tinyfish extractor crashed: {e}",
+            })
+        return _json.dumps(result)
+
+    return _tinyfish_extract_tool
+
+
+def _make_tinyfish_search_tool(ledger: "QuotaLedger"):
+    """Build a TinyFish search tool that returns a JSON string and records
+    quota usage (sprint-19)."""
+
+    def _tinyfish_search_tool(
+        query: str = "",
+        num: int = 10,
+        include_raw_content: bool = False,
+        site: str | None = None,
+    ) -> str:
+        import json as _json
+
+        try:
+            from .tinyfish import search as _tf_search
+
+            result = _tf_search(
+                query,
+                num=num,
+                include_raw_content=include_raw_content,
+                site=site,
+                ledger=ledger,
+            )
+        except Exception as e:
+            return _json.dumps(
+                {
+                    "provider": "tinyfish_search",
+                    "query": query,
+                    "success": False,
+                    "results": [],
+                    "error": f"tinyfish_search crashed: {e}",
+                }
+            )
+        return _json.dumps(result)
+
+    return _tinyfish_search_tool
+
+
+def _make_playwright_search_tool(ledger: "QuotaLedger"):
+    """Build a Playwright SERP-scrape tool that returns a JSON string and
+    records quota usage (sprint-19)."""
+
+    def _playwright_search_tool(
+        query: str = "",
+        engine: str = "ddg",
+        num: int = 10,
+    ) -> str:
+        import json as _json
+
+        try:
+            from .playwright_extractor import search as _pw_search
+
+            result = _pw_search(query, engine=engine, num=num, ledger=ledger)
+        except Exception as e:
+            return _json.dumps(
+                {
+                    "provider": "playwright_search",
+                    "query": query,
+                    "engine": engine,
+                    "success": False,
+                    "results": [],
+                    "error": f"playwright_search crashed: {e}",
+                }
+            )
+        return _json.dumps(result)
+
+    return _playwright_search_tool
 
 
 def _make_playwright_extract_tool(ledger: "QuotaLedger"):

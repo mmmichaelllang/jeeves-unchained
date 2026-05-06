@@ -1,0 +1,609 @@
+version: 1
+mined_at: 2026-05-06
+count: 48
+cases:
+  - id: 2026-04-24_global_news
+    category: global_news
+    sector: global_news
+    session_date: 2026-04-24
+    query: "world news 2026-04-24 top stories"
+    golden_urls:
+      - https://www.cnn.com/2026/04/24/world/live-news/iran-war-trump-israel-lebanon
+      - https://www.cnn.com/2026/04/24/middleeast/third-us-aircraft-carrier-iran-analysis-intl-hnk-ml
+      - https://www.aljazeera.com/news/2026/4/24/iran-war-whats-happening-on-day-56-after-trump-extended-ceasefire
+      - https://www.aljazeera.com/news/liveblog/2026/4/24/iran-war-live-lebanon-truce-extended-trump-says-time-not-on-tehrans-side
+      - https://www.theguardian.com/world/live/2026/apr/24/iran-war-live-updates-trump-hormuz-strait-israel-lebanon-truce
+      - https://www.theguardian.com/politics/live/2026/apr/24/keir-starmer-peter-mandelson-us-met-police-westminster-assisted-dying-latest-news
+      - https://www.nytimes.com/live/2026/04/24/world/iran-war-trump-hormuz
+      - https://www.nytimes.com/2026/04/24/opinion/international-world/iran-war-trump-deal.html
+      - https://www.nytimes.com/2026/04/24/us/politics/trump-rubio-iran-world-cup.html
+      - https://www.npr.org/2026/04/24/g-s1-118595/middle-east-war-updates
+      - https://knpr.org/npr/2026-04-24/thousands-of-seafarers-stranded-by-ongoing-u-s-blockade-on-strait-of-hormuz
+      - https://www.iowapublicradio.org/news-from-npr/2026-04-24/eu-approves-a-106-billion-loan-package-to-help-ukraine-after-hungary-lifts-its-veto
+      - https://www.bbc.com/audio/play/p0ng93t9
+      - https://www.nytimes.com/issue/todaysinyt/2026/04/23/todays-new-york-times-international-edition
+  - id: 2026-04-24_intellectual_journals
+    category: intellectual_journals
+    sector: intellectual_journals
+    session_date: 2026-04-24
+    query: "essays NYRB OR LRB OR n+1 long-form 2026-04-24"
+    golden_urls:
+      - https://www.nybooks.com/articles/2026/04/23/reimagining-the-future-of-ireland-otoole-mcbride-toibin/
+      - https://www.nybooks.com/articles/2026/05/14/the-music-of-what-happens-poems-of-seamus-heaney/
+      - https://www.lrb.co.uk/the-paper/v48/n07/charles-glass/diary
+      - https://www.lrb.co.uk/the-paper/v48/n07/james-lasdun/reality-instruction
+      - https://www.lrb.co.uk/the-paper/v48/n07/ian-penman/i-m-just-a-sound
+      - https://aeon.co/essays/why-the-best-way-to-understand-the-self-is-to-build-a-robot-one
+      - https://aeon.co/essays/how-classical-indian-philosophy-helps-us-understand-the-self
+      - https://aeon.co/essays/could-ai-replace-human-art-experts-in-attributing-paintings
+      - https://www.themarginalian.org/2026/04/18/whitman-traversal/
+      - https://www.themarginalian.org/2026/04/15/kiln-quantum/
+      - https://www.themarginalian.org/2026/04/12/margaret-boden-creativity/
+      - https://www.themarginalian.org/2026/04/11/beethoven-ode-to-joy/
+      - https://jacobin.com/2026/04/decarbonizing-housing-landlords-class-conflict/
+      - https://jacobin.com/2026/04/shaikh-capitalism-marxism-economic-theory
+      - http://www.jacobinmag.com/2026/04/iran-war-regime-crisis-stability
+  - id: 2026-04-24_local_news
+    category: local_news
+    sector: local_news
+    session_date: 2026-04-24
+    query: "Edmonds Washington local news 2026-04-24"
+    golden_urls:
+      - https://myedmondsnews.com/2026/04/everett-community-transit-resume-work-on-potential-transit-consolidation/
+      - https://myedmondsnews.com/2026/04/positive-discipline-classes-for-families-april-25/
+      - https://www.instagram.com/p/DXfHFl2kqn0/
+      - https://myedmondsnews.com/2026/04/edmonds-college-student-aaron-slaughter-receives-2026-governors-student-civic-leadership-award/
+      - https://myedmondsnews.com/2026/04/edmonds-port-commission-meeting-agenda-for-april-28-2026/
+      - https://www.facebook.com/fox13seattle/posts/police-are-investigating-a-shooting-that-left-one-injured-in-seattles-chinatown-/1575433564177164/
+  - id: 2026-04-24_wearable_ai
+    category: wearable_ai
+    sector: wearable_ai
+    session_date: 2026-04-24
+    query: "wearable AI device news 2026-04-24"
+    golden_urls:
+      - https://www.comgateway.com/blogs/a-blueprint-for-your-new-digital-bromance-friend-ai-pendant-vs-your-current-tech-stack-in-the-uk/
+      - https://www.macrumors.com/2026/04/03/breakthrough-new-iphone-accessory/
+      - https://techcrunch.com/2026/03/11/former-apple-engineer-raises-5m-for-a-note-taking-pendant-that-only-records-your-voice/
+      - https://www.france24.com/en/live-news/20260111-ai-pendants-back-in-vogue-at-tech-show-after-early-setback
+      - https://www.magicschool.ai/blog-posts/whats-new-april-2026
+      - https://web.diffit.me/diffit-for-differentiation
+      - https://www.briskteaching.com/post/brisk-announces-curriculum-intelligence-for-back-to-school-2026
+      - https://www.briskteaching.com/use-cases/english-teachers
+      - https://www.tomsguide.com/ai/the-looki-l1-is-the-first-personal-ai-wearable-i-might-actually-wear
+      - https://medium.com/@ayeshha2398/10-best-ai-gadgets-of-2026-my-honest-review-of-the-gear-you-actually-need-9c9330b0e121
+      - https://mashable.com/article/ces-2026-motorola-entering-wearable-ai
+      - https://www.cnet.com/tech/computing/features/smart-glasses-revolution-whats-coming-meta-ray-bans-and-beyond/
+  - id: 2026-04-25_family
+    category: family
+    sector: family
+    session_date: 2026-04-25
+    query: "family parenting culture longform 2026-04-25"
+    golden_urls:
+      - https://www.seattlechoralcompany.org/join-us/
+      - https://www.seattlepromusica.org/auditions
+      - https://www.nwassociatedarts.org/contact-us/auditions/
+      - https://www.sno-isle.org/locations/edmonds/
+      - https://www.sno-isle.org/kids/under-5/
+      - https://www.imaginecm.org/
+      - https://zoo.org/zoomazium/
+  - id: 2026-04-25_global_news
+    category: global_news
+    sector: global_news
+    session_date: 2026-04-25
+    query: "world news 2026-04-25 top stories"
+    golden_urls:
+      - https://www.bbc.com/news/articles/c4g6nyvl29po
+      - https://www.bbc.com/news/articles/clyx7nnrkqdo
+      - https://www.bbc.com/news/articles/cd9v1wll8qqo
+      - https://apnews.com/live/iran-war-israel-trump-04-25-2026
+      - https://www.youtube.com/watch?v=5nbZVabw-GE
+  - id: 2026-04-25_intellectual_journals
+    category: intellectual_journals
+    sector: intellectual_journals
+    session_date: 2026-04-25
+    query: "essays NYRB OR LRB OR n+1 long-form 2026-04-25"
+    golden_urls:
+      - https://www.nybooks.com/online/2026/04/25/we-goofed/
+      - https://www.nybooks.com/online/2026/04/10/the-emirates-on-the-tightrope/
+      - https://www.nybooks.com/articles/2026/05/14/the-right-amount-of-crazy-fintan-otoole/
+      - https://www.nybooks.com/online/2026/04/22/waiting-for-day-zero-los-angeles-iranians/
+      - https://www.nybooks.com/articles/2026/04/23/reimagining-the-future-of-ireland-otoole-mcbride-toibin/
+      - https://go.nybooks.com/4riq6xV?printpage=true
+  - id: 2026-04-25_local_news
+    category: local_news
+    sector: local_news
+    session_date: 2026-04-25
+    query: "Edmonds Washington local news 2026-04-25"
+    golden_urls:
+      - https://www.edmondsbeacon.com/stories/overnight-closures-planned-for-sr-525-ramps-near-alderwood-mall-parkway,174765
+      - https://www.heraldnet.com/2026/04/22/woman-58-died-in-her-cell-at-snohomish-county-jail/
+  - id: 2026-04-25_wearable_ai
+    category: wearable_ai
+    sector: wearable_ai
+    session_date: 2026-04-25
+    query: "wearable AI device news 2026-04-25"
+    golden_urls:
+      - https://audria.tech/
+      - https://gmic.ai/
+      - https://phonic.co/
+      - https://magicschool.ai/
+      - https://briskteaching.com/
+      - https://diffit.me/
+      - https://nirva.life/
+      - https://compasswearable.com/
+      - https://sensforge.com/
+      - https://lumilife.online/
+  - id: 2026-04-26_family
+    category: family
+    sector: family
+    session_date: 2026-04-26
+    query: "family parenting culture longform 2026-04-26"
+    golden_urls:
+      - https://www.seattlechoralcompany.org/join-us/
+      - https://www.seattlepromusica.org/auditions
+      - https://www.nwrs.org/audition-for-nwrs
+      - https://www.nwassociatedarts.org/contact-us/auditions/
+      - https://www.sno-isle.org/locations/edmonds/
+      - https://www.imaginecm.org/calendar/
+      - https://resources.helpmegrowwa.org/search/5fc9e7fd-eece-5388-b653-257096f01e53
+      - https://www.sno-isle.org/kids/under-5/
+  - id: 2026-04-26_global_news
+    category: global_news
+    sector: global_news
+    session_date: 2026-04-26
+    query: "world news 2026-04-26 top stories"
+    golden_urls:
+      - https://www.aljazeera.com/news/liveblog/2026/4/26/iran-war-live-tehran-rejects-talks-under-siege-trump-cancels-envoys-trip
+      - https://www.aljazeera.com/news/2026/4/26/israeli-attacks-kill-at-least-four-palestinians-in-gaza
+      - https://www.bbc.com/news/videos/cgqkq18qqeeo
+      - https://www.npr.org/2026/04/25/nx-s1-5799544/trump-white-house-correspondents-dinner
+      - https://www.usnews.com/news/world/articles/2026-04-26/mali-defence-minister-killed-in-al-qaeda-linked-attack-near-bamako-rfi-reports
+      - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEQk9jtUU26iQyILFkbUlnVEFge5ba_-SslUQFICGwA4cBiYERJHsxZslUK7kTT9_yD0KxW3sFopDzaGvA98uxEXtlR4a3_m6LWg5ZKltV4TispYb0D2E5OGj7JLN_mP3zwc7bPa91c
+      - https://www.cbsnews.com/news/mexico-cia-agents-killed-crash-local-raid/
+  - id: 2026-04-26_local_news
+    category: local_news
+    sector: local_news
+    session_date: 2026-04-26
+    query: "Edmonds Washington local news 2026-04-26"
+    golden_urls:
+      - https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/
+      - https://www.heraldnet.com/2026/04/22/woman-58-died-in-her-cell-at-snohomish-county-jail
+      - https://www.edmondsbeacon.com/stories/overnight-closures-planned-for-sr-525-ramps-near-alderwood-mall-parkway,174765
+  - id: 2026-04-26_wearable_ai
+    category: wearable_ai
+    sector: wearable_ai
+    session_date: 2026-04-26
+    query: "wearable AI device news 2026-04-26"
+    golden_urls:
+      - http://oreateai.com/blog/meet-friend-the-ai-pendant-that-listens-and-connects/247dd09bbb7bd40d4d44c199da3a4efa
+      - https://aicovery.com/tools/friend-ai
+      - https://www.fastcompany.com/91007630/avi-schiffmanns-tab-ai-necklace-has-raised-1-9-million-to-replace-god
+      - https://www.geeky-gadgets.com/apple-ai-pin-details-2/
+      - https://engadget.com/the-humane-ai-pin-is-the-solution-to-none-of-technologys-problems-120002469.html
+      - https://baynews9.com/fl/tampa/news/2026/04/20/hillsborough-schools-using-ai-tool--magic-school--to-help-teachers
+      - https://www.magicschool.ai/magic-tools
+      - https://aitoolsbakery.com/blog/diffit-ai-review/
+      - https://web.diffit.me/home
+  - id: 2026-04-27_family
+    category: family
+    sector: family
+    session_date: 2026-04-27
+    query: "family parenting culture longform 2026-04-27"
+    golden_urls:
+      - https://www.seattlechoralcompany.org/join-us/
+      - https://www.seattlepromusica.org/auditions
+      - https://www.nwassociatedarts.org/contact-us/auditions/
+      - https://nwchorale.org/sing.htm
+      - https://www.sno-isle.org/kids/under-5/
+      - https://sno-isle.bibliocommons.com/v2/events?locations=13&audiences=5ecfd4bde19e6b240078b87c%2C5ecfd4b707f0884500ce8c9f%2C5f0ce9c2036b39880a776ab0%2C5f0ce9be8497d4760a06c16a
+      - https://www.imaginecm.org/
+      - https://zoo.org/zoomazium/
+  - id: 2026-04-27_global_news
+    category: global_news
+    sector: global_news
+    session_date: 2026-04-27
+    query: "world news 2026-04-27 top stories"
+    golden_urls:
+      - https://www.reuters.com/world/north-korea-confirms-troop-deployment-russia-first-time-kcna-report-2025-04-27/
+      - https://www.rte.ie/news/2026/0427/1570462-starmer-mandelson/
+      - https://www.bbc.co.uk/news/articles/c5ywy54229ko
+      - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHKRSaKVWuHi-hnqO5JYqsvDZBz0BZcF5apdo9e_Lr49WT_UMAw8Q2_9DtYZmaPXI_15W11eY9huA1w_qVT6oolKvCQ7v5-gOTx_L6NV4fxacXGKnkc6sxnEqyWLe_t7PaUa3DOKg==
+  - id: 2026-04-27_intellectual_journals
+    category: intellectual_journals
+    sector: intellectual_journals
+    session_date: 2026-04-27
+    query: "essays NYRB OR LRB OR n+1 long-form 2026-04-27"
+    golden_urls:
+      - https://www.nybooks.com/online/2026/04/19/war-games-olympics-empire/
+      - https://www.nybooks.com/articles/2026/04/23/reimagining-the-future-of-ireland-otoole-mcbride-toibin/
+      - https://aeon.co/essays/why-the-best-way-to-understand-the-self-is-to-build-a-robot-one
+      - https://aeon.co/essays/science-and-metaphysics-must-work-together-to-answer-lifes-deepest-questions
+      - https://www.lrb.co.uk/the-paper/v48/n07/eyal-weizman/all-they-will-find-is-sand
+      - https://www.lrb.co.uk/the-paper/v48/n07/christian-lorentzen/i-sympathise-with-the-child
+  - id: 2026-04-27_local_news
+    category: local_news
+    sector: local_news
+    session_date: 2026-04-27
+    query: "Edmonds Washington local news 2026-04-27"
+    golden_urls:
+      - https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/
+      - https://myedmondsnews.com/2026/04/council-approves-key-contracts-drops-potential-tree-litigation-and-proclaims-april-9-local-news-day/
+      - https://myedmondsnews.com/2026/04/edmonds-at-center-of-discussions-as-south-county-fire-commissioners-embark-on-redistricting/
+      - http://www.edmondsbeacon.com/stories/untitled,174933
+  - id: 2026-04-27_wearable_ai
+    category: wearable_ai
+    sector: wearable_ai
+    session_date: 2026-04-27
+    query: "wearable AI device news 2026-04-27"
+    golden_urls:
+      - https://friend.com/
+      - https://limitless.ai/
+      - https://omi.me/
+      - https://audria.tech/
+      - https://compasswearable.com/
+      - https://magicschool.ai/
+      - https://briskteaching.com/
+      - https://web.diffit.me/
+      - https://humy.ai/
+      - https://teachersbuddy.com/
+      - https://getbuddi.ai/
+  - id: 2026-04-28_global_news
+    category: global_news
+    sector: global_news
+    session_date: 2026-04-28
+    query: "world news 2026-04-28 top stories"
+    golden_urls:
+      - https://www.bbc.com/news
+      - https://www.reuters.com/world/middle-east/us-iran-clash-un-after-tehran-gets-nuclear-non-proliferation-role-2026-04-27/
+      - https://www.reuters.com/world/pope-first-female-archbishop-canterbury-meet-pray-together-2026-04-27/
+      - https://www.reuters.com/world/google-gets-pointers-eu-regulators-helping-ai-rivals-access-services-2026-04-27/
+      - https://www.cnn.com/2026/04/28/world/video/oil-refinery-sebastian-digvid
+  - id: 2026-04-28_intellectual_journals
+    category: intellectual_journals
+    sector: intellectual_journals
+    session_date: 2026-04-28
+    query: "essays NYRB OR LRB OR n+1 long-form 2026-04-28"
+    golden_urls:
+      - https://www.nybooks.com/online/2026/04/22/waiting-for-day-zero-los-angeles-iranians/
+      - https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions
+      - https://jacobin.com/2026/04/ai-critical-thinking-chatbots-subjectivity/
+      - https://www.themarginalian.org/2026/04/26/how-birds-fly/
+      - https://www.lrb.co.uk/the-paper/v48/n07/ian-penman/i-m-just-a-sound
+  - id: 2026-04-28_local_news
+    category: local_news
+    sector: local_news
+    session_date: 2026-04-28
+    query: "Edmonds Washington local news 2026-04-28"
+    golden_urls:
+      - https://myedmondsnews.com/2026/04/city-shares-design-for-next-phase-of-hwy-99-revitalization-asks-public-to-weigh-in/
+      - https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/
+      - https://myedmondsnews.com/2026/04/wa-sues-albertsons-over-deceptive-buy-one-get-one
+  - id: 2026-04-28_wearable_ai
+    category: wearable_ai
+    sector: wearable_ai
+    session_date: 2026-04-28
+    query: "wearable AI device news 2026-04-28"
+    golden_urls:
+      - https://friend.com/
+      - http://jordancooper.blog/2025/09/03/friend-com/
+      - https://en.wikipedia.org/wiki/Friend_(product)
+      - https://www.world-today-news.com/samsung-project-luna-new-ai-companion-concept/
+      - https://www.magicschool.ai/magic-tools
+      - https://www.magicschool.ai/blog-posts/ai-teaching-tools-updates-2026
+      - https://www.magicschool.ai/blog-posts/whats-new-april-2026
+      - https://web.diffit.me/
+      - https://web.diffit.me/why-diffit
+      - https://web.diffit.me/first-year-teachers
+      - https://aipilotguide.com/humane-ai-pin-2-review-2026/
+      - https://techcrunch.com/2026/01/21/not-to-be-outdone-by-openai-apple-is-reportedly-developing-an-ai-wearable/
+      - https://www.cnet.com/tech/services-and-software/nirva-ai-jewelry-ces-2026/
+      - https://www.umevo.ai/blogs/ume-all-posts/bee-ai-pendant-complete-review-features-battery-life-and-pricing-2026
+      - https://www.limitless.ai/
+  - id: 2026-04-29_family
+    category: family
+    sector: family
+    session_date: 2026-04-29
+    query: "family parenting culture longform 2026-04-29"
+    golden_urls:
+      - http://www.seattlepromusica.org/auditions
+      - http://www.seattlepromusica.org/calendar
+      - https://www.seattlepromusica.org/calendar/2025/8/25/2025-26-season-auditions-for-all-voice-parts
+      - https://sno-isle.bibliocommons.com/v2/events?types=5f0ce972da1b731c0af31864
+      - https://www.sno-isle.org/locations/edmonds/
+      - https://www.sno-isle.org/locations/lynnwood/
+      - https://sno-isle.bibliocommons.com/events/search/fq=types:(5f0ce972da1b731c0af31864%20OR%2060c925525f9fa8370015086e%20OR%205f0ce8fd8497d4760a06c15e%20OR%205f0ce903da1b731c0af31862)/event/61b2a2172268d34100c0318f
+  - id: 2026-04-29_global_news
+    category: global_news
+    sector: global_news
+    session_date: 2026-04-29
+    query: "world news 2026-04-29 top stories"
+    golden_urls:
+      - https://www.bbc.co.uk/news/articles/cqjplqgd1r2o
+      - https://www.reuters.com/world/europe/trump-says-king-charles-does-not-want-iran-have-nuclear-weapon-2026-04-29/
+      - https://www.npr.org/2026/04/28/nx-s1-5802283/iran-middle-east-updates
+      - https://www.bbc.com/news
+      - https://www.reuters.com/world/middle-east/us-iran-clash-un-after-tehran-gets-nuclear-non-proliferation-role-2026-04-27/
+  - id: 2026-04-29_intellectual_journals
+    category: intellectual_journals
+    sector: intellectual_journals
+    session_date: 2026-04-29
+    query: "essays NYRB OR LRB OR n+1 long-form 2026-04-29"
+    golden_urls:
+      - https://www.themarginalian.org/2026/02/27/fanny-wright-traversal/
+      - https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions
+      - https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom
+      - https://www.nybooks.com/articles/2026/04/23/blood-in-the-game-bloodline-fever-beach/
+  - id: 2026-04-29_local_news
+    category: local_news
+    sector: local_news
+    session_date: 2026-04-29
+    query: "Edmonds Washington local news 2026-04-29"
+    golden_urls:
+      - https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/
+      - https://myedmondsnews.com/2026/04/council-to-consider-amendment-to-perrinville-creek-consultant-contract-april-28/
+      - https://www.heraldnet.com/2026/04/20/south-county-fire-board-considers-redistricting-proposals/
+  - id: 2026-04-29_wearable_ai
+    category: wearable_ai
+    sector: wearable_ai
+    session_date: 2026-04-29
+    query: "wearable AI device news 2026-04-29"
+    golden_urls:
+      - https://friend.com/
+      - https://nirva.life/
+      - https://wareit.ai/
+      - https://humane.com/
+      - https://www.magicschool.ai/blog-posts/whats-new-april-2026
+      - https://web.diffit.me/
+      - https://library.diffit.me/
+      - https://nunatechnology.com/
+      - https://themobimedapp.com/
+  - id: 2026-04-30_intellectual_journals
+    category: intellectual_journals
+    sector: intellectual_journals
+    session_date: 2026-04-30
+    query: "essays NYRB OR LRB OR n+1 long-form 2026-04-30"
+    golden_urls:
+      - https://www.lrb.co.uk/the-paper/v48/n02/donald-mackenzie/ai-s-scale
+      - https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions
+      - https://www.themarginalian.org/2026/02/27/fanny-wright-traversal/
+      - https://www.nybooks.com/articles/2026/04/23/blood-in-the-game-bloodline-fever-beach/
+  - id: 2026-04-30_local_news
+    category: local_news
+    sector: local_news
+    session_date: 2026-04-30
+    query: "Edmonds Washington local news 2026-04-30"
+    golden_urls:
+      - https://myedmondsnews.com/2026/04/council-approves-key-contracts-drops-potential-tree-litigation-and-proclaims-april-9-local-news-day/
+      - https://www.heraldnet.com/2026/04/20/south-county-fire-board-considers-redistricting-proposals/
+      - https://myedmondsnews.com/2026/04/edmonds-at-center-of-discussions-as-south-county-fire-commissioners-embark-on-redistricting/
+      - https://www.heraldnet.com/2026/04/09/edmonds-approves-contract-for-gasifier-operations-at-sewage-plant/
+      - https://www.heraldnet.com/2026/04/10/court-of-appeals-reopens-edmonds-tree-mandate-case/
+  - id: 2026-04-30_wearable_ai
+    category: wearable_ai
+    sector: wearable_ai
+    session_date: 2026-04-30
+    query: "wearable AI device news 2026-04-30"
+    golden_urls:
+      - https://friend.com/
+      - https://omi.me/
+      - https://audria.tech/
+      - https://nirva.life/
+      - https://wareit.ai/
+      - https://magicschool.ai/
+      - https://web.diffit.me/
+      - https://teachersbuddy.com/
+      - https://teachmateai.com/
+      - https://humy.ai/
+      - https://nunatechnology.com/
+  - id: 2026-05-01_family
+    category: family
+    sector: family
+    session_date: 2026-05-01
+    query: "family parenting culture longform 2026-05-01"
+    golden_urls:
+      - http://www.seattlepromusica.org/auditions
+      - https://www.seattlepromusica.org/calendar/2025/8/25/2025-26-season-auditions-for-all-voice-parts
+      - https://nwchorale.org/sing.htm
+      - https://www.choralartsnw.org/auditions2025/
+      - https://www.seattlechoruses.org/join-chorus/
+      - https://www.sno-isle.org/locations/edmonds/
+      - https://www.sno-isle.org/locations/lynnwood/
+      - https://www.sno-isle.org/kids/under-5
+      - https://sno-isle.bibliocommons.com/v2/events?types=5f0ce972da1b731c0af31864
+  - id: 2026-05-01_global_news
+    category: global_news
+    sector: global_news
+    session_date: 2026-05-01
+    query: "world news 2026-05-01 top stories"
+    golden_urls:
+      - https://www.bbc.com/news/articles/cx21m88rd14o
+      - https://www.reuters.com/world/zelenskiy-says-ukraine-will-continue-extending-range-strikes-russia-2026-04-29/
+      - https://www.bbc.co.uk/news/articles/ce3pw5x3z54o
+      - https://www.bbc.co.uk/news/articles/c4gv4dvngygo
+  - id: 2026-05-01_intellectual_journals
+    category: intellectual_journals
+    sector: intellectual_journals
+    session_date: 2026-05-01
+    query: "essays NYRB OR LRB OR n+1 long-form 2026-05-01"
+    golden_urls:
+      - https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom
+      - https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions
+      - https://www.nybooks.com/articles/2026/04/23/blood-in-the-game-bloodline-fever-beach
+      - https://www.themarginalian.org/2026/02/27/fanny-wright-traversal
+  - id: 2026-05-01_local_news
+    category: local_news
+    sector: local_news
+    session_date: 2026-05-01
+    query: "Edmonds Washington local news 2026-05-01"
+    golden_urls:
+      - https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/
+      - https://www.edmondsbeacon.com/stories/city-council-adopts-safety-action-plan,175444
+      - https://myedmondsnews.com/2026/04/edmonds-to-begin-sewer-storm-pipe-rehabilitation-project-may-4/
+  - id: 2026-05-01_wearable_ai
+    category: wearable_ai
+    sector: wearable_ai
+    session_date: 2026-05-01
+    query: "wearable AI device news 2026-05-01"
+    golden_urls:
+      - https://www.friend.com/
+      - https://www.limitless.ai/
+      - https://www.comgateway.com/blogs/is-getting-the-tab-ai-wearable-gen-1-delivered-to-south-korea-actually-worth-the-effort/
+      - https://www.bee.computer/
+      - https://www.magicschool.ai/
+      - https://web.diffit.me/
+      - https://www.briskteaching.com/
+      - https://www.plaud.ai/blogs/articles/9-life-changing-ai-wearable-devices-in-2026
+      - https://www.omi.me/
+      - https://www.umevo.ai/blogs/ume-all-posts/the-ultimate-guide-to-ai-wearable-devices-in-2026-features-top-picks-and-use-cases
+  - id: 2026-05-02_family
+    category: family
+    sector: family
+    session_date: 2026-05-02
+    query: "family parenting culture longform 2026-05-02"
+    golden_urls:
+      - http://www.seattlepromusica.org/auditions
+      - https://www.seattlechoralcompany.org/join-us/
+      - https://www.nwassociatedarts.org/contact-us/auditions/
+      - https://www.choralartsnw.org/
+      - https://www.sno-isle.org/locations/edmonds/
+      - https://www.sno-isle.org/locations/lynnwood/
+      - https://sno-isle.bibliocommons.com/v2/events?types=5f0ce972da1b731c0af31864
+  - id: 2026-05-02_global_news
+    category: global_news
+    sector: global_news
+    session_date: 2026-05-02
+    query: "world news 2026-05-02 top stories"
+    golden_urls:
+      - https://www.bbc.co.uk/news/articles/c4g4xexy4w7o
+      - https://www.reuters.com/world/uk/prince-harry-loses-legal-fight-with-uk-government-over-police-protection-2025-05-02/
+      - https://www.reuters.com/world/europe/kremlin-says-it-wants-definitive-ukrainian-response-putins-offer-three-day-2025-05-03/
+      - https://www.bbc.com/news/articles/c0q9xq7knq2o
+      - https://www.theguardian.com/world
+  - id: 2026-05-02_intellectual_journals
+    category: intellectual_journals
+    sector: intellectual_journals
+    session_date: 2026-05-02
+    query: "essays NYRB OR LRB OR n+1 long-form 2026-05-02"
+    golden_urls:
+      - https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/
+      - https://www.themarginalian.org/2026/03/02/the-light-eaters/
+      - https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions
+      - https://www.lrb.co.uk/pages/standalone/the-2026-lrb-winter-lectures
+      - https://www.nybooks.com/articles/2026/04/23/blood-in-the-game-bloodline-fever-beach/
+  - id: 2026-05-02_local_news
+    category: local_news
+    sector: local_news
+    session_date: 2026-05-02
+    query: "Edmonds Washington local news 2026-05-02"
+    golden_urls:
+      - https://myedmondsnews.com/2026/05/scene-in-edmonds-around-town-friday-69/
+      - https://myedmondsnews.com/2026/05/summer-market-season-2026-kicks-off-under-sunny-skies-in-edmonds/
+      - https://myedmondsnews.com/2026/05/south-county-fire-public-hearing-may-5-on-proposed-bond-measure/
+  - id: 2026-05-02_wearable_ai
+    category: wearable_ai
+    sector: wearable_ai
+    session_date: 2026-05-02
+    query: "wearable AI device news 2026-05-02"
+    golden_urls:
+      - https://www.goodhousekeeping.com/electronics/a68156015/friend-review/
+      - https://www.comgateway.com/blogs/why-are-belgian-tech-circles-suddenly-obsessed-with-this-us-exclusive-ai-pendant/
+      - https://www.cnet.com/tech/mobile/motorola-project-maxwell-wearable-ai-pendant-at-mwc-2026/
+      - https://www.magicschool.ai/blog-posts/ai-teaching-tools-updates-2026
+      - https://www.magicschool.ai/blog-posts/whats-new-april-2026
+      - https://www.magicschool.ai/magic-tools
+      - https://www.techtimes.com/articles/314655/20260216/best-ai-notetaking-devices-2026-comparing-rewind-pendant-plaud-ai-recorder-other-wearable-mics.htm
+      - https://www.cnet.com/tech/services-and-software/nirva-ai-jewelry-ces-2026/
+      - https://mikecann.blog/posts/always-listening-a-month-with-the-bee-computer-ai-assistant/
+      - https://www.pocnetwork.net/product-reviews/looki-l1-ai-lifelogging-camera/
+  - id: 2026-05-03_local_news
+    category: local_news
+    sector: local_news
+    session_date: 2026-05-03
+    query: "Edmonds Washington local news 2026-05-03"
+    golden_urls:
+      - https://myedmondsnews.com/2026/05/new-statewide-housing-law-goes-into-effect-june-11-how-do-local-city-leaders-organizations-feel-about-it/
+      - https://myedmondsnews.com/2026/05/construction-on-88th-ave-w-in-edmonds-to-resume-week-of-may-4/
+      - https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/
+  - id: 2026-05-03_wearable_ai
+    category: wearable_ai
+    sector: wearable_ai
+    session_date: 2026-05-03
+    query: "wearable AI device news 2026-05-03"
+    golden_urls:
+      - https://friend.com/
+      - https://www.greenbot.com/ai-wearable-friend/
+      - https://www.pcmag.com/news/friend-is-an-always-listening-ai-companion-necklace-that-texts-you
+      - https://sacra.com/research/friend
+      - https://www.magicschool.ai/magic-tools
+      - https://www.magicschool.ai/blog-posts/ai-teaching-tools-updates-2026
+      - https://magicschool.ai/tools/writing-feedback
+      - https://magicschool.ai/magicschool-for-districts
+      - https://lightmind.art/
+      - https://www.imaging-resource.com/news/luci-pin-aims-to-reimagine-life-logging-with-privacy-first-local-ai-processing/
+      - https://getreflecti.com/
+  - id: 2026-05-04_career
+    category: career
+    sector: career
+    session_date: 2026-05-04
+    query: "AI engineering hiring news 2026-05-04"
+    golden_urls:
+      - https://www.ziprecruiter.com/c/Snohomish-School-District/Job/English-Language-Arts-Teacher-Pool-(2026-2027)/-in-Snohomish,WA?jid=10504e25df1ba105
+      - https://www.breakroom.cc/en-us/jobs/listing/1710553-northshore-school-district-social-studies-teacher-secondary
+      - https://www.edjoblist.com/employment/social-studies-teacher--secondary-listing-160358.aspx
+      - https://www.applitrack.com/edmonds/onlineapp/default
+  - id: 2026-05-04_family
+    category: family
+    sector: family
+    session_date: 2026-05-04
+    query: "family parenting culture longform 2026-05-04"
+    golden_urls:
+      - http://www.seattlepromusica.org/auditions
+      - https://sno-isle.bibliocommons.com/v2/events?types=5f0ce972da1b731c0af31864
+      - https://www.sno-isle.org/locations/edmonds/
+      - https://www.sno-isle.org/locations/lynnwood/
+  - id: 2026-05-04_global_news
+    category: global_news
+    sector: global_news
+    session_date: 2026-05-04
+    query: "world news 2026-05-04 top stories"
+    golden_urls:
+      - https://www.bbc.co.uk/news/articles/cm2e44y44gjo
+      - https://www.bbc.co.uk/news/articles/cd9pn541jjlo
+      - https://www.reuters.com/world/europe/putin-says-he-hopes-there-will-be-no-need-use-nuclear-weapons-ukraine-2025-05-04/
+  - id: 2026-05-04_intellectual_journals
+    category: intellectual_journals
+    sector: intellectual_journals
+    session_date: 2026-05-04
+    query: "essays NYRB OR LRB OR n+1 long-form 2026-05-04"
+    golden_urls:
+      - https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/
+      - https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions
+      - https://jacobin.com/2026/03/post-order-us-global-dominance
+      - https://go.nybooks.com/3N19jS3?printpage=true
+      - https://go.nybooks.com/4bkh9hE?printpage=true
+  - id: 2026-05-04_local_news
+    category: local_news
+    sector: local_news
+    session_date: 2026-05-04
+    query: "Edmonds Washington local news 2026-05-04"
+    golden_urls:
+      - https://edmondswa.gov/news/what_s_new/aging_pipe_repairs_begins_may_4_-_who_s_affected_
+      - https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/
+      - https://www.fox13seattle.com/news/new-video-edmonds-spa-attack
+      - https://myedmondsnews.com/2026/04/edmonds-at-center-of-discussions-as-south-county-fire-commissioners-embark-on-redistricting/
+  - id: 2026-05-04_wearable_ai
+    category: wearable_ai
+    sector: wearable_ai
+    session_date: 2026-05-04
+    query: "wearable AI device news 2026-05-04"
+    golden_urls:
+      - https://friend.com/
+      - https://omi.me/
+      - https://nirva.life/
+      - https://audria.tech/
+      - https://socraeducation.com/
+      - https://hellohistory.ai/
+      - https://humy.ai/
+      - https://teachersbuddy.com/
+      - https://wareit.ai/
+      - https://sandbar.com/

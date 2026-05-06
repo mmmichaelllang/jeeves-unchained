@@ -31,6 +31,13 @@ RESEARCH_BUDGET_GEMINI: int = 3
 RESEARCH_BUDGET_EXA: int = 7             # 1 reserved for literary_pick
 RESEARCH_BUDGET_SERPER: int = 20
 RESEARCH_BUDGET_PLAYWRIGHT: int = 5      # last-resort; each call ~5-15s
+# Sprint-19 search-agent canaries — opt-in via JEEVES_USE_* flags. Budgets
+# only bind when the corresponding tool is registered.
+RESEARCH_BUDGET_JINA_SEARCH: int = 10
+RESEARCH_BUDGET_JINA_DEEPSEARCH: int = 3      # token-heavy; 1 call/deep sector
+RESEARCH_BUDGET_JINA_RERANK: int = 8
+RESEARCH_BUDGET_TINYFISH_SEARCH: int = 8
+RESEARCH_BUDGET_PLAYWRIGHT_SEARCH: int = 20   # zero-API; bounded by wall-clock
 
 Phase = Literal["research", "write", "correspondence"]
 

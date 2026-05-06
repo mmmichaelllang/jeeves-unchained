@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import json
 import logging
-import re
+import time
 from typing import Any
 
 from ..config import Config
 from .quota import QuotaLedger
+from .rate_limits import acquire as _rl_acquire
+from .telemetry import emit as _emit
 
 log = logging.getLogger(__name__)
 
@@ -53,6 +55,7 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
                 "ERROR: exa_search requires a non-empty 'query' argument. "
                 "Example: exa_search(query='triadic ontology 2026', search_type='auto', num_results=3)"
             )
+        t0 = time.monotonic()
         try:
             from exa_py import Exa  # type: ignore
 
@@ -64,11 +67,19 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
             }
             if category:
                 kwargs["category"] = category
-            if start_published_date and re.match(r"^\d{4}-\d{2}-\d{2}$", start_published_date):
-                kwargs["start_published_date"] = start_published_date
-            resp = client.search(query, **kwargs)
+            with _rl_acquire("exa"):
+                resp = client.search(query, **kwargs)
         except Exception as e:
             log.warning("exa search error: %s", e)
+            _emit(
+                "tool_call",
+                provider="exa",
+                query=query,
+                ok=False,
+                results=0,
+                latency_ms=int((time.monotonic() - t0) * 1000),
+                error=str(e)[:200],
+            )
             return json.dumps({"provider": "exa", "error": str(e), "results": []})
 
         ledger.record("exa", 1)
@@ -85,6 +96,15 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
             }
             for r in (resp.results or [])
         ]
+        _emit(
+            "tool_call",
+            provider="exa",
+            query=query,
+            search_type=search_type,
+            ok=True,
+            results=len(results),
+            latency_ms=int((time.monotonic() - t0) * 1000),
+        )
         return json.dumps({
             "provider": "exa",
             "query": query,
