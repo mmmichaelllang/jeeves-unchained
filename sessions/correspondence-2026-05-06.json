@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] Andy: Email from Andrew Lang about taking action and an invitation to join a group effort\n- [escalation] Mrs. Lang: Correspondence email from lang.mc@gmail.com\n- [escalation] Mrs. Lang: Correspondence email from lang.mc@gmail.com\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves\n- [no action] Mistral AI: Mistral AI subscription activation notification\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves\n- [no action] Mistral AI: Mistral AI welcome email\n- [no action] Cerebras Systems: Cerebras welcome email\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves\n- [no action] My Edmonds News: My Edmonds News newsletter\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves\n- [no action] JD from Autohive: Email from JD about a conversation\n- [no action] GitHub: GitHub notification about a regenerated personal access token\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves Memory\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves",
+  "text": "- [escalation] Andy: Message from Andrew Lang about taking action and trusting its impact\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Correspondence Phase\n- [no action] \"Superhuman – Zain Kahn\": Newsletter from Superhuman about ChatGPT's new default model\n- [no action] Edmonds Patch: Newsletter from Edmonds Patch about local performances\n- [no action] lang.mc@gmail.com: Daily intelligence report from Jeeves\n- [no action] lang.mc@gmail.com: Correspondence report from Jeeves\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for CI - main\n- [no action] mmmichaelllang: GitHub notification about a failed PR run for CI - fix(correspondence)\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Daily Pipeline, Attempt #3\n- [no action] Mistral AI: Notification from Mistral AI about active subscription\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Daily Pipeline, Attempt #2\n- [no action] Mistral AI: Welcome message from Mistral AI\n- [no action] Cerebras Systems: Welcome message from Cerebras Systems\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Daily Pipeline",
   "counts": {
     "reply_needed": 0,
     "decision_required": 0,
     "scheduling": 0,
     "follow_up": 0,
-    "escalation": 3,
-    "no_action": 12
+    "escalation": 1,
+    "no_action": 29
   }
 }
