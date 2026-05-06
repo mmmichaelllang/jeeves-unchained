@@ -387,6 +387,23 @@ def _load_prior_briefing_text(cfg: Config) -> str:
     return ""
 
 
+def _is_groq_rate_limit(exc: Exception) -> bool:
+    """Detect Groq 429 / TPD / TPM rate-limit errors so the renderer can
+    fall through to NIM/OR instead of bubbling the failure up.
+    """
+    cls = type(exc).__name__.lower()
+    msg = str(exc).lower()
+    return (
+        "ratelimit" in cls
+        or "429" in msg
+        or "rate limit" in msg
+        or "rate_limit" in msg
+        or "tokens per day" in msg
+        or "tpd" in msg
+        or "tpm" in msg
+    )
+
+
 def render_with_groq(
     cfg: Config,
     classified: list[ClassifiedMessage],
@@ -395,8 +412,17 @@ def render_with_groq(
     run_date_iso: str,
     max_tokens: int = 4096,
 ) -> str:
-    """Single Groq call that returns the full HTML briefing."""
+    """Render the correspondence briefing as a single HTML doc.
 
+    Three-tier fallback (matches the write phase, sprint-17):
+    * Tier 1: Groq llama-3.3-70b-versatile (primary).
+    * Tier 2: NIM meta/llama-3.3-70b-instruct (when Groq 429/TPD/TPM).
+    * Tier 3: OpenRouter free-tier chain via the dynamic resolver.
+
+    Before 2026-05-06 only Tier 1 existed; the 2026-05-06 12:00 daily run
+    failed because Groq TPD hit 95,811/100k at the render step and the
+    auto-retry workflow burned three attempts hitting the same wall.
+    """
     from llama_index.core.base.llms.types import ChatMessage, MessageRole
 
     from .llm import build_groq_llm
@@ -421,14 +447,34 @@ def render_with_groq(
         + "\n```"
     )
 
-    llm = build_groq_llm(cfg, temperature=0.65, max_tokens=max_tokens)
-    resp = llm.chat(
-        [
-            ChatMessage(role=MessageRole.SYSTEM, content=system),
-            ChatMessage(role=MessageRole.USER, content=user),
-        ]
+    # Tier 1 — Groq.
+    try:
+        llm = build_groq_llm(cfg, temperature=0.65, max_tokens=max_tokens)
+        resp = llm.chat(
+            [
+                ChatMessage(role=MessageRole.SYSTEM, content=system),
+                ChatMessage(role=MessageRole.USER, content=user),
+            ]
+        )
+        text = str(resp.message.content or "")
+        if text.strip():
+            return text
+        log.warning("correspondence: Groq returned empty content — escalating to NIM/OR")
+    except Exception as groq_exc:
+        if not _is_groq_rate_limit(groq_exc):
+            raise
+        log.warning(
+            "correspondence: Groq render rate-limited (%s) — falling through to NIM/OR",
+            str(groq_exc)[:200],
+        )
+
+    # Tier 2/3 — reuse the write phase's NIM+OR escalation.
+    from .write import _try_nim_then_or
+
+    log.info("correspondence: invoking NIM+OR fallback chain")
+    return _try_nim_then_or(
+        cfg, system, user, max_tokens=max_tokens, label="correspondence_render",
     )
-    return str(resp.message.content or "")
 
 
 def build_handoff_text(classified: list[ClassifiedMessage]) -> str:
