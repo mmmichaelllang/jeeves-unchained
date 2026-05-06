@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [reply needed] Andrew Lang: Andrew Lang invites Mister Lang to join the newest group effort: Make Care Visible!\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Write Phase\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Research Phase\n- [no action] lang.mc@gmail.com: Correspondence from lang.mc@gmail.com with a greeting and no specific request\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Correspondence Phase\n- [no action] Edmonds Patch: Newsletter from Edmonds Patch about local events and news\n- [no action] lang.mc@gmail.com: Correspondence from lang.mc@gmail.com with a greeting and no specific request\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for CI\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for CI\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Daily Pipeline\n- [no action] Mistral AI: Notification from Mistral AI about an active subscription\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Daily Pipeline",
+  "text": "- [escalation] Andrew Lang: Andrew Lang invites Mister Lang to join a group effort\n- [reply needed] Jacky Bishop: Email from Jacky Bishop regarding car scanning, with pictures of vehicles.\n- [reply needed] Anthropic: The Claude API access has been disabled due to the organization being out of usage credits.\n- [follow up] mmmichaelllang: Jeeves Daily Pipeline workflow run failed\n- [follow up] mmmichaelllang: Jeeves Daily Pipeline workflow run failed\n- [follow up] mmmichaelllang: Jeeves Research Phase workflow run failed\n- [follow up] mmmichaelllang: Jeeves Daily Pipeline workflow run failed\n- [follow up] mmmichaelllang: Jeeves Correspondence Phase workflow run failed\n- [no action] Mark Peng: Mark Peng sent an email about competitor pricing updates.\n- [no action] \"QFC Savings & Sales\": QFC sent a newsletter about weekly deals.\n- [no action] CARFAX Car Care: CARFAX sent a reminder about a recommended service for Mister Lang's car.\n- [no action] mmmichaelllang: GitHub sent a notification about a failed workflow run for Jeeves-memory.\n- [no action] mmmichaelllang: GitHub sent a notification about a failed workflow run for Jeeves-memory.\n- [no action] lang.mc@gmail.com: Lang.mc sent a correspondence email to Mister Lang.",
   "counts": {
-    "reply_needed": 1,
+    "reply_needed": 2,
     "decision_required": 0,
     "scheduling": 0,
-    "follow_up": 0,
-    "escalation": 0,
-    "no_action": 29
+    "follow_up": 5,
+    "escalation": 1,
+    "no_action": 42
   }
 }
