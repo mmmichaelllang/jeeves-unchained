@@ -1,12 +1,16 @@
 name: Jeeves — Archive Old Sessions
 
-# Weekly housekeeping: move sessions/ files older than 90 days into
+# Daily housekeeping: move sessions/ files older than 90 days into
 # sessions/archive/YYYY/MM/. Keeps the working tree small without losing
 # audit trail. load_prior_sessions() only scans recent 7 days so this is safe.
+#
+# 2026-05-06: bumped from weekly (Sun 06:00) to daily (06:00) to grow the
+# brain faster — the archive job is idempotent and a no-op on days when no
+# sessions cross the 90-day threshold, so daily cadence is cheap.
 
 on:
   schedule:
-    - cron: '0 6 * * 0'  # Sundays 06:00 UTC (well clear of the 12:00 daily run)
+    - cron: '0 6 * * *'  # Daily 06:00 UTC (well clear of the 12:00 daily run)
   workflow_dispatch:
     inputs:
       days:

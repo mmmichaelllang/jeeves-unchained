@@ -117,7 +117,16 @@ def test_try_nim_then_or_raises_when_both_fail(monkeypatch):
 
 
 def test_invoke_or_write_iterates_through_models(monkeypatch):
-    """First model fails, second succeeds — return second's text."""
+    """First model fails, second succeeds — return second's text.
+
+    Pins the chain via JEEVES_OR_FREE_MODELS so the test doesn't depend on
+    whatever the live OR resolver returns this minute (sprint-20 dynamic
+    resolver).
+    """
+    monkeypatch.setenv("JEEVES_OR_FREE_MODELS",
+                       "vendor/llama-70b:free,vendor/qwen-72b:free")
+    monkeypatch.setattr(wmod, "_OR_FREE_MODELS_CACHE", None, raising=False)
+
     call_log = []
 
     class _FakeOpenAI:
