@@ -1,6 +1,6 @@
 {
   "date": "2026-05-06",
-  "briefing_chars": 13465,
+  "briefing_chars": 16431,
   "session_status": "complete",
   "detectors_run": [
     "D8_dedup",
@@ -17,34 +17,67 @@
   ],
   "defects": [
     {
-      "type": "dedup_url_cross_section",
-      "severity": "high",
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
       "section": null,
-      "detail": "URL appears in 2 sections",
+      "detail": "12 URLs already covered in prior briefings",
       "evidence": {
-        "url": "https://www.newyorker.com/magazine/2026/05/11/two-hundred-and-fifty-years-of-complicated-commemorations",
-        "sections": [
-          "The Specific Enquiries",
-          "Talk of the Town"
+        "overlap_count": 12,
+        "samples": [
+          "https://arxiv.org/pdf/2602.02660",
+          "http://arxiv.org/abs/2602.08990v1",
+          "https://nunatechnology.com",
+          "https://immersioned.org",
+          "https://humy.ai"
         ]
       }
     },
     {
-      "type": "dedup_cross_day_overlap",
-      "severity": "medium",
-      "section": null,
-      "detail": "1 URLs already covered in prior briefings",
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Reading Room",
+      "detail": "section under 30 words (13) but sectors ['intellectual_journals', 'enriched_articles'] have available data",
       "evidence": {
-        "overlap_count": 1,
-        "samples": [
-          "https://www.newyorker.com/magazine/2026/05/11/two-hundred-and-fifty-years-of-complicated-commemorations"
+        "word_count": 13,
+        "data_signals": [
+          "enriched_articles=2items"
         ]
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "section under 30 words (10) but sectors ['literary_pick'] have available data",
+      "evidence": {
+        "word_count": 10,
+        "data_signals": [
+          "literary_pick=populated"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
+      "evidence": {
+        "weather_preview": "Mostly cloudy and cool today in Edmonds. Current temp 57\u00b0F, peaking near 62-66\u00b0F this afternoon. Lig"
+      }
+    },
+    {
+      "type": "greeting_missing_correspondence",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "correspondence handoff text present but no preview in greeting",
+      "evidence": {
+        "handoff_preview": "- [escalation] Andrew Lang: Andrew Lang invites Mister Lang to join a group effort\n- [reply needed] Jacky Bishop: Email from Jacky Bishop regarding car scanning, with pictures of vehicles.\n- [reply ne"
       }
     }
   ],
-  "section_count": 2,
+  "section_count": 7,
   "hallucinated_url_count": 0,
-  "empty_section_count": 0,
+  "empty_section_count": 2,
   "aside_template_count": 0,
   "narrative_flow_score": null,
   "writing_quality_score": null,

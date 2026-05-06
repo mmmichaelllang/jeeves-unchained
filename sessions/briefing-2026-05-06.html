@@ -28,23 +28,48 @@ a { color: #18375a; text-decoration: none; border-bottom: 1px solid #88a8c8; }
 <div class="container">
 <img class="banner" src="https://i.imgur.com/UqSFELh.png" alt=""> 
 <div class="mh-date">Wednesday, May 6, 2026</div> 
-<p>Good morning, Mister Lang. I trust you are having a satisfactory day thus far.</p> 
+We need to produce a single HTML <p> paragraph, 80-150 words, dry, precise butler voice, mentioning the weekday, the weather, and a one-line preview of the correspondence load. No h3. Only the <p> tag.
 
+We need to compute weekday for 2026-05-06. Let's calculate: 2026-05-06. Use known reference: 2024-02-29 was Thursday (leap year). But easier: Use known: 2025-01-01 is Wednesday? Actually 2024-01-01 was Monday (2024 is leap year). 2024-01-01 Monday. Then 2025-01-01 Wednesday (since 2024 had 366 days => shift 2 days). 2026-01-01 Thursday (2025 not leap, shift 1 day). Now compute days to May 6 2026.
+
+Month lengths 2026 (not leap): Jan31, Feb28, Mar31, Apr30, May6.
+
+Days from Jan1 to May5 inclusive? Actually Jan1 is day 1. So days before May6 = Jan31+Feb28+Mar31+Apr30 = 31+28+31+30 = 120 days. Then May6 is day 121 of year (since Jan1 =1). So offset from Jan1 = 120 days.
+
+Jan1 2026 is Thursday. Add 120 days: 120 mod 7 = 1 (since 119 is multiple of 7). So Thursday + 1 
+
+
+<h3>The Domestic Sphere</h3> 
+<p>Edmonds City Council unanimously approved the city’s first‑ever Comprehensive Plan, as reported by the City of Edmonds. The council’s decision clears the way for a wave of development that has long been stalled.</p> 
+<p>Police Chief Loi Dawkins warned that six officer vacancies must be filled to preserve public safety. Meanwhile, the city is bracing for the new statewide housing law (HB 2266), which could reshape the local market. The Edmonds School District is also recruiting certificated teachers, including English Language Arts and High School History positions, via the district website.</p> 
+
+</div>
+<!-- COVERAGE_LOG: [{"headline": "Isabelle's paper", "url": "https://philarchive.org/archive/ISATRO-4", "sector": "Sector 4"}, {"headline": "Slade’s paper", "url": "https://ersearch2.cvtisr.sk/vufind/EdsRecord/edsair,edsair.doi.dedup.....448a95726a3e08715423b148d8dee692", "sector": "Sector 4"}, {"headline": "DOVA", "url": "https://arxiv.org/pdf/2603.13327", "sector": "Sector 4"}, {"headline": "MARS", "url": "https://arxiv.org/pdf/2602.02660", "sector": "Sector 4"}, {"headline": "InternAgent‑1.5", "url": "http://arxiv.org/abs/2602.08990v1", "sector": "Sector 4"}, {"headline": "Audria", "url": "https://audria.tech/", "sector": "Sector 5"}, {"headline": "Buddi AI", "url": "https://getbuddi.ai/", "sector": "Sector 5"}, {"headline": "Nirva", "url": "https://nirva.life/", "sector": "Sector 5"}, {"headline": "Nuna", "url": "https://nunatechnology.com/", "sector": "Sector 5"}, {"headline": "Humi.ai", "url": "https://humy.ai/", "sector": "Sector 5"}, {"headline": "ImmersionED", "url": "https://immersioned.org/", "sector": "Sector 5"}, {"headline": "Read at The New Yorker", "url": "https://www.newyorker.com/magazine/2026/05/11/two-hundred-and-fifty-years-of-complicated-commemorations", "sector": "Sector 7"}] -->
+<div class="signoff">
+<p>Your reluctantly faithful Butler,<br/>Jeeves</p>
+</div>
+</body>
 <h3>Beyond the Geofence</h3> 
 <p>Global wires are silent today; no substantive developments to detain our attention.</p> 
 
-<h3>The Intellectual Journals</h3> 
-<p>Academic journals are likewise dormant; nothing of sufficient weight to merit note.</p> 
 
+
+<h3>The Reading Room</h3>
+<p>The intellectual journals offer nothing fresh this morning, Sir. Tomorrow we shall resume.</p>
 <h3>The Specific Enquiries</h3> 
 <p>The triadic‑ontology series continues, though no breakthrough since our last review. Two fresh papers, however, push the field forward. Christopher Isabelle's “Triadic Relational Ontology: From Primordial Separation to Relational Field” argues that dyadic structures are necessary but insufficient for emergence and meaning. <a href="https://philarchive.org/archive/ISATRO-4">Isabelle's paper</a> insists a third, actively‑maintained “relational field” is required or intelligibility collapses.</p> 
 <p>Trent Slade’s “A Triadic Ontology with SU(3) Invariants” builds a minimal, computationally‑tractable ontic kernel grounded in the qutrit representation of SU(3). <a href="https://ersearch2.cvtisr.sk/vufind/EdsRecord/edsair,edsair.doi.dedup.....448a95726a3e08715423b148d8dee692">Slade’s paper</a> offers a concrete algebraic foothold for the debate.</p> 
 <p>In AI, three advances dominate the autonomous‑research stack this week. <a href="https://arxiv.org/pdf/2603.13327">DOVA</a> introduces deliberation‑first orchestration, shaving 40‑60 % off routine inference cost while preserving depth for hard queries. <a href="https://arxiv.org/pdf/2602.02660">MARS</a> adds a Budget‑Aware MCTS planner that balances performance against compute. <a href="http://arxiv.org/abs/2602.08990v1">InternAgent‑1.5</a> scales the paradigm to full scientific discovery, unifying generation, verification, and evolution subsystems. The DOVA benchmark suggests a substantial reduction in computational expense — a modest but tangible shift.</p> 
 
+
 <h3>The Commercial Ledger</h3> 
 <p>Three new voice‑first AI wearables launched this year. <a href="https://audria.tech/">Audria</a> is a behind‑the‑ear device focused on proactive assistance; <a href="https://getbuddi.ai/">Buddi AI</a> is a versatile brooch/pen/pendant that transcribes and summarizes conversations. The lifelogging pendant market has split: <a href="https://nirva.life/">Nirva</a> offers jewelry‑grade AI that passively journals the day, while <a href="https://nunatechnology.com/">Nuna</a> provides an emotion‑tracking pendant that visualises stress and calm patterns.</p> 
 <p>English and History teachers have gained three specialised AI co‑workers this spring. <a href="https://humy.ai/">Humi.ai</a> supplies over 1,200 interactive historical figures plus a suite of planning, differentiation, and auto‑graded assessment tools; <a href="https://immersioned.org/">ImmersionED</a> delivers a complete US History curriculum via game‑based learning. These may be of interest to you, Mister Lang.</p> 
 
+
+
+<h3>The Library Stacks</h3>
+<p>The wires are quiet on this front this morning, Sir.</p>
 <h3>Talk of the Town</h3> 
 <p>And now, Sir, I take the liberty of reading from this week’s Talk of the Town in The New Yorker.</p> 
 <!-- NEWYORKER_START -->
@@ -61,14 +86,10 @@ Donald Trump’s personal aversion to admitting fault suggests that we will not 
 <!-- NEWYORKER_END --> 
 <p><a href="https://www.newyorker.com/magazine/2026/05/11/two-hundred-and-fifty-years-of-complicated-commemorations">Read at The New Yorker</a></p> 
 
-<h3>The Domestic Sphere</h3> 
-<p>Edmonds City Council unanimously approved the city’s first‑ever Comprehensive Plan, as reported by the City of Edmonds. The council’s decision clears the way for a wave of development that has long been stalled.</p> 
-<p>Police Chief Loi Dawkins warned that six officer vacancies must be filled to preserve public safety. Meanwhile, the city is bracing for the new statewide housing law (HB 2266), which could reshape the local market. The Edmonds School District is also recruiting certificated teachers, including English Language Arts and High School History positions, via the district website.</p> 
 
-</div>
-<!-- COVERAGE_LOG: [{"headline": "Isabelle's paper", "url": "https://philarchive.org/archive/ISATRO-4", "sector": "Sector 4"}, {"headline": "Slade’s paper", "url": "https://ersearch2.cvtisr.sk/vufind/EdsRecord/edsair,edsair.doi.dedup.....448a95726a3e08715423b148d8dee692", "sector": "Sector 4"}, {"headline": "DOVA", "url": "https://arxiv.org/pdf/2603.13327", "sector": "Sector 4"}, {"headline": "MARS", "url": "https://arxiv.org/pdf/2602.02660", "sector": "Sector 4"}, {"headline": "InternAgent‑1.5", "url": "http://arxiv.org/abs/2602.08990v1", "sector": "Sector 4"}, {"headline": "Audria", "url": "https://audria.tech/", "sector": "Sector 5"}, {"headline": "Buddi AI", "url": "https://getbuddi.ai/", "sector": "Sector 5"}, {"headline": "Nirva", "url": "https://nirva.life/", "sector": "Sector 5"}, {"headline": "Nuna", "url": "https://nunatechnology.com/", "sector": "Sector 5"}, {"headline": "Humi.ai", "url": "https://humy.ai/", "sector": "Sector 5"}, {"headline": "ImmersionED", "url": "https://immersioned.org/", "sector": "Sector 5"}, {"headline": "Read at The New Yorker", "url": "https://www.newyorker.com/magazine/2026/05/11/two-hundred-and-fifty-years-of-complicated-commemorations", "sector": "Sector 7"}] -->
 <div class="signoff">
 <p>Your reluctantly faithful Butler,<br/>Jeeves</p>
 </div>
+<!-- COVERAGE_LOG: [{"headline": "Isabelle's paper", "url": "https://philarchive.org/archive/ISATRO-4", "sector": "Sector 4"}, {"headline": "Slade’s paper", "url": "https://ersearch2.cvtisr.sk/vufind/EdsRecord/edsair,edsair.doi.dedup.....448a95726a3e08715423b148d8dee692", "sector": "Sector 4"}, {"headline": "DOVA", "url": "https://arxiv.org/pdf/2603.13327", "sector": "Sector 4"}, {"headline": "MARS", "url": "https://arxiv.org/pdf/2602.02660", "sector": "Sector 4"}, {"headline": "InternAgent‑1.5", "url": "http://arxiv.org/abs/2602.08990v1", "sector": "Sector 4"}, {"headline": "Audria", "url": "https://audria.tech/", "sector": "Sector 5"}, {"headline": "Buddi AI", "url": "https://getbuddi.ai/", "sector": "Sector 5"}, {"headline": "Nirva", "url": "https://nirva.life/", "sector": "Sector 5"}, {"headline": "Nuna", "url": "https://nunatechnology.com/", "sector": "Sector 5"}, {"headline": "Humi.ai", "url": "https://humy.ai/", "sector": "Sector 5"}, {"headline": "ImmersionED", "url": "https://immersioned.org/", "sector": "Sector 5"}, {"headline": "Read at The New Yorker", "url": "https://www.newyorker.com/magazine/2026/05/11/two-hundred-and-fifty-years-of-complicated-commemorations", "sector": "Sector 7"}] -->
 </body>
 </html>

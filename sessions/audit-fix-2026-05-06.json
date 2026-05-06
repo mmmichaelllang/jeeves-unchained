@@ -1,20 +1,61 @@
 {
   "date": "2026-05-06",
-  "pre_fix_chars": 11631,
-  "post_fix_chars": 13465,
+  "pre_fix_chars": 14140,
+  "post_fix_chars": 16431,
   "actions": [
     {
-      "type": "rerender_empty_with_data",
-      "section": "Talk of the Town",
+      "type": "reorder_sections",
+      "section": null,
+      "detail": "rebuilt h3 order: actual=['Beyond the Geofence', 'The Intellectual Journals', 'The Specific Enquiries', 'The Commercial Ledger', 'Talk of the Town', 'The Domestic Sphere'] \u2192 canonical=['Beyond the Geofence', 'The Specific Enquiries', 'The Commercial Ledger', 'Talk of the Town', 'The Domestic Sphere']",
+      "status": "applied",
+      "evidence": {
+        "actual": [
+          "Beyond the Geofence",
+          "The Intellectual Journals",
+          "The Specific Enquiries",
+          "The Commercial Ledger",
+          "Talk of the Town",
+          "The Domestic Sphere"
+        ],
+        "rebuilt": [
+          "Beyond the Geofence",
+          "The Specific Enquiries",
+          "The Commercial Ledger",
+          "Talk of the Town",
+          "The Domestic Sphere"
+        ]
+      }
+    },
+    {
+      "type": "inject_missing_section",
+      "section": "The Reading Room",
+      "detail": "injected empty-feed for The Reading Room",
+      "status": "applied",
+      "evidence": {
+        "anchor": "Beyond the Geofence"
+      }
+    },
+    {
+      "type": "inject_missing_section",
+      "section": "The Library Stacks",
+      "detail": "injected empty-feed for The Library Stacks",
+      "status": "applied",
+      "evidence": {
+        "anchor": "The Commercial Ledger"
+      }
+    },
+    {
+      "type": "rerender_greeting",
+      "section": "(greeting)",
       "detail": "re-rendered via nvidia/nemotron-3-super-120b-a12b:free",
       "status": "applied",
       "evidence": {
         "model": "nvidia/nemotron-3-super-120b-a12b:free",
-        "chars": 2106
+        "chars": 975
       }
     }
   ],
-  "pre_fix_defect_count": 3,
+  "pre_fix_defect_count": 8,
   "post_fix_defect_count": null,
   "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free"
 }
