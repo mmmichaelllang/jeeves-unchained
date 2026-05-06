@@ -54,16 +54,15 @@ log = logging.getLogger("jeeves.research")
 # a 429 cascade that costs 60-120s backoff — wiping out any wall-clock gain.
 # Historical: semaphore=3 caused ALL sectors to return defaults in <1 min.
 #
-# Lightweight sectors use fewer tokens and rarely trigger rate limits.
-# semaphore=2 lets two light sectors share a NIM connection slot while the
-# sequential for-loop still ensures prior_sample grows correctly between pairs.
-#
-# Wall-clock estimate with tiering (~14 sectors):
-#   3 deep × 3 min = 9 min (sequential)
-#   11 light × 2 min / 2 concurrent = ~11 min (overlapped in pairs)
-#   Total ≈ 20 min vs ~33 min fully sequential (−13 min, −40%)
+# Light sectors WERE briefly raised to semaphore=2 + pair-gather (sprint-19
+# slice E, PR #85 merged 2026-05-05) for ~40% wall-clock saving. Reverted
+# 2026-05-06 after two production runs lost 4/8 (run B) and 6/8 (run C) light
+# sectors: NIM free tier closes one or both streaming agents under concurrent
+# Kimi calls, and the loser exhausts its 60+120s rate-limit retry budget and
+# returns spec.default. Both knobs (semaphore + dispatch shape) restored to
+# match deep-sector behaviour: solo, sequential, prior_sample grows after each.
 _SECTOR_SEMAPHORE_HEAVY = asyncio.Semaphore(1)
-_SECTOR_SEMAPHORE_LIGHT = asyncio.Semaphore(2)
+_SECTOR_SEMAPHORE_LIGHT = asyncio.Semaphore(1)
 
 # Sectors that use max_tokens=4096 and are prone to 429 / stream-drop on NIM.
 _DEEP_SECTOR_NAMES: frozenset[str] = frozenset({"triadic_ontology", "ai_systems", "uap"})
@@ -201,12 +200,12 @@ async def _run_sector_loop(
     across earlier sectors today.
 
     Key design decisions:
-    - Tiered parallelism: deep sectors (triadic_ontology, ai_systems, uap) run
-      solo (semaphore=1) to avoid NIM 429 cascades. Light sectors run in pairs
-      (semaphore=2) via asyncio.gather, cutting light-sector wall-clock by ~40%.
-    - prior_sample grows progressively: after each sector (or pair) we append
-      discovered URLs so the NEXT sector sees full within-session context. Pairs
-      share the same prior_sample snapshot at pair-start; both URLs merge after.
+    - Sectors run solo (both deep and light use semaphore=1) to avoid NIM
+      stream-drop / 429 cascades on the free tier. Pair-concurrency was tried
+      in sprint-19 slice E and reverted 2026-05-06 after two daily runs lost
+      4/8 and 6/8 light sectors. See the _SECTOR_SEMAPHORE_LIGHT comment block.
+    - prior_sample grows progressively: after each sector we append its
+      discovered URLs so the NEXT sector sees full within-session context.
     - prior_urls_ordered is newest-first: caller builds it by walking prior sessions
       newest→oldest, then COVERAGE_LOG. A 150-URL cap keeps the prompt size bounded
       while guaranteeing yesterday's URLs always appear first.
@@ -262,7 +261,7 @@ async def _run_sector_loop(
     light_specs = [s for s in non_enriched if s.name not in _DEEP_SECTOR_NAMES]
 
     log.info(
-        "running %d non-enriched sectors: %d deep (sequential), %d light (pairs)…",
+        "running %d non-enriched sectors sequentially: %d deep, %d light…",
         len(non_enriched), len(deep_specs), len(light_specs),
     )
 
@@ -271,12 +270,11 @@ async def _run_sector_loop(
         results = [await _run_one(spec)]
         _update_prior(results)
 
-    # Run light sectors in pairs (semaphore=2 allows 2 concurrent NIM connections).
-    # Both sectors in a pair share the same prior_sample snapshot at pair-start;
-    # their URLs are merged into prior_sample together after the pair completes.
-    for i in range(0, len(light_specs), 2):
-        pair = light_specs[i:i + 2]
-        results = await asyncio.gather(*[_run_one(s) for s in pair])
+    # Run light sectors sequentially (sprint-19 slice E pair-gather reverted
+    # 2026-05-06: NIM free tier wiped 4-6/8 light sectors per run when called
+    # concurrently). Same shape as deep loop above; prior_sample grows after each.
+    for spec in light_specs:
+        results = [await _run_one(spec)]
         _update_prior(results)
 
     if enriched_spec is not None:

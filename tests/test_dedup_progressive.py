@@ -21,12 +21,17 @@ def _make_sector_value(urls: list[str], headlines: list[str]) -> list[dict]:
     return [{"url": u, "headline": h} for u, h in zip(urls, headlines)]
 
 
-def test_prior_sample_grows_between_pairs():
-    """Tiered parallelism contract: light sectors run in pairs sharing the same
-    prior_sample snapshot; between pairs, prior_sample accumulates.
+def test_prior_sample_grows_between_sectors():
+    """Sequential dedup contract: light sectors run one at a time and
+    prior_sample grows after every sector. The N-th sector always sees the
+    URLs discovered by sectors 0..N-1 today plus prior_urls_ordered.
 
-    Pair 1: sector_a + sector_b — both see only prior_urls_ordered.
-    Pair 2: sector_c — sees prior_urls_ordered + sector_a URL + sector_b URL.
+    sector_a — sees only prior_urls_ordered.
+    sector_b — sees prior_urls_ordered + sector_a URL.
+    sector_c — sees prior_urls_ordered + sector_a + sector_b URLs.
+
+    (Sprint-19 slice E briefly ran light sectors in pairs and reverted
+    2026-05-06; the assertions below pin the post-revert sequential shape.)
     """
 
     captured_samples: list[list] = []
@@ -65,19 +70,23 @@ def test_prior_sample_grows_between_pairs():
 
     assert len(captured_samples) == 3, "Three sectors → three captured snapshots"
 
-    # Pair 1 (sector_a, sector_b): both see the same pre-pair snapshot.
-    for s in captured_samples[:2]:
-        assert "https://prior.com/old" in s, "Both pair-1 sectors must see prior URL"
-        assert "https://example.com/sector_a" not in s, \
-            "Within a pair, sectors share a pre-pair snapshot — cross-sector visibility not guaranteed"
+    # All three sectors carry the original prior URL forward.
+    for s in captured_samples:
+        assert "https://prior.com/old" in s
 
-    # Pair 2 (sector_c): must see URLs from pair 1 merged in.
-    pair2 = captured_samples[2]
-    assert "https://prior.com/old" in pair2
-    assert "https://example.com/sector_a" in pair2, \
-        "sector_c must see sector_a's URL from the completed pair 1"
-    assert "https://example.com/sector_b" in pair2, \
-        "sector_c must see sector_b's URL from the completed pair 1"
+    # sector_a runs first, so it cannot see anything from today.
+    assert "https://example.com/sector_a" not in captured_samples[0]
+    assert "https://example.com/sector_b" not in captured_samples[0]
+
+    # sector_b runs after sector_a — must see sector_a's URL.
+    assert "https://example.com/sector_a" in captured_samples[1], \
+        "sector_b must see sector_a's URL from the completed previous sector"
+    assert "https://example.com/sector_b" not in captured_samples[1]
+
+    # sector_c runs last — must see both prior light sectors' URLs.
+    third = captured_samples[2]
+    assert "https://example.com/sector_a" in third
+    assert "https://example.com/sector_b" in third
 
 
 def test_prior_sample_cap_is_150():
