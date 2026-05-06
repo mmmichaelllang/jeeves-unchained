@@ -1,9 +1,10 @@
 """Test fixtures shared across the suite.
 
-Currently scoped to the sprint-18 TinyFish rollout: when ``TINYFISH_API_KEY``
-is unset (the default in CI), monkey-patch ``jeeves.tools.tinyfish.extract_article``
-to return a deterministic stub. This keeps any code path that imports the
-TinyFish client hermetic — no real HTTP egress from pytest.
+Sprint-18 (TinyFish) and sprint-20 (stealth-browser) rollouts both use the
+same hermetic-stub pattern: when the relevant secret / config is absent
+(the default in CI), monkey-patch the extractor's public function to
+return a deterministic failure dict so any code path that imports the
+client stays free of real HTTP egress.
 """
 
 from __future__ import annotations
@@ -42,4 +43,40 @@ def _stub_tinyfish_when_unconfigured(monkeypatch):
         monkeypatch.setattr(tinyfish, "extract_article", _stub, raising=True)
     except Exception:
         # If tinyfish isn't importable (older branch / partial sync) just no-op.
+        pass
+
+
+@pytest.fixture(autouse=True)
+def _stub_stealth_when_unconfigured(monkeypatch):
+    """Replace ``stealth._extract_with_backend`` with a stub when no
+    ``STEALTH_STORAGE_STATE_PATH`` is set.
+
+    Sprint-20 sibling of ``_stub_tinyfish_when_unconfigured``. The stealth
+    module is import-safe without patchright/camoufox installed (it
+    chooses the backend lazily), but the backend launcher would either
+    raise ImportError or attempt to spawn a real browser — neither is
+    appropriate for a hermetic test. Tests that exercise the
+    ``_extract_with_backend`` happy-path should monkeypatch it themselves.
+    """
+    if os.environ.get("STEALTH_STORAGE_STATE_PATH", "").strip():
+        # Real config in env — let the test exercise the real code path.
+        return
+
+    def _stub(url, *, backend, storage_state_path, timeout_seconds, max_chars):
+        return {
+            "success": False,
+            "title": "",
+            "text": "",
+            "backend": backend,
+            "auth_used": bool(storage_state_path),
+            "quality_score": 0.0,
+            "error": "stealth backend stubbed (no STEALTH_STORAGE_STATE_PATH)",
+        }
+
+    try:
+        from jeeves.tools import stealth
+
+        monkeypatch.setattr(stealth, "_extract_with_backend", _stub, raising=True)
+    except Exception:
+        # If stealth isn't importable (older branch / partial sync) just no-op.
         pass
