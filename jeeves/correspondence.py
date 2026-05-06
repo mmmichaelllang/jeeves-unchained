@@ -390,17 +390,28 @@ def _load_prior_briefing_text(cfg: Config) -> str:
 def _is_groq_rate_limit(exc: Exception) -> bool:
     """Detect Groq 429 / TPD / TPM rate-limit errors so the renderer can
     fall through to NIM/OR instead of bubbling the failure up.
+
+    Class-name match is the strongest signal (openai SDK raises
+    ``RateLimitError``). Message match uses specific rate-limit phrases —
+    NOT a bare ``"429"`` substring, which false-positives on unrelated
+    error strings that happen to mention the number 429 (the test bench
+    caught a ValueError whose message contained "not a 429").
     """
     cls = type(exc).__name__.lower()
+    if "ratelimit" in cls:
+        return True
     msg = str(exc).lower()
     return (
-        "ratelimit" in cls
-        or "429" in msg
-        or "rate limit" in msg
+        "rate limit" in msg
         or "rate_limit" in msg
         or "tokens per day" in msg
-        or "tpd" in msg
-        or "tpm" in msg
+        or "tpd:" in msg
+        or "tpm:" in msg
+        or "tpd " in msg
+        or "tpm " in msg
+        or "tpm exceeded" in msg
+        or "tpd exceeded" in msg
+        or "too many requests" in msg
     )
 
 
