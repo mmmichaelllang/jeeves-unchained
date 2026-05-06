@@ -3,29 +3,10 @@
   "status": "complete",
   "dedup": {
     "covered_urls": [
-      "https://aeon.co/essays/sure-ai-can-do-writing-but-memoir-not-so-much",
-      "https://jewishcurrents.org/issue/spring-2026",
-      "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/",
-      "https://myedmondsnews.com/2026/05/council-postpones-vote-on-city-administrator-advances-measure-on-salary-commission/",
-      "https://us.macmillan.com/books/9780374706098",
-      "https://www.edmondsbeacon.com/stories/city-council-adopts-safety-action-plan,175444",
-      "https://www.newyorker.com/magazine/2026/05/11/two-hundred-and-fifty-years-of-complicated-commemorations",
-      "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
-      "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/"
+      "https://www.newyorker.com/magazine/2026/05/11/two-hundred-and-fifty-years-of-complicated-commemorations"
     ],
     "covered_headlines": [
-      "The Edmonds City Council postponed until next week its vote on confirming Mayor Mike Rosen’s appointment of Stephanie Lucash as the city’s new administrator. Lucash, currently Kenmore’s deputy city manager, would earn $226,068 in 2026 if approved.",
-      "On April 28 the council unanimously adopted Edmonds’ first-ever Comprehensive Safety Action Plan, a $300,000 roadmap funded by a federal Safe Streets grant.",
-      "The same April 28 meeting featured annual reports from the city’s contract prosecutor (Walls Law Firm) and the Snohomish County Public Defender Association.",
-      "Police Chief Loi Dawkins updated the council on House Bill 2015 compliance requirements the department must meet by June 30 to access $210,000 in public-safety sales-tax revenue collected since February.",
-      "A sweeping investigation by ProPublica and FRONTLINE finds that more than 300 U.S.",
-      "In a pair of recent essays, The Marginalian explores the porous boundaries of mind and perception.",
-      "Aeon’s latest essays take on time, creativity and human nature.",
-      "The Spring 2026 issue of Jewish Currents devotes its pages to the politics of refuge and the fractures within the Jewish left. Tanvi Misra’s opening essay, “The Death of Asylum,” traces how centuries of legal maneuvers to deny sanctuary—from the 19th-century British Aliens Act to contemporary U.",
       "Two Hundred and Fifty Years of Complicated Commemorations",
-      "Gilead",
-      "Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny — ProPublica",
-      "The One Hundred Milliseconds Between the World and You: Oliver Sacks on Perception – The Marginalian",
       "**Friend AI Pendant** (MyTabAI, Inc): $99 wearable voice companion with 15-hour battery life, always-listening mic for conversations, and $7.",
       "**MagicSchool AI**: April 2026 updates include Educational Song Generator (turns lessons into music) and Studio Mode in Raina for document editing.",
       "**Nirva AI Jewelry**: Fashion-forward pendant that combines AI sensing with jewelry design, tracks emotions and auto-journals life experiences.",
@@ -117,6 +98,7 @@
       "Friend and Tab pendants represent the new wave of lifelogging wearables that continuously record audio for AI analysis.",
       "Friendship Schools",
       "From the Rooftops of Tehran | Anonymous | The New York Review of Books",
+      "Gilead",
       "Global diplomatic efforts are fraying as the Iran conflict shows no resolution and new crises emerge.",
       "Gold and silver bullion seized in anti-slavery raid in Hull",
       "Hallucinations | Oliver Sacks",
@@ -328,15 +310,12 @@
       "functions.tavily_extract:5{\"urls\": [\"https://www.",
       "functions.tavily_search:2",
       "‘The Music of What Happens’ | Nick Laird | The New York Review of Books",
-      "email | Mistral AI",
-      "email | Cerebras Systems",
-      "email | My Edmonds News",
-      "email | JD from Autohive",
-      "email | GitHub"
+      "email | Andrew Lang",
+      "email | lang.mc@gmail.com",
+      "email | Edmonds Patch",
+      "email | Mistral AI"
     ],
-    "cross_sector_dupes": [
-      "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/"
-    ]
+    "cross_sector_dupes": []
   },
   "triadic_ontology": {
     "findings": "",
@@ -350,66 +329,12 @@
     "findings": "",
     "urls": []
   },
-  "weather": "Mostly cloudy this morning with increasing afternoon sunshine. High 66°F, light south winds shifting northwest. Just a 10% chance of a brief shower. Tonight stays mostly cloudy, low 52°F with light north breeze. Pleasant spring day—jacket weather early, comfortable by afternoon.",
-  "local_news": [
-    {
-      "category": "municipal",
-      "source": "myedmondsnews.com",
-      "findings": "The Edmonds City Council postponed until next week its vote on confirming Mayor Mike Rosen’s appointment of Stephanie Lucash as the city’s new administrator. Lucash, currently Kenmore’s deputy city manager, would earn $226,068 in 2026 if approved. Council President Michelle Dotsch said the high-profile post deserves more public and council scrutiny. In the same May 5 session the council: voted 3-3 on restarting the volunteer Salary Commission (Mayor Rosen broke the tie to advance it); moved to the May 12 consent agenda an ordinance clarifying that council meetings scheduled on election days will instead be held the preceding day; and heard a Planning Department update showing 15 detached-ADU permits issued last year and major projects nearing approval, including the 411-unit Edmonds Green  [TRUNCATED]",
-      "urls": [
-        "https://myedmondsnews.com/2026/05/council-postpones-vote-on-city-administrator-advances-measure-on-salary-commission/"
-      ]
-    },
-    {
-      "category": "municipal",
-      "source": "myedmondsnews.com",
-      "findings": "On April 28 the council unanimously adopted Edmonds’ first-ever Comprehensive Safety Action Plan, a $300,000 roadmap funded by a federal Safe Streets grant. The plan identifies 11 priority traffic-safety projects citywide—ranging from Highway 99 corridor upgrades to downtown-core intersection redesigns—that can now compete for future federal grants. Transportation engineer Bertrand Haus said the study pinpoints locations with the highest crash rates and perceived danger for pedestrians, cyclists and drivers. Adoption keeps Edmonds eligible for additional Safe Streets and Roads for All funding.",
-      "urls": [
-        "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/"
-      ]
-    },
-    {
-      "category": "municipal",
-      "source": "edmondsbeacon.com",
-      "findings": "The same April 28 meeting featured annual reports from the city’s contract prosecutor (Walls Law Firm) and the Snohomish County Public Defender Association. Prosecutor Aaron Walls told the council his firm has hired an additional attorney, eliminating a case backlog that had drawn council concern last fall. Public-defender director Kathleen Kyle reported misdemeanor theft remains the top charge in Edmonds (median value $37.66) and urged local retailers to adopt stronger anti-theft measures.",
-      "urls": [
-        "https://www.edmondsbeacon.com/stories/city-council-adopts-safety-action-plan,175444"
-      ]
-    },
-    {
-      "category": "public_safety",
-      "source": "myedmondsnews.com",
-      "findings": "Police Chief Loi Dawkins updated the council on House Bill 2015 compliance requirements the department must meet by June 30 to access $210,000 in public-safety sales-tax revenue collected since February. Six policy areas still need work: alignment with the Keep Washington Working Act, use-of-force policy updates, improved use-of-force data collection, firearms-relinquishment procedures, related training mandates, and state training-standard compliance. Dawkins said EPD is collaborating with the Criminal Justice Training Center and expects to meet the deadline; she will then pursue a new $100 million state staffing-capacity grant.",
-      "urls": [
-        "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/"
-      ]
-    }
-  ],
+  "weather": "",
+  "local_news": [],
   "career": {},
   "family": {},
   "global_news": [],
-  "intellectual_journals": [
-    {
-      "source": "ProPublica",
-      "findings": "A sweeping investigation by ProPublica and FRONTLINE finds that more than 300 U.S. citizens—protesters, by-standers and even family members—have been swept up in Trump-era immigration raids and charged with assaulting or obstructing federal agents. Yet in over a third of the cases prosecutors quietly dismissed the charges after video evidence contradicted officers’ sworn statements, revealing a pattern of legally shaky arrests whose primary effect is to chill dissent. The report centers on Alejandro Orellana, a Marine veteran arrested in an East L.A. raid that was staged for Fox News cameras;  [TRUNCATED]",
-      "url": "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions"
-    },
-    {
-      "source": "The Marginalian",
-      "findings": "In a pair of recent essays, The Marginalian explores the porous boundaries of mind and perception. First, drawing on Oliver Sacks’s posthumous collection The River of Consciousness, it traces how 100-millisecond delays in neural processing create the felt continuity of experience—showing that perception is less a window on reality than a creative act that “marshals all that we are and reflects us back to ourselves.” A companion piece on plant intelligence reviews Zoë Schlanger’s The Light Eaters, arguing that new findings about plant memory, problem-solving and communication demand a wider def [TRUNCATED]",
-      "url": "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/"
-    },
-    {
-      "source": "Aeon",
-      "findings": "Aeon’s latest essays take on time, creativity and human nature. Emily Thomas shows how the 19th-century invention of the linear timeline—popularized by Sebastian Adams’s 1881 “Synchronological Chart”—fundamentally altered Western consciousness, replacing cyclical and mythic temporality with an arrow that marches from past to future. Richard Beard argues that AI can now produce competent sonnets yet remains constitutionally incapable of memoir, because the genre’s power lies not in craft but in the irreducible surprise of lived experience. Jonathan Goodman complicates Beard’s claim, surveying n [TRUNCATED]",
-      "url": "https://aeon.co/essays/sure-ai-can-do-writing-but-memoir-not-so-much"
-    },
-    {
-      "source": "Jewish Currents",
-      "findings": "The Spring 2026 issue of Jewish Currents devotes its pages to the politics of refuge and the fractures within the Jewish left. Tanvi Misra’s opening essay, “The Death of Asylum,” traces how centuries of legal maneuvers to deny sanctuary—from the 19th-century British Aliens Act to contemporary U.S. policies—laid the groundwork for today’s authoritarian resurgence. A symposium on Gaza gathers twenty-three Palestinian voices reflecting on lives lost and futures foreclosed, while Jon Danforth-Appell questions whether trauma can fully explain attachment to Zionism or whether what is called trauma i [TRUNCATED]",
-      "url": "https://jewishcurrents.org/issue/spring-2026"
-    }
-  ],
+  "intellectual_journals": [],
   "wearable_ai": [],
   "newyorker": {
     "available": true,
@@ -425,32 +350,17 @@
     "error": null
   },
   "literary_pick": {
-    "available": true,
-    "title": "Gilead",
-    "author": "Marilynne Robinson",
-    "year": 2004,
-    "summary": "In 1956, Reverend John Ames, a 76-year-old Iowa preacher, begins a letter to his young son, recounting his life and the lives of his father and grandfather—both also ministers. The novel explores the tensions between pacifism and violence, faith and doubt, and the legacy of fathers and sons. Through Ames’s meditative voice, Robinson crafts a quiet, luminous story that has been hailed as a modern classic for its spiritual depth and lyrical prose.",
-    "url": "https://us.macmillan.com/books/9780374706098"
+    "available": false,
+    "title": "",
+    "author": "",
+    "year": null,
+    "summary": "",
+    "url": ""
   },
-  "enriched_articles": [
-    {
-      "url": "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
-      "source": "www.propublica.org",
-      "title": "Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny — ProPublica",
-      "fetch_failed": false,
-      "text": "![In a hectic scene, three officers with guns, helmets and camouflage gear are a blur of motion on a sidewalk, and all three are moving in different directions. Behind and beside them are people in street clothes, including one person who has fallen on the sidewalk. They are holding a phone and an agent is standing over them.](https://www.propublica.org/wp-content/uploads/2026/03/GettyImages-2219290205_maxHeight_3000_maxWidth_3000.jpg?w=1149)\n\n# Caught in the Crackdown: As Arrests at Anti-ICE Pr"
-    },
-    {
-      "url": "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/",
-      "source": "www.themarginalian.org",
-      "title": "The One Hundred Milliseconds Between the World and You: Oliver Sacks on Perception – The Marginalian",
-      "fetch_failed": false,
-      "text": "[The Marginalian](https://www.themarginalian.org/)\n\n[The Marginalian](https://www.themarginalian.org/)\n\n![The Marginalian](https://www.themarginalian.org/wp-content/themes/themarginalian/images/the_marginalian_logo_print.png?20251109a)\n\n### [ABOUT](/about/)\n\n### [CONTACT](/contact/)\n\n### [SUPPORT](/donate/)\n\n### SUBSCRIBE\n\n[Newsletter](/newsletter/)\n\n[RSS](https://feeds.feedburner.com/brainpickings/rss)\n\n### CONNECT\n\n[Facebook](https://www.facebook.com/TheMarginalian/)\n\n[Twitter](https://twitter"
-    }
-  ],
+  "enriched_articles": [],
   "correspondence": {
     "found": true,
     "fallback_used": false,
-    "text": "- [escalation] Andy: Email from Andrew Lang about taking action and an invitation to join a group effort\n- [escalation] Mrs. Lang: Correspondence email from lang.mc@gmail.com\n- [escalation] Mrs. Lang: Correspondence email from lang.mc@gmail.com\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves\n- [no action] Mistral AI: Mistral AI subscription activation notification\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves\n- [no action] Mistral AI: Mistral AI welcome email\n- [no action] Cerebras Systems: Cerebras welcome email\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves\n- [no action] My Edmonds News: My Edmonds News newsletter\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves\n- [no action] JD from Autohive: Email from JD about a conversation\n- [no action] GitHub: GitHub notification about a regenerated personal access token\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves Memory\n- [no action] mmmichaelllang: GitHub notification about a failed pipeline run for Jeeves"
+    "text": "- [reply needed] Andrew Lang: Andrew Lang invites Mister Lang to join the newest group effort: Make Care Visible!\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Write Phase\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Research Phase\n- [no action] lang.mc@gmail.com: Correspondence from lang.mc@gmail.com with a greeting and no specific request\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Correspondence Phase\n- [no action] Edmonds Patch: Newsletter from Edmonds Patch about local events and news\n- [no action] lang.mc@gmail.com: Correspondence from lang.mc@gmail.com with a greeting and no specific request\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for CI\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for CI\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Daily Pipeline\n- [no action] Mistral AI: Notification from Mistral AI about an active subscription\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Daily Pipeline"
   }
 }
