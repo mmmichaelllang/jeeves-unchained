@@ -73,6 +73,7 @@ TIER_3: tuple[str, ...] = (
     "playwright",
     "playwright_search",
     "firecrawl",
+    "stealth",
 )
 
 DEFAULT_LIMITS: dict[str, int] = {
