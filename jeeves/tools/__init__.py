@@ -49,6 +49,7 @@ TOOL_TAXONOMY: dict[str, dict[str, str]] = {
     "fetch_article_text":     {"role": "extract",        "tier": "1", "billing": "free"},
     "tinyfish_extract":       {"role": "extract",        "tier": "3", "billing": "daily"},
     "playwright_extract":     {"role": "extract",        "tier": "3", "billing": "free"},
+    "stealth_extract":        {"role": "extract",        "tier": "3", "billing": "free"},
     # -- curated_feed: single-source publication scraper --
     "fetch_new_yorker_talk_of_the_town": {"role": "curated_feed", "tier": "1", "billing": "free"},
 }
@@ -318,6 +319,37 @@ def all_search_tools(
             )
         )
 
+    # ---- Sprint-20: stealth extractor (canary) ----
+    # Free-tier-only stack: patchright/camoufox + browserforge fingerprint
+    # diversity + storage_state for paywalled subscriptions. Registered only
+    # when JEEVES_USE_STEALTH=1 — default-off, mirrors sprint-18/19 canary
+    # rollout. Backend importability is checked lazily inside the tool;
+    # registration itself does not require patchright/camoufox at import
+    # time (the module is import-safe without optional deps).
+    if _os.environ.get("JEEVES_USE_STEALTH", "").strip() == "1":
+        tools.append(
+            FunctionTool.from_defaults(
+                fn=_make_stealth_extract_tool(ledger),
+                name="stealth_extract",
+                description=(
+                    "Stealth-browser extractor with optional auth + "
+                    "fingerprint diversity. CHOOSE WHEN the target is "
+                    "behind a subscriber paywall (NYT, FT, WSJ, "
+                    "Bloomberg, Atlantic, NewYorker, Economist) OR a "
+                    "Cloudflare-Turnstile / DataDome challenge. PREFER "
+                    "OVER playwright_extract when storage_state has been "
+                    "bootstrapped for the host — stealth carries the "
+                    "auth cookies + a per-host browserforge fingerprint "
+                    "to dodge IP-uniformity flags. DO NOT USE for "
+                    "public news pages where fetch_article_text or Jina "
+                    "already succeeded — overkill. Hard cap: 40/day. "
+                    "Args: url (str). Returns JSON string with "
+                    "{url, title, text, success, extracted_via, "
+                    "backend, auth_used, error?}."
+                ),
+            )
+        )
+
     if _os.environ.get("JEEVES_USE_PLAYWRIGHT_SEARCH", "").strip() == "1":
         tools.append(
             FunctionTool.from_defaults(
@@ -442,6 +474,45 @@ def _make_playwright_search_tool(ledger: "QuotaLedger"):
         return _json.dumps(result)
 
     return _playwright_search_tool
+
+
+def _make_stealth_extract_tool(ledger: "QuotaLedger"):
+    """Build a stealth-browser extractor tool that records quota usage.
+
+    Records monthly + daily counters per call so the research_sectors
+    quota guard recognises a stealth-only sector as having performed
+    real work AND so the daily 40-call hard cap fires before runaway
+    auth-rot scenarios burn CI minutes.
+    """
+    def _stealth_extract_tool(url: str) -> str:
+        """FunctionTool wrapper around stealth.extract_article.
+
+        Returns a JSON string so LlamaIndex's _parse_tool_output() produces
+        a valid JSON TextBlock in the NIM context (matching the contract
+        enforced on every other tool — see notes in research_sectors.py).
+        """
+        import json as _json
+
+        try:
+            from .stealth import extract_article
+
+            result = extract_article(
+                url, timeout_seconds=30, max_chars=4000, ledger=ledger
+            )
+        except Exception as e:
+            return _json.dumps({
+                "url": url,
+                "success": False,
+                "title": "",
+                "text": "",
+                "extracted_via": "stealth",
+                "backend": "",
+                "auth_used": False,
+                "error": f"stealth extractor crashed: {e}",
+            })
+        return _json.dumps(result)
+
+    return _stealth_extract_tool
 
 
 def _make_playwright_extract_tool(ledger: "QuotaLedger"):

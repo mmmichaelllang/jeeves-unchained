@@ -1359,11 +1359,24 @@ def _shadow_tinyfish_enabled() -> bool:
     )
 
 
-def _append_shadow_record(record: dict[str, Any]) -> None:
-    """Append a single jsonl line to ``sessions/shadow-tinyfish-<date>.jsonl``.
+def _shadow_stealth_enabled() -> bool:
+    """Sprint-20: stealth shadow flag.
+
+    Independent of tinyfish — both can fire in the same run; each writes
+    its own ``sessions/shadow-<provider>-<date>.jsonl``. Stealth has no
+    secret-key gate (the storage_state path is optional + the module is
+    fail-soft when no browser backend is installed) so the flag alone is
+    enough to opt in.
+    """
+    return os.environ.get("JEEVES_STEALTH_SHADOW", "").strip() == "1"
+
+
+def _append_shadow_record(record: dict[str, Any], *, prefix: str = "tinyfish") -> None:
+    """Append a single jsonl line to ``sessions/shadow-<prefix>-<date>.jsonl``.
 
     Best-effort. Silently swallows any IO error — shadow capture must never
-    affect production output.
+    affect production output. Default prefix preserves the sprint-18
+    tinyfish file naming for backward compatibility.
     """
     try:
         from datetime import datetime, timezone
@@ -1372,7 +1385,7 @@ def _append_shadow_record(record: dict[str, Any]) -> None:
         sessions_dir = Path.cwd() / "sessions"
         sessions_dir.mkdir(parents=True, exist_ok=True)
         today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-        path = sessions_dir / f"shadow-tinyfish-{today}.jsonl"
+        path = sessions_dir / f"shadow-{prefix}-{today}.jsonl"
         with path.open("a", encoding="utf-8") as fh:
             fh.write(json.dumps(record, ensure_ascii=False) + "\n")
     except Exception as exc:
@@ -1685,13 +1698,21 @@ def extract_article(
 ) -> dict[str, Any]:
     """Public wrapper around ``_extract_article_core``.
 
-    Behaviour identical to the core implementation. When
-    ``JEEVES_TINYFISH_SHADOW=1`` and ``TINYFISH_API_KEY`` is set, fires
-    TinyFish on the same URL in a background thread and writes a comparison
-    record to ``sessions/shadow-tinyfish-<date>.jsonl``. The Playwright
-    result is always returned; TinyFish output is never substituted.
+    Behaviour identical to the core implementation. Two independent shadow
+    flags fan out parallel observe-only fetches:
+
+    * ``JEEVES_TINYFISH_SHADOW=1`` (sprint-18) — TinyFish managed extractor,
+      writes ``sessions/shadow-tinyfish-<date>.jsonl``.
+    * ``JEEVES_STEALTH_SHADOW=1`` (sprint-20) — stealth-browser extractor
+      (camoufox/patchright + storage_state + browserforge), writes
+      ``sessions/shadow-stealth-<date>.jsonl``.
+
+    Either, both, or neither may be enabled. The Playwright result is
+    always returned; shadow output is never substituted.
     """
-    if not _shadow_tinyfish_enabled():
+    tinyfish_on = _shadow_tinyfish_enabled()
+    stealth_on = _shadow_stealth_enabled()
+    if not (tinyfish_on or stealth_on):
         return _extract_article_core(
             url,
             timeout_seconds=timeout_seconds,
@@ -1702,7 +1723,7 @@ def extract_article(
     import time as _time
     from concurrent.futures import ThreadPoolExecutor
 
-    def _shadow_call() -> dict[str, Any]:
+    def _tinyfish_call() -> dict[str, Any]:
         from .tinyfish import extract_article as _tf_extract
 
         t0 = _time.monotonic()
@@ -1713,9 +1734,26 @@ def extract_article(
         res["_latency_ms"] = int((_time.monotonic() - t0) * 1000)
         return res
 
+    def _stealth_call() -> dict[str, Any]:
+        from .stealth import shadow_call as _stealth_shadow
+
+        try:
+            return _stealth_shadow(
+                url, timeout_seconds=timeout_seconds, max_chars=max_chars
+            )
+        except Exception as exc:
+            return {
+                "success": False,
+                "text": "",
+                "error": f"stealth shadow exception: {exc}",
+                "_latency_ms": -1,
+            }
+
+    workers = int(tinyfish_on) + int(stealth_on)
     pw_t0 = _time.monotonic()
-    with ThreadPoolExecutor(max_workers=1) as ex:
-        future = ex.submit(_shadow_call)
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        tf_future = ex.submit(_tinyfish_call) if tinyfish_on else None
+        st_future = ex.submit(_stealth_call) if stealth_on else None
         pw_result = _extract_article_core(
             url,
             timeout_seconds=timeout_seconds,
@@ -1723,36 +1761,69 @@ def extract_article(
             crystallize=crystallize,
         )
         pw_latency_ms = int((_time.monotonic() - pw_t0) * 1000)
-        try:
-            tf_result = future.result(timeout=timeout_seconds + 5)
-        except Exception as exc:
-            tf_result = {"success": False, "error": f"shadow timeout: {exc}", "text": "", "_latency_ms": -1}
+
+        def _await(fut) -> dict[str, Any]:
+            try:
+                return fut.result(timeout=timeout_seconds + 5)
+            except Exception as exc:
+                return {"success": False, "error": f"shadow timeout: {exc}",
+                        "text": "", "_latency_ms": -1}
+
+        tf_result = _await(tf_future) if tf_future is not None else None
+        st_result = _await(st_future) if st_future is not None else None
 
     pw_text = pw_result.get("text") or ""
-    tf_text = tf_result.get("text") or ""
-    record = {
-        "url": url,
-        "playwright": {
-            "success": bool(pw_result.get("success")),
-            "char_count": len(pw_text),
-            "extracted_via": pw_result.get("extracted_via"),
-            "quality_score": pw_result.get("quality_score"),
-            "latency_ms": pw_latency_ms,
-            "title": (pw_result.get("title") or "")[:200],
-            "error": pw_result.get("error"),
-            "text_sha16": hashlib.sha256(pw_text.encode("utf-8", "replace")).hexdigest()[:16],
-        },
-        "tinyfish": {
-            "success": bool(tf_result.get("success")),
-            "char_count": len(tf_text),
-            "quality_score": tf_result.get("quality_score"),
-            "latency_ms": tf_result.get("_latency_ms"),
-            "title": (tf_result.get("title") or "")[:200],
-            "error": tf_result.get("error"),
-            "text_sha16": hashlib.sha256(tf_text.encode("utf-8", "replace")).hexdigest()[:16],
-        },
+    pw_block = {
+        "success": bool(pw_result.get("success")),
+        "char_count": len(pw_text),
+        "extracted_via": pw_result.get("extracted_via"),
+        "quality_score": pw_result.get("quality_score"),
+        "latency_ms": pw_latency_ms,
+        "title": (pw_result.get("title") or "")[:200],
+        "error": pw_result.get("error"),
+        "text_sha16": hashlib.sha256(pw_text.encode("utf-8", "replace")).hexdigest()[:16],
     }
-    _append_shadow_record(record)
+
+    if tf_result is not None:
+        tf_text = tf_result.get("text") or ""
+        _append_shadow_record(
+            {
+                "url": url,
+                "playwright": pw_block,
+                "tinyfish": {
+                    "success": bool(tf_result.get("success")),
+                    "char_count": len(tf_text),
+                    "quality_score": tf_result.get("quality_score"),
+                    "latency_ms": tf_result.get("_latency_ms"),
+                    "title": (tf_result.get("title") or "")[:200],
+                    "error": tf_result.get("error"),
+                    "text_sha16": hashlib.sha256(tf_text.encode("utf-8", "replace")).hexdigest()[:16],
+                },
+            },
+            prefix="tinyfish",
+        )
+
+    if st_result is not None:
+        st_text = st_result.get("text") or ""
+        _append_shadow_record(
+            {
+                "url": url,
+                "playwright": pw_block,
+                "stealth": {
+                    "success": bool(st_result.get("success")),
+                    "char_count": len(st_text),
+                    "quality_score": st_result.get("quality_score"),
+                    "latency_ms": st_result.get("_latency_ms"),
+                    "title": (st_result.get("title") or "")[:200],
+                    "backend": st_result.get("backend"),
+                    "auth_used": st_result.get("auth_used"),
+                    "error": st_result.get("error"),
+                    "text_sha16": hashlib.sha256(st_text.encode("utf-8", "replace")).hexdigest()[:16],
+                },
+            },
+            prefix="stealth",
+        )
+
     return pw_result
 
 

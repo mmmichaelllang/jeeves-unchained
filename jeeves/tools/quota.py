@@ -35,6 +35,12 @@ DEFAULT_STATE = {
     "jina_deepsearch": {"used": 0, "free_cap": 300, "overage_per_1k_usd": 5.00},
     "jina_rerank": {"used": 0, "free_cap": 3000, "overage_per_1k_usd": 0.20},
     "playwright_search": {"used": 0, "free_cap": 9999, "overage_per_1k_usd": 0.00},
+    # Sprint-20: stealth extractor (canary). Free-tier-only stack
+    # (patchright + browserforge + camoufox + storage_state); the cost
+    # bound is wall-clock CI minutes, not $. free_cap=200 is a usage
+    # ceiling, not a billing one — the daily hard cap below is what
+    # actually fires in production.
+    "stealth": {"used": 0, "free_cap": 200, "overage_per_1k_usd": 0.00},
 }
 
 # Sprint-19: auxiliary providers are tracked in the ledger (so usage counts
@@ -51,6 +57,7 @@ _AUX_PROVIDERS: set[str] = {
     "jina_rerank",
     "playwright",
     "playwright_search",
+    "stealth",
 }
 
 
@@ -75,6 +82,10 @@ DAILY_HARD_CAPS: dict[str, int] = {
     "jina_deepsearch": 20,       # token-heavy, 30s+ latency — tight cap
     "jina_rerank": 100,          # cheap, ~1ms/pair; cap = pair-call ceiling
     "playwright_search": 60,     # zero-API-cost; cap = wall-clock guardrail
+    # Sprint-20 stealth extractor — between tinyfish=30 and playwright=60.
+    # Browser launch is the cost (CI minutes); cap fires before runaway
+    # auth-rot scenarios hammer the runner.
+    "stealth": 40,
 }
 
 
