@@ -96,7 +96,10 @@ def all_search_tools(
             description=(
                 "Tavily AI-native search with synthesized answer. Best for: multi-source "
                 "research questions. Args: query (str), max_results (int=8), "
-                "depth ('basic'|'advanced'). Use 'advanced' sparingly (2x credits)."
+                "depth ('basic'|'advanced' — use 'advanced' sparingly, 2x credits), "
+                "time_range (str|None: 'day'|'week'|'month'|'year' — biases toward "
+                "freshness; pass 'week' for non-breaking sectors to prevent evergreen "
+                "results re-ranking into top results day-over-day, 'day' for breaking)."
             ),
         ),
         FunctionTool.from_defaults(
@@ -120,7 +123,11 @@ def all_search_tools(
                 "'news', 'research paper', 'company', 'pdf', 'personal site', "
                 "'financial report', 'people' — use None if unsure), "
                 "search_type (str='auto' — also 'fast', 'instant', 'deep-lite', "
-                "'deep', 'deep-reasoning'), text_max_chars (int=20000)."
+                "'deep', 'deep-reasoning'), text_max_chars (int=20000), "
+                "start_published_date (str|None, 'YYYY-MM-DD' — restricts to "
+                "content published on or after the date; pass the value of "
+                "{seven_days_ago} from the prompt to bias against evergreen "
+                "pages re-ranking day-over-day)."
             ),
         ),
         FunctionTool.from_defaults(

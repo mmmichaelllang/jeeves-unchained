@@ -479,8 +479,10 @@ beyond `<p>` and inline `<a>` anchors.
   Jeeves does not apologise for the language; Mister Lang is no longer
   scandalised.
 
-Aim for ~600-800 words. No profane asides — the final editor adds them.
-When Sector 1 opening is complete,
+Length is proportional to source material — typically 400-700 words for a
+day with full correspondence + weather + Edmonds municipal news, shorter
+when any of those are empty. Do NOT pad to a target. No profane asides —
+the final editor adds them. When Sector 1 opening is complete,
 emit the literal comment `<!-- PART1 END -->` and STOP.
 
 Do NOT write local_news yet — Part 2 handles it. Do NOT write the sign-off.
@@ -554,9 +556,11 @@ CONTINUATION_RULES = """
     you are about to cite is in that list AND another part has already cited
     it (or you are not the first sector that surfaces it), do NOT re-narrate
     the underlying story. One bridging clause max.
-11. WIT QUOTA. At least one sardonic, wry, or darkly humorous observation per
-    part. This may be a short parenthetical, a loaded short sentence after a
-    long paragraph, an ironic understatement, or a dry aside about human folly.
+11. WIT IS PERMITTED, NOT REQUIRED. A sardonic or dry observation lands when
+    it grows out of the specific content just described. If nothing in this
+    part begs for an aside, write none. Forced wit is worse than no wit.
+    Do NOT add a wit-only paragraph at the end of a section to satisfy this
+    rule — the rule is satisfied by zero asides if zero asides are warranted.
     It need not be profane — a well-timed "Naturally." or "One had hoped
     otherwise." lands harder than gratuitous language. If you complete your
     writing and have included zero wit, insert one before the sentinel.
@@ -738,8 +742,11 @@ stories often run across multiple days. Apply synthesis intelligence:
   unresolved, Sir"*) and move on.
 - **New story**: cover in full.
 
-Aim for ~500-700 words when items exist. No profane asides in draft.
-Missing persons or fatal incidents must be treated with sober gravity.
+Length proportional to surviving items (those passing both filters).
+A single qualifying public-safety item warrants 1-2 specific paragraphs;
+a busy municipal day may run 400-600 words. Do NOT pad. No profane
+asides in draft. Missing persons or fatal incidents must be treated
+with sober gravity.
 
 When done, emit `<!-- PART2 END -->` and STOP. Do NOT close outer tags.
 """
@@ -792,7 +799,7 @@ Mister Lang has already been briefed on.
 5. If everything is a repeat: acknowledge briefly, note that the board is
    quiet, and move on. Do NOT pad with advice about job-searching.
 
-**SYNTHESIS CLOSE (REQUIRED):**
+**SYNTHESIS CLOSE (OPTIONAL — only if it adds a specific fact):**
 End this section with a short closing observation that is ONLY possible from
 having read these specific postings — something concrete and non-transferable:
 - An observation about which district is most active this week vs. last
@@ -811,7 +818,11 @@ generic filler, not synthesis):
 - "the job market is active" / "teaching opportunities are plentiful"
 - "this is an exciting time" / "there are many opportunities"
 
-Aim for ~500-700 words. No profane asides in draft — the final editor adds them.
+Length proportional to genuinely-new postings. One real new posting → 80-150
+words on it. Five new postings → up to 600 words. All-repeats → one sentence
+acknowledging the board is quiet, plus the closing observation if it earns
+its keep. Do NOT pad. No profane asides in draft — the final editor adds
+them.
 
 When done, emit `<!-- PART3 END -->` and STOP. Do NOT close outer tags.
 """
@@ -922,7 +933,10 @@ is. One sentence, then proceed to choral/toddler content.
 or your own input payload in the briefing text. Jeeves reads the morning
 papers — he does not narrate his data sources.
 
-Aim for ~700-900 words when items exist. No profane asides in draft.
+Length proportional to substantive items in choir + toddler + global_news.
+Empty global_news → one-line statement plus brief family content (~100-200
+words total). Rich global news week → up to 700-800 words. Do NOT pad to a
+target. No profane asides in draft.
 
 When done, emit `<!-- PART4 END -->` and STOP. Do NOT close outer tags.
 """
@@ -979,7 +993,7 @@ same essay, the same debate, the same thinker's work may resurface.
    explicit. Jeeves reads widely and connects what he reads. This is not
    padding — it is the highest function of the briefing.
 
-**SYNTHESIS CLOSE (REQUIRED):**
+**SYNTHESIS CLOSE (OPTIONAL — only if it adds a specific fact):**
 End this section with a short closing observation that is ONLY possible from
 having read the specific pieces covered here. It must name the essay, the
 thinker, or the argument. It cannot be transplanted unchanged to a different
@@ -1002,7 +1016,11 @@ BANNED closing patterns (generic filler — delete entirely):
 - Any paragraph whose subject is "intellectual journals", "these journals",
   or "the journals" in the abstract — generalising rather than citing.
 
-Aim for ~600-800 words. No profane asides in draft — the final editor adds them.
+Length proportional to the journals' actual content. Two rich pieces with
+full enriched_articles text → up to 700 words. One piece, brief findings →
+200-300 words and stop. Do NOT extend a thin section with a closing
+observation written for length. No profane asides in draft — the final
+editor adds them.
 
 When done, emit `<!-- PART5 END -->` and STOP. Do NOT close outer tags.
 """
@@ -1103,7 +1121,10 @@ BANNED closing patterns (delete entirely):
 - "These are exciting / significant developments in..." (label, not substance)
 - "Continuing to monitor the progress being made in..." (do not do this ever)
 
-Aim for ~600-800 words total for this part. No profane asides in draft.
+Length proportional to the specific named studies/papers covered. All-repeats
+→ a couple of sentences each, then move on. Real new papers → 200-350 words
+each. Do NOT pad with category-level commentary about "the field". No profane
+asides in draft.
 
 When done, emit `<!-- PART6 END -->` and STOP. Do NOT close outer tags.
 """
@@ -3060,6 +3081,154 @@ def _dedup_paragraphs_across_blocks(
     return scoped
 
 
+# Tracking-param sweeper used by _canonical_url. Strips utm_*, ref, ref_src,
+# fbclid, gclid, mc_cid, mc_eid, igshid — common in copy-pasted publisher URLs.
+_TRACKING_PARAM_RE = re.compile(
+    r"[?&](utm_[^=&]+|ref|ref_src|fbclid|gclid|mc_cid|mc_eid|igshid|s_kwcid)=[^&]*",
+    re.IGNORECASE,
+)
+_HREF_RE = re.compile(r'href="([^"]+)"', re.IGNORECASE)
+
+
+def _canonical_url(url: str) -> str:
+    """Canonicalize a URL for cross-paragraph identity matching.
+
+    - Lowercases scheme + host (path stays case-sensitive — some sites care).
+    - Strips trailing slash from path.
+    - Strips common tracking params (utm_*, fbclid, gclid, etc.).
+    - Strips '#fragment'.
+    Returns "" for falsy / non-http inputs (mailto:, javascript:, etc.).
+    """
+    if not url:
+        return ""
+    u = url.strip()
+    if not u.lower().startswith(("http://", "https://")):
+        return ""
+    # Drop fragment.
+    if "#" in u:
+        u = u.split("#", 1)[0]
+    # Strip tracking params, then normalise the query separators left behind:
+    #   "?utm_x=…&id=1"  → "&id=1"   → "?id=1"
+    #   "?id=1&utm_x=…"  → "?id=1"   (trailing & cleaned)
+    u = _TRACKING_PARAM_RE.sub("", u)
+    u = re.sub(r"\?&+", "?", u)
+    u = re.sub(r"&{2,}", "&", u)
+    u = re.sub(r"[?&]+$", "", u)
+    # If stripping removed the leading "?" entirely, promote the first "&".
+    if "?" not in u and "&" in u:
+        u = u.replace("&", "?", 1)
+    m = re.match(r"^(https?://)([^/?#]+)(.*)$", u, re.IGNORECASE)
+    if not m:
+        return u
+    scheme = m.group(1).lower()
+    host = m.group(2).lower()
+    rest = m.group(3) or ""
+    # Trim trailing slash on path (but keep "/" for bare-host URLs).
+    if rest.endswith("/") and len(rest) > 1:
+        rest = rest[:-1]
+    return scheme + host + rest
+
+
+def _dedup_urls_across_blocks(html: str) -> str:
+    """Drop <p> blocks whose URL citations are all cited more richly elsewhere.
+
+    Catches the case where the same article URL is narrated by two parts in
+    different prose. Shape-based dedup (h3 text identity, Jaccard on prose)
+    misses this — the prose differs but the underlying citation is identical.
+
+    Algorithm:
+    - Fence the verbatim TOTT block and the signoff so they are not touched.
+    - For each remaining <p>, collect canonicalized URLs from <a href> anchors.
+    - Score each <p> with _paragraph_quality_score (anchors → words → chars).
+    - For every URL appearing in 2+ <p>s, the highest-scoring <p> is the
+      keeper for that URL.
+    - Drop a <p> only when (1) it shares at least one URL with another <p>,
+      (2) it is the keeper for none of its URLs, AND (3) every URL it cites
+      has a keeper elsewhere — i.e., it has zero unique-to-itself URLs.
+      This guarantees no citation is lost.
+    """
+    ny_match = _NY_BLOCK_FENCE_RE.search(html)
+    sentinel_ny = "<!--__JEEVES_URL_DEDUP_NY__-->"
+    if ny_match:
+        ny_saved = ny_match.group(0)
+        scoped = _NY_BLOCK_FENCE_RE.sub(sentinel_ny, html, count=1)
+    else:
+        ny_saved = None
+        scoped = html
+
+    so_match = re.search(
+        r'<div class="signoff".*?</div>', scoped, re.DOTALL | re.IGNORECASE
+    )
+    sentinel_so = "<!--__JEEVES_URL_DEDUP_SO__-->"
+    if so_match:
+        so_saved = so_match.group(0)
+        scoped = scoped[: so_match.start()] + sentinel_so + scoped[so_match.end():]
+    else:
+        so_saved = None
+
+    paragraphs: list[
+        tuple[int, int, str, set[str], tuple[int, int, int]]
+    ] = []
+    for m in _P_TAG_RE.finditer(scoped):
+        body = m.group(1)
+        urls = {_canonical_url(u) for u in _HREF_RE.findall(body)}
+        urls = {u for u in urls if u}
+        if not urls:
+            continue
+        score = _paragraph_quality_score(body)
+        paragraphs.append((m.start(), m.end(), body, urls, score))
+
+    def _restore_and_return(s: str) -> str:
+        if so_saved is not None:
+            s = s.replace(sentinel_so, so_saved, 1)
+        if ny_saved is not None:
+            s = s.replace(sentinel_ny, ny_saved, 1)
+        return s
+
+    if len(paragraphs) < 2:
+        return _restore_and_return(scoped)
+
+    url_to_idx: dict[str, list[int]] = {}
+    for i, (_, _, _, urls, _) in enumerate(paragraphs):
+        for u in urls:
+            url_to_idx.setdefault(u, []).append(i)
+
+    best_for_url: dict[str, int] = {}
+    for u, idxs in url_to_idx.items():
+        if len(idxs) < 2:
+            continue
+        best_for_url[u] = max(idxs, key=lambda i: paragraphs[i][4])
+
+    if not best_for_url:
+        return _restore_and_return(scoped)
+
+    drop: set[int] = set()
+    for i, (_, _, _, urls, _) in enumerate(paragraphs):
+        shared = urls & set(best_for_url.keys())
+        if not shared:
+            continue
+        if any(best_for_url[u] == i for u in shared):
+            continue
+        unique_urls = urls - shared
+        if unique_urls:
+            continue
+        drop.add(i)
+
+    if not drop:
+        return _restore_and_return(scoped)
+
+    log.warning(
+        "url dedup: dropping %d <p> blocks whose URLs are cited more richly elsewhere",
+        len(drop),
+    )
+
+    for idx in sorted(drop, reverse=True):
+        start, end, _, _, _ = paragraphs[idx]
+        scoped = scoped[:start] + scoped[end:]
+
+    return _restore_and_return(scoped)
+
+
 def _dedup_h3_sections_across_blocks(html: str) -> str:
     """When the same `<h3>` text appears multiple times non-adjacently, keep
     the section with the most `<a>` anchors + words; drop the others.
@@ -3274,23 +3443,29 @@ stays.
    while preserving the anchor in place. The link survives even if the
    sentence does not.
 
-3. **Word-count floor.** Your output's body prose must be at least **80%**
-   of the input's body prose word count. If you find yourself producing
-   shorter output than that, you are over-deleting — STOP, restore the
-   most aggressively-trimmed paragraphs, and rebalance toward retention.
+3. **Word-count floor (relaxed).** Your output's body prose must be at least
+   **70%** of the input's body prose word count. The previous 80% floor
+   forced retention of weak commentary just to hit the target — that is
+   over. If genuine deletions of pablum bring you below 70%, you have
+   correctly over-deleted; restore only paragraphs that named specific
+   entities (per A0.1).
 
-4. **Section-density floor.** Every `<h3>` section must end with at least
-   3 substantive `<p>` paragraphs (paragraphs whose body is ≥ 25 words and
-   names at least one specific entity). If your edits leave a section with
-   fewer than 3 such paragraphs, restore the most informative one you cut.
+4. **Section-density is proportional, not minimum.** A section with rich
+   source material gets 3-4 substantive paragraphs. A section with one
+   article and one specific fact gets 1-2 paragraphs and stops. NEVER
+   restore a paragraph just to hit a paragraph count if the paragraph
+   was filler commentary. Better a 1-paragraph section that says one
+   specific thing than a 3-paragraph section padded with significance
+   commentary.
 
-5. **The briefing must remain dense.** A briefing with `<h3>` headers and
-   1-paragraph stubs under each is a failure. Better to have a few sections
-   with 4–6 paragraphs each than 7 sections with 1 paragraph each.
+5. **The briefing must remain specific.** A briefing with `<h3>` headers
+   and one substantive paragraph each is acceptable when source material
+   is thin. A briefing padded to 5000 words with 60% commentary is the
+   failure mode you must prevent.
 
-If your output violates A0.1, A0.4, or A0.5, the deterministic post-processor
-will reject it and ship the unedited draft. Both options leave the briefing
-worse — get this right.
+If your output violates A0.1 (drops paragraphs with 2+ named entities), the
+deterministic post-processor will reject it and ship the unedited draft.
+A0.4 and A0.5 are no longer rejection triggers — they are guidance.
 
 ### A1. HARD DELETIONS — remove every occurrence without exception
 
@@ -3759,7 +3934,9 @@ _NY_BLOCK_RE = re.compile(
 )
 
 # Editor output gates. Tuned to catch the 2026-05-01 regression mode.
-_EDITOR_WORD_FLOOR_RATIO = 0.80   # output must be ≥80% of input word count
+_EDITOR_WORD_FLOOR_RATIO = 0.70   # output must be ≥70% of input word count
+                                  # (sprint-17 F3.b/e: was 0.80 — relaxed so editor
+                                  # can delete pablum without padding to retain it)
 _EDITOR_WORD_CEILING_RATIO = 1.30 # output must be ≤130% — bloated/echoed edits fail
 _EDITOR_MIN_ANCHORS_PER_1K = 5.0  # body link density floor
 _EDITOR_MAX_ASIDE_ORPHANS = 0     # zero standalone-template asides allowed
@@ -4479,20 +4656,18 @@ async def generate_briefing(
             except Exception as exc:
                 log.warning("[%s] debug dump failed: %s", label, exc)
 
-        # Density diagnostic — log thin parts for triage. Strip HTML tags
-        # before counting so word totals reflect actual prose, not markup.
+        # Density diagnostic — log word count per part. Targets are now
+        # CEILINGS (sprint-17 F3.b/e), not floors: we only warn on bloat.
         part_words = len(_strip_tags(raw_part).split())
         target = _PART_WORD_TARGETS.get(label, 0)
-        if target and part_words < target * 0.6:
+        if target and part_words > target * 1.4:
             log.warning(
-                "[%s] thin draft: %d words < 60%% of target (%d). "
-                "Possible causes: Groq truncation, dedup over-pruning, "
-                "or model under-delivering. Investigate if briefing total "
-                "falls below 3000 prose words.",
+                "[%s] bloated draft: %d words > 140%% of target ceiling (%d). "
+                "Likely model padded with commentary. Editor pass should trim.",
                 label, part_words, target,
             )
         else:
-            log.info("[%s] draft: %d words (target %d)", label, part_words, target)
+            log.info("[%s] draft: %d words (ceiling %d)", label, part_words, target)
 
         # Track asides for within-run dedup before launching the refine thread.
         if label not in _NO_ASIDE_PARTS:
@@ -4597,6 +4772,13 @@ async def generate_briefing(
     # full briefing then Parts 2-9 repeated material), drop the duplicates.
     # Uses 4-word shingle Jaccard similarity (≥0.6) — keeps the richer copy.
     stitched = _dedup_paragraphs_across_blocks(stitched)
+
+    # URL-keyed cross-block dedup. When the same article URL is cited by
+    # two parts in different prose, the Jaccard pass misses it (prose differs
+    # but the citation is identical). This pass drops the lesser <p> when
+    # every URL it cites has a richer occurrence elsewhere — guaranteeing no
+    # unique citation is lost. Sprint-17 finding F2.a.
+    stitched = _dedup_urls_across_blocks(stitched)
 
     # Return structured context so callers can forward quality metadata.
     # Scripts call postprocess_html(html, session, quality_warnings=warnings)

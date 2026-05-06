@@ -22,6 +22,7 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
         category: str | None = None,
         search_type: str = "auto",
         text_max_chars: int = 20000,
+        start_published_date: str | None = None,
     ) -> str:
         """Exa neural semantic search with full-text content.
 
@@ -37,6 +38,10 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
                 'deep-reasoning' (~12-40s, strongest synthesis).
             text_max_chars: cap on per-result full-text (default 20000, ~3000 words
                 per article — enough for synthesis without requiring a follow-up extract).
+            start_published_date: ISO date string (YYYY-MM-DD). Restricts results
+                to content published on or after this date — biases against
+                evergreen pages re-ranking into top results day after day.
+                None = no freshness filter (default Exa ranking).
 
         Returns a JSON string so LlamaIndex's _parse_tool_output() produces valid
         JSON in the NIM context rather than Python repr with single quotes.

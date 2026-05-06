@@ -29,6 +29,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from jeeves.config import Config, MissingSecret  # noqa: E402
 from jeeves.dedup import covered_headlines as get_covered_headlines  # noqa: E402
+from jeeves.dedup import covered_sources_by_host  # noqa: E402
 from jeeves.dedup import covered_urls  # noqa: E402
 from jeeves.research_sectors import (  # noqa: E402
     SECTOR_SPECS,
@@ -192,6 +193,7 @@ async def _run_sector_loop(
     limit: int,
     quota_summary: str = "",
     story_continuity: str = "",
+    prior_sources_by_host: dict[str, list[str]] | None = None,
 ) -> None:
     """Run SECTOR_SPECS sequentially, updating the dedup context after each sector.
 
@@ -236,6 +238,7 @@ async def _run_sector_loop(
                 cfg, spec, list(prior_sample), ledger,
                 quota_summary=quota_summary,
                 story_continuity=story_continuity,
+                prior_sources_by_host=prior_sources_by_host,
             )
 
     def _update_prior(results):
@@ -285,6 +288,7 @@ async def _run_sector_loop(
             extra_user=extra,
             quota_summary=quota_summary,
             story_continuity=story_continuity,
+            prior_sources_by_host=prior_sources_by_host,
         )
         session[enriched_spec.name] = ea_value
         discovered_urls.extend(collect_urls_from_sector(ea_value))
@@ -422,12 +426,20 @@ def main(argv: list[str] | None = None) -> int:
     prior_urls_ordered: list[str] = []
     prior_urls_seen: set[str] = set()
     prior_hl: set[str] = set()
+    prior_sources_by_host: dict[str, list[str]] = {}
     for sess in prior_sessions:  # load_prior_sessions returns newest-first
         for u in covered_urls(sess):
             if u not in prior_urls_seen:
                 prior_urls_ordered.append(u)
                 prior_urls_seen.add(u)
         prior_hl |= get_covered_headlines(sess)
+        # Source-rotation map: per-host list of titles cited yesterday.
+        # Newer-first, dedup per host.
+        for host, titles in covered_sources_by_host(sess).items():
+            bucket = prior_sources_by_host.setdefault(host, [])
+            for t in titles:
+                if t and t not in bucket:
+                    bucket.append(t)
 
     # COVERAGE_LOG feedback: URLs Jeeves actually cited in prose go first —
     # they are the highest-confidence already-covered signal.
@@ -437,8 +449,9 @@ def main(argv: list[str] | None = None) -> int:
             prior_urls_seen.add(u)
 
     log.info(
-        "%d prior sessions loaded: %d URLs (ordered), %d headlines in rolling dedup set.",
+        "%d prior sessions loaded: %d URLs (ordered), %d headlines, %d hosts in rolling dedup set.",
         len(prior_sessions), len(prior_urls_ordered), len(prior_hl),
+        len(prior_sources_by_host),
     )
 
     ledger = QuotaLedger(cfg.quota_state_path)
@@ -463,6 +476,7 @@ def main(argv: list[str] | None = None) -> int:
                 limit=args.limit,
                 quota_summary=quota_sum,
                 story_continuity=story_ctx,
+                prior_sources_by_host=prior_sources_by_host,
             )
         )
 

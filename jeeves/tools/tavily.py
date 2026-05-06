@@ -20,6 +20,7 @@ def make_tavily_search(cfg: Config, ledger: QuotaLedger):
         query: str = "",
         max_results: int = 8,
         depth: str = "basic",
+        time_range: str | None = None,
     ) -> str:
         """Tavily AI-native search with an optional synthesized answer.
 
@@ -27,6 +28,8 @@ def make_tavily_search(cfg: Config, ledger: QuotaLedger):
             query: question or keyword string (required — must be a non-empty string).
             max_results: max results to return.
             depth: 'basic' (1 credit) or 'advanced' (2 credits).
+            time_range: bias toward freshness — 'day' / 'week' / 'month' / 'year'.
+                None = no freshness filter (default Tavily ranking).
 
         Returns a JSON string so LlamaIndex's _parse_tool_output() produces valid
         JSON in the NIM context rather than Python repr with single quotes.
