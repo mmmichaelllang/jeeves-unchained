@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [reply needed] Jacky Bishop: The sender is sending pictures of vehicles for car scanning as Mr Language is abroad.\n- [reply needed] Rich Lang: Rich Lang is sharing an article with Mister Lang.\n- [reply needed] Jen Manglos: Response to a question about story time\n- [decision required] Anthropic: Anthropic is notifying Mister Lang that his Claude API access is turned off due to lack of credits.\n- [no action] JD from Autohive: Marketing email from Autohive\n- [no action] GitHub: GitHub notification about a regenerated personal access token\n- [no action] lang.mc@gmail.com: Daily correspondence from Jeeves\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run\n- [no action] lang.mc@gmail.com: Daily correspondence from Jeeves\n- [no action] \"H&M\": Update from H&M about member experience\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run\n- [no action] \"Superhuman – Zain Kahn\": Email from Superhuman about launching agent-only startups\n- [no action] Edmonds Patch: Newsletter from Edmonds Patch\n- [no action] lang.mc@gmail.com: Daily intelligence from Jeeves\n- [no action] lang.mc@gmail.com: Daily intelligence from Jeeves",
+  "text": "- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Research Phase\" failed in repository jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Daily Pipeline\" failed in repository jeeves-unchained.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Correspondence Phase\" failed in repository jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions failure in Jeeves Daily Pipeline workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure in Jeeves Write Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure in Jeeves Research Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure in Jeeves Daily Pipeline workflow.\n- [escalation] Sir Richard: Rich Lang shared a New York Times opinion article about public schools and democracy.\n- [escalation] Anthropic: Claude API access disabled due to depleted usage credits.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow failed.\n- [escalation] mmmichaelllang: GitHub notification that the CI workflow for sprint 16 failed.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow failed.",
   "counts": {
-    "reply_needed": 3,
-    "decision_required": 1,
+    "reply_needed": 1,
+    "decision_required": 0,
     "scheduling": 0,
-    "follow_up": 0,
-    "escalation": 0,
-    "no_action": 46
+    "follow_up": 1,
+    "escalation": 20,
+    "no_action": 28
   }
 }
