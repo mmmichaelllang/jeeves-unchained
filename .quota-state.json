@@ -2,28 +2,58 @@
   "month": "2026-05",
   "providers": {
     "serper": {
-      "used": 157,
+      "used": 165,
       "free_cap": 2500,
       "overage_per_1k_usd": 0.3
     },
     "tavily": {
-      "used": 451,
+      "used": 494,
       "free_cap": 1000,
       "overage_per_1k_usd": 8.0
     },
     "exa": {
-      "used": 225,
+      "used": 243,
       "free_cap": 500,
       "overage_per_1k_usd": 5.0
     },
     "gemini": {
-      "used": 44,
+      "used": 47,
       "free_cap": 1500,
       "overage_per_1k_usd": 35.0
+    },
+    "tinyfish": {
+      "used": 0,
+      "free_cap": 100,
+      "overage_per_1k_usd": 12.0
+    },
+    "tinyfish_search": {
+      "used": 0,
+      "free_cap": 250,
+      "overage_per_1k_usd": 24.0
+    },
+    "jina_search": {
+      "used": 0,
+      "free_cap": 6000,
+      "overage_per_1k_usd": 0.2
+    },
+    "jina_deepsearch": {
+      "used": 0,
+      "free_cap": 300,
+      "overage_per_1k_usd": 5.0
+    },
+    "jina_rerank": {
+      "used": 0,
+      "free_cap": 3000,
+      "overage_per_1k_usd": 0.2
+    },
+    "playwright_search": {
+      "used": 0,
+      "free_cap": 9999,
+      "overage_per_1k_usd": 0.0
     }
   },
   "daily": {
-    "date": "2026-05-05",
-    "gemini_grounded": 2
+    "date": "2026-05-06",
+    "gemini_grounded": 3
   }
 }
