@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] Andy: Message from Andrew Lang about taking action and trusting its impact\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Correspondence Phase\n- [no action] \"Superhuman – Zain Kahn\": Newsletter from Superhuman about ChatGPT's new default model\n- [no action] Edmonds Patch: Newsletter from Edmonds Patch about local performances\n- [no action] lang.mc@gmail.com: Daily intelligence report from Jeeves\n- [no action] lang.mc@gmail.com: Correspondence report from Jeeves\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for CI - main\n- [no action] mmmichaelllang: GitHub notification about a failed PR run for CI - fix(correspondence)\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Daily Pipeline, Attempt #3\n- [no action] Mistral AI: Notification from Mistral AI about active subscription\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Daily Pipeline, Attempt #2\n- [no action] Mistral AI: Welcome message from Mistral AI\n- [no action] Cerebras Systems: Welcome message from Cerebras Systems\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Daily Pipeline",
+  "text": "- [reply needed] Andrew Lang: Andrew Lang invites Mister Lang to join the newest group effort: Make Care Visible!\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Write Phase\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Research Phase\n- [no action] lang.mc@gmail.com: Correspondence from lang.mc@gmail.com with a greeting and no specific request\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Correspondence Phase\n- [no action] Edmonds Patch: Newsletter from Edmonds Patch about local events and news\n- [no action] lang.mc@gmail.com: Correspondence from lang.mc@gmail.com with a greeting and no specific request\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for CI\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for CI\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Daily Pipeline\n- [no action] Mistral AI: Notification from Mistral AI about an active subscription\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves — Daily Pipeline",
   "counts": {
-    "reply_needed": 0,
+    "reply_needed": 1,
     "decision_required": 0,
     "scheduling": 0,
     "follow_up": 0,
-    "escalation": 1,
+    "escalation": 0,
     "no_action": 29
   }
 }
