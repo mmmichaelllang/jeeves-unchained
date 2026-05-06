@@ -1,0 +1,20 @@
+{
+  "date": "2026-05-06",
+  "pre_fix_chars": 11631,
+  "post_fix_chars": 13465,
+  "actions": [
+    {
+      "type": "rerender_empty_with_data",
+      "section": "Talk of the Town",
+      "detail": "re-rendered via nvidia/nemotron-3-super-120b-a12b:free",
+      "status": "applied",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "chars": 2106
+      }
+    }
+  ],
+  "pre_fix_defect_count": 3,
+  "post_fix_defect_count": null,
+  "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free"
+}

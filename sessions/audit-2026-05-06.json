@@ -1,0 +1,53 @@
+{
+  "date": "2026-05-06",
+  "briefing_chars": 13465,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete"
+  ],
+  "detectors_skipped": [
+    "D7_narrative_flow",
+    "D9_writing_quality"
+  ],
+  "defects": [
+    {
+      "type": "dedup_url_cross_section",
+      "severity": "high",
+      "section": null,
+      "detail": "URL appears in 2 sections",
+      "evidence": {
+        "url": "https://www.newyorker.com/magazine/2026/05/11/two-hundred-and-fifty-years-of-complicated-commemorations",
+        "sections": [
+          "The Specific Enquiries",
+          "Talk of the Town"
+        ]
+      }
+    },
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "1 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 1,
+        "samples": [
+          "https://www.newyorker.com/magazine/2026/05/11/two-hundred-and-fifty-years-of-complicated-commemorations"
+        ]
+      }
+    }
+  ],
+  "section_count": 2,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 0,
+  "aside_template_count": 0,
+  "narrative_flow_score": null,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": null
+}
