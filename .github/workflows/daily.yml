@@ -135,20 +135,61 @@ jobs:
           JINA_API_KEY: ${{ secrets.JINA_API_KEY }}
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          # ── Sprint-18 TinyFish canary (managed extractor). Defaults: shadow
+          # OFF, active OFF — pipeline behaves exactly as pre-sprint when both
+          # vars are empty. Flip via repo Variables to promote.
+          TINYFISH_API_KEY: ${{ secrets.TINYFISH_API_KEY }}
+          JEEVES_TINYFISH_SHADOW: ${{ vars.JEEVES_TINYFISH_SHADOW || '' }}
+          JEEVES_USE_TINYFISH: ${{ vars.JEEVES_USE_TINYFISH || '' }}
+          # ── Sprint-19 slice D (search-agent canaries). Each tool registers
+          # only when its flag is set. All default-off.
+          JEEVES_USE_JINA_SEARCH: ${{ vars.JEEVES_USE_JINA_SEARCH || '' }}
+          JEEVES_USE_JINA_DEEPSEARCH: ${{ vars.JEEVES_USE_JINA_DEEPSEARCH || '' }}
+          JEEVES_USE_JINA_RERANK: ${{ vars.JEEVES_USE_JINA_RERANK || '' }}
+          JEEVES_USE_TINYFISH_SEARCH: ${{ vars.JEEVES_USE_TINYFISH_SEARCH || '' }}
+          JEEVES_USE_PLAYWRIGHT_SEARCH: ${{ vars.JEEVES_USE_PLAYWRIGHT_SEARCH || '' }}
+          # ── Sprint-19 slice E (telemetry + search-shadow). Telemetry writes
+          # one JSONL line per tool call to sessions/telemetry-<utc>.jsonl.
+          # Shadow flags fire peer providers in parallel after serper_search
+          # and write to sessions/shadow-search-<provider>-<utc>.jsonl. All
+          # default-off; production output is bit-identical when unset.
+          JEEVES_TELEMETRY: ${{ vars.JEEVES_TELEMETRY || '' }}
+          JEEVES_JINA_SEARCH_SHADOW: ${{ vars.JEEVES_JINA_SEARCH_SHADOW || '' }}
+          JEEVES_TINYFISH_SEARCH_SHADOW: ${{ vars.JEEVES_TINYFISH_SEARCH_SHADOW || '' }}
+          JEEVES_PLAYWRIGHT_SEARCH_SHADOW: ${{ vars.JEEVES_PLAYWRIGHT_SEARCH_SHADOW || '' }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
         run: uv run python scripts/research.py
 
-      - name: Commit quota ledger
+      - name: Commit quota ledger + shadow + telemetry jsonl
+        # Bundles four classes of artifact into one commit:
+        #   .quota-state.json                       (ledger snapshot)
+        #   sessions/shadow-tinyfish-<date>.jsonl   (sprint-18 extract shadow)
+        #   sessions/shadow-search-<provider>-<date>.jsonl  (slice-E search shadows)
+        #   sessions/telemetry-<date>.jsonl         (slice-E tool-call stream)
+        # All append-only per-day; in-tree storage keeps offline analysis
+        # cheap (rg / jq pipelines).
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          STAGED=0
           if [ -f .quota-state.json ] && ! git diff --quiet .quota-state.json; then
+            git add .quota-state.json
+            STAGED=1
+          fi
+          for pattern in 'sessions/shadow-tinyfish-*.jsonl' 'sessions/shadow-search-*.jsonl' 'sessions/telemetry-*.jsonl'; do
+            if ls $pattern >/dev/null 2>&1; then
+              git add $pattern 2>/dev/null || true
+              if ! git diff --cached --quiet -- $pattern; then
+                STAGED=1
+              fi
+            fi
+          done
+          if [ "$STAGED" = "1" ]; then
             git config user.name "jeeves-bot"
             git config user.email "jeeves-bot@users.noreply.github.com"
-            git add .quota-state.json
             git commit -m "quota: update counters $(date -u +%Y-%m-%d)"
             # The research script commits session-*.json to GitHub via the Contents API,
             # leaving untracked copies in the working tree. Remove them before rebase so
