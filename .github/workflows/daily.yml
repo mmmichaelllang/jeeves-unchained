@@ -337,6 +337,18 @@ jobs:
             echo "::warning::jq not available on runner — gate cannot evaluate, treating as revert"
             exit 0
           fi
+          # F-009 schema-shape check — both files MUST have .defects as an array.
+          # Without this, a malformed post-fix JSON (e.g., {"date":"…"} with no
+          # defects key) makes jq '.defects | length' return 0, which the gate
+          # would interpret as "auditor improved!" and KEEP the broken briefing.
+          if ! jq -e '.defects | type == "array"' sessions/audit-$DATE.json >/dev/null 2>&1; then
+            echo "::warning::pre-fix audit JSON has no .defects array — schema drift, treating as revert"
+            exit 0
+          fi
+          if ! jq -e '.defects | type == "array"' sessions/audit-$DATE.post-fix.json >/dev/null 2>&1; then
+            echo "::warning::post-fix audit JSON has no .defects array — malformed/incomplete, treating as revert"
+            exit 0
+          fi
           PRE=$(jq '.defects | length' sessions/audit-$DATE.json)
           POST=$(jq '.defects | length' sessions/audit-$DATE.post-fix.json)
           if ! [[ "$PRE" =~ ^[0-9]+$ ]] || ! [[ "$POST" =~ ^[0-9]+$ ]]; then
