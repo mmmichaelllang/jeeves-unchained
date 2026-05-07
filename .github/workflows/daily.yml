@@ -321,20 +321,33 @@ jobs:
       - name: Gate commit on auditor improvement
         if: ${{ vars.JEEVES_AUDITOR_AUTO_FIX == '1' }}
         run: |
+          # F-009 — defensive default: assume revert. Any unhandled error
+          # below leaves AUDITOR_REVERT=1, so re-send is conservatively
+          # blocked (re-send step requires env.AUDITOR_REVERT != '1').
+          # Only the explicit "post < pre" branch flips this to 0.
+          echo "AUDITOR_REVERT=1" >> $GITHUB_ENV
+          set -euo pipefail
           DATE="${{ github.event.inputs.date || '' }}"
           if [ -z "$DATE" ]; then DATE=$(date -u +%Y-%m-%d); fi
           if [ ! -f sessions/audit-$DATE.post-fix.json ]; then
             echo "::warning::no post-fix audit JSON — gate inconclusive, treating as revert"
-            echo "AUDITOR_REVERT=1" >> $GITHUB_ENV
+            exit 0
+          fi
+          if ! command -v jq >/dev/null 2>&1; then
+            echo "::warning::jq not available on runner — gate cannot evaluate, treating as revert"
             exit 0
           fi
           PRE=$(jq '.defects | length' sessions/audit-$DATE.json)
           POST=$(jq '.defects | length' sessions/audit-$DATE.post-fix.json)
+          if ! [[ "$PRE" =~ ^[0-9]+$ ]] || ! [[ "$POST" =~ ^[0-9]+$ ]]; then
+            echo "::warning::jq returned non-integer (PRE=$PRE POST=$POST) — schema drift?, treating as revert"
+            exit 0
+          fi
           echo "pre-fix defects: $PRE / post-fix defects: $POST"
           if [ "$POST" -ge "$PRE" ]; then
             echo "::warning::auditor did not improve briefing (pre=$PRE post=$POST) — reverting briefing.html"
             git checkout sessions/briefing-$DATE.html
-            echo "AUDITOR_REVERT=1" >> $GITHUB_ENV
+            # AUDITOR_REVERT already 1 from the defensive default above.
           else
             echo "::notice::auditor improved briefing ($PRE -> $POST defects)"
             echo "AUDITOR_REVERT=0" >> $GITHUB_ENV
