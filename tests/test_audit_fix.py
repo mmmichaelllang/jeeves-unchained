@@ -287,7 +287,12 @@ def test_f7_rerenders_greeting_via_stub(tmp_path, monkeypatch):
     monkeypatch.setattr(
         fix_mod, "_call_audit_model",
         lambda prompt, system="", max_tokens=2048:
-            ("<p>Wednesday morning, Mister Lang. 66°F. Andy flagged something.</p>",
+            ("<p>Wednesday morning, Mister Lang. The forecast settles on "
+             "cloud as its working principle, with a high near sixty-six "
+             "and very little wind worth mentioning. Andy has flagged "
+             "something overnight that will want attention before the "
+             "third coffee, though not, the butler suspects, before the "
+             "first.</p>",
              "stub/reasoning-7b:free"),
     )
     monkeypatch.setenv("OPENROUTER_API_KEY", "fake")
@@ -296,7 +301,7 @@ def test_f7_rerenders_greeting_via_stub(tmp_path, monkeypatch):
     out = (tmp_path / "briefing-2026-05-06.html").read_text(encoding="utf-8")
     assert "Greet placeholder" not in out
     assert "Wednesday morning" in out
-    assert "66°F" in out
+    assert "sixty-six" in out
 
 
 # ---------------------------------------------------------------------------
