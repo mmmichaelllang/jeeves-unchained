@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] Mrs. Lang: Daily Jeeves correspondence summary sent by Mrs. Lang.\n- [escalation] mmmichaelllang: GitHub Actions failure in jeeves-memory Write Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure in jeeves-memory Research Phase workflow.\n- [escalation] Mrs. Lang: Daily Jeeves correspondence summary sent by Mrs. Lang.\n- [escalation] mmmichaelllang: GitHub Actions failure in jeeves-memory Correspondence Phase workflow.\n- [escalation] Mrs. Lang: Daily Jeeves correspondence summary sent by Mrs. Lang.\n- [escalation] mmmichaelllang: GitHub Actions CI failure in jeeves-unchained repository.\n- [escalation] mmmichaelllang: CI workflow for jeeves-unchained failed on PR run\n- [escalation] mmmichaelllang: Daily Jeeves pipeline failed on third attempt\n- [escalation] mmmichaelllang: Daily Jeeves pipeline failed on second attempt\n- [escalation] mmmichaelllang: Daily Jeeves pipeline failed on first attempt\n- [escalation] Andy: Andy Lang invites you to join new group effort Make Care Visible\n- [escalation] mmmichaelllang: Daily Jeeves pipeline failed on earlier commit\n- [escalation] mmmichaelllang: Jeeves memory research phase workflow failed\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Daily Pipeline failed on main branch.",
+  "text": "- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Correspondence Phase failed on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Research Phase failed on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure in jeeves-memory repository.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failure in jeeves-unchained repository on main branch.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failure for a PR in jeeves-unchained repository.\n- [escalation] mmmichaelllang: Third failed attempt of the Jeeves Daily Pipeline workflow in jeeves-unchained.\n- [escalation] mmmichaelllang: Second failed attempt of the Jeeves Daily Pipeline workflow in jeeves-unchained.\n- [escalation] mmmichaelllang: Initial failure of the Jeeves Daily Pipeline workflow in jeeves-unchained.\n- [escalation] Andy: Brother Andy Lang shares an example of taking action and invites participation in a new group effort called Make Care Visible.\n- [escalation] mmmichaelllang: Another failure of the Jeeves Daily Pipeline workflow in jeeves-unchained from earlier in the day.",
   "counts": {
-    "reply_needed": 1,
+    "reply_needed": 0,
     "decision_required": 3,
     "scheduling": 0,
-    "follow_up": 0,
-    "escalation": 22,
-    "no_action": 24
+    "follow_up": 1,
+    "escalation": 14,
+    "no_action": 32
   }
 }
