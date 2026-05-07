@@ -1,0 +1,59 @@
+name: Jeeves — Weekly Audit Health Report
+
+# Walks sessions/audit-fix-*.json for the last 7 days and emails a digest
+# of validator-rejection counts, applied/skipped/failed totals, and any
+# auditor-revert commits (F-009 gate fires). Lets the operator notice
+# slow drifts in reasoning-model behavior or auditor regressions without
+# opening every audit-fix-<date>.json by hand.
+#
+# Cadence: Sundays 06:30 UTC (well after the daily 12:00 cron and the
+# 06:00 archive job). No commits, no pushes — read-only + email.
+
+on:
+  schedule:
+    - cron: '30 6 * * 0'  # Sunday 06:30 UTC
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Window size in days (default 7)"
+        required: false
+        default: "7"
+      email:
+        description: "Recipient address (default lang.mc@gmail.com)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    name: Audit Health
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 30  # need git log for revert-commit detection
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.8.17"
+
+      - name: Sync dependencies
+        run: uv sync --no-dev
+
+      - name: Run audit health report
+        env:
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          JEEVES_RECIPIENT_EMAIL: ${{ vars.JEEVES_RECIPIENT_EMAIL || 'lang.mc@gmail.com' }}
+        run: |
+          DAYS="${{ github.event.inputs.days || '7' }}"
+          RECIPIENT="${{ github.event.inputs.email || vars.JEEVES_RECIPIENT_EMAIL || 'lang.mc@gmail.com' }}"
+          echo "Days window: $DAYS"
+          echo "Recipient:   $RECIPIENT"
+          uv run python scripts/audit_health_report.py \
+            --days "$DAYS" \
+            --email "$RECIPIENT" \
+            --verbose
