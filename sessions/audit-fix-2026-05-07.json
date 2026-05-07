@@ -1,0 +1,47 @@
+{
+  "date": "2026-05-07",
+  "pre_fix_chars": 22701,
+  "post_fix_chars": 22640,
+  "actions": [
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.newyorker.com/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.newyorker.com/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.newyorker.com/magazine/2026/05/07/colberts-trumpet-player-on-life-after-late-night'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.newyorker.com/magazine/2026/05/07/colberts-trumpet-player-on-life-after-late-night"
+      }
+    },
+    {
+      "type": "inject_missing_section",
+      "section": "The Library Stacks",
+      "detail": "injected empty-feed for The Library Stacks",
+      "status": "applied",
+      "evidence": {
+        "anchor": "The Specific Enquiries"
+      }
+    },
+    {
+      "type": "rerender_greeting",
+      "section": "(greeting)",
+      "detail": "validator rejected: non-html prefix: 'We need to output a single HTML <p> paragraph, 80-150 words,'",
+      "status": "failed",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to output a single HTML <p> paragraph, 80-150 words, dry precise butler voice, mention weekday, weather, and a o"
+      }
+    }
+  ],
+  "pre_fix_defect_count": 6,
+  "post_fix_defect_count": null,
+  "audit_model_used": null
+}

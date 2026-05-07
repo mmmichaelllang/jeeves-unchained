@@ -1,0 +1,65 @@
+{
+  "date": "2026-05-07",
+  "briefing_chars": 22640,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete"
+  ],
+  "detectors_skipped": [
+    "D7_narrative_flow",
+    "D9_writing_quality"
+  ],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "24 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 24,
+        "samples": [
+          "https://www.bbc.com/news/articles/cz0ev7enk2lo",
+          "https://humy.ai",
+          "https://www.reuters.com/world",
+          "https://www.theguardian.com/world",
+          "https://www.bbc.com/news/articles/cj0pq2q8221o"
+        ]
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "section under 30 words (10) but sectors ['literary_pick'] have available data",
+      "evidence": {
+        "word_count": 10,
+        "data_signals": [
+          "literary_pick=populated"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
+      "evidence": {
+        "weather_preview": "Mostly cloudy and cool today in Edmonds. High 63-66\u00b0F, low tonight 49-52\u00b0F. Only a 1% chance of rain"
+      }
+    }
+  ],
+  "section_count": 7,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 1,
+  "aside_template_count": 0,
+  "narrative_flow_score": null,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": null
+}
