@@ -1,6 +1,6 @@
 {
   "date": "2026-05-07",
-  "briefing_chars": 22640,
+  "briefing_chars": 20186,
   "session_status": "complete",
   "detectors_run": [
     "D8_dedup",
@@ -20,27 +20,27 @@
       "type": "dedup_cross_day_overlap",
       "severity": "medium",
       "section": null,
-      "detail": "24 URLs already covered in prior briefings",
+      "detail": "22 URLs already covered in prior briefings",
       "evidence": {
-        "overlap_count": 24,
+        "overlap_count": 22,
         "samples": [
-          "https://www.bbc.com/news/articles/cz0ev7enk2lo",
-          "https://humy.ai",
-          "https://www.reuters.com/world",
-          "https://www.theguardian.com/world",
-          "https://www.bbc.com/news/articles/cj0pq2q8221o"
+          "https://harpers.org/archive/2026/04/the-authority-of-thought-pankaj-mishra",
+          "https://audria.tech",
+          "https://www.edmondsbeacon.com/stories/city-council-adopts-safety-action-plan,175444",
+          "https://www.newyorker.com/magazine/2026/02/16/what-is-claude-anthropic-doesnt-know-either",
+          "https://myedmondsnews.com/2026/05/climate-crusader-and-educator-gayla-shoemake-named-edmonds-citizen-of-the-year"
         ]
       }
     },
     {
       "type": "empty_with_data",
       "severity": "high",
-      "section": "The Library Stacks",
-      "detail": "section under 30 words (10) but sectors ['literary_pick'] have available data",
+      "section": "Talk of the Town",
+      "detail": "section under 30 words (4) but sectors ['newyorker'] have available data",
       "evidence": {
-        "word_count": 10,
+        "word_count": 4,
         "data_signals": [
-          "literary_pick=populated"
+          "newyorker=populated"
         ]
       }
     },
@@ -50,7 +50,7 @@
       "section": "(greeting)",
       "detail": "weather string present in session but not in greeting",
       "evidence": {
-        "weather_preview": "Mostly cloudy and cool today in Edmonds. High 63-66\u00b0F, low tonight 49-52\u00b0F. Only a 1% chance of rain"
+        "weather_preview": "Mist and cool this morning in Edmonds\u201449\u00b0F with 97% humidity and SSE winds at 5 mph. The day will st"
       }
     }
   ],

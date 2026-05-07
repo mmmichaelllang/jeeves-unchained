@@ -1,33 +1,34 @@
 {
   "date": "2026-05-07",
-  "pre_fix_chars": 22701,
-  "post_fix_chars": 22640,
+  "pre_fix_chars": 20374,
+  "post_fix_chars": 20186,
   "actions": [
     {
-      "type": "strip_hallucinated_url",
+      "type": "dedup_within_run_strip",
       "section": null,
-      "detail": "stripped <a href='https://www.newyorker.com/'>",
+      "detail": "stripped duplicate <a href='https://www.harpercollins.com/products/the-known-world-edward-p-jones'>",
       "status": "applied",
       "evidence": {
-        "url": "https://www.newyorker.com/"
+        "url": "https://www.harpercollins.com/products/the-known-world-edward-p-jones"
       }
     },
     {
-      "type": "strip_hallucinated_url",
+      "type": "dedup_within_run_strip",
       "section": null,
-      "detail": "stripped <a href='https://www.newyorker.com/magazine/2026/05/07/colberts-trumpet-player-on-life-after-late-night'>",
+      "detail": "stripped duplicate <a href='https://www.newyorker.com/magazine/2026/02/16/what-is-claude-anthropic-doesnt-know-either'>",
       "status": "applied",
       "evidence": {
-        "url": "https://www.newyorker.com/magazine/2026/05/07/colberts-trumpet-player-on-life-after-late-night"
+        "url": "https://www.newyorker.com/magazine/2026/02/16/what-is-claude-anthropic-doesnt-know-either"
       }
     },
     {
-      "type": "inject_missing_section",
-      "section": "The Library Stacks",
-      "detail": "injected empty-feed for The Library Stacks",
-      "status": "applied",
+      "type": "rerender_empty_with_data",
+      "section": "Talk of the Town",
+      "detail": "validator rejected: non-html prefix: 'We need to write a paragraph (or two) as Jeeves, dry, precis'",
+      "status": "failed",
       "evidence": {
-        "anchor": "The Specific Enquiries"
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to write a paragraph (or two) as Jeeves, dry, precise, occasionally barbed, only swear if it lands. Use <a href="
       }
     },
     {

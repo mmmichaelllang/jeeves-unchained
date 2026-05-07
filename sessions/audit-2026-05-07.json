@@ -1,6 +1,6 @@
 {
   "date": "2026-05-07",
-  "briefing_chars": 22701,
+  "briefing_chars": 20374,
   "session_status": "complete",
   "detectors_run": [
     "D8_dedup",
@@ -16,18 +16,31 @@
   "detectors_skipped": [],
   "defects": [
     {
+      "type": "dedup_url_cross_section",
+      "severity": "high",
+      "section": null,
+      "detail": "URL appears in 2 sections",
+      "evidence": {
+        "url": "https://www.newyorker.com/magazine/2026/02/16/what-is-claude-anthropic-doesnt-know-either",
+        "sections": [
+          "The Reading Room",
+          "The Library Stacks"
+        ]
+      }
+    },
+    {
       "type": "dedup_cross_day_overlap",
       "severity": "medium",
       "section": null,
-      "detail": "24 URLs already covered in prior briefings",
+      "detail": "22 URLs already covered in prior briefings",
       "evidence": {
-        "overlap_count": 24,
+        "overlap_count": 22,
         "samples": [
-          "https://www.bbc.com/news/live/c152zyj0599t",
-          "https://myedmondsnews.com/2026/05/wa-supreme-court-rejects-states-attempt-to-unblock-sheriff-eligibility-law",
-          "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception",
-          "https://nirva.life",
-          "https://www.propublica.org/article/life-inside-ice-dilley-children"
+          "https://audria.tech",
+          "https://www.newyorker.com/magazine/2026/05/11/colberts-trumpet-player-on-life-after-late-night",
+          "https://harpers.org/archive/2026/04/the-authority-of-thought-pankaj-mishra",
+          "https://philarchive.org/archive/ISATRO-4",
+          "https://www.newyorker.com/magazine/2026/02/16/what-is-claude-anthropic-doesnt-know-either"
         ]
       }
     },
@@ -41,72 +54,85 @@
         "issues": [
           {
             "section": "Opening",
-            "issue": "CSS block irrelevant to briefing disrupts narrative flow"
-          },
-          {
-            "section": "Greeting",
-            "issue": "Abrupt shift from salutation to technical GitHub failures without transition"
+            "issue": "Begins with unrelated CSS code, disrupting the expected briefing format."
           },
           {
             "section": "Domestic Sphere",
-            "issue": "Local news items presented as a list with no logical progression or thematic links"
+            "issue": "Abrupt transition from GitHub failures to local council news without a linking sentence."
           },
           {
             "section": "Beyond the Geofence",
-            "issue": "International topics introduced abruptly, lacking segue from domestic affairs"
+            "issue": "Shifts from local Edmonds news to international conflict with no segue, breaking logical progression."
           },
           {
-            "section": "Reading Room",
-            "issue": "Essays cited in isolation, no connective argument or thematic thread"
+            "section": "Beyond the Geofence",
+            "issue": "Inserts colloquial expletives ('A proper omnishambles...') that undercut the cultivated butler tone."
           },
           {
-            "section": "Specific Enquiries",
-            "issue": "Jumps from academic ontology to AI advancements without explanatory bridge"
+            "section": "The Reading Room",
+            "issue": "Lists multiple essays without explaining their relevance or connecting them to a central theme."
           },
           {
-            "section": "Congressional UAP",
-            "issue": "UAP discussion inserted suddenly, unrelated to preceding AI wearable section"
+            "section": "The Specific Enquiries",
+            "issue": "Jumps from metaphysical debates to AI research papers without a clear explanatory bridge."
           },
           {
-            "section": "New Yorker Excerpt",
-            "issue": "Lengthy Talk of the Town block inserted as-is, breaking briefing cohesion"
+            "section": "The Commercial Ledger",
+            "issue": "Ends with an incongruous phrase ('A proper, old\u2011fashioned goat\u2011fuck...') that interrupts the flow."
+          },
+          {
+            "section": "The Library Stacks",
+            "issue": "Provides an excessively long, digressive New Yorker excerpt that overwhelms the briefing\u2019s concise intent."
           },
           {
             "section": "Signoff",
-            "issue": "Closing appears after long excerpt, lacking summarizing remarks or proper valediction"
+            "issue": "Appears after a lengthy excerpt with no concluding summary or transition back to the briefing purpose."
           }
         ],
         "model": "nvidia/nemotron-3-super-120b-a12b:free"
       }
     },
     {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Specific Enquiries",
-      "detail": "href 'https://www.newyorker.com/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://www.newyorker.com/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
+      "type": "writing_quality_low",
       "severity": "medium",
-      "section": "The Specific Enquiries",
-      "detail": "href 'https://www.newyorker.com/magazine/2026/05/07/colberts-trumpet-player-on-life-after-late-night' not present in any session JSON sector",
+      "section": null,
+      "detail": "writing quality score 5/10",
       "evidence": {
-        "url": "https://www.newyorker.com/magazine/2026/05/07/colberts-trumpet-player-on-life-after-late-night",
-        "is_homepage": false
+        "score": 5,
+        "issues": [
+          {
+            "type": "vague",
+            "evidence": "A proper omnishambles of the highest, most fucking degree."
+          },
+          {
+            "type": "vague",
+            "evidence": "A clusterfuck of biblical proportions, Sir."
+          },
+          {
+            "type": "vague",
+            "evidence": "A total and utter shitshow."
+          },
+          {
+            "type": "vague",
+            "evidence": "A proper, old\u2011fashioned goat\u2011fuck of an exercise."
+          },
+          {
+            "type": "voice_break",
+            "evidence": "Multiple expletives ('fucking', 'clusterfuck', 'shitshow', 'goat\u2011fuck') break the cultivated butler voice."
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
       }
     },
     {
-      "type": "missing_section",
+      "type": "empty_with_data",
       "severity": "high",
-      "section": "The Library Stacks",
-      "detail": "h3 'The Library Stacks' absent but sectors ['literary_pick'] have data",
+      "section": "Talk of the Town",
+      "detail": "section under 30 words (4) but sectors ['newyorker'] have available data",
       "evidence": {
-        "sectors": [
-          "literary_pick"
+        "word_count": 4,
+        "data_signals": [
+          "newyorker=populated"
         ]
       }
     },
@@ -116,16 +142,16 @@
       "section": "(greeting)",
       "detail": "weather string present in session but not in greeting",
       "evidence": {
-        "weather_preview": "Mostly cloudy and cool today in Edmonds. High 63-66\u00b0F, low tonight 49-52\u00b0F. Only a 1% chance of rain"
+        "weather_preview": "Mist and cool this morning in Edmonds\u201449\u00b0F with 97% humidity and SSE winds at 5 mph. The day will st"
       }
     }
   ],
-  "section_count": 6,
-  "hallucinated_url_count": 2,
-  "empty_section_count": 0,
+  "section_count": 7,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 1,
   "aside_template_count": 0,
   "narrative_flow_score": 3,
-  "writing_quality_score": null,
+  "writing_quality_score": 5,
   "dedup_score": null,
   "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free"
 }
