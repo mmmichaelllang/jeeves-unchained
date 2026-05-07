@@ -375,6 +375,96 @@ def fix_missing_sections(html: str, defects: list[dict], session: dict,
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# F-001 — output validator for LLM-backed fixes (F6-F9).
+# Reasoning models (nemotron, deepseek-r1, openai-o1) emit chain-of-thought
+# on a non-trivial percentage of calls. fix_empty_with_data previously
+# spliced ``text`` verbatim with only a falsy guard, leading to the
+# 2026-05-06 briefing leaking nemotron's planning prose into Talk of the
+# Town. This validator gates every fix path that splices model output.
+# ---------------------------------------------------------------------------
+
+# First non-whitespace token must be a block-level HTML opener.
+_AUDIT_OUT_FIRST_TAG_RE = re.compile(r"^\s*<(p|div|h[1-6]|section|article)\b", re.IGNORECASE)
+
+# Strip HTML tags for word counting. Crude but sufficient — we only need
+# to bracket the count, not parse semantically.
+_AUDIT_OUT_TAG_STRIP_RE = re.compile(r"<[^>]+>")
+
+# CoT markers — phrases reasoning models emit when narrating their plan.
+# Case-insensitive substring match. Defense-in-depth: catches HTML-then-CoT
+# (case 3 in the F-001 plan), which the first-tag check misses.
+_AUDIT_OUT_COT_MARKERS = (
+    "we need to produce",
+    "word count:",
+    "word count target",
+    "let me start",
+    "let me think",
+    "let me check",
+    "let me adjust",
+    "let's count",
+    "step 1:",
+    "step 2:",
+    "first, i'll",
+    "first i'll",
+    "i'll write",
+    "i'll draft",
+    "i need to",
+    "the user wants",
+    "the user is asking",
+    "okay, so",
+    "okay so the",
+    "<think>",
+    "</think>",
+)
+
+
+def _validate_audit_model_output(
+    text: str,
+    *,
+    expect_html_paragraph: bool = True,
+    min_words: int = 30,
+    max_words: int = 400,
+) -> tuple[bool, str]:
+    """Reject chain-of-thought leaks, fragments, and oversized output.
+
+    Returns (ok, reason). ok=True means the text is safe to splice into
+    the briefing. ok=False means the caller should append a failed
+    FixAction and skip the splice.
+
+    Rules (in order):
+
+    1. Strip whitespace; reject empty.
+    2. If expect_html_paragraph: first non-whitespace token must open a
+       block-level HTML tag (<p>, <div>, <h2>-<h6>, <section>, <article>).
+    3. Word count (post tag-strip) must be in [min_words, max_words].
+    4. Defense-in-depth: scan full text against curated CoT markers.
+    """
+    if not text or not text.strip():
+        return (False, "empty after strip")
+
+    stripped = text.strip()
+
+    if expect_html_paragraph and not _AUDIT_OUT_FIRST_TAG_RE.match(stripped):
+        preview = stripped[:60].replace("\n", " ")
+        return (False, f"non-html prefix: {preview!r}")
+
+    plain = _AUDIT_OUT_TAG_STRIP_RE.sub(" ", stripped)
+    words = [w for w in plain.split() if w.strip()]
+    n = len(words)
+    if n < min_words:
+        return (False, f"word count: {n} below floor {min_words}")
+    if n > max_words:
+        return (False, f"word count: {n} above ceiling {max_words}")
+
+    lower = stripped.lower()
+    for marker in _AUDIT_OUT_COT_MARKERS:
+        if marker in lower:
+            return (False, f"cot marker: {marker!r}")
+
+    return (True, "ok")
+
+
 def _call_audit_model(prompt: str, system: str = "",
                       max_tokens: int = 2048) -> tuple[str, str | None]:
     api_key = os.environ.get("OPENROUTER_API_KEY", "").strip()
@@ -482,6 +572,23 @@ def fix_empty_with_data(html: str, defects: list[dict], session: dict,
                 section=section_name,
                 detail="skipped — LLM call failed",
                 status="failed",
+            ))
+            continue
+        # F-001 — gate the splice on structural validation. Reasoning models
+        # leak chain-of-thought; without this gate the planning prose ends
+        # up in the briefing (see 2026-05-06 incident).
+        ok, reason = _validate_audit_model_output(text)
+        if not ok:
+            log.warning(
+                "audit_fix: validator rejected output for %s (model=%s, reason=%s)",
+                section_name, model, reason,
+            )
+            actions.append(FixAction(
+                type="rerender_empty_with_data",
+                section=section_name,
+                detail=f"validator rejected: {reason}",
+                status="failed",
+                evidence={"model": model, "preview": text[:120]},
             ))
             continue
         model_used = model

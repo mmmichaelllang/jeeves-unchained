@@ -242,7 +242,11 @@ def test_f6_rerenders_empty_with_data_via_stub(tmp_path, monkeypatch):
     monkeypatch.setattr(
         fix_mod, "_call_audit_model",
         lambda prompt, system="", max_tokens=2048:
-            ("<p>Gilead by Marilynne Robinson — your literary pick today.</p>",
+            ("<p>Gilead by Marilynne Robinson is the literary pick this "
+             "morning, a 2004 novel of considerable patience. The butler "
+             "suspects Mister Lang will appreciate its refusal to hurry — "
+             "the rare American novel that earns its meditative pace "
+             "honestly rather than by stalling.</p>",
              "stub/reasoning-7b:free"),
     )
     monkeypatch.setenv("OPENROUTER_API_KEY", "fake")
