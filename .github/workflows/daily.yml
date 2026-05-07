@@ -311,11 +311,37 @@ jobs:
         run: |
           DATE="${{ github.event.inputs.date || '' }}"
           if [ -z "$DATE" ]; then DATE=$(date -u +%Y-%m-%d); fi
-          # Overwrites audit-<date>.json with post-fix counts.
+          # F-009 — preserve pre-fix audit JSON; write post-fix counts to a
+          # separate file so the forensic record stays intact.
+          cp sessions/audit-$DATE.json sessions/audit-$DATE.original.json
           uv run python scripts/audit.py --date "$DATE" --no-llm || true
+          mv sessions/audit-$DATE.json sessions/audit-$DATE.post-fix.json
+          mv sessions/audit-$DATE.original.json sessions/audit-$DATE.json
+
+      - name: Gate commit on auditor improvement
+        if: ${{ vars.JEEVES_AUDITOR_AUTO_FIX == '1' }}
+        run: |
+          DATE="${{ github.event.inputs.date || '' }}"
+          if [ -z "$DATE" ]; then DATE=$(date -u +%Y-%m-%d); fi
+          if [ ! -f sessions/audit-$DATE.post-fix.json ]; then
+            echo "::warning::no post-fix audit JSON — gate inconclusive, treating as revert"
+            echo "AUDITOR_REVERT=1" >> $GITHUB_ENV
+            exit 0
+          fi
+          PRE=$(jq '.defects | length' sessions/audit-$DATE.json)
+          POST=$(jq '.defects | length' sessions/audit-$DATE.post-fix.json)
+          echo "pre-fix defects: $PRE / post-fix defects: $POST"
+          if [ "$POST" -ge "$PRE" ]; then
+            echo "::warning::auditor did not improve briefing (pre=$PRE post=$POST) — reverting briefing.html"
+            git checkout sessions/briefing-$DATE.html
+            echo "AUDITOR_REVERT=1" >> $GITHUB_ENV
+          else
+            echo "::notice::auditor improved briefing ($PRE -> $POST defects)"
+            echo "AUDITOR_REVERT=0" >> $GITHUB_ENV
+          fi
 
       - name: Re-send revised briefing (gated)
-        if: ${{ vars.JEEVES_AUDITOR_RESEND == '1' && vars.JEEVES_AUDITOR_AUTO_FIX == '1' }}
+        if: ${{ vars.JEEVES_AUDITOR_RESEND == '1' && vars.JEEVES_AUDITOR_AUTO_FIX == '1' && env.AUDITOR_REVERT != '1' }}
         env:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           JEEVES_RECIPIENT_EMAIL: ${{ vars.JEEVES_RECIPIENT_EMAIL || 'lang.mc@gmail.com' }}
@@ -330,9 +356,15 @@ jobs:
         run: |
           git config user.name "jeeves-bot"
           git config user.email "jeeves-bot@users.noreply.github.com"
-          git add sessions/audit-*.json sessions/briefing-*.html 2>/dev/null || true
+          # F-009 — also stage audit-fix-*.json (was missing); pre-fix +
+          # post-fix audit JSONs both committed for forensic record.
+          git add sessions/audit-*.json sessions/audit-fix-*.json sessions/briefing-*.html 2>/dev/null || true
           if ! git diff --cached --quiet; then
-            git commit -m "auditor: $(date -u +%Y-%m-%d) records"
+            MSG="auditor: $(date -u +%Y-%m-%d) records"
+            if [ "$AUDITOR_REVERT" = "1" ]; then
+              MSG="$MSG (reverted — auditor regressed)"
+            fi
+            git commit -m "$MSG"
             git pull --rebase --autostash origin "${{ github.ref_name }}" || true
             git push
           else
