@@ -179,9 +179,107 @@ def test_render_html_escapes_special_chars(tmp_path):
     sd = tmp_path / "sessions"
     rep = collect_week_report(sd, days=7, today=date(2026, 5, 6))
     html = render_html(rep)
-    # Raw < and > from the model name must be escaped inside <pre>.
+    # Raw < and > from the model name must be escaped wherever it surfaces.
     assert "&lt;script&gt;" in html
     assert "<script>alert" not in html  # raw form must NOT appear
-    # Outer body/pre tags are not escaped.
+    # Outer body tag is not escaped — it's part of the email layout.
     assert "<body" in html
-    assert "<pre" in html
+
+
+def test_render_html_empty_window_short_circuits(tmp_path):
+    """Empty-window path returns the short message, not a full layout."""
+    from audit_health_report import collect_week_report, render_html  # noqa: PLC0415
+
+    sd = tmp_path / "sessions"
+    sd.mkdir()
+    rep = collect_week_report(sd, days=7, today=date(2026, 5, 6))
+    html = render_html(rep)
+    assert "No audit-fix runs in window" in html
+    # Should NOT contain a per-day table or summary chips.
+    assert "Per day" not in html
+    assert "applied" not in html.lower() or "Either" in html  # the only "applied" is in code-tag context
+
+
+def test_render_html_includes_summary_chips(tmp_path):
+    """Happy path includes applied/skipped/failed/reverts chips with values."""
+    from audit_health_report import collect_week_report, render_html  # noqa: PLC0415
+
+    _make_audit_fix(tmp_path, "2026-05-05", [
+        {"type":"strip_hallucinated_url","section":None,"detail":"applied","status":"applied"},
+        {"type":"rerender_empty_with_data","section":"x",
+         "detail":"validator rejected: cot marker", "status":"failed"},
+    ])
+    sd = tmp_path / "sessions"
+    rep = collect_week_report(sd, days=7, today=date(2026, 5, 6))
+    html = render_html(rep)
+    # Chip labels (uppercased in the inline CSS via text-transform).
+    assert "applied" in html
+    assert "failed" in html
+    # Numeric values present.
+    assert ">1<" in html  # one applied + one failed -> both render as 1
+    # Per-day table rendered.
+    assert "Per day" in html
+    assert "2026-05-05" in html
+
+
+def test_render_html_sentinel_red_when_reverts_exist(tmp_path, monkeypatch):
+    """When a revert commit is found, sentinel uses the alert color."""
+    from audit_health_report import collect_week_report, render_html  # noqa: PLC0415
+    import audit_health_report as mod  # noqa: PLC0415
+
+    monkeypatch.setattr(mod, "_git_log_revert_commits",
+                        lambda since, sd: [("abc1234", "auditor: 2026-05-05 records (reverted — auditor regressed)")])
+
+    _make_audit_fix(tmp_path, "2026-05-05", [
+        {"type":"strip_hallucinated_url","section":None,"detail":"applied","status":"applied"},
+    ])
+    sd = tmp_path / "sessions"
+    rep = collect_week_report(sd, days=7, today=date(2026, 5, 6))
+    html = render_html(rep)
+    # Alert color (red #cf222e) appears in the rendered HTML.
+    assert "#cf222e" in html
+    # Revert commit list rendered.
+    assert "abc1234" in html
+    assert "auditor regressed" in html
+
+
+def test_history_covers_window_heuristic():
+    """Heuristic: depth >= days * 6 is enough; less may miss reverts."""
+    from audit_health_report import _history_covers_window  # noqa: PLC0415
+
+    assert _history_covers_window(None, 7) is True   # unknown -> don't false-warn
+    assert _history_covers_window(50, 7) is True     # 50 >= 7*6 = 42
+    assert _history_covers_window(42, 7) is True     # exactly equal is enough
+    assert _history_covers_window(30, 7) is False    # 30 < 42
+    assert _history_covers_window(0, 1) is False     # zero-depth always insufficient
+
+
+def test_collect_week_report_records_history_depth(tmp_path, monkeypatch):
+    """`git_history_depth` and `history_covers_window` populated on the report."""
+    from audit_health_report import collect_week_report  # noqa: PLC0415
+    import audit_health_report as mod  # noqa: PLC0415
+
+    monkeypatch.setattr(mod, "_git_history_depth", lambda sd: 30)
+
+    _make_audit_fix(tmp_path, "2026-05-05",
+                    actions=[{"type":"x","section":None,"detail":"a","status":"applied"}])
+    sd = tmp_path / "sessions"
+    rep = collect_week_report(sd, days=7, today=date(2026, 5, 6))
+    assert rep.git_history_depth == 30
+    assert rep.history_covers_window is False  # 30 < 7*6
+
+
+def test_render_text_warns_on_shallow_history(tmp_path, monkeypatch):
+    """Shallow-history sentinel surfaces in plain-text render."""
+    from audit_health_report import collect_week_report, render_text  # noqa: PLC0415
+    import audit_health_report as mod  # noqa: PLC0415
+
+    monkeypatch.setattr(mod, "_git_history_depth", lambda sd: 10)
+
+    _make_audit_fix(tmp_path, "2026-05-05",
+                    actions=[{"type":"x","section":None,"detail":"a","status":"applied"}])
+    sd = tmp_path / "sessions"
+    rep = collect_week_report(sd, days=7, today=date(2026, 5, 6))
+    out = render_text(rep)
+    assert "Git history depth" in out
+    assert "fetch-depth" in out

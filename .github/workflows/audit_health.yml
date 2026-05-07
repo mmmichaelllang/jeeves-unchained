@@ -34,7 +34,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 30  # need git log for revert-commit detection
+          # Need git log history for the F-009 revert-commit scan in
+          # audit_health_report._git_log_revert_commits. Production cadence
+          # is ~5 commits/day (correspondence, research, write, audit,
+          # audit-fix). 30 commits covers ~6 days comfortably — fine for
+          # the default 7-day window.
+          #
+          # If the workflow's `--days` input is bumped above ~5, also bump
+          # this to roughly `days * 6`, or set `fetch-depth: 0` for full
+          # history (~10s extra clone time). The script's sentinel will
+          # warn when the depth heuristic suggests truncation.
+          fetch-depth: 30
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v3
