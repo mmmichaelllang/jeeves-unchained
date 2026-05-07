@@ -247,3 +247,128 @@ def test_fix_empty_with_data_accepts_clean_output(tmp_path, monkeypatch):
     assert rerender[0].status == "applied", (
         f"clean output should have applied, got {rerender[0].status!r}"
     )
+
+
+# ---------------------------------------------------------------------------
+# F-007: Integration — validator wired into fix_greeting_incomplete (F7).
+# ---------------------------------------------------------------------------
+
+
+def _write_greeting_trio(tmp_path, briefing_html, defects):
+    """Trio writer for greeting tests — needs weather + correspondence in session."""
+    (tmp_path / "briefing-2026-05-06.html").write_text(briefing_html, encoding="utf-8")
+    (tmp_path / "audit-2026-05-06.json").write_text(
+        json.dumps({"date": "2026-05-06", "defects": defects}), encoding="utf-8",
+    )
+    session = {
+        "date": "2026-05-06",
+        "weather": "Mostly cloudy, high 66°F",
+        "correspondence": {"text": "- [escalation] Andy: action item due Thursday"},
+    }
+    (tmp_path / "session-2026-05-06.json").write_text(
+        json.dumps(session), encoding="utf-8",
+    )
+    return tmp_path
+
+
+def test_fix_greeting_incomplete_rejects_cot_output(tmp_path, monkeypatch):
+    """Greeting-shape CoT must NOT be spliced into the opening paragraph.
+
+    Same threat model as F-001: reasoning models leak planning prose. The
+    greeting fix path is the second of two LLM-backed splice sites — F-007
+    closes the gap left by F-001.
+    """
+    from audit_fix import run_fix  # noqa: PLC0415
+    import audit_fix as fix_mod  # noqa: PLC0415
+
+    html = """<!DOCTYPE html><html><body>
+<p>Greet placeholder.</p>
+<h3>The Domestic Sphere</h3>
+<p>Content.</p>
+</body></html>"""
+    defects = [{
+        "type": "greeting_missing_weather",
+        "severity": "medium",
+        "section": "(greeting)",
+        "detail": "x",
+        "evidence": {"weather_preview": "high 66°F"},
+    }]
+    _write_greeting_trio(tmp_path, html, defects)
+
+    cot_output = (
+        "We need to write a greeting paragraph that mentions the date, "
+        "the weather, and previews the correspondence load. Word count: "
+        "80-150 words. Let me think about the in-medias-res opening "
+        "Jeeves uses. <p>Wednesday, then. The morning offers cloud cover "
+        "and Andy's escalation, in roughly that order of consequence.</p>"
+    )
+    monkeypatch.setattr(
+        fix_mod, "_call_audit_model",
+        lambda prompt, system="", max_tokens=400: (cot_output, "stub/reasoning-7b:free"),
+    )
+    monkeypatch.setenv("OPENROUTER_API_KEY", "fake")
+
+    report = run_fix("2026-05-06", tmp_path, use_llm=True, dry_run=False)
+    out = (tmp_path / "briefing-2026-05-06.html").read_text(encoding="utf-8")
+
+    # CoT must not survive into the briefing.
+    assert "We need to write a greeting" not in out
+    assert "Word count:" not in out
+    assert "Let me think" not in out
+
+    # Original placeholder remains untouched (greeting fix returned early).
+    assert "Greet placeholder" in out
+
+    rerender = [a for a in report.actions if a.type == "rerender_greeting"]
+    assert len(rerender) == 1
+    assert rerender[0].status == "failed", (
+        f"expected status='failed' on validator reject, got {rerender[0].status!r}; "
+        f"detail={rerender[0].detail!r}"
+    )
+    assert "validator" in rerender[0].detail.lower()
+
+
+def test_fix_greeting_incomplete_accepts_clean_output(tmp_path, monkeypatch):
+    """Sanity: a clean 47-word <p> greeting still splices via the validator."""
+    from audit_fix import run_fix  # noqa: PLC0415
+    import audit_fix as fix_mod  # noqa: PLC0415
+
+    html = """<!DOCTYPE html><html><body>
+<p>Greet placeholder.</p>
+<h3>The Domestic Sphere</h3>
+<p>Content.</p>
+</body></html>"""
+    defects = [{
+        "type": "greeting_missing_weather",
+        "severity": "medium",
+        "section": "(greeting)",
+        "detail": "x",
+        "evidence": {"weather_preview": "high 66°F"},
+    }]
+    _write_greeting_trio(tmp_path, html, defects)
+
+    # 47 words, in-medias-res, mentions weekday + weather + correspondence.
+    clean_output = (
+        "<p>Wednesday, then, and a sky that has settled on cloud as its "
+        "operating principle — high of sixty-six, light wind, no real "
+        "complaint to speak of. Andy's escalation arrived overnight; the "
+        "butler will mention it once and decline to flag again until "
+        "Mister Lang has had coffee.</p>"
+    )
+    monkeypatch.setattr(
+        fix_mod, "_call_audit_model",
+        lambda prompt, system="", max_tokens=400: (clean_output, "stub/reasoning-7b:free"),
+    )
+    monkeypatch.setenv("OPENROUTER_API_KEY", "fake")
+
+    report = run_fix("2026-05-06", tmp_path, use_llm=True, dry_run=False)
+    out = (tmp_path / "briefing-2026-05-06.html").read_text(encoding="utf-8")
+
+    assert "Greet placeholder" not in out
+    assert "Wednesday, then" in out
+
+    rerender = [a for a in report.actions if a.type == "rerender_greeting"]
+    assert len(rerender) == 1
+    assert rerender[0].status == "applied", (
+        f"clean output should have applied, got {rerender[0].status!r}"
+    )

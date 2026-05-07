@@ -667,6 +667,23 @@ def fix_greeting_incomplete(html: str, defects: list[dict], session: dict,
             status="failed",
         ))
         return html, None
+    # F-007 — gate the splice on structural validation. Same threat model
+    # as F-001 in fix_empty_with_data: reasoning models leak chain-of-thought,
+    # and without this gate the planning prose ends up in the greeting.
+    ok, reason = _validate_audit_model_output(text)
+    if not ok:
+        log.warning(
+            "audit_fix: validator rejected greeting output (model=%s, reason=%s)",
+            model, reason,
+        )
+        actions.append(FixAction(
+            type="rerender_greeting",
+            section="(greeting)",
+            detail=f"validator rejected: {reason}",
+            status="failed",
+            evidence={"model": model, "preview": text[:120]},
+        ))
+        return html, None
 
     # Replace the FIRST <p> in the document (greeting is always first).
     m = re.search(r"<p[^>]*>.*?</p>", html, re.DOTALL)
