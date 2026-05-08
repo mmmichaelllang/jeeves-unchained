@@ -67,3 +67,20 @@ jobs:
             --days "$DAYS" \
             --email "$RECIPIENT" \
             --verbose
+
+      - name: Run quality-warning telemetry report
+        # Aggregates `quality_warnings` from run-manifest-*.json over the same
+        # window as the audit health step. Surfaces chronic prompt-level
+        # patterns (PART7 fallback fires, PART9 TOTT scaffolding fires, NIM
+        # refine misses). Run AFTER audit_health so a single email-stack lands
+        # per Sunday morning.
+        env:
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          JEEVES_RECIPIENT_EMAIL: ${{ vars.JEEVES_RECIPIENT_EMAIL || 'lang.mc@gmail.com' }}
+        run: |
+          DAYS="${{ github.event.inputs.days || '7' }}"
+          RECIPIENT="${{ github.event.inputs.email || vars.JEEVES_RECIPIENT_EMAIL || 'lang.mc@gmail.com' }}"
+          uv run python scripts/quality_telemetry_report.py \
+            --days "$DAYS" \
+            --email "$RECIPIENT" \
+            --verbose
