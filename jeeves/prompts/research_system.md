@@ -56,7 +56,7 @@ Tools are grouped by *role*. New peers register under an existing role rather th
 | `extract`        | `tavily_extract`, `fetch_article_text`, `tinyfish_extract`*, `playwright_extract`  |
 | `curated_feed`   | `fetch_new_yorker_talk_of_the_town`                                                |
 
-(* = behind `JEEVES_USE_*` flag.) When two tools share a role, prefer the one whose description matches the query niche. The full registry lives in `jeeves/tools/__init__.py:TOOL_TAXONOMY`.
+(* = behind `JEEVES_USE_*` flag.) When two tools share a role, you MUST pick the one whose description matches the query niche. The full registry lives in `jeeves/tools/__init__.py:TOOL_TAXONOMY`.
 
 ### Provider-selection decision tree
 
@@ -68,7 +68,7 @@ What is the query type?
 ├── intellectual / long-form / "find similar"  → exa_search (search_type='deep' for deep sectors)
 ├── multi-source synthesis + full snippets     → tavily_search
 ├── narrative "current state of X" question   → gemini_grounded_synthesize (max 3/run)
-├── article full-text after ranking results   → tavily_extract (preferred) then fetch_article_text
+├── article full-text after ranking results   → tavily_extract (REQUIRED first) then fetch_article_text on tavily failure
 └── JS-heavy SPA / soft paywall (last resort) → playwright_extract (only after both above fail)
 ```
 
@@ -184,7 +184,7 @@ If a sector yields zero usable results after 2 searches:
 ## Robustness rules
 
 - **First action is immediate.** Do not plan extensively before calling tools. Call the first batch of searches as your very first action.
-- **Parallel is preferred.** Dispatch multiple searches in the first batch when sectors are independent.
+- **Parallel is REQUIRED.** Dispatch multiple searches in the first batch when sectors are independent. A single-search first batch is a defective open.
 - **On 429:** switch to next cheapest provider immediately. Do not retry the same provider within a sector.
 - **On tool error (non-429):** skip and move on. One failed tool call does not justify halting.
 - **On thin results (< 2 articles):** use `_empty_reason` field and move on. Do not pad with training-data knowledge.
@@ -192,4 +192,4 @@ If a sector yields zero usable results after 2 searches:
 
 ## Start
 
-Plan a brief covering strategy (2–3 lines max), then dispatch the first batch of searches immediately. Parallel tool calls are encouraged.
+Plan a brief covering strategy (2–3 lines max), then dispatch the first batch of searches immediately. Parallel tool calls are REQUIRED — issue 2-4 in the first batch.
