@@ -1,0 +1,29 @@
+{
+  "date": "2026-05-08",
+  "pre_fix_chars": 22130,
+  "post_fix_chars": 22219,
+  "actions": [
+    {
+      "type": "inject_missing_section",
+      "section": "The Library Stacks",
+      "detail": "injected empty-feed for The Library Stacks",
+      "status": "applied",
+      "evidence": {
+        "anchor": "The Commercial Ledger"
+      }
+    },
+    {
+      "type": "rerender_greeting",
+      "section": "(greeting)",
+      "detail": "validator rejected: non-html prefix: 'We need to output a single HTML <p> paragraph, 80-150 words,'",
+      "status": "failed",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to output a single HTML <p> paragraph, 80-150 words, dry, precise butler voice, mention the weekday, the weather"
+      }
+    }
+  ],
+  "pre_fix_defect_count": 5,
+  "post_fix_defect_count": null,
+  "audit_model_used": null
+}

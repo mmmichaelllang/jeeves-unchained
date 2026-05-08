@@ -1,0 +1,65 @@
+{
+  "date": "2026-05-08",
+  "briefing_chars": 22219,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete"
+  ],
+  "detectors_skipped": [
+    "D7_narrative_flow",
+    "D9_writing_quality"
+  ],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "24 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 24,
+        "samples": [
+          "https://link.springer.com/article/10.1007/s12136-025-00635-5",
+          "https://www.nybooks.com/articles/2026/03/12/a-bitter-winter-in-ukraine-tim-judah",
+          "https://myedmondsnews.com/2026/05/city-of-edmonds-update-resolution-of-wastewater-treatment-plant-operational-issues-ongoing",
+          "https://www.theguardian.com/world",
+          "https://humy.ai"
+        ]
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "section under 30 words (10) but sectors ['literary_pick'] have available data",
+      "evidence": {
+        "word_count": 10,
+        "data_signals": [
+          "literary_pick=populated"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
+      "evidence": {
+        "weather_preview": "Today in Edmonds: Cloudy morning giving way to partly sunny afternoon, high 60-62\u00b0F. Light SW winds "
+      }
+    }
+  ],
+  "section_count": 7,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 1,
+  "aside_template_count": 0,
+  "narrative_flow_score": null,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": null
+}

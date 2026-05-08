@@ -1,0 +1,135 @@
+{
+  "date": "2026-05-08",
+  "briefing_chars": 22130,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D7_narrative_flow",
+    "D9_writing_quality",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete"
+  ],
+  "detectors_skipped": [],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "24 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 24,
+        "samples": [
+          "https://www.reuters.com/world",
+          "http://arxiv.org/abs/2602.08990v1",
+          "https://audria.tech",
+          "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception",
+          "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting"
+        ]
+      }
+    },
+    {
+      "type": "narrative_flow_low",
+      "severity": "high",
+      "section": null,
+      "detail": "narrative flow score 3/10",
+      "evidence": {
+        "score": 3,
+        "issues": [
+          {
+            "section": "Opening",
+            "issue": "CSS code block unrelated to narrative disrupts flow"
+          },
+          {
+            "section": "Domestic Sphere",
+            "issue": "No paragraph break or transition before heading"
+          },
+          {
+            "section": "Beyond the Geofence",
+            "issue": "Abrupt heading without linking sentence"
+          },
+          {
+            "section": "The Reading Room",
+            "issue": "Abrupt heading without linking sentence"
+          },
+          {
+            "section": "The Specific Enquiries",
+            "issue": "Abrupt heading without linking sentence"
+          },
+          {
+            "section": "The Commercial Ledger",
+            "issue": "Abrupt heading without linking sentence"
+          },
+          {
+            "section": "Talk of the Town",
+            "issue": "Redundant closing note and lack of transition into section"
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "writing_quality_low",
+      "severity": "medium",
+      "section": null,
+      "detail": "writing quality score 5/10",
+      "evidence": {
+        "score": 5,
+        "issues": [
+          {
+            "type": "filler",
+            "evidence": "The salient matters, in this case, are the repeated failures across different workflows, suggesting a potential systemic issue rather than isolated incidents."
+          },
+          {
+            "type": "repetition",
+            "evidence": "as My Edmonds News reports."
+          },
+          {
+            "type": "vague",
+            "evidence": "The teaching job boards are quiet this morning, Sir \u2014 nothing new has surfaced within thirty miles."
+          },
+          {
+            "type": "voice_break",
+            "evidence": "The Edmonds City Council has postponed its vote on confirming Stephanie Lucash as the new city administrator until next week, My Edmonds News reports."
+          },
+          {
+            "type": "aside_overuse",
+            "evidence": "according to My Edmonds News ."
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "missing_section",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "h3 'The Library Stacks' absent but sectors ['literary_pick'] have data",
+      "evidence": {
+        "sectors": [
+          "literary_pick"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
+      "evidence": {
+        "weather_preview": "Today in Edmonds: Cloudy morning giving way to partly sunny afternoon, high 60-62\u00b0F. Light SW winds "
+      }
+    }
+  ],
+  "section_count": 6,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 0,
+  "aside_template_count": 0,
+  "narrative_flow_score": 3,
+  "writing_quality_score": 5,
+  "dedup_score": null,
+  "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free"
+}
