@@ -261,19 +261,27 @@ async def _run_sector_loop(
     light_specs = [s for s in non_enriched if s.name not in _DEEP_SECTOR_NAMES]
 
     log.info(
-        "running %d non-enriched sectors sequentially: %d deep, %d light…",
-        len(non_enriched), len(deep_specs), len(light_specs),
+        "running %d non-enriched sectors sequentially: %d light first, then %d deep…",
+        len(non_enriched), len(light_specs), len(deep_specs),
     )
 
-    # Run deep sectors one at a time — NIM stream-drop / 429 risk too high to pair.
-    for spec in deep_specs:
+    # 2026-05-08 reorder — light sectors FIRST, deep sectors LAST.
+    #
+    # Why: career and family are light sectors whose Kimi agent runs on NIM.
+    # When they ran AFTER the deep sectors (triadic_ontology, ai_systems, uap),
+    # NIM's free-tier TPM budget was saturated and they ate 429s for all 3
+    # retries → returned default {} → empty section in briefing. Sessions
+    # 5/3 through 5/8 confirm career has been empty (or malformed) for a week.
+    # Light sectors carry Lang-personal content (job hunt, choir, toddler
+    # activities) with no usable fallback; deep sectors fall back cleanly to
+    # `default={"findings":"","urls":[]}`. Better to lose the deep sectors
+    # silently than to ship empty career/family every day.
+    for spec in light_specs:
         results = [await _run_one(spec)]
         _update_prior(results)
 
-    # Run light sectors sequentially (sprint-19 slice E pair-gather reverted
-    # 2026-05-06: NIM free tier wiped 4-6/8 light sectors per run when called
-    # concurrently). Same shape as deep loop above; prior_sample grows after each.
-    for spec in light_specs:
+    # Run deep sectors one at a time — NIM stream-drop / 429 risk too high to pair.
+    for spec in deep_specs:
         results = [await _run_one(spec)]
         _update_prior(results)
 
