@@ -1633,7 +1633,7 @@ def test_inject_banner_added_when_missing():
     )
     result = _inject_banner(html)
     assert 'class="banner"' in result
-    assert 'i.imgur.com/UqSFELh.png' in result
+    assert 'i.imgur.com/iB0S0Qt.png' in result
     # Banner must come BEFORE mh-date.
     assert result.index('class="banner"') < result.index('mh-date')
 
@@ -1665,7 +1665,7 @@ def test_inject_banner_replaces_wrong_url():
         '</div></body></html>'
     )
     result = _inject_banner(html)
-    assert 'i.imgur.com/UqSFELh.png' in result
+    assert 'i.imgur.com/iB0S0Qt.png' in result
     assert 'wrong.jpg' not in result
     assert result.count('class="banner"') == 1
 

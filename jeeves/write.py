@@ -390,8 +390,8 @@ masthead structure with today's full weekday date filled in, then:
     * { box-sizing: border-box; }
     body { font-family: Georgia, 'Times New Roman', serif; background: #0a0a0a; color: #1a1714; margin: 0; padding: 48px 16px 80px; font-size: 17px; }
     .container { max-width: 660px; margin: 0 auto; background: #fdfaf5; border: 1px solid #bfb090; line-height: 1.88; }
-    .banner { display: block; width: 100%; margin: 0; padding: 0; border: 0; }
-    .mh-date { background-color: #0c1015; color: #8899aa; margin: 0; padding: 36px 56px 48px; font-size: 0.72em; font-style: italic; text-align: center; letter-spacing: 0.08em; border-bottom: 3px solid #c8902a; }
+    .banner { display: block; width: 100%; max-width: 100%; height: auto; margin: 0; padding: 0; border: 0; }
+    .mh-date { background-color: #0c1015; color: #8899aa; margin: 0; padding: 36px 56px 48px; font-size: 0.9em; font-style: italic; text-align: center; letter-spacing: 0.08em; border-bottom: 3px solid #c8902a; }
     h2 { background-color: #0c1015; color: #c8902a; margin: 3.2em 0 0; padding: 24px 56px; font-size: 0.55em; font-weight: normal; text-transform: uppercase; letter-spacing: 0.6em; border-top: 3px solid #c8902a; }
     h3 { font-size: 1.1em; font-weight: bold; font-style: italic; color: #18375a; margin: 2em 40px 0.5em; padding: 0 0 0 20px; border-left: 4px solid #c8902a; line-height: 1.4; }
     p { margin: 0 56px 1.5em; padding: 0; }
@@ -409,7 +409,7 @@ masthead structure with today's full weekday date filled in, then:
 </head>
 <body>
 <div class="container">
-<img class="banner" src="https://i.imgur.com/UqSFELh.png" alt="">
+<img class="banner" src="https://i.imgur.com/iB0S0Qt.png" alt="" width="660" style="display:block;width:100%;max-width:100%;height:auto;border:0;margin:0;padding:0;">
 <div class="mh-date">[FULL WEEKDAY DATE e.g. Tuesday, 29 April 2026]</div>
 ```
 
@@ -2386,8 +2386,18 @@ _NY_INTRO_MARKER = "reading from this week's Talk of the Town"
 _NY_SIGNOFF_MARKERS = ('<div class="signoff">', "<!-- COVERAGE_LOG")
 
 
-_BANNER_URL = "https://i.imgur.com/UqSFELh.png"
-_BANNER_HTML = f'<img class="banner" src="{_BANNER_URL}" alt="">'
+_BANNER_URL = "https://i.imgur.com/iB0S0Qt.png"
+# Wide-aspect banner (2000x341, ~5.87:1). Inline width/height/style attrs so
+# email clients that strip <style> blocks (Outlook, some Yahoo paths) still
+# scale the image proportionally to the 660px container on desktop and to the
+# narrower viewport on mobile. width="660" is an HTML attribute that older
+# Outlook treats as an absolute pixel cap; the inline `max-width:100%` lets
+# the modern responsive scaling win on every other client.
+_BANNER_HTML = (
+    f'<img class="banner" src="{_BANNER_URL}" alt="" width="660" '
+    f'style="display:block;width:100%;max-width:100%;height:auto;border:0;'
+    f'margin:0;padding:0;">'
+)
 _BANNER_RE = re.compile(r'<img\b[^>]*\bclass="banner"[^>]*>', re.IGNORECASE)
 _CONTAINER_OPEN_RE = re.compile(r'(<div\b[^>]*\bclass="container"[^>]*>)', re.IGNORECASE)
 
@@ -2429,6 +2439,235 @@ _TOTT_INTRO_PARAGRAPH = (
 )
 _TOTT_PLACEHOLDER = "<!-- NEWYORKER_CONTENT_PLACEHOLDER -->"
 _TOTT_HEADER = "<h3>Talk of the Town</h3>"
+
+
+# UAP-distinctive tokens used by the part7 drop-detector. Match against the
+# draft lowercased — if NONE of these tokens appear and uap.findings/urls
+# are populated, we know the model omitted the UAP sub-section.
+_UAP_TOKENS = ("uap", "ufo", "disclosure", "luna", "anomalous", "non-human")
+
+# Marker that closes the part7 fragment. Models emit this verbatim per the
+# system prompt. Fallback paragraphs are injected immediately BEFORE this
+# marker so they sit inside the part7 scope.
+_PART7_END_MARKER = "<!-- PART7 END -->"
+
+
+def _html_escape(text: str) -> str:
+    """Minimal escape for user-derived strings that land in <p>/href contexts."""
+    return (
+        (text or "")
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+    )
+
+
+def _truncate_to_sentence(text: str, max_chars: int = 600) -> str:
+    """Slice prose at the latest sentence boundary that fits within max_chars.
+
+    Falls back to a hard cut + ellipsis if no boundary lands in range. Used by
+    the UAP fallback injector so the model's `findings` prose lands as
+    self-contained sentences rather than mid-clause.
+    """
+    text = (text or "").strip()
+    if not text:
+        return ""
+    if len(text) <= max_chars:
+        return text
+    snippet = text[:max_chars]
+    for end in (". ", "! ", "? ", "; "):
+        idx = snippet.rfind(end)
+        if idx >= max_chars // 3:
+            return snippet[: idx + 1].strip()
+    return snippet.rstrip(", ").rstrip() + "…"
+
+
+def _build_uap_fallback_html(uap_data: dict) -> str:
+    """Render a Jeeves-voice paragraph from session.uap when the model drops it.
+
+    Uses `findings` prose truncated to ~3 sentences and links the first URL
+    if present. Returns "" if there's nothing to render.
+    """
+    findings = (uap_data.get("findings") or "").strip()
+    urls = uap_data.get("urls") or []
+    if not findings and not urls:
+        return ""
+    body = _truncate_to_sentence(findings, max_chars=600)
+    body_html = _html_escape(body) if body else ""
+    # Link the first valid URL into the closing clause when one exists.
+    link_html = ""
+    if urls and isinstance(urls, list):
+        first_url = next(
+            (u for u in urls if isinstance(u, str) and u.startswith("http")),
+            "",
+        )
+        if first_url:
+            link_html = (
+                f' <a href="{_html_escape(first_url)}">Source</a>.'
+            )
+    if not body_html and link_html:
+        body_html = "Recent disclosure-front activity is detailed at the source."
+    return (
+        '<p><em>On the disclosure front, Sir,</em> '
+        f"{body_html}{link_html}</p>"
+    )
+
+
+def _build_literary_fallback_html(lit_data: dict) -> str:
+    """Render a Jeeves-voice paragraph from session.literary_pick when dropped.
+
+    Pulls title, author, year, summary, url. Returns "" if literary_pick is
+    not available or has no title.
+    """
+    if not bool(lit_data.get("available")):
+        return ""
+    title = (lit_data.get("title") or "").strip()
+    if not title:
+        return ""
+    author = (lit_data.get("author") or "").strip()
+    year = lit_data.get("year")
+    summary = (lit_data.get("summary") or "").strip()
+    url = (lit_data.get("url") or "").strip()
+
+    title_safe = _html_escape(title)
+    if url and url.startswith("http"):
+        title_html = f'<a href="{_html_escape(url)}">{title_safe}</a>'
+    else:
+        title_html = f"<em>{title_safe}</em>"
+
+    byline_bits: list[str] = []
+    if author:
+        byline_bits.append(f"by {_html_escape(author)}")
+    if year:
+        byline_bits.append(f"({_html_escape(str(year))})")
+    byline = " ".join(byline_bits)
+
+    summary_html = ""
+    if summary:
+        summary_html = " " + _html_escape(_truncate_to_sentence(summary, 380))
+
+    intro = (
+        "<p><em>The library has placed</em> "
+        f"{title_html}"
+        f"{(' ' + byline) if byline else ''}"
+        f" on the desk this morning, Sir, in lieu of fresh disclosure news."
+        f"{summary_html}</p>"
+    )
+    return intro
+
+
+def _maybe_inject_part7_fallbacks(
+    raw_part: str,
+    payload: dict,
+    quality_warnings: list[str],
+) -> str:
+    """Detect UAP/literary_pick drops in part7 and splice in fallback HTML.
+
+    Mirrors PART7's documented routing (see PART7_INSTRUCTIONS):
+      - ROUTE B (uap has data): UAP wins. We synthesize a UAP fallback when
+        the draft drops it. We do NOT also inject a literary fallback —
+        ROUTE B does not present literary_pick, so a UAP + literary
+        co-injection would produce a tonally jarring "two skipped sections
+        glued together" paragraph.
+      - ROUTE A (uap empty): literary_pick wins. We synthesize a literary
+        fallback when the draft drops it.
+      - Both empty: nothing to inject.
+
+    Logs to quality_warnings — these flow into the run manifest where the
+    weekly audit-health report can flag chronic dropping:
+      - "part7_route_b_uap_dropped"        — ROUTE B fired, draft missing UAP
+      - "part7_uap_fallback_injected"      — UAP fallback HTML spliced in
+      - "part7_route_a_literary_dropped"   — ROUTE A fired, draft missing book
+      - "part7_literary_fallback_injected" — literary fallback HTML spliced in
+      - "part7_route_b_literary_suppressed" — both dropped under ROUTE B; we
+        kept UAP and SUPPRESSED literary to avoid tonal mismatch
+    """
+    if not isinstance(payload, dict):
+        return raw_part
+    uap_data = payload.get("uap") or {}
+    lit_data = payload.get("literary_pick") or {}
+    if not isinstance(uap_data, dict):
+        uap_data = {}
+    if not isinstance(lit_data, dict):
+        lit_data = {}
+
+    uap_text = (uap_data.get("findings") or "").strip()
+    uap_urls = uap_data.get("urls") or []
+    lit_avail = bool(lit_data.get("available"))
+    lit_title = (lit_data.get("title") or "").strip()
+    lit_author = (lit_data.get("author") or "").strip()
+    draft_lc = (raw_part or "").lower()
+
+    # ROUTE selection mirrors PART7 prompt logic exactly. uap_has_new is the
+    # canonical input to the prompt's routing decision; we read it the same
+    # way _session_subset does (default True so legacy sessions still cover
+    # UAP rather than silently skipping it).
+    uap_has_new = payload.get("uap_has_new", True)
+    uap_has_data = bool(uap_text or uap_urls)
+    route_b = bool(uap_has_new) and uap_has_data
+    # ROUTE A is implied: uap empty OR uap_has_new=false.
+
+    uap_present = any(t in draft_lc for t in _UAP_TOKENS)
+    uap_dropped = route_b and not uap_present
+
+    lit_present = (
+        (lit_title and lit_title.lower() in draft_lc)
+        or (lit_author and lit_author.lower() in draft_lc)
+    )
+    lit_should_appear_route_a = (not route_b) and lit_avail and bool(lit_title)
+    lit_dropped_route_a = lit_should_appear_route_a and not lit_present
+
+    fallback_chunks: list[str] = []
+
+    if uap_dropped:
+        quality_warnings.append("part7_route_b_uap_dropped")
+        log.warning(
+            "part7 ROUTE B: session has uap.findings (%d chars, %d urls) but "
+            "draft contains no UAP-distinctive tokens — synthesizing fallback",
+            len(uap_text), len(uap_urls),
+        )
+        chunk = _build_uap_fallback_html(uap_data)
+        if chunk:
+            fallback_chunks.append(chunk)
+            quality_warnings.append("part7_uap_fallback_injected")
+
+    if lit_dropped_route_a:
+        quality_warnings.append("part7_route_a_literary_dropped")
+        log.warning(
+            "part7 ROUTE A: literary_pick.available=True (%r by %r) but draft "
+            "contains neither title nor author — synthesizing fallback",
+            lit_title, lit_author,
+        )
+        chunk = _build_literary_fallback_html(lit_data)
+        if chunk:
+            fallback_chunks.append(chunk)
+            quality_warnings.append("part7_literary_fallback_injected")
+
+    # Forensic flag — under ROUTE B with literary data also missing, we are
+    # intentionally suppressing the literary fallback to avoid the doubled
+    # paragraph tonal mismatch. If this fires often, the prompt itself is
+    # routing wrong (or PART7 keeps dropping content) and warrants surgery.
+    if route_b and lit_avail and bool(lit_title) and not lit_present:
+        quality_warnings.append("part7_route_b_literary_suppressed")
+
+    if not fallback_chunks:
+        return raw_part
+
+    block = "\n" + "\n".join(fallback_chunks) + "\n"
+
+    # Splice immediately before the PART7 END marker so the fallback stays
+    # inside part7's scope (otherwise stitching attaches it to part8).
+    if _PART7_END_MARKER in raw_part:
+        return raw_part.replace(
+            _PART7_END_MARKER, block + _PART7_END_MARKER, 1
+        )
+
+    log.warning(
+        "part7: %s marker missing — appending fallback at end of fragment",
+        _PART7_END_MARKER,
+    )
+    return (raw_part or "").rstrip() + block
 
 
 def _ensure_tott_scaffolding(part9_html: str, newyorker_available: bool, ny_url: str = "") -> str:
@@ -4757,6 +4996,20 @@ async def generate_briefing(
         if fragment_warnings:
             quality_warnings.extend(fragment_warnings)
 
+        # Part 7 content-drop detector + fallback injector. PART7 is supposed
+        # to cover UAP + wearable_ai + literary_pick. When the session HAS
+        # populated uap or literary_pick data but the model omits them from
+        # its draft, we (a) flag it in quality_warnings and (b) synthesize a
+        # fallback paragraph from the session data and splice it in before
+        # PART7 END so the briefing stops shipping with these holes.
+        if label == "part7":
+            try:
+                raw_part = _maybe_inject_part7_fallbacks(
+                    raw_part, payload, quality_warnings
+                )
+            except Exception as exc:
+                log.warning("part7 fallback injector raised: %s", exc)
+
         # Part 9 scaffolding hardening — guarantee TOTT intro + placeholder
         # are present so _inject_newyorker_verbatim can splice in the verbatim
         # article text. Models repeatedly skip these despite explicit prompts.
@@ -5278,8 +5531,8 @@ def render_mock_briefing(session: SessionModel) -> str:
     * {{ box-sizing: border-box; }}
     body {{ font-family: Georgia, 'Times New Roman', serif; background: #0a0a0a; color: #1a1714; margin: 0; padding: 48px 16px 80px; font-size: 17px; }}
     .container {{ max-width: 660px; margin: 0 auto; background: #fdfaf5; border: 1px solid #bfb090; line-height: 1.88; }}
-    .banner {{ display: block; width: 100%; margin: 0; padding: 0; border: 0; }}
-    .mh-date {{ background-color: #0c1015; color: #8899aa; margin: 0; padding: 36px 56px 48px; font-size: 0.72em; font-style: italic; text-align: center; letter-spacing: 0.08em; border-bottom: 3px solid #c8902a; }}
+    .banner {{ display: block; width: 100%; max-width: 100%; height: auto; margin: 0; padding: 0; border: 0; }}
+    .mh-date {{ background-color: #0c1015; color: #8899aa; margin: 0; padding: 36px 56px 48px; font-size: 0.9em; font-style: italic; text-align: center; letter-spacing: 0.08em; border-bottom: 3px solid #c8902a; }}
     h2 {{ background-color: #0c1015; color: #c8902a; margin: 3.2em 0 0; padding: 24px 56px; font-size: 0.55em; font-weight: normal; text-transform: uppercase; letter-spacing: 0.6em; border-top: 3px solid #c8902a; }}
     h3 {{ font-size: 1.1em; font-weight: bold; font-style: italic; color: #18375a; margin: 2em 40px 0.5em; padding: 0 0 0 20px; border-left: 4px solid #c8902a; line-height: 1.4; }}
     p {{ margin: 0 56px 1.5em; padding: 0; }}
@@ -5297,7 +5550,7 @@ def render_mock_briefing(session: SessionModel) -> str:
 </head>
 <body>
 <div class="container">
-  <img class="banner" src="{_BANNER_URL}" alt="">
+  {_BANNER_HTML}
   <div class="mh-date">DRY RUN</div>
   {body_html}
   <div class="signoff"><p>Your reluctantly faithful Butler,<br/>Jeeves</p></div>
