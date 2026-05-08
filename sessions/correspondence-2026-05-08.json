@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] mmmichaelllang: GitHub Actions failure in Jeeves Daily Pipeline workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure in Jeeves Correspondence Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure in Jeeves Write Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure in Jeeves Research Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure in Jeeves Correspondence Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure in Jeeves Write Phase workflow on the jeeves-memory repo.\n- [escalation] mmmichaelllang: GitHub Actions failure in Jeeves Research Phase workflow on the jeeves-memory repo.\n- [escalation] mmmichaelllang: GitHub Actions failure in Jeeves Correspondence Phase workflow on the jeeves-memory repo.\n- [escalation] mmmichaelllang: GitHub Actions CI failure on the jeeves-unchained repo main branch.\n- [escalation] mmmichaelllang: GitHub Actions CI failure on a PR in the jeeves-unchained repo.\n- [escalation] mmmichaelllang: Third failed attempt of the Jeeves Daily Pipeline workflow on the jeeves-unchained repo.\n- [escalation] mmmichaelllang: Second failed attempt of the Jeeves Daily Pipeline workflow on the jeeves-unchained repo.",
+  "counts": {
+    "reply_needed": 0,
+    "decision_required": 2,
+    "scheduling": 1,
+    "follow_up": 0,
+    "escalation": 18,
+    "no_action": 29
+  }
+}
