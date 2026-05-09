@@ -3,84 +3,79 @@
   "status": "complete",
   "dedup": {
     "covered_urls": [
-      "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom",
+      "https://aeon.co/essays/the-wests-forgotten-republican-heritage",
       "https://arxiv.org/abs/2603.27008v1",
       "https://arxiv.org/abs/2603.28986v1",
       "https://arxiv.org/pdf/2602.02660",
       "https://arxiv.org/pdf/2603.13327",
+      "https://audria.tech/",
+      "https://comparateur-ia.com/en/ai-news/prompt-engineering-avance-10-techniques-2026",
       "https://compasswearable.com/",
       "https://docs.house.gov/Committee/Calendar/ByEvent.aspx?EventID=117722",
       "https://ersearch2.cvtisr.sk/vufind/EdsRecord/edsair,edsair.doi.dedup.....448a95726a3e08715423b148d8dee692",
-      "https://friend.com/",
+      "https://getbuddi.ai/",
+      "https://go.nybooks.com/4bkh9hE?printpage=true",
       "https://hellohistory.ai/",
       "https://humy.ai/",
-      "https://karozieminski.substack.com/p/ai-prompting-techniques-reasoning-models-2026",
-      "https://limitless.ai/",
-      "https://linkedin.com/company/viai",
+      "https://jewishcurrents.org/issue/spring-2026",
+      "https://link.springer.com/article/10.1007/s12136-025-00635-5",
       "https://lumilife.online/",
+      "https://minami.ai/blog/best-autonomous-ai-agent",
+      "https://mitsloan.mit.edu/ideas-made-to-matter/ai-agents-tech-circularity-whats-ahead-platforms-2026",
+      "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/",
       "https://myedmondsnews.com/2026/05/city-of-edmonds-update-resolution-of-wastewater-treatment-plant-operational-issues-ongoing/",
       "https://myedmondsnews.com/2026/05/council-postpones-vote-on-city-administrator-advances-measure-on-salary-commission/",
-      "https://myedmondsnews.com/2026/05/new-statewide-housing-law-goes-into-effect-june-11-how-do-local-city-leaders-organizations-feel-about-it/",
       "https://northshore.tedk12.com/hire/index.aspx",
-      "https://nunatechnology.com/",
       "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
-      "https://parallelhistories.org.uk/",
-      "https://sandbar.com/",
+      "https://revolutioned.ai/",
+      "https://skugga.com/",
+      "https://sureprompts.com/blog/ai-reasoning-models-prompting-complete-guide-2026",
       "https://twee.com/",
       "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
-      "https://www.aljazeera.com/news/2026/5/7/gulf-states-urge-un-action-to-ensure-strait-of-hormuz-safety",
-      "https://www.aljazeera.com/news/2026/5/7/msf-accuses-israel-of-manufacturing-a-malnutrition-crisis-in-gaza",
-      "https://www.aljazeera.com/news/2026/5/7/us-issues-new-cuba-sanctions-as-un-experts-warn-of-energy-starvation",
-      "https://www.applitrack.com/edmonds/onlineapp/default.aspx?all=1",
+      "https://www.applitrack.com/everettsd/onlineapp/default.aspx?AppliTrackJobID=8263&ref=",
       "https://www.bbc.com/news/articles/c0q9xq7knq2o",
-      "https://www.bbc.com/news/articles/cn0ep28drllo",
+      "https://www.bbc.com/news/articles/c8x7kxjgq9xo",
+      "https://www.bbc.com/news/articles/ceqw35r1j5wo",
       "https://www.bbc.com/news/articles/cnv8l99r3yyo",
-      "https://www.bbc.com/news/live/cx297218m9vt",
+      "https://www.edjoblist.com/employment/snohomish-school-district-profile-200.aspx",
       "https://www.harpercollins.com/products/the-known-world-edward-p-jones",
-      "https://www.k12jobspot.com/Job/5498277",
       "https://www.linkedin.com/jobs/view/english-language-arts-teacher-lake-washington-high-school-leave-replacement-0-8-fte-at-lake-washington-school-district-4409625589",
       "https://www.newsnationnow.com/space/ufo/luna-address-info-nonhuman-origin/",
       "https://www.newyorker.com/magazine/2026/05/04/ellen-burstyns-inner-library",
-      "https://www.nomos-elibrary.de/880328.pdf",
-      "https://www.nybooks.com/articles/2026/03/12/a-bitter-winter-in-ukraine-tim-judah/",
-      "https://www.nybooks.com/online/2026/03/10/the-new-war-on-speech-trump/",
-      "https://www.themarginalian.org/2026/02/24/diane-ackerman-the-planets/",
-      "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/"
+      "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/",
+      "https://www.ziprecruiter.com/c/Snohomish-School-District/Job/English-Language-Arts-Teacher-Pool-(2026-2027)/-in-Snohomish,WA?jid=10504e25df1ba105",
+      "https://www2.nwrdc.wa-k12.net/scripts/cgiip.exe/WService=wshorels71/rapplmnu03.w"
     ],
     "covered_headlines": [
-      "Three 2025 works advance triadic/relational metaphysics: Migliorini unites Trinitarian theology with analytic relational ontology; Slade proposes a SU(3)-based quantum ontology where qutrits are ontic primitives and triadic mediation is enforced by ℤ₃ rotations;",
-      "Three new papers define the 2026 autonomous-research stack. DOVA introduces deliberation-first orchestration: before any tool call, a meta-reasoning layer consults a persistent user model and entity-aware context, cutting inference cost 40–60 % on routine tasks while preserving depth for hard ones.",
-      "Exa returned three official and news items: a November 2024 House joint hearing titled “Unidentified Anomalous Phenomena: Exposing the Truth” featuring Luis Elizondo and other witnesses; a 1 April 2026 press release from Rep.",
-      "The Edmonds City Council has postponed until next week its vote on confirming Stephanie Lucash as the new city administrator. Lucash, currently deputy city manager of Kenmore, would receive an annual base salary of $226,068 if confirmed.",
-      "A new statewide housing law takes effect June 11 that will require cities to expand where housing can be built for people experiencing homelessness.",
-      "The City of Edmonds provided an update on ongoing efforts to resolve operational issues at the wastewater treatment plant. The $31 million carbon recovery system has experienced significant delays and technical failures since construction began in 2021.",
-      "Snohomish School District",
-      "English, History, Forensics and Drama Teacher",
-      "Lake Washington School District",
-      "English Language Arts Teacher - Leave Replacement",
-      "Northshore School District",
-      "English Language Development Teacher - Secondary",
-      "Edmonds School District",
-      "High School English Teacher Pool",
-      "The US-Iran conflict continues to escalate with a 'war of blockades' over the Strait of Hormuz. Iran has seized two cargo ships, including the Epaminondas, and stated that reopening the strait is 'impossible' if the US blockade continues.",
-      "The EU has approved a €90bn loan for Ukraine after Ukraine resumed pumping Russian oil through the Druzhba pipeline to Hungary and Slovakia, ending months of deadlock. This funding is seen as vital EU support for Kyiv, with two-thirds earmarked for defense needs.",
-      "China's economy, which weathered Trump's tariffs, is now being significantly impacted by the Iran war. The conflict is putting pressure on factory orders, costs, and jobs in China's export-driven economy, with workers in manufacturing hubs like Foshan struggling with reduced opportunities.",
-      "Doctors Without Borders (MSF) has accused Israel of manufacturing a malnutrition crisis in Gaza through restrictions on food and aid deliveries. Their analysis shows over half of pregnant women suffered malnutrition, with 90% of babies born premature and 84% having low birth weight.",
-      "Gulf states are pushing a UN Security Council resolution threatening Iran with sanctions if it doesn't halt attacks on ships in the Strait of Hormuz and disclose mine locations. Qatar's ambassador emphasized this is crucial for global economic stability and energy security.",
-      "The US has imposed new sanctions on Cuba targeting the military-controlled GAESA conglomerate, amid what UN experts call an 'energy starvation' campaign.",
-      "In 'The One Hundred Milliseconds Between the World and You', Maria Popova distills Oliver Sacks’s posthumous essay collection to a single insight: perception is not a passive intake of data but a creative act that mirrors the self.",
-      "Diane Ackerman’s 'A Cosmic Pastoral' frames the universe as an improbable love letter, asking how a system can observe itself. The answer, she proposes, is 'systematic wonder'.",
-      "Aryeh Neier’s 'The New War on Speech' dissects Trump’s January 2026 executive order purporting to end 'government censorship'. Neier, former ACLU director, traces the order’s contradiction: while claiming to restore free speech, it targets non-citizens and revives 1917-18 Espionage Act tactics.",
-      "Tim Judah’s 'A Bitter Winter in Ukraine' reports from Kyiv on the war’s third winter, where novelist Andrey Kurkov’s resigned observation—'the future is just too far away'—captures national fatigue.",
-      "Flora Champy’s 'The role of literature as the key to personal freedom' reframes Proust’s 1905 essay 'On Reading' as a defense of literature against utilitarian moralizing. Proust, translating Ruskin’s 'Sesame and Lilies', rejects the Victorian notion that books must 'pay' through moral improvement.",
-      "The voice-first AI hardware landscape has crystallized into three distinct form factors in 2026. **Limitless** (formerly Rewind) offers a $399 pendant bundle with HIPAA-compliant privacy protection, recording conversations for personalized AI insights - the company was recently acquired by Meta.",
-      "English and History teachers gained four specialized AI co-workers this spring. **Humy.",
-      "The lifelogging wearable category has evolved into sophisticated AI jewelry with two distinct camps. **LumiLife** (Germany) launched a complete ecosystem of smart watch, ring, and glasses connected by one AI-powered app that adapts to user patterns for daily performance optimization.",
+      "Three 2025 papers advance triadic/relational metaphysics: Slade proposes a quantum-inspired triadic ontology using SU(3) symmetry and qutrit states as ontic primitives, yielding a 3-8-2 schema of basis stances, generators and classifiers.",
+      "Three new papers define the 2026 autonomous-research stack. DOVA introduces deliberation-first orchestration where meta-reasoning precedes tool calls, cutting inference cost 40-60 % on simple tasks while preserving depth.",
+      "Three key documents reveal an ongoing 2025-2026 congressional push for UAP transparency. A November 2024 joint House hearing titled \"Unidentified Anomalous Phenomena: Exposing the Truth\" featured former DoD official Luis Elizondo and NASA’s Michael Gold.",
+      "The Edmonds City Council has postponed until next week its vote on confirming Stephanie Lucash as the new city administrator. Lucash, currently deputy city manager for Kenmore, would receive an annual base salary of $226,068 if confirmed.",
+      "The City of Edmonds issued an update on ongoing efforts to resolve operational issues at the Edmonds Wastewater Treatment Plant. A $415,000 contract with Jacobs Engineering was approved to assist with operations.",
+      "Edmonds Police Chief Loi Dawkins reported the department must complete six policy improvements by June 30 to access $210,000 in public safety sales tax revenue collected since February.",
+      "Snohomish",
+      "English Language Arts Teacher Pool (2026-2027)",
+      "Social Studies/History Teacher Pool (2026-2027)",
+      "Everett",
+      "2026-27 Certificated Teacher Pool - Secondary (Grades 6-12)",
+      "Lake Washington",
+      "English Language Arts Teacher - Lake Washington High School (Leave Replacement)",
+      "Northshore",
+      "Certificated Teacher Pool - Secondary",
+      "Shoreline",
+      "Secondary Teacher Pool",
+      "Extracted full content from key BBC articles covering new developments. Searched for latest updates on Iran-US Strait of Hormuz situation and Ukraine-Russia conflict today.",
+      "Maria Popova distills Oliver Sacks’s posthumous essay collection into a meditation on the 100-millisecond lag between neural firing and conscious perception.",
+      "Sean Irving revives 19th-century “economic republicanism” as a corrective to contemporary powerlessness.",
+      "Arang Keshavarzian reports from Tehran on the twin cataclysms of late 2025–early 2026: the Dey uprising and the subsequent US-Israeli war.",
+      "In the Spring 2026 issue, Tanvi Misra’s essay “The Death of Asylum” traces how centuries of restrictive refugee policy laid the groundwork for today’s authoritarian politics.",
+      "Voice-first AI wearables have crystallized into three distinct form factors for 2026. Audria (audria.",
+      "English and History teachers gained four specialized AI co-workers this spring. Humy.",
+      "The lifelogging wearable category has evolved into sophisticated AI jewelry with two distinct camps. LumiLife (lumilife.",
       "Ellen Burstyn’s Inner Library",
       "The Known World",
-      "MSF accuses Israel of manufacturing a malnutrition crisis in Gaza",
-      "Gulf states urge UN action to ensure Strait of Hormuz safety",
-      "US and Iran in blockade standoff as Pakistan pushes for talks",
+      "US and Iran locked in blockade standoff as Pakistan pushes for talks",
+      "EU approves €90bn loan for Ukraine as pipeline is turned on ending deadlock",
       "**Friend AI Pendant** (MyTabAI, Inc): $99 wearable voice companion with 15-hour battery life, always-listening mic for conversations, and $7.",
       "**MagicSchool AI**: April 2026 updates include Educational Song Generator (turns lessons into music) and Studio Mode in Raina for document editing.",
       "**Nirva AI Jewelry**: Fashion-forward pendant that combines AI sensing with jewelry design, tracks emotions and auto-journals life experiences.",
@@ -146,6 +141,7 @@
       "Edmonds Police Chief Loi Dawkins reported the department must complete six policy updates by June 30 to access $210,000 in public safety sales tax rev",
       "Edmonds Police Chief Loi Dawkins reported the department must complete six policy updates by June 30 to access $210,000 in public safety sales tax revenue collected since February.",
       "Edmonds Police Department reports it is on track to meet state-mandated de-escalation and mental-health training deadlines despite a statewide audit showing many agencies lag.",
+      "Edmonds School District",
       "Edmonds approved a $415,000 contract with Jacobs Engineering to operate the gasification system at its wastewater treatment plant, marking a potential",
       "Edmonds officials are bracing for a new statewide housing law (HB 2266) that takes effect June 11, forcing cities to allow transitional and supportive housing, plus indoor emergency shelters, in more zones.",
       "Edmonds police blotter for the week ending April 19 included a theft arrest of an adult female at Highway 99, a warrant arrest, and various other mino",
@@ -161,7 +157,6 @@
       "English and History teachers gained three specialized AI co-workers this spring. Humy.",
       "English and History teachers now have specialized AI co-workers that do far more than generic chatbots. MagicSchool (already briefed) remains dominant, but new entrants are carving out humanities niches.",
       "English and History teachers now have three well-funded, purpose-built AI co-teachers.",
-      "Everett",
       "Everett Public Schools",
       "Eyal Weizman's 'All they will find is sand: Gaza’s Yellow Line' provides a forensic analysis of Israel's systematic destruction of Gaza's built enviro",
       "Fintan O'Toole's essay 'The Right Amount of Crazy' dissects Trump's application of the 'Madman Theory' in foreign policy, particularly regarding Iran.",
@@ -189,6 +184,7 @@
       "High School English / History Teacher",
       "High School English Teacher",
       "High School English Teacher (Long-Term Sub)",
+      "High School English Teacher Pool",
       "High School English or History Teacher",
       "High School English/History Teacher",
       "High School English/History Teacher Pool",
@@ -224,7 +220,7 @@
       "King Charles III and Queen Camilla began their historic four-day US state visit, arriving to a military welcome.",
       "King Charles III has begun a historic four-day US state visit, addressing Congress on Tuesday to defend 'democratic values' following Saturday's assas",
       "Lake Stevens School District",
-      "Lake Washington",
+      "Lake Washington School District",
       "Late-night highway shutdowns are coming near Alderwood",
       "Late-night highway shutdowns are coming near Alderwood - Edmonds Beacon",
       "Lifelogging and lifestyle wearables are converging on discreet jewelry form factors.",
@@ -254,7 +250,7 @@
       "Myanmar’s former leader Aung San Suu Kyi to be moved to house arrest, state media says",
       "New suspected hantavirus cases have been identified in Spain and on the remote island of Tristan da Cunha, expanding the outbreak beyond the cruise ship cluster that has already killed three passengers.",
       "North Korea has officially confirmed for the first time that it deployed 14,000 troops to fight alongside Russia in Ukraine under Kim Jong Un's direct",
-      "Northshore",
+      "Northshore School District",
       "Now let me extract full content from the key articles I found, particularly the BBC and Reuters pieces thatily_extract:5<|tool_call_argument_begin|>",
       "Nuna emotion-tracking pendant (nunatechnology.",
       "Oil prices surged to their highest level since 2022 after reports that the US military is preparing to brief President Trump on new strike options aga",
@@ -300,18 +296,15 @@
       "Secondary English Teacher Pool",
       "Secondary History Teacher",
       "Secondary Social Studies Teacher",
-      "Secondary Teacher Pool",
       "Secondary Teacher Pool (Grades 6-12)",
       "Secondary Teacher Pool (Grades 6–12)",
       "Secondary Teachers – General Pool",
-      "Shoreline",
       "Shoreline Christian School",
       "Shoreline School District",
       "Singapore will introduce judicial caning as a mandatory sentence for boys aged 10-16 convicted of bullying offences under amendments passed by parliament.",
       "Sno-Isle Libraries offers weekly Toddler Storytime at Lynnwood Library (19200 44th Ave W) on Mondays 9:30-10:00 am starting May 4, featuring stories,",
-      "Snohomish",
+      "Snohomish School District",
       "Social Studies/History Teacher Pool",
-      "Social Studies/History Teacher Pool (2026-2027)",
       "South County Fire commissioners are redistricting to incorporate Edmonds' 42,000+ residents into the Regional Fire Authority.",
       "South County Fire commissioners will hold a public hearing Monday, May 5 at 7 p.m.",
       "South County Fire public hearing May 5 on proposed bond measure",
@@ -441,37 +434,40 @@
     "cross_sector_dupes": []
   },
   "triadic_ontology": {
-    "findings": "Three 2025 works advance triadic/relational metaphysics: Migliorini unites Trinitarian theology with analytic relational ontology; Slade proposes a SU(3)-based quantum ontology where qutrits are ontic primitives and triadic mediation is enforced by ℤ₃ rotations; and the Karl Alber volume \"Trinitarian Ontologies\" inaugurates a new series bridging analytic and continental approaches to triadic philosophy, gathering key scholars to map the field’s theological roots and contemporary applications.",
+    "findings": "Three 2025 papers advance triadic/relational metaphysics: Slade proposes a quantum-inspired triadic ontology using SU(3) symmetry and qutrit states as ontic primitives, yielding a 3-8-2 schema of basis stances, generators and classifiers. Migliorini develops a relational-trinitarian model that integrates analytic theology with structural realism, arguing divine relationality can transcend substance metaphysics without lapsing into monism. Tricard critiques nominalistic relationalism, demonstrating that pure relation-based accounts of quantities fail to ground determinate properties, thus challenging core assumptions of relational metaphysics.",
     "urls": [
-      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
       "https://ersearch2.cvtisr.sk/vufind/EdsRecord/edsair,edsair.doi.dedup.....448a95726a3e08715423b148d8dee692",
-      "https://www.nomos-elibrary.de/880328.pdf"
+      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
+      "https://link.springer.com/article/10.1007/s12136-025-00635-5"
     ]
   },
   "ai_systems": {
-    "findings": "Three new papers define the 2026 autonomous-research stack. DOVA introduces deliberation-first orchestration: before any tool call, a meta-reasoning layer consults a persistent user model and entity-aware context, cutting inference cost 40–60 % on routine tasks while preserving depth for hard ones. MARS adds Budget-Aware Planning—cost-constrained Monte-Carlo tree search that balances performance against execution expense—and Comparative Reflective Memory that mines cross-branch insights; 63 % of its “Aha!” moments come from transfer between search paths. Mimosa completes the trio with an evolving multi-agent framework that auto-synthesizes task-specific workflows, scores them with an LLM judge, and iteratively refines the topology; on ScienceAgentBench it pushes DeepSeek-V3.2 to 43.1 % success, beating both single-agent and static multi-agent baselines. Meanwhile, RASPRef shows how prompts themselves can be optimized: retrieval-augmented, self-supervised prompt refinement treats the pr [TRUNCATED]",
+    "findings": "Three new papers define the 2026 autonomous-research stack. DOVA introduces deliberation-first orchestration where meta-reasoning precedes tool calls, cutting inference cost 40-60 % on simple tasks while preserving depth. MARS adds budget-aware Monte-Carlo planning and reflective memory, achieving SOTA on MLE-Bench and producing “Aha!” cross-branch insights 63 % of the time. Mimosa closes the loop with an evolving workflow engine that auto-synthesizes task-specific agent topologies via MCP tool discovery and iterative judge feedback, scoring 43.1 % on ScienceAgentBench. Prompt engineering has matured into a disciplined practice: the 2026 playbook discards chain-of-thought hand-holding in favor of six-slot briefs (goal, constraints, context, audience, reasoning budget, evaluation) and API-level depth dials. Concurrently, production agents like NoimosAI and OpenAI Operator now run end-to-end marketing or browser workflows with persistent memory and governance guardrails, signaling the sh [TRUNCATED]",
     "urls": [
       "https://arxiv.org/pdf/2603.13327",
       "https://arxiv.org/pdf/2602.02660",
       "https://arxiv.org/abs/2603.28986v1",
       "https://arxiv.org/abs/2603.27008v1",
-      "https://karozieminski.substack.com/p/ai-prompting-techniques-reasoning-models-2026"
+      "https://sureprompts.com/blog/ai-reasoning-models-prompting-complete-guide-2026",
+      "https://minami.ai/blog/best-autonomous-ai-agent",
+      "https://mitsloan.mit.edu/ideas-made-to-matter/ai-agents-tech-circularity-whats-ahead-platforms-2026",
+      "https://comparateur-ia.com/en/ai-news/prompt-engineering-avance-10-techniques-2026"
     ]
   },
   "uap": {
-    "findings": "Exa returned three official and news items: a November 2024 House joint hearing titled “Unidentified Anomalous Phenomena: Exposing the Truth” featuring Luis Elizondo and other witnesses; a 1 April 2026 press release from Rep. Anna Paulina Luna’s Oversight Task Force demanding UAP videos from the Department of War and citing whistleblower claims of withheld footage; and a 30 April 2026 NewsNation interview in which Luna says she has personally seen evidence of “nonhuman origin” in classified SCIF briefings and plans a public release once declassified. Together they show ongoing congressional pressure for UAP disclosure extending into 2026, with explicit references to non-human intelligence.",
+    "findings": "Three key documents reveal an ongoing 2025-2026 congressional push for UAP transparency. A November 2024 joint House hearing titled \"Unidentified Anomalous Phenomena: Exposing the Truth\" featured former DoD official Luis Elizondo and NASA’s Michael Gold. Task-force chair Rep. Anna Paulina Luna (R-Fla.) continues to investigate non-human origin claims, demanding 46 unreleased UAP videos from the Pentagon’s All-Domain Anomaly Resolution Office and threatening subpoenas if the April 14, 2026 deadline is missed. She publicly promises a press conference to present materials she says are of non-human or interdimensional origin.",
     "urls": [
       "https://docs.house.gov/Committee/Calendar/ByEvent.aspx?EventID=117722",
       "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
       "https://www.newsnationnow.com/space/ufo/luna-address-info-nonhuman-origin/"
     ]
   },
-  "weather": "Partly cloudy this morning, becoming overcast by afternoon. High 58°F, low 47°F. Light rain possible after 3 pm, 30 % chance. Winds west-southwest 8–12 mph, gusting to 18 mph near the Sound. Evening stays gray with patchy drizzle and temps easing to the upper 40s—good weather for a light jacket if you’re heading to the waterfront.",
+  "weather": "Mostly cloudy early, then clearing to afternoon sunshine. High 65°F with light south winds becoming west. Tonight: partly cloudy, low 49°F, calm north-northwest breeze. Zero rain chance. Perfect for evening strolls along the waterfront.",
   "local_news": [
     {
       "category": "municipal",
       "source": "My Edmonds News",
-      "findings": "The Edmonds City Council has postponed until next week its vote on confirming Stephanie Lucash as the new city administrator. Lucash, currently deputy city manager of Kenmore, would receive an annual base salary of $226,068 if confirmed. The council also advanced a measure to reactivate the volunteer salary commission, which would make binding salary recommendations for elected officials. Mayor Mike Rosen broke a 3-3 tie to move the salary commission proposal forward.",
+      "findings": "The Edmonds City Council has postponed until next week its vote on confirming Stephanie Lucash as the new city administrator. Lucash, currently deputy city manager for Kenmore, would receive an annual base salary of $226,068 if confirmed. The council also voted 3-3 on restarting the volunteer salary commission, with Mayor Mike Rosen breaking the tie to advance the measure. Planning Director Mike Clugston reported 15 detached accessory dwelling unit permits were issued last year, and the department is creating pre-approved DADU plans to reduce costs and processing time.",
       "urls": [
         "https://myedmondsnews.com/2026/05/council-postpones-vote-on-city-administrator-advances-measure-on-salary-commission/"
       ]
@@ -479,164 +475,143 @@
     {
       "category": "municipal",
       "source": "My Edmonds News",
-      "findings": "A new statewide housing law takes effect June 11 that will require cities to expand where housing can be built for people experiencing homelessness. The law has sparked mixed reactions from local leaders and organizations in Edmonds, with some expressing concerns about implementation challenges while others see it as necessary to address the housing crisis.",
+      "findings": "The City of Edmonds issued an update on ongoing efforts to resolve operational issues at the Edmonds Wastewater Treatment Plant. A $415,000 contract with Jacobs Engineering was approved to assist with operations. A recent multi-day trial run of the gasifier was conducted, with Jacobs still evaluating results. The project, which began in 2018, has cost $31 million and been plagued by delays and technical failures, forcing the city to haul waste to Oregon landfills at over $5 million cost.",
       "urls": [
-        "https://myedmondsnews.com/2026/05/new-statewide-housing-law-goes-into-effect-june-11-how-do-local-city-leaders-organizations-feel-about-it/"
+        "https://myedmondsnews.com/2026/05/city-of-edmonds-update-resolution-of-wastewater-treatment-plant-operational-issues-ongoing/"
       ]
     },
     {
-      "category": "municipal",
+      "category": "public_safety",
       "source": "My Edmonds News",
-      "findings": "The City of Edmonds provided an update on ongoing efforts to resolve operational issues at the wastewater treatment plant. The $31 million carbon recovery system has experienced significant delays and technical failures since construction began in 2021. The city has brought in Jacobs Engineering as an independent consultant to help address the problems, with recent trial runs showing mixed results. The city has spent over $5 million hauling wastewater solids to Oregon landfills while the system remains non-operational.",
+      "findings": "Edmonds Police Chief Loi Dawkins reported the department must complete six policy improvements by June 30 to access $210,000 in public safety sales tax revenue collected since February. Required changes include updates to use-of-force policies, immigration compliance, firearms relinquishment procedures, and state training standards. The department is working with the Criminal Justice Training Center to meet the deadline.",
       "urls": [
-        "https://myedmondsnews.com/2026/05/city-of-edmonds-update-resolution-of-wastewater-treatment-plant-operational-issues-ongoing/"
+        "https://myedmondsnews.com/2026/04/public-safety-environmental-issues-focus-of-tuesday-edmonds-council-meeting/"
       ]
     }
   ],
   "career": {
     "openings": [
       {
-        "district": "Snohomish School District",
-        "role": "English, History, Forensics and Drama Teacher",
-        "url": "https://www.k12jobspot.com/Job/5498277",
-        "summary": "1.0 FTE continuing contract position teaching middle school English (0.4), history (0.2), forensics (0.2), and drama (0.2). Requires valid Washington teaching certificate with Elementary Ed or History and ELA endorsement.",
+        "district": "Snohomish",
+        "role": "English Language Arts Teacher Pool (2026-2027)",
+        "url": "https://www.ziprecruiter.com/c/Snohomish-School-District/Job/English-Language-Arts-Teacher-Pool-(2026-2027)/-in-Snohomish,WA?jid=10504e25df1ba105",
+        "summary": "Full-time English Language Arts teacher positions for the 2026-2027 school year. Pool posting allows district principals to review applications and contact candidates for interviews as specific openings arise.",
         "deadline": null,
-        "salary_range": "$78,616 - $156,126"
+        "salary_range": null
       },
       {
-        "district": "Lake Washington School District",
-        "role": "English Language Arts Teacher - Leave Replacement",
+        "district": "Snohomish",
+        "role": "Social Studies/History Teacher Pool (2026-2027)",
+        "url": "https://www.edjoblist.com/employment/snohomish-school-district-profile-200.aspx",
+        "summary": "Secondary-level history and social studies teacher pool for the 2026-2027 academic year. Applications reviewed for multiple potential vacancies across district schools.",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Everett",
+        "role": "2026-27 Certificated Teacher Pool - Secondary (Grades 6-12)",
+        "url": "https://www.applitrack.com/everettsd/onlineapp/default.aspx?AppliTrackJobID=8263&ref=",
+        "summary": "Secondary teacher pool covering grades 6-12 for the 2026-2027 school year. Includes English and History positions as vacancies become available throughout the district.",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Lake Washington",
+        "role": "English Language Arts Teacher - Lake Washington High School (Leave Replacement)",
         "url": "https://www.linkedin.com/jobs/view/english-language-arts-teacher-lake-washington-high-school-leave-replacement-0-8-fte-at-lake-washington-school-district-4409625589",
-        "summary": "0.8 FTE leave replacement position at Lake Washington High School for the 2026-2027 school year.",
+        "summary": "0.8 FTE leave replacement English Language Arts position at Lake Washington High School for the 2026-2027 school year. Temporary position covering extended absence.",
         "deadline": null,
         "salary_range": null
       },
       {
-        "district": "Northshore School District",
-        "role": "English Language Development Teacher - Secondary",
+        "district": "Northshore",
+        "role": "Certificated Teacher Pool - Secondary",
         "url": "https://northshore.tedk12.com/hire/index.aspx",
-        "summary": "Pool posting for secondary English Language Development teacher positions. District uses pool postings to collect applications for anticipated vacancies.",
-        "deadline": "2027-01-31",
+        "summary": "Secondary teacher pool for Northshore School District. Applications accepted for English and History positions as specific vacancies are posted throughout the 2026-2027 school year.",
+        "deadline": null,
         "salary_range": null
       },
       {
-        "district": "Edmonds School District",
-        "role": "High School English Teacher Pool",
-        "url": "https://www.applitrack.com/edmonds/onlineapp/default.aspx?all=1",
-        "summary": "General certificated teacher pool for anticipated high school English positions. Apply to pool postings to be considered as specific positions become available.",
+        "district": "Shoreline",
+        "role": "Secondary Teacher Pool",
+        "url": "https://www2.nwrdc.wa-k12.net/scripts/cgiip.exe/WService=wshorels71/rapplmnu03.w",
+        "summary": "Certificated secondary teacher positions including English and History for the 2026-2027 school year. Pool system allows principals to review applications for multiple potential openings.",
         "deadline": null,
         "salary_range": null
       }
     ],
-    "notes": "Most districts use pool postings for anticipated vacancies rather than specific positions. Snohomish offers the most detailed posting with combined English/History role. Northshore has January 2027 deadline for pool applications. All require Washington state teaching certification."
+    "notes": "Most districts are using pool posting systems for 2026-2027 secondary teacher positions rather than listing specific vacancies. This allows principals to review applications as openings arise. Candidates should apply to relevant pools and monitor district websites for specific position postings. Salary ranges and deadlines are typically provided during the interview process rather than in initial pool postings."
   },
   "family": {},
   "global_news": [
     {
       "category": "global_news",
-      "source": "BBC",
-      "findings": "The US-Iran conflict continues to escalate with a 'war of blockades' over the Strait of Hormuz. Iran has seized two cargo ships, including the Epaminondas, and stated that reopening the strait is 'impossible' if the US blockade continues. Meanwhile, Pakistan is pushing for peace talks between the US and Iran, though no confirmed date has been set for negotiations.",
+      "source": "research_agent",
+      "findings": "Extracted full content from key BBC articles covering new developments. Searched for latest updates on Iran-US Strait of Hormuz situation and Ukraine-Russia conflict today.",
       "urls": [
-        "https://www.bbc.com/news/live/cx297218m9vt",
-        "https://www.bbc.com/news/articles/c0q9xq7knq2o"
-      ]
-    },
-    {
-      "category": "global_news",
-      "source": "BBC",
-      "findings": "The EU has approved a €90bn loan for Ukraine after Ukraine resumed pumping Russian oil through the Druzhba pipeline to Hungary and Slovakia, ending months of deadlock. This funding is seen as vital EU support for Kyiv, with two-thirds earmarked for defense needs.",
-      "urls": [
-        "https://www.bbc.com/news/articles/cnv8l99r3yyo"
-      ]
-    },
-    {
-      "category": "global_news",
-      "source": "BBC",
-      "findings": "China's economy, which weathered Trump's tariffs, is now being significantly impacted by the Iran war. The conflict is putting pressure on factory orders, costs, and jobs in China's export-driven economy, with workers in manufacturing hubs like Foshan struggling with reduced opportunities.",
-      "urls": [
-        "https://www.bbc.com/news/articles/cn0ep28drllo"
-      ]
-    },
-    {
-      "category": "global_news",
-      "source": "Al Jazeera",
-      "findings": "Doctors Without Borders (MSF) has accused Israel of manufacturing a malnutrition crisis in Gaza through restrictions on food and aid deliveries. Their analysis shows over half of pregnant women suffered malnutrition, with 90% of babies born premature and 84% having low birth weight.",
-      "urls": [
-        "https://www.aljazeera.com/news/2026/5/7/msf-accuses-israel-of-manufacturing-a-malnutrition-crisis-in-gaza"
-      ]
-    },
-    {
-      "category": "global_news",
-      "source": "Al Jazeera",
-      "findings": "Gulf states are pushing a UN Security Council resolution threatening Iran with sanctions if it doesn't halt attacks on ships in the Strait of Hormuz and disclose mine locations. Qatar's ambassador emphasized this is crucial for global economic stability and energy security.",
-      "urls": [
-        "https://www.aljazeera.com/news/2026/5/7/gulf-states-urge-un-action-to-ensure-strait-of-hormuz-safety"
-      ]
-    },
-    {
-      "category": "global_news",
-      "source": "Al Jazeera",
-      "findings": "The US has imposed new sanctions on Cuba targeting the military-controlled GAESA conglomerate, amid what UN experts call an 'energy starvation' campaign. The sanctions come as Cuba faces severe fuel shortages affecting hospitals and schools, with only one Russian oil tanker reaching Cuba in recent months.",
-      "urls": [
-        "https://www.aljazeera.com/news/2026/5/7/us-issues-new-cuba-sanctions-as-un-experts-warn-of-energy-starvation"
+        "https://www.bbc.com/news/articles/c0q9xq7knq2o",
+        "https://www.bbc.com/news/articles/cnv8l99r3yyo",
+        "https://www.bbc.com/news/articles/c8x7kxjgq9xo",
+        "https://www.bbc.com/news/articles/ceqw35r1j5wo"
       ]
     }
   ],
   "intellectual_journals": [
     {
       "source": "The Marginalian",
-      "findings": "In 'The One Hundred Milliseconds Between the World and You', Maria Popova distills Oliver Sacks’s posthumous essay collection to a single insight: perception is not a passive intake of data but a creative act that mirrors the self. Drawing on neurological case studies of patients whose consciousness enters 'standstills', Sacks argues that motion is perceived not as robotic calculation but as a unique qualitative experience—what Francis Crick and Christof Koch term 'qualia'. These wholly subjective experiences require a 'coalition' of millions of neurons, forming and dissolving in fractions of  [TRUNCATED]",
-      "url": "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/"
-    },
-    {
-      "source": "The Marginalian",
-      "findings": "Diane Ackerman’s 'A Cosmic Pastoral' frames the universe as an improbable love letter, asking how a system can observe itself. The answer, she proposes, is 'systematic wonder'. Tracing her discovery of Carl Sagan’s mentorship and his 1974 letter to Timothy Leary enclosing her astronomy-inspired poetry, Ackerman meditates on the weight of cosmic consciousness: the paradox of doing laundry while reckoning with star-forged iron in our blood. She celebrates poets as 'weight-bearers of wonder', tasked with holding the 'cosmic overwhelm'—from Pluto’s 'rock-ribbed' defiance to Jupiter’s 'agitated fos [TRUNCATED]",
-      "url": "https://www.themarginalian.org/2026/02/24/diane-ackerman-the-planets/"
-    },
-    {
-      "source": "New York Review of Books",
-      "findings": "Aryeh Neier’s 'The New War on Speech' dissects Trump’s January 2026 executive order purporting to end 'government censorship'. Neier, former ACLU director, traces the order’s contradiction: while claiming to restore free speech, it targets non-citizens and revives 1917-18 Espionage Act tactics. The piece juxtaposes Trump’s rhetoric with historical assaults on expression, noting that Wilson’s administration prosecuted 2,000 dissenters under wartime laws. Neier warns that the order’s focus on social media 'coercion' masks a broader chilling effect, particularly on immigrant and international voi [TRUNCATED]",
-      "url": "https://www.nybooks.com/online/2026/03/10/the-new-war-on-speech-trump/"
-    },
-    {
-      "source": "New York Review of Books",
-      "findings": "Tim Judah’s 'A Bitter Winter in Ukraine' reports from Kyiv on the war’s third winter, where novelist Andrey Kurkov’s resigned observation—'the future is just too far away'—captures national fatigue. Judah details the grinding assault on Ukraine’s energy grid (60% rely on power stations for heat), linking the frost-resistance of a Kyiv farmer’s banana trees to civilian endurance. The piece traces Ukraine’s evolution from 2014’s distant Donbas conflict to 2026’s existential siege, where drone innovation and civilian mobilization coexist with gambling-addicted soldiers and lukewarm radiators.",
-      "url": "https://www.nybooks.com/articles/2026/03/12/a-bitter-winter-in-ukraine-tim-judah/"
+      "findings": "Maria Popova distills Oliver Sacks’s posthumous essay collection into a meditation on the 100-millisecond lag between neural firing and conscious perception. Sacks argues that perception is not passive reception but a creative act: the brain must marshal a “coalition” of millions of neurons, sustained above a threshold of intensity, before any stimulus reaches awareness. This temporal gap—one-tenth of a second—means that what we experience as “now” is already a curated memory, shaped by attention, desire, and the entire archive of personal experience. The essay closes with the unsettling impli [TRUNCATED]",
+      "urls": [
+        "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/"
+      ]
     },
     {
       "source": "Aeon",
-      "findings": "Flora Champy’s 'The role of literature as the key to personal freedom' reframes Proust’s 1905 essay 'On Reading' as a defense of literature against utilitarian moralizing. Proust, translating Ruskin’s 'Sesame and Lilies', rejects the Victorian notion that books must 'pay' through moral improvement. Instead, he argues reading is a disinterested communion with minds unconstrained by social performance—'a unique form of communication' that preserves past sensations and makes time tangible. Champy positions this as a rebuke to contemporary cost/benefit analyses of culture, asserting literature’s v [TRUNCATED]",
-      "url": "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom"
+      "findings": "Sean Irving revives 19th-century “economic republicanism” as a corrective to contemporary powerlessness. The tradition, stretching from Machiavelli to the British Chartists, held that freedom is not merely non-interference but the absence of domination: citizens must possess sufficient economic independence to resist arbitrary power. Irving traces how industrial capitalism severed this link, replacing republican self-rule with market dependence. Recovering the older insight—that liberty requires countervailing economic power—could re-arm progressive politics against both authoritarianism and o [TRUNCATED]",
+      "urls": [
+        "https://aeon.co/essays/the-wests-forgotten-republican-heritage"
+      ]
+    },
+    {
+      "source": "The New York Review of Books",
+      "findings": "Arang Keshavarzian reports from Tehran on the twin cataclysms of late 2025–early 2026: the Dey uprising and the subsequent US-Israeli war. The December protests, sparked by economic collapse and political repression, revealed a society debating whether to transform suffering into collective self-rule or surrender to a politics of blood. The February assassination of Ayatollah Khamenei and the ensuing bombardment—killing 175 schoolchildren in a single southern Iranian town—shoved Iran onto the latter path, extinguishing the embers of internal revolution and entrenching a cycle of external viole [TRUNCATED]",
+      "urls": [
+        "https://go.nybooks.com/4bkh9hE?printpage=true"
+      ]
+    },
+    {
+      "source": "Jewish Currents",
+      "findings": "In the Spring 2026 issue, Tanvi Misra’s essay “The Death of Asylum” traces how centuries of restrictive refugee policy laid the groundwork for today’s authoritarian politics. By criminalizing flight and outsourcing border control, liberal states normalized the idea that safety is a scarce commodity to be rationed by sovereigns rather than a shared human right. The piece argues that the erosion of asylum has not only immiserated migrants but also eroded the moral vocabulary with which democracies once defended pluralism, replacing it with a zero-sum calculus of security and belonging.",
+      "urls": [
+        "https://jewishcurrents.org/issue/spring-2026"
+      ]
     }
   ],
   "wearable_ai": [
     {
       "category": "ai_voice_hardware",
-      "findings": "The voice-first AI hardware landscape has crystallized into three distinct form factors in 2026. **Limitless** (formerly Rewind) offers a $399 pendant bundle with HIPAA-compliant privacy protection, recording conversations for personalized AI insights - the company was recently acquired by Meta. **Friend** (MyTabAI) has raised $7.9M in seed funding and operates from San Francisco with a focus on A [TRUNCATED]",
+      "findings": "Voice-first AI wearables have crystallized into three distinct form factors for 2026. Audria (audria.tech) is a discreet behind-the-ear device that proactively listens to conversations and provides context-aware assistance with smart scheduling and reminders. Buddi AI (getbuddi.ai) takes a modular approach, functioning as a pendant, brooch, pen, or hand band while transcribing conversations in rea [TRUNCATED]",
       "urls": [
-        "https://limitless.ai/",
-        "https://friend.com/",
-        "https://sandbar.com/"
+        "https://audria.tech/",
+        "https://getbuddi.ai/",
+        "https://compasswearable.com/"
       ]
     },
     {
       "category": "teacher_ai_tools",
-      "findings": "English and History teachers gained four specialized AI co-workers this spring. **Humy.ai** leads with 1,200+ interactive AI-powered historical figures plus 90+ teacher tools, supporting auto-graded assignments across Social Studies, ELA, and World Languages while maintaining FERPA/COPPA compliance. **Twee** provides AI-powered tools specifically for English teachers to create questions, dialogues [TRUNCATED]",
+      "findings": "English and History teachers gained four specialized AI co-workers this spring. Humy.ai provides 1,200+ interactive AI-powered historical figures plus 90+ teacher tools for lesson planning, reading differentiation, and auto-graded assignments across Social Studies and ELA. Twee.com offers AI tools specifically for English teachers to generate questions, dialogues, stories, and vocabulary exercises [TRUNCATED]",
       "urls": [
         "https://humy.ai/",
         "https://twee.com/",
         "https://hellohistory.ai/",
-        "https://parallelhistories.org.uk/"
+        "https://revolutioned.ai/"
       ]
     },
     {
       "category": "wearable_devices",
-      "findings": "The lifelogging wearable category has evolved into sophisticated AI jewelry with two distinct camps. **LumiLife** (Germany) launched a complete ecosystem of smart watch, ring, and glasses connected by one AI-powered app that adapts to user patterns for daily performance optimization. **Nuna** offers an emotion-tracking pendant that provides auto-journaling and mood insights through soft color disp [TRUNCATED]",
+      "findings": "The lifelogging wearable category has evolved into sophisticated AI jewelry with two distinct camps. LumiLife (lumilife.online) offers a complete ecosystem of smart watch, ring, and glasses connected by one AI-powered app that adapts to individual patterns for daily performance optimization. SKUGGA Technology (skugga.com) takes a unique approach with miniaturized smart technology that fits into an [TRUNCATED]",
       "urls": [
         "https://lumilife.online/",
-        "https://nunatechnology.com/",
-        "https://compasswearable.com/",
-        "https://linkedin.com/company/viai"
+        "https://skugga.com/"
       ]
     }
   ],
@@ -658,35 +633,28 @@
     "title": "The Known World",
     "author": "Edward P. Jones",
     "year": 2003,
-    "summary": "Winner of the 2004 Pulitzer Prize for Fiction, this debut novel reimagines antebellum Virginia through the story of Henry Townsend, a former slave who becomes a slave-owning landowner. Jones crafts a morally intricate narrative that explores the paradox of Black slaveholders and the corrosive legacy of slavery, weaving together the lives of freed and enslaved people with biblical gravity. Critics hailed it as a masterpiece destined for the American literary canon, comparing its scope and moral complexity to Toni Morrison's Beloved and William Faulkner's Absalom, Absalom!",
+    "summary": "Winner of the 2004 Pulitzer Prize and hailed by the New York Times as the best work of 21st-century fiction, The Known World is a debut novel of extraordinary emotional depth and literary power. Set in antebellum Virginia, it tells the story of Henry Townsend, a former slave who becomes the proprietor of his own plantation—and his own slaves. After his death, his widow Caldonia is consumed by grief, and the plantation begins to unravel: slaves escape, families betray one another, and the fragile order of the \"known world\" collapses. Jones masterfully weaves the lives of the freed and the ensla [TRUNCATED]",
     "url": "https://www.harpercollins.com/products/the-known-world-edward-p-jones"
   },
   "enriched_articles": [
     {
-      "url": "https://www.aljazeera.com/news/2026/5/7/msf-accuses-israel-of-manufacturing-a-malnutrition-crisis-in-gaza",
-      "source": "www.aljazeera.com",
-      "title": "MSF accuses Israel of manufacturing a malnutrition crisis in Gaza",
-      "fetch_failed": false,
-      "text": "# MSF accuses Israel of manufacturing a malnutrition crisis in Gaza\n\n*Doctors Without Borders said it identified its first cases of child malnutrition in January 2024, just three months into Israel's assault.*\n\nSave\n\nShare\n\n![A displaced family eats a meal inside a tent.](/wp-content/uploads/2025/07/2025-07-11T110712Z_577951930_RC2OJFAL1EUN_RTRMADP_3_ISRAEL-PALESTINIANS-GAZA-PREGNANT-1752271744.jpg?resize=770%2C513&quality=80)\n![](/wp-content/uploads/2026/05/Me-1-1778058603.jpg?resize=96%2C96&qu"
-    },
-    {
-      "url": "https://www.aljazeera.com/news/2026/5/7/gulf-states-urge-un-action-to-ensure-strait-of-hormuz-safety",
-      "source": "www.aljazeera.com",
-      "title": "Gulf states urge UN action to ensure Strait of Hormuz safety",
-      "fetch_failed": false,
-      "text": "# Gulf states urge UN action to ensure Strait of Hormuz safety\n\n*Draft resolution demands Iran halt attacks, disclose mines, and ensure humanitarian aid passage through the Strait.*\n\nSave\n\nShare\n\n![NEW YORK, NEW YORK - MAY 07: US Ambassador to the United Nations (UN) Mike Waltz is joined by Gulf states ambassadors as he speaks to reporters after the passing of a UN Security Council draft resolution on the situation with ships in the Strait of Hormuz at UN Headquarters on May 07, 2026 in New York"
-    },
-    {
       "url": "https://www.bbc.com/news/articles/c0q9xq7knq2o",
       "source": "www.bbc.com",
-      "title": "US and Iran in blockade standoff as Pakistan pushes for talks",
+      "title": "US and Iran locked in blockade standoff as Pakistan pushes for talks",
       "fetch_failed": false,
       "text": "# US and Iran in blockade standoff as Pakistan pushes for talks\n\n![](https://static.files.bbci.co.uk/bbcdotcom/web/20260427-074339-4d487e3684-web-3.2.0-4/grey-placeholder.png)\n![AFP via Getty Images Security personnel stand guard at a security checkpost along a road temporarily closed near the Serena Hotel at the Red Zone area in Islamabad on April 20, 2026.](https://ichef.bbci.co.uk/news/480/cpsprodpb/0b1f/live/f56ba0d0-3e60-11f1-8887-e93160959470.jpg.webp)\n\nCourtesy of last night's Truth Socia"
+    },
+    {
+      "url": "https://www.bbc.com/news/articles/cnv8l99r3yyo",
+      "source": "www.bbc.com",
+      "title": "EU approves €90bn loan for Ukraine as pipeline is turned on ending deadlock",
+      "fetch_failed": false,
+      "text": "# EU approves €90bn loan for Ukraine as pipeline is turned on ending deadlock\n\n![](https://static.files.bbci.co.uk/bbcdotcom/web/20260427-074339-4d487e3684-web-3.2.0-4/grey-placeholder.png)\n![Reuters The Druzhba oil pipeline between Hungary and Russia is seen at the Hungarian MOL Group's Danube Refinery in Szazhalombatta, Hungary, May 18, 2022](https://ichef.bbci.co.uk/news/480/cpsprodpb/40de/live/992a3f20-3e29-11f1-b55d-0f258dce1735.jpg.webp)\n\nUkraine says it has resumed pumping Russian oil thr"
     }
   ],
   "correspondence": {
     "found": true,
     "fallback_used": false,
-    "text": "- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Correspondence Phase.\n- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Write Phase.\n- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Research Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Correspondence Phase\" failed for repository mmmichaelllang/jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Write Phase\" failed for repository mmmichaelllang/jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Research Phase\" failed for repository mmmichaelllang/jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions workflow \"Jeeves — Correspondence Phase\" failed for repository mmmichaelllang/jeeves-memory.\n- [escalation] mmmichaelllang: CI workflow on main branch failed all jobs.\n- [escalation] mmmichaelllang: PR CI workflow failed for fix(correspondence) branch.\n- [escalation] mmmichaelllang: Third attempt of daily Jeeves pipeline failed some jobs."
+    "text": "- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Correspondence Phase.\n- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Write Phase.\n- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Research Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Correspondence Phase failed for mmmichaelllang/jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed for mmmichaelllang/jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Research Phase failed for mmmichaelllang/jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Correspondence Phase failed for mmmichaelllang/jeeves-memory.\n- [escalation] mmmichaelllang: CI workflow for jeeves-unchained failed on main branch.\n- [escalation] mmmichaelllang: CI workflow failed for PR fixing correspondence fallback.\n- [escalation] mmmichaelllang: Jeeves daily pipeline failed on third attempt.\n- [escalation] mmmichaelllang: Jeeves daily pipeline failed on second attempt."
   }
 }
