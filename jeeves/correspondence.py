@@ -239,13 +239,59 @@ def classify_with_kimi(
         _TIMEOUT_SLEEPS = (30,)
         max_attempts_rate = 3
         max_attempts_timeout = 2
+        # Best-effort token-usage extractor — same shape as jeeves.write._extract_llm_usage.
+        # Inlined here to avoid a write→correspondence import cycle.
+        def _usage(resp):
+            u = (
+                getattr(resp, "usage", None)
+                or getattr(getattr(resp, "raw", None), "usage", None)
+            )
+            if u is None:
+                return None, None, None
+            def _g(o, k):
+                if isinstance(o, dict):
+                    return o.get(k)
+                return getattr(o, k, None)
+            pt = _g(u, "prompt_tokens") or _g(u, "input_tokens")
+            ct = _g(u, "completion_tokens") or _g(u, "output_tokens")
+            tt = _g(u, "total_tokens")
+            return (
+                int(pt) if pt is not None else None,
+                int(ct) if ct is not None else None,
+                int(tt) if tt is not None else None,
+            )
+
+        from .tools.telemetry import emit_llm_call
+
         attempt = 0
         while True:
+            t0 = time.monotonic()
             try:
                 resp = llm.chat(messages)
                 raw = str(resp.message.content or "").strip()
+                pt, ct, tt = _usage(resp)
+                emit_llm_call(
+                    provider="nim",
+                    model="kimi-k2",
+                    label=f"classify_batch_{batch_num}",
+                    sector="correspondence",
+                    prompt_tokens=pt,
+                    completion_tokens=ct,
+                    total_tokens=tt,
+                    latency_ms=(time.monotonic() - t0) * 1000,
+                    ok=True,
+                )
                 break
             except Exception as exc:
+                emit_llm_call(
+                    provider="nim",
+                    model="kimi-k2",
+                    label=f"classify_batch_{batch_num}",
+                    sector="correspondence",
+                    latency_ms=(time.monotonic() - t0) * 1000,
+                    ok=False,
+                    error=type(exc).__name__,
+                )
                 exc_str = str(exc).lower()
                 is_rate_limit = (
                     "429" in exc_str

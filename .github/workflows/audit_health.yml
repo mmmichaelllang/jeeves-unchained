@@ -67,3 +67,71 @@ jobs:
             --days "$DAYS" \
             --email "$RECIPIENT" \
             --verbose
+
+      - name: Run quality-warning telemetry report
+        # Aggregates `quality_warnings` from run-manifest-*.json over the same
+        # window as the audit health step. Surfaces chronic prompt-level
+        # patterns (PART7 fallback fires, PART9 TOTT scaffolding fires, NIM
+        # refine misses). Run AFTER audit_health so a single email-stack lands
+        # per Sunday morning.
+        env:
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          JEEVES_RECIPIENT_EMAIL: ${{ vars.JEEVES_RECIPIENT_EMAIL || 'lang.mc@gmail.com' }}
+        run: |
+          DAYS="${{ github.event.inputs.days || '7' }}"
+          RECIPIENT="${{ github.event.inputs.email || vars.JEEVES_RECIPIENT_EMAIL || 'lang.mc@gmail.com' }}"
+          uv run python scripts/quality_telemetry_report.py \
+            --days "$DAYS" \
+            --email "$RECIPIENT" \
+            --verbose
+
+      - name: Run tokens-per-call telemetry report
+        # Aggregates llm_call + tool_call events from telemetry-*.jsonl.
+        # Surfaces per-provider call/token/latency rolls so chronic NIM
+        # TPM-ceiling pressure becomes visible without grepping JSONL.
+        # The report is committed in the next step so it lives in repo history.
+        env:
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          JEEVES_RECIPIENT_EMAIL: ${{ vars.JEEVES_RECIPIENT_EMAIL || 'lang.mc@gmail.com' }}
+        run: |
+          DAYS="${{ github.event.inputs.days || '7' }}"
+          uv run python scripts/tokens_per_call_report.py \
+            --days "$DAYS" \
+            --verbose
+
+      - name: Run skill skip-list graduator
+        # Walks last 14 days of session-*.json, auto-updates each site
+        # skill's skip-list section with items shipped >=3 consecutive days.
+        run: |
+          uv run python scripts/graduate_skip_lists.py \
+            --days 14 --min-consecutive 3 --verbose
+
+      - name: Run skill body graduator (observed-data block)
+        # Adds an "Observed in last N days" auto-graduated section to each
+        # skill, capturing host distribution + new-vs-prior ratio per day.
+        # Bounded by session JSON only — full-trace body graduation requires
+        # llm_call telemetry coverage (in progress).
+        run: |
+          uv run python scripts/graduate_skill_body.py \
+            --days 14 --stable-floor 4 --verbose
+
+      - name: Commit graduated skills + telemetry reports
+        # Commits any changes to:
+        #   - jeeves/site_skills/registry/*.md (skip-list + observed blocks)
+        #   - reports/quality-telemetry-*.md
+        #   - reports/tokens-per-call-*.md
+        # Skill files become a durable, audit-able trail of the agents'
+        # learning over time.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "jeeves-bot"
+          git config user.email "jeeves-bot@users.noreply.github.com"
+          git add jeeves/site_skills/registry/*.md reports/*.md 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "weekly graduator: skill skip-lists + observed + telemetry reports $(date -u +%Y-%m-%d)"
+            git pull --rebase --autostash origin main || true
+            git push
+          else
+            echo "no graduator changes to commit"
+          fi
