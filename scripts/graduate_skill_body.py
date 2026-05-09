@@ -114,6 +114,13 @@ def _walk_tool_call_events(sessions_dir: Path, days: int) -> list[dict]:
     return out
 
 
+SEARCH_PROVIDERS = frozenset({
+    "serper", "exa", "tavily", "jina_search", "jina_deepsearch",
+    "gemini_grounded", "vertex_grounded", "tinyfish_search",
+    "playwright_search",
+})
+
+
 def _queries_for_sector_hosts(
     events: list[dict], hosts: list[str],
 ) -> list[tuple[str, str, int, int]]:
@@ -121,15 +128,10 @@ def _queries_for_sector_hosts(
 
     Returns list of (provider, query, calls, ok_calls) sorted by calls desc.
     Filters to queries from search providers (serper, exa, tavily, jina,
-    gemini, vertex, tinyfish, playwright). Hosts arg is currently unused but
-    held for future per-host correlation when telemetry adds result URLs.
+    gemini, vertex, tinyfish, playwright). Hosts arg is currently unused
+    by this function — see ``_queries_returning_stuck_urls`` for per-URL
+    correlation now that tool_call telemetry carries ``urls_returned``.
     """
-    SEARCH_PROVIDERS = frozenset({
-        "serper", "exa", "tavily", "jina_search", "jina_deepsearch",
-        "gemini_grounded", "vertex_grounded", "tinyfish_search",
-        "playwright_search",
-    })
-    # Group: (provider, query) -> {calls, ok}
     g: dict[tuple[str, str], dict[str, int]] = defaultdict(
         lambda: {"calls": 0, "ok": 0}
     )
@@ -144,6 +146,46 @@ def _queries_for_sector_hosts(
             g[key]["ok"] += 1
     return sorted(
         [(p, q, v["calls"], v["ok"]) for (p, q), v in g.items()],
+        key=lambda t: -t[2],
+    )
+
+
+def _queries_returning_stuck_urls(
+    events: list[dict], stuck_urls: list[str],
+) -> list[tuple[str, str, int]]:
+    """Correlate queries with stuck-URL appearances using ``urls_returned``.
+
+    Reads tool_call events emitted by serper/exa/tavily/jina (post 2026-05-09)
+    that include the top-10 returned URLs. For each (provider, query) pair,
+    counts how many of the stuck URLs it has returned over the window.
+    Returns list of (provider, query, stuck_hits) sorted by stuck_hits desc.
+
+    Used to give the rewrite suggester a precise rather than heuristic
+    target — the queries with the highest stuck-hit count are the actual
+    rotation candidates.
+    """
+    if not stuck_urls:
+        return []
+    stuck_set = {u for u in stuck_urls if u}
+    if not stuck_set:
+        return []
+
+    g: dict[tuple[str, str], int] = defaultdict(int)
+    for ev in events:
+        provider = str(ev.get("provider") or "")
+        query = str(ev.get("query") or "").strip()
+        if not query or provider not in SEARCH_PROVIDERS:
+            continue
+        urls_returned = ev.get("urls_returned") or []
+        if not isinstance(urls_returned, list):
+            continue
+        for u in urls_returned:
+            if not isinstance(u, str):
+                continue
+            if u in stuck_set or _strip_url(u) in stuck_set:
+                g[(provider, query)] += 1
+    return sorted(
+        [(p, q, hits) for (p, q), hits in g.items()],
         key=lambda t: -t[2],
     )
 
@@ -243,14 +285,19 @@ def _analyze_sector(
 
 
 def _render_query_block(
-    *, queries: list[tuple[str, str, int, int]], stuck_count: int, days: int,
+    *,
+    queries: list[tuple[str, str, int, int]],
+    stuck_count: int,
+    days: int,
+    stuck_query_correlation: list[tuple[str, str, int]] | None = None,
 ) -> str:
     """Render the queries-observed + suggested-rewrite block.
 
-    `queries` is the output of `_queries_for_sector_hosts` — per-sector
-    aggregation. `stuck_count` is the number of stuck producers detected in
-    session JSON for the same sector; high values mean the current query
-    set is yielding repeats and rotation is overdue.
+    `queries` is the output of `_queries_for_sector_hosts`. `stuck_count` is
+    the number of stuck-producer URLs detected in session JSON; high values
+    mean the current query set yields repeats. `stuck_query_correlation`
+    (when telemetry has urls_returned) is the precise per-query stuck-hit
+    count — used to name specific queries to rotate rather than guessing.
     """
     if not queries:
         return (
@@ -261,19 +308,45 @@ def _render_query_block(
     lines.append("**Queries observed** (provider · query · calls · ok-calls):")
     lines.append("")
     for provider, query, calls, ok in queries[:15]:
-        # Truncate long queries for table display.
         q_short = query if len(query) <= 100 else query[:97] + "…"
         lines.append(f"- `{provider}` · `{q_short}` — {calls} call(s), {ok} ok")
-    if stuck_count >= 3 and queries:
+
+    # Precise per-query stuck-correlation, available when serper/exa/tavily/
+    # jina emit urls_returned (post-2026-05-09 telemetry).
+    if stuck_query_correlation:
         lines.append("")
         lines.append(
-            f"**Suggested rewrite**: {stuck_count} URL(s) are stuck on >=4-day "
-            "ship streaks. The top queries above are likely contributing — "
-            "rotate them. Keep queries that fired few times AND were ok; drop "
-            "or narrow the high-call high-stuck-producer queries. Adopt one "
-            "of the narrower-query examples from the skill's Workflow section "
-            "until at least one new URL surfaces."
+            "**Stuck-URL correlation** (precise — queries that returned URLs "
+            "currently in the stuck-producer list; rotate these first):"
         )
+        lines.append("")
+        for provider, query, hits in stuck_query_correlation[:10]:
+            q_short = query if len(query) <= 100 else query[:97] + "…"
+            lines.append(
+                f"- `{provider}` · `{q_short}` — returned {hits} stuck URL(s)"
+            )
+
+    if stuck_count >= 3 and queries:
+        lines.append("")
+        if stuck_query_correlation:
+            top = stuck_query_correlation[0]
+            lines.append(
+                f"**Suggested rewrite**: {stuck_count} URL(s) are stuck on "
+                f">=4-day streaks. The query `{top[1][:80]}` (provider "
+                f"`{top[0]}`) returned {top[2]} of them — rotate it FIRST. "
+                "Adopt one of the narrower-query examples from the skill's "
+                "Workflow section until at least one new URL surfaces."
+            )
+        else:
+            lines.append(
+                f"**Suggested rewrite**: {stuck_count} URL(s) are stuck on "
+                ">=4-day ship streaks but `urls_returned` telemetry is "
+                "missing — the precise per-query attribution is unavailable. "
+                "Top queries above are likely contributing; rotate the "
+                "highest-call ones first. To get precise attribution next "
+                "run, ensure search-provider tool emits include "
+                "`urls_returned=...` (serper/exa/tavily/jina patched 2026-05-09)."
+            )
     elif stuck_count == 0 and queries:
         lines.append("")
         lines.append(
@@ -286,6 +359,7 @@ def _render_query_block(
 def _render_observed_section(
     *, sectors: list[str], analyses: dict, days: int, stable_floor: int,
     sector_queries: dict | None = None,
+    sector_query_stuck_corr: dict | None = None,
 ) -> str:
     today = _utc_today().isoformat()
     out = [
@@ -334,12 +408,21 @@ def _render_observed_section(
                 out.append(f"| {row['date']} | {row['new_count']} | {row['total_count']} | {row['ratio']} |")
             out.append("")
         # Per-sector query block — pulled from telemetry tool_call events.
+        # `sector_query_stuck_corr` (optional in the kw-arg below) carries
+        # the precise (provider, query, stuck-hits) tuples computed from
+        # urls_returned telemetry, when available.
+        corr = (
+            sector_query_stuck_corr.get(sector)
+            if sector_query_stuck_corr
+            else None
+        )
         if sector_queries and sector in sector_queries:
             out.append(
                 _render_query_block(
                     queries=sector_queries[sector],
                     stuck_count=len(a.get("stuck_producers", [])),
                     days=days,
+                    stuck_query_correlation=corr,
                 )
             )
     return "\n".join(out).rstrip() + "\n"
@@ -426,10 +509,20 @@ def main(argv: list[str] | None = None) -> int:
             sector: _queries_for_sector_hosts(tool_events, hosts)
             for sector in sectors
         }
+        # Precise per-query stuck-URL correlation. Requires urls_returned
+        # in tool_call events (serper/exa/tavily/jina, 2026-05-09 patch).
+        sector_query_stuck_corr = {
+            sector: _queries_returning_stuck_urls(
+                tool_events,
+                stuck_urls=[u for u, _c in analyses[sector].get("stuck_producers", [])],
+            )
+            for sector in sectors
+        }
         body = _render_observed_section(
             sectors=sectors, analyses=analyses,
             days=args.days, stable_floor=args.stable_floor,
             sector_queries=sector_queries,
+            sector_query_stuck_corr=sector_query_stuck_corr,
         )
         new_text = _splice_observed(text, body)
         changed = new_text != text

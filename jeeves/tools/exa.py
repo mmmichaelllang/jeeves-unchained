@@ -96,6 +96,7 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
             }
             for r in (resp.results or [])
         ]
+        urls_returned = [r.get("url", "") for r in results if r.get("url")][:10]
         _emit(
             "tool_call",
             provider="exa",
@@ -104,6 +105,7 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
             ok=True,
             results=len(results),
             latency_ms=int((time.monotonic() - t0) * 1000),
+            urls_returned=urls_returned,
         )
         return json.dumps({
             "provider": "exa",

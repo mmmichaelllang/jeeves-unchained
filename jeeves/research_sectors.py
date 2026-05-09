@@ -1314,6 +1314,18 @@ async def run_sector(
     net_attempts = 0
     rl_attempts = 0
     last_exc: Exception | None = None
+    # Sector-level LLM-call telemetry. Records ONE event per agent.run()
+    # invocation — this is the high-water mark for NIM TPM pressure since
+    # each run loops over many tool calls + Kimi inferences. Token usage is
+    # rarely surfaced through the FunctionAgent abstraction (NIM streams),
+    # so we record call-count + latency + ok and let the rollup show what's
+    # available. No retry-attempt is double-counted: only the SUCCESSFUL or
+    # FINALLY-FAILED outcome lands.
+    import time as _t
+    from .tools.telemetry import emit_llm_call
+
+    _sector_t0 = _t.monotonic()
+
     for _loop_guard in range(20):  # hard cap prevents infinite loop
         try:
             if response is None and net_attempts == 0 and rl_attempts == 0:
@@ -1329,6 +1341,14 @@ async def run_sector(
                     verbose=cfg.verbose,
                 )
                 response = await agent_r.run(user_msg)
+            emit_llm_call(
+                provider="nim",
+                model="kimi-k2",
+                label="research_sector",
+                sector=spec.name,
+                latency_ms=(_t.monotonic() - _sector_t0) * 1000,
+                ok=True,
+            )
             break  # success — exit retry loop
         except Exception as e:
             last_exc = e
@@ -1338,6 +1358,15 @@ async def run_sector(
                         "sector %s: NIM 429 on all %d rate-limit retries (%s); "
                         "returning default.",
                         spec.name, rl_attempts + 1, e,
+                    )
+                    emit_llm_call(
+                        provider="nim",
+                        model="kimi-k2",
+                        label="research_sector",
+                        sector=spec.name,
+                        latency_ms=(_t.monotonic() - _sector_t0) * 1000,
+                        ok=False,
+                        error="rate_limit_exhausted",
                     )
                     return spec.default
                 delay = _ratelimit_delays[rl_attempts]
@@ -1353,6 +1382,15 @@ async def run_sector(
                         "sector %s: network error on all %d retries (%s); "
                         "returning default.",
                         spec.name, net_attempts + 1, e,
+                    )
+                    emit_llm_call(
+                        provider="nim",
+                        model="kimi-k2",
+                        label="research_sector",
+                        sector=spec.name,
+                        latency_ms=(_t.monotonic() - _sector_t0) * 1000,
+                        ok=False,
+                        error=type(e).__name__,
                     )
                     return spec.default
                 delay = _net_delays[net_attempts]

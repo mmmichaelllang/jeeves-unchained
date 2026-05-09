@@ -116,8 +116,11 @@ def _classify_batch_with_openrouter(
         role_str = role.value if hasattr(role, "value") else str(role or "user").lower()
         payload.append({"role": role_str, "content": str(m.content or "")})
 
+    from .tools.telemetry import emit_llm_call
+
     last_exc: Exception | None = None
     for model_id in _OPENROUTER_CLASSIFY_MODELS:
+        t0 = time.monotonic()
         try:
             resp = client.chat.completions.create(
                 model=model_id,
@@ -126,10 +129,35 @@ def _classify_batch_with_openrouter(
                 temperature=0.1,
             )
             text = (resp.choices[0].message.content or "").strip()
+            usage = getattr(resp, "usage", None)
+            pt = getattr(usage, "prompt_tokens", None) if usage else None
+            ct = getattr(usage, "completion_tokens", None) if usage else None
+            tt = getattr(usage, "total_tokens", None) if usage else None
+            emit_llm_call(
+                provider="openrouter",
+                model=model_id,
+                label="classify_fallback",
+                sector="correspondence",
+                prompt_tokens=pt,
+                completion_tokens=ct,
+                total_tokens=tt,
+                latency_ms=(time.monotonic() - t0) * 1000,
+                ok=bool(text),
+                error="" if text else "empty_response",
+            )
             if text:
                 log.info("openrouter classify fallback succeeded via %s", model_id)
                 return text
         except Exception as exc:
+            emit_llm_call(
+                provider="openrouter",
+                model=model_id,
+                label="classify_fallback",
+                sector="correspondence",
+                latency_ms=(time.monotonic() - t0) * 1000,
+                ok=False,
+                error=type(exc).__name__,
+            )
             last_exc = exc
             log.debug("openrouter %s failed: %s", model_id, exc)
             continue
@@ -505,6 +533,9 @@ def render_with_groq(
     )
 
     # Tier 1 — Groq.
+    from .tools.telemetry import emit_llm_call
+
+    t0 = time.monotonic()
     try:
         llm = build_groq_llm(cfg, temperature=0.65, max_tokens=max_tokens)
         resp = llm.chat(
@@ -514,10 +545,42 @@ def render_with_groq(
             ]
         )
         text = str(resp.message.content or "")
+        # Best-effort token extraction (same shape as write.py and classify_with_kimi).
+        usage = (
+            getattr(resp, "usage", None)
+            or getattr(getattr(resp, "raw", None), "usage", None)
+        )
+        def _g(o, k):
+            if isinstance(o, dict):
+                return o.get(k)
+            return getattr(o, k, None) if o is not None else None
+        pt = _g(usage, "prompt_tokens") or _g(usage, "input_tokens")
+        ct = _g(usage, "completion_tokens") or _g(usage, "output_tokens")
+        tt = _g(usage, "total_tokens")
+        emit_llm_call(
+            provider="groq",
+            model=cfg.groq_model_id,
+            label="correspondence_render",
+            sector="correspondence",
+            prompt_tokens=int(pt) if pt is not None else None,
+            completion_tokens=int(ct) if ct is not None else None,
+            total_tokens=int(tt) if tt is not None else None,
+            latency_ms=(time.monotonic() - t0) * 1000,
+            ok=bool(text.strip()),
+        )
         if text.strip():
             return text
         log.warning("correspondence: Groq returned empty content — escalating to NIM/OR")
     except Exception as groq_exc:
+        emit_llm_call(
+            provider="groq",
+            model=cfg.groq_model_id,
+            label="correspondence_render",
+            sector="correspondence",
+            latency_ms=(time.monotonic() - t0) * 1000,
+            ok=False,
+            error=type(groq_exc).__name__,
+        )
         if not _is_groq_rate_limit(groq_exc):
             raise
         log.warning(

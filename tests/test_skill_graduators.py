@@ -279,7 +279,8 @@ def test_render_query_block_high_stuck_suggests_rotation(skill_body):
         queries=queries, stuck_count=5, days=14,
     )
     assert "Suggested rewrite" in out
-    assert "rotate them" in out
+    # Without urls_returned correlation, suggestion falls back to general guidance.
+    assert "highest-call" in out or "rotate" in out.lower()
     assert "ai_systems autonomous research" in out
 
 
@@ -301,6 +302,66 @@ def test_render_query_block_truncates_long_queries(skill_body):
     # Truncated to 100 chars + ellipsis (101 chars total in the table cell).
     assert long_query not in out  # full version not present
     assert "x" * 97 + "…" in out
+
+
+def test_queries_returning_stuck_urls_correlates_precisely(skill_body):
+    """Per-query stuck-URL correlation reads urls_returned from tool_call events."""
+    events = [
+        {"event": "tool_call", "provider": "serper", "query": "DOVA arxiv 2026",
+         "ok": True, "urls_returned": ["https://arxiv.org/abs/2603.13327", "https://other.com/x"]},
+        {"event": "tool_call", "provider": "serper", "query": "DOVA arxiv 2026",
+         "ok": True, "urls_returned": ["https://arxiv.org/abs/2603.13327"]},
+        {"event": "tool_call", "provider": "exa", "query": "narrow query",
+         "ok": True, "urls_returned": ["https://fresh.com/new"]},
+    ]
+    stuck = ["https://arxiv.org/abs/2603.13327"]
+    corr = skill_body._queries_returning_stuck_urls(events, stuck)
+    assert corr[0] == ("serper", "DOVA arxiv 2026", 2)
+    # exa "narrow query" returned no stuck URL → not in result.
+    assert all(q != "narrow query" for _p, q, _h in corr)
+
+
+def test_queries_returning_stuck_urls_empty_inputs(skill_body):
+    assert skill_body._queries_returning_stuck_urls([], ["x"]) == []
+    assert skill_body._queries_returning_stuck_urls(
+        [{"event": "tool_call", "provider": "serper", "query": "q",
+          "ok": True, "urls_returned": ["x"]}],
+        [],
+    ) == []
+
+
+def test_queries_returning_stuck_urls_handles_arxiv_canonicalisation(skill_body):
+    """Stuck-list contains canonical abs/ID; events return pdf/IDvN — must match."""
+    events = [
+        {"event": "tool_call", "provider": "exa", "query": "ai_systems",
+         "ok": True, "urls_returned": ["https://arxiv.org/pdf/2603.13327v2.pdf"]},
+    ]
+    stuck = ["https://arxiv.org/abs/2603.13327"]
+    corr = skill_body._queries_returning_stuck_urls(events, stuck)
+    assert corr == [("exa", "ai_systems", 1)]
+
+
+def test_render_query_block_with_correlation_names_top_query(skill_body):
+    queries = [("serper", "high call", 12, 12), ("exa", "low call", 1, 1)]
+    correlation = [("serper", "high call", 5)]
+    out = skill_body._render_query_block(
+        queries=queries, stuck_count=5, days=14,
+        stuck_query_correlation=correlation,
+    )
+    assert "Stuck-URL correlation" in out
+    assert "high call" in out
+    assert "rotate it FIRST" in out
+
+
+def test_render_query_block_falls_back_when_no_correlation(skill_body):
+    """Without urls_returned telemetry, suggestion notes the missing data."""
+    queries = [("serper", "q", 12, 12)]
+    out = skill_body._render_query_block(
+        queries=queries, stuck_count=5, days=14,
+        stuck_query_correlation=None,
+    )
+    assert "urls_returned` telemetry is" in out
+    assert "patched 2026-05-09" in out
 
 
 def test_walk_tool_call_events_skips_non_tool_call_events(skill_body, tmp_path, monkeypatch):
