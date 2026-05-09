@@ -1,6 +1,6 @@
 {
   "date": "2026-05-09",
-  "briefing_chars": 24953,
+  "briefing_chars": 17552,
   "session_status": "complete",
   "detectors_run": [
     "D8_dedup",
@@ -19,66 +19,68 @@
       "type": "dedup_cross_day_overlap",
       "severity": "medium",
       "section": null,
-      "detail": "29 URLs already covered in prior briefings",
+      "detail": "18 URLs already covered in prior briefings",
       "evidence": {
-        "overlap_count": 29,
+        "overlap_count": 18,
         "samples": [
+          "https://www.theguardian.com/politics/2026/may/08/labour-local-elections-keir-starmer-cling-on",
           "https://www.bbc.com/news/articles/cnv8l99r3yyo",
-          "https://audria.tech",
-          "https://aeon.co/essays/the-wests-forgotten-republican-heritage",
-          "https://humy.ai",
-          "https://link.springer.com/article/10.1007/s12136-025-00635-5"
+          "https://www.npr.org/2026/05/08/nx-s1-5805193/redistricting-virginia-trump-midterms",
+          "https://tech.yahoo.com/wearables/articles/vocci-ring-may-first-ai-163000223.html",
+          "https://www.bbc.com/news/articles/cn0ep28drllo"
         ]
       }
     },
     {
-      "type": "writing_quality_issue",
-      "severity": "low",
+      "type": "narrative_flow_low",
+      "severity": "high",
       "section": null,
-      "detail": "aside_overuse: a proper omnishambles of a decision, Sir",
+      "detail": "narrative flow score 4/10",
       "evidence": {
-        "score": 9,
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
-      }
-    },
-    {
-      "type": "writing_quality_issue",
-      "severity": "low",
-      "section": null,
-      "detail": "aside_overuse: a total and utter shitshow of a decision, Sir \u2014 but then again, what else is new?",
-      "evidence": {
-        "score": 9,
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
-      }
-    },
-    {
-      "type": "writing_quality_issue",
-      "severity": "low",
-      "section": null,
-      "detail": "aside_overuse: a right old fucking shambles of a project, I'm afraid.",
-      "evidence": {
-        "score": 9,
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
-      }
-    },
-    {
-      "type": "writing_quality_issue",
-      "severity": "low",
-      "section": null,
-      "detail": "aside_overuse: a staggering, monumental cock-waffle of a task, but someone's got to do it.",
-      "evidence": {
-        "score": 9,
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
-      }
-    },
-    {
-      "type": "writing_quality_issue",
-      "severity": "low",
-      "section": null,
-      "detail": "aside_overuse: a proper, bespoke, hand-crafted clusterfuck of a system, but it's the only way to keep the wheels turning.",
-      "evidence": {
-        "score": 9,
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+        "score": 4,
+        "issues": [
+          {
+            "section": "Opening",
+            "issue": "CSS code block precedes narrative, breaking flow"
+          },
+          {
+            "section": "Greeting",
+            "issue": "Abrupt shift from code to salutation without transition"
+          },
+          {
+            "section": "Tone",
+            "issue": "Profanity ('fucking', 'thundercunt', 'shitshow') clashes with Jeeves register"
+          },
+          {
+            "section": "Headings",
+            "issue": "Section titles appear as plain text, creating a choppy structure"
+          },
+          {
+            "section": "Paragraph length",
+            "issue": "Overly long paragraphs bundle unrelated topics, harming progression"
+          },
+          {
+            "section": "Redundancy",
+            "issue": "Repeated omnishambles phrasing adds unnecessary repetition"
+          },
+          {
+            "section": "Transition",
+            "issue": "Move from domestic sphere to global news lacks a linking sentence"
+          },
+          {
+            "section": "Talk of the Town",
+            "issue": "Excerpt inserted without adequate lead\u2011in, disrupting continuity"
+          },
+          {
+            "section": "Formatting",
+            "issue": "HTML entity (&middot;) appears in prose, interrupting reading flow"
+          },
+          {
+            "section": "Closing",
+            "issue": "Sign\u2011off follows a dense list without a natural buildup to closure"
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
       }
     },
     {
@@ -95,9 +97,9 @@
       "type": "hallucinated_url",
       "severity": "high",
       "section": "The Domestic Sphere",
-      "detail": "href 'https://www.edmondslibrary.org/' not present in any session JSON sector",
+      "detail": "href 'https://www.edmondswa.gov/' not present in any session JSON sector",
       "evidence": {
-        "url": "https://www.edmondslibrary.org/",
+        "url": "https://www.edmondswa.gov/",
         "is_homepage": true
       }
     },
@@ -105,9 +107,9 @@
       "type": "hallucinated_url",
       "severity": "high",
       "section": "The Domestic Sphere",
-      "detail": "href 'https://www.edmondsparksandrec.org/' not present in any session JSON sector",
+      "detail": "href 'https://www.sno-isle.org/' not present in any session JSON sector",
       "evidence": {
-        "url": "https://www.edmondsparksandrec.org/",
+        "url": "https://www.sno-isle.org/",
         "is_homepage": true
       }
     },
@@ -118,16 +120,6 @@
       "detail": "href 'https://www.newyorker.com/' not present in any session JSON sector",
       "evidence": {
         "url": "https://www.newyorker.com/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Commercial Ledger",
-      "detail": "href 'https://getbudii.ai/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://getbudii.ai/",
         "is_homepage": true
       }
     },
@@ -144,23 +136,12 @@
       }
     },
     {
-      "type": "missing_section",
-      "severity": "high",
-      "section": "The Library Stacks",
-      "detail": "h3 'The Library Stacks' absent but sectors ['literary_pick'] have data",
-      "evidence": {
-        "sectors": [
-          "literary_pick"
-        ]
-      }
-    },
-    {
       "type": "greeting_missing_weather",
       "severity": "medium",
       "section": "(greeting)",
       "detail": "weather string present in session but not in greeting",
       "evidence": {
-        "weather_preview": "Mostly cloudy early, then clearing to afternoon sunshine. High 65\u00b0F with light south winds becoming "
+        "weather_preview": "Mostly cloudy today in Edmonds, 64\u00b0F high/53\u00b0F low. Light SW winds 5-10 mph, near-zero rain chance. "
       }
     },
     {
@@ -169,16 +150,16 @@
       "section": "(greeting)",
       "detail": "correspondence handoff text present but no preview in greeting",
       "evidence": {
-        "handoff_preview": "- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Daily Pipeline.\n- [escalation] mmm"
+        "handoff_preview": "- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR adding telemetry features.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR adding telemetry features.\n- [e"
       }
     }
   ],
   "section_count": 6,
-  "hallucinated_url_count": 5,
+  "hallucinated_url_count": 4,
   "empty_section_count": 0,
   "aside_template_count": 0,
-  "narrative_flow_score": null,
-  "writing_quality_score": 9,
+  "narrative_flow_score": 4,
+  "writing_quality_score": null,
   "dedup_score": null,
-  "audit_model_used": "qwen/qwen3-next-80b-a3b-instruct:free"
+  "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free"
 }

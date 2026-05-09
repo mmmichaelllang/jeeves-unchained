@@ -1,7 +1,7 @@
 {
   "date": "2026-05-09",
-  "pre_fix_chars": 24953,
-  "post_fix_chars": 25149,
+  "pre_fix_chars": 17552,
+  "post_fix_chars": 17507,
   "actions": [
     {
       "type": "strip_hallucinated_url",
@@ -15,19 +15,19 @@
     {
       "type": "strip_hallucinated_url",
       "section": null,
-      "detail": "stripped <a href='https://www.edmondslibrary.org/'>",
+      "detail": "stripped <a href='https://www.edmondswa.gov/'>",
       "status": "applied",
       "evidence": {
-        "url": "https://www.edmondslibrary.org/"
+        "url": "https://www.edmondswa.gov/"
       }
     },
     {
       "type": "strip_hallucinated_url",
       "section": null,
-      "detail": "stripped <a href='https://www.edmondsparksandrec.org/'>",
+      "detail": "stripped <a href='https://www.sno-isle.org/'>",
       "status": "applied",
       "evidence": {
-        "url": "https://www.edmondsparksandrec.org/"
+        "url": "https://www.sno-isle.org/"
       }
     },
     {
@@ -40,15 +40,6 @@
       }
     },
     {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://getbudii.ai/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://getbudii.ai/"
-      }
-    },
-    {
       "type": "inject_missing_section",
       "section": "The Reading Room",
       "detail": "injected empty-feed for The Reading Room",
@@ -58,26 +49,17 @@
       }
     },
     {
-      "type": "inject_missing_section",
-      "section": "The Library Stacks",
-      "detail": "injected empty-feed for The Library Stacks",
-      "status": "applied",
-      "evidence": {
-        "anchor": "The Commercial Ledger"
-      }
-    },
-    {
       "type": "rerender_greeting",
       "section": "(greeting)",
-      "detail": "re-rendered via qwen/qwen3-next-80b-a3b-instruct:free",
-      "status": "applied",
+      "detail": "validator rejected: non-html prefix: 'We need to output a single HTML <p> paragraph, 80-150 words,'",
+      "status": "failed",
       "evidence": {
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free",
-        "chars": 600
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to output a single HTML <p> paragraph, 80-150 words, dry precise butler voice. Mention weekday, weather, and a o"
       }
     }
   ],
-  "pre_fix_defect_count": 15,
+  "pre_fix_defect_count": 9,
   "post_fix_defect_count": null,
-  "audit_model_used": "qwen/qwen3-next-80b-a3b-instruct:free"
+  "audit_model_used": null
 }

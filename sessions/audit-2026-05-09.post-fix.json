@@ -1,6 +1,6 @@
 {
   "date": "2026-05-09",
-  "briefing_chars": 25149,
+  "briefing_chars": 17507,
   "session_status": "complete",
   "detectors_run": [
     "D8_dedup",
@@ -20,15 +20,15 @@
       "type": "dedup_cross_day_overlap",
       "severity": "medium",
       "section": null,
-      "detail": "29 URLs already covered in prior briefings",
+      "detail": "18 URLs already covered in prior briefings",
       "evidence": {
-        "overlap_count": 29,
+        "overlap_count": 18,
         "samples": [
-          "https://northshore.tedk12.com/hire/index.aspx",
-          "https://compasswearable.com",
-          "https://www.bbc.com/news/articles/c8x7kxjgq9xo",
-          "https://www2.nwrdc.wa-k12.net/scripts/cgiip.exe/WService=wshorels71/rapplmnu03.w",
-          "https://hellohistory.ai"
+          "https://teachersbuddy.com",
+          "https://www.newsnationnow.com/space/ufo/luna-address-info-nonhuman-origin",
+          "https://stylus.education",
+          "https://www.bbc.com/news/articles/cnv8l99r3yyo",
+          "https://www.kuraplan.com/us/plans/text-analysis-focus-4353e088"
         ]
       }
     },
@@ -40,21 +40,17 @@
       "evidence": {
         "word_count": 13,
         "data_signals": [
-          "intellectual_journals=4items",
-          "enriched_articles=2items"
+          "enriched_articles=3items"
         ]
       }
     },
     {
-      "type": "empty_with_data",
-      "severity": "high",
-      "section": "The Library Stacks",
-      "detail": "section under 30 words (10) but sectors ['literary_pick'] have available data",
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
       "evidence": {
-        "word_count": 10,
-        "data_signals": [
-          "literary_pick=populated"
-        ]
+        "weather_preview": "Mostly cloudy today in Edmonds, 64\u00b0F high/53\u00b0F low. Light SW winds 5-10 mph, near-zero rain chance. "
       }
     },
     {
@@ -63,13 +59,13 @@
       "section": "(greeting)",
       "detail": "correspondence handoff text present but no preview in greeting",
       "evidence": {
-        "handoff_preview": "- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Daily Pipeline.\n- [escalation] mmm"
+        "handoff_preview": "- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR adding telemetry features.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR adding telemetry features.\n- [e"
       }
     }
   ],
-  "section_count": 8,
+  "section_count": 7,
   "hallucinated_url_count": 0,
-  "empty_section_count": 2,
+  "empty_section_count": 1,
   "aside_template_count": 0,
   "narrative_flow_score": null,
   "writing_quality_score": null,
