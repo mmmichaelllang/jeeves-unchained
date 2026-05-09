@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Correspondence Phase.\n- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Write Phase.\n- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Research Phase.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Correspondence Phase failed for mmmichaelllang/jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Write Phase failed for mmmichaelllang/jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Research Phase failed for mmmichaelllang/jeeves-memory.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Correspondence Phase failed for mmmichaelllang/jeeves-memory.\n- [escalation] mmmichaelllang: CI workflow for jeeves-unchained failed on main branch.\n- [escalation] mmmichaelllang: CI workflow failed for PR fixing correspondence fallback.\n- [escalation] mmmichaelllang: Jeeves daily pipeline failed on third attempt.\n- [escalation] mmmichaelllang: Jeeves daily pipeline failed on second attempt.",
+  "text": "- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR adding telemetry features.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR adding telemetry features.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR fixing write helpers and lesson plans.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR adding telemetry features.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR adding site-skills package.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline workflow failed.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline workflow failed.\n- [escalation] mmmichaelllang: GitHub Actions correspondence phase workflow failed.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure in jeeves-memory Write Phase\n- [escalation] mmmichaelllang: GitHub Actions workflow failure in jeeves-memory Research Phase\n- [escalation] mmmichaelllang: GitHub Actions workflow failure in jeeves-memory Correspondence Phase\n- [escalation] mmmichaelllang: GitHub Actions workflow failure in jeeves-memory Write Phase\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Research Phase failed on main branch.",
   "counts": {
-    "reply_needed": 1,
+    "reply_needed": 0,
     "decision_required": 2,
     "scheduling": 0,
     "follow_up": 0,
-    "escalation": 18,
-    "no_action": 28
+    "escalation": 23,
+    "no_action": 25
   }
 }
