@@ -49,6 +49,37 @@ jobs:
       - name: Sync dependencies
         run: uv sync --no-dev
 
+      # Preflight Gmail OAuth refresh-token check. Fails fast on invalid_grant
+      # (permanent revoke / Testing-mode 7-day expiry) and sends an out-of-band
+      # alert via GMAIL_APP_PASSWORD before research/write get queued. Without
+      # this, a dead refresh token silently kills the whole day's pipeline.
+      #
+      # Exit codes from scripts/check_gmail_oauth.py:
+      #   0  ok
+      #   2  invalid_grant — permanent (token revoked or expired)
+      #   3  other auth error — transient (Google outage etc.)
+      #   4  missing env vars / unparseable token JSON
+      - name: Preflight Gmail OAuth
+        env:
+          GMAIL_OAUTH_TOKEN_JSON: ${{ secrets.GMAIL_OAUTH_TOKEN_JSON }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          JEEVES_RECIPIENT_EMAIL: ${{ vars.JEEVES_RECIPIENT_EMAIL || 'lang.mc@gmail.com' }}
+        run: |
+          set +e
+          uv run python scripts/check_gmail_oauth.py
+          rc=$?
+          set -e
+          if [ "$rc" -eq 0 ]; then
+            echo "::notice::Gmail OAuth preflight ok"
+            exit 0
+          fi
+          if [ "$rc" -eq 2 ]; then
+            echo "::error::Gmail OAuth refresh token is invalid_grant (revoked or expired). Alert email sent. Mint a fresh token via scripts/gmail_auth.py and update GMAIL_OAUTH_TOKEN_JSON."
+          else
+            echo "::error::Gmail OAuth preflight failed with exit code $rc — see step output for details."
+          fi
+          exit "$rc"
+
       - name: Run correspondence phase
         env:
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
@@ -309,14 +340,37 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
+          # 2026-05-08 hardening — guard the cp/mv chain against missing
+          # inputs. When write skipped (e.g. correspondence crashed), audit.py
+          # exits non-zero with no audit-<DATE>.json on disk; the previous
+          # `cp` then crashed under set -e and reported the auditor as failed
+          # even though the actual failure was upstream.
+          set -e
           DATE="${{ github.event.inputs.date || '' }}"
           if [ -z "$DATE" ]; then DATE=$(date -u +%Y-%m-%d); fi
+          if [ ! -f "sessions/audit-$DATE.json" ]; then
+            echo "::warning::no sessions/audit-$DATE.json — upstream phase likely failed; skipping post-fix re-audit"
+            exit 0
+          fi
+          if [ ! -f "sessions/briefing-$DATE.html" ]; then
+            echo "::warning::no sessions/briefing-$DATE.html — nothing to re-audit; skipping"
+            exit 0
+          fi
           # F-009 — preserve pre-fix audit JSON; write post-fix counts to a
           # separate file so the forensic record stays intact.
-          cp sessions/audit-$DATE.json sessions/audit-$DATE.original.json
-          uv run python scripts/audit.py --date "$DATE" --no-llm || true
-          mv sessions/audit-$DATE.json sessions/audit-$DATE.post-fix.json
-          mv sessions/audit-$DATE.original.json sessions/audit-$DATE.json
+          cp "sessions/audit-$DATE.json" "sessions/audit-$DATE.original.json"
+          # Capture re-audit exit so we can decide what to do with the temp files.
+          set +e
+          uv run python scripts/audit.py --date "$DATE" --no-llm
+          rc=$?
+          set -e
+          if [ "$rc" -ne 0 ] || [ ! -f "sessions/audit-$DATE.json" ]; then
+            echo "::warning::post-fix audit.py exited $rc or produced no JSON — restoring original audit JSON"
+            mv "sessions/audit-$DATE.original.json" "sessions/audit-$DATE.json"
+            exit 0
+          fi
+          mv "sessions/audit-$DATE.json" "sessions/audit-$DATE.post-fix.json"
+          mv "sessions/audit-$DATE.original.json" "sessions/audit-$DATE.json"
 
       - name: Gate commit on auditor improvement
         if: ${{ vars.JEEVES_AUDITOR_AUTO_FIX == '1' }}

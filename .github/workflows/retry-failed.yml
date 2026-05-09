@@ -1,27 +1,24 @@
 name: Jeeves — Auto-Retry Failed Runs
 
-# Fires whenever a watched workflow finishes. If the conclusion was failure
-# AND we haven't retried too many times yet, we re-run only the failed jobs
-# (not the whole pipeline) so successful early phases don't get re-charged
-# against API quotas.
+# Fires whenever a watched workflow finishes. Classifies the failure into
+# transient vs permanent BEFORE retrying:
+#
+#   - Transient (rate-limit, timeout, network, 429/5xx): re-run failed jobs.
+#   - Permanent (auth/secret/import/syntax errors): do NOT retry. Send an
+#     out-of-band alert email via GMAIL_APP_PASSWORD so the user sees the
+#     break instead of finding it after a missing newsletter.
 #
 # Watched workflows:
-#   - Jeeves — Daily Pipeline       (correspondence → research → write)
+#   - Jeeves — Daily Pipeline       (correspondence -> research -> write -> auditor)
 #   - Jeeves — Archive Old Sessions (daily housekeeping)
 #
-# Retry budget: up to 2 automatic re-runs per original run. After that the
-# guard goes silent — manual `workflow_dispatch` is the path forward, since
-# whatever is failing twice in a row is almost certainly a code or quota
-# issue that retrying further will not fix.
+# Retry budget (transient only): up to 2 automatic re-runs per original run.
 
 on:
   workflow_run:
     workflows:
       - "Jeeves — Daily Pipeline"
       - "Jeeves — Archive Old Sessions"
-      # Auditor lives inside the Daily Pipeline as a job, not its own
-      # workflow — Daily Pipeline failure already covers auditor failure.
-
     types:
       - completed
 
@@ -30,31 +27,163 @@ permissions:
   contents: read
 
 jobs:
-  retry:
-    name: Re-run failed jobs
-    if: >-
-      github.event.workflow_run.conclusion == 'failure' &&
-      github.event.workflow_run.run_attempt < 3
+  classify_and_retry:
+    name: Classify failure and retry (or alert)
+    if: github.event.workflow_run.conclusion == 'failure'
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
 
     steps:
-      - name: Wait before retry
-        # Brief cool-down before re-running. Lets transient upstream issues
-        # (Groq TPM windows, NIM cold-restart, OR rate-limit windows) clear
-        # without hammering the same minute.
-        run: sleep 60
-
-      - name: Re-run failed jobs
+      - name: Classify failure
+        id: classify
         uses: actions/github-script@v7
+        with:
+          # Returns: { verdict: 'transient' | 'permanent' | 'unknown',
+          #           reason: <human-readable string>,
+          #           sample: <first matching log line, truncated> }
+          # Permanent markers (do NOT retry; alert):
+          #   - invalid_grant                            (Gmail OAuth refresh dead)
+          #   - "Token has been expired or revoked"     (Google OAuth)
+          #   - "Missing required environment variables" (jeeves.config.MissingSecret)
+          #   - "ModuleNotFoundError"                    (dep drift / bad deploy)
+          #   - "ImportError"                            (same)
+          #   - "SyntaxError"                            (broken commit shipped)
+          #   - "535"                                    (SMTP auth)
+          #   - "GMAIL_APP_PASSWORD is required"         (jeeves.email)
+          # Transient markers (retry):
+          #   - 429 / "rate limit"                       (NIM, Groq, OR, OpenAI-shape)
+          #   - "ECONNRESET" / "Read timed out"          (transport)
+          #   - "503" / "504"                            (gateway upstream)
+          #   - "TPM" / "TPD"                            (Groq token-per-min/day)
+          #   - "peer closed connection"                 (NIM stream-drop)
+          #   - "Process completed with exit code 124"   (timeout)
+          script: |
+            const runId = context.payload.workflow_run.id;
+            core.info(`Classifying run ${runId} (${context.payload.workflow_run.name})`);
+
+            const PERMANENT_PATTERNS = [
+              /invalid_grant/i,
+              /Token has been expired or revoked/i,
+              /Missing required environment variables/i,
+              /ModuleNotFoundError/,
+              /\bImportError\b/,
+              /\bSyntaxError\b/,
+              /\b535\b.*?(?:Authentication|Username|Password)/i,
+              /GMAIL_APP_PASSWORD is required/,
+              /SMTPAuthenticationError/,
+            ];
+            const TRANSIENT_PATTERNS = [
+              /\b429\b/,
+              /rate.?limit/i,
+              /ECONNRESET/,
+              /Read timed out/i,
+              /\b503\b/,
+              /\b504\b/,
+              /\bTPM\b/,
+              /\bTPD\b/,
+              /peer closed connection/i,
+              /Process completed with exit code 124/,
+              /timeout while waiting/i,
+            ];
+
+            // Pull the failed jobs. If we can't fetch logs (permissions /
+            // 403), fall back to "unknown" + retry — preserves the legacy
+            // behavior on classifier failure.
+            let logsText = '';
+            try {
+              const jobs = await github.rest.actions.listJobsForWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: runId,
+                per_page: 30,
+              });
+              const failed = jobs.data.jobs.filter(j => j.conclusion === 'failure');
+              core.info(`Found ${failed.length} failed jobs`);
+              for (const job of failed) {
+                try {
+                  const dl = await github.rest.actions.downloadJobLogsForWorkflowRun({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    job_id: job.id,
+                  });
+                  // dl.data is the log body (string for small jobs, Buffer
+                  // otherwise). Coerce to string defensively.
+                  const body = typeof dl.data === 'string'
+                    ? dl.data
+                    : Buffer.from(dl.data).toString('utf8');
+                  // Keep only the last ~200KB to bound regex cost.
+                  logsText += body.slice(-200000) + '\n';
+                } catch (e) {
+                  core.warning(`Could not fetch logs for job ${job.id}: ${e.message}`);
+                }
+              }
+            } catch (e) {
+              core.warning(`Could not list jobs: ${e.message}`);
+            }
+
+            const findFirstMatch = (patterns) => {
+              for (const re of patterns) {
+                const m = logsText.match(re);
+                if (m) return { pattern: re.source, sample: m[0].slice(0, 200) };
+              }
+              return null;
+            };
+
+            const permHit = findFirstMatch(PERMANENT_PATTERNS);
+            const transHit = findFirstMatch(TRANSIENT_PATTERNS);
+
+            // Permanent wins over transient — if both fire, the permanent
+            // marker is the actual blocker (e.g. invalid_grant after a
+            // 429-and-retry sequence in some prior step).
+            let verdict, reason, sample;
+            if (permHit) {
+              verdict = 'permanent';
+              reason = `permanent failure marker: ${permHit.pattern}`;
+              sample = permHit.sample;
+            } else if (transHit) {
+              verdict = 'transient';
+              reason = `transient failure marker: ${transHit.pattern}`;
+              sample = transHit.sample;
+            } else if (!logsText) {
+              verdict = 'unknown';
+              reason = 'could not fetch logs (permissions or fetch error) — retrying defensively';
+              sample = '';
+            } else {
+              verdict = 'unknown';
+              reason = 'no known marker matched — retrying defensively';
+              sample = '';
+            }
+
+            core.info(`Verdict: ${verdict} — ${reason}`);
+            if (sample) core.info(`Sample: ${sample}`);
+            core.setOutput('verdict', verdict);
+            core.setOutput('reason', reason);
+            core.setOutput('sample', sample);
+            core.setOutput('attempt', String(context.payload.workflow_run.run_attempt));
+            core.setOutput('workflow_name', context.payload.workflow_run.name);
+            core.setOutput('run_url', context.payload.workflow_run.html_url);
+
+      - name: Retry transient (or unknown) — re-run failed jobs
+        if: >-
+          (steps.classify.outputs.verdict == 'transient' ||
+           steps.classify.outputs.verdict == 'unknown') &&
+          github.event.workflow_run.run_attempt < 3
+        uses: actions/github-script@v7
+        env:
+          # Pass classifier verdict via env to avoid GHA-then-JS double expansion
+          # corruption (a bare `verdict=transient` would be an undefined ident).
+          VERDICT: ${{ steps.classify.outputs.verdict }}
         with:
           script: |
             const runId = context.payload.workflow_run.id;
             const attempt = context.payload.workflow_run.run_attempt;
             const name = context.payload.workflow_run.name;
+            const verdict = process.env.VERDICT || 'unknown';
+            // Brief cool-down for transient upstream issues to clear.
+            await new Promise(r => setTimeout(r, 60000));
             core.info(
               `Triggering re-run #${attempt + 1} for "${name}" (run ${runId}, ` +
-              `previous conclusion=${context.payload.workflow_run.conclusion})`
+              `verdict=${verdict})`
             );
             try {
               await github.rest.actions.reRunWorkflowFailedJobs({
@@ -64,9 +193,6 @@ jobs:
               });
               core.notice(`Re-run requested for "${name}" run ${runId}`);
             } catch (err) {
-              // Some terminal failures (e.g. job timed out before any logs
-              // were uploaded) reject reRunFailedJobs with 422. Fall back to
-              // a full workflow re-run so the user still gets retried output.
               core.warning(`reRunWorkflowFailedJobs failed: ${err.message}`);
               await github.rest.actions.reRunWorkflow({
                 owner: context.repo.owner,
@@ -75,3 +201,45 @@ jobs:
               });
               core.notice(`Full re-run requested for "${name}" run ${runId}`);
             }
+
+      # Checkout is needed only on the alert path so we can run
+      # scripts/notify_pipeline_failure.py via uv. On the retry path we skip
+      # the checkout to keep latency low.
+      - name: Checkout (alert path only)
+        if: steps.classify.outputs.verdict == 'permanent'
+        uses: actions/checkout@v4
+
+      - name: Set up uv (alert path only)
+        if: steps.classify.outputs.verdict == 'permanent'
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.8.17"
+
+      - name: Sync dependencies (alert path only)
+        if: steps.classify.outputs.verdict == 'permanent'
+        run: uv sync --no-dev
+
+      - name: Send permanent-failure alert
+        if: steps.classify.outputs.verdict == 'permanent'
+        env:
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          JEEVES_RECIPIENT_EMAIL: ${{ vars.JEEVES_RECIPIENT_EMAIL || 'lang.mc@gmail.com' }}
+          PIPELINE_REASON: ${{ steps.classify.outputs.reason }}
+          PIPELINE_SAMPLE: ${{ steps.classify.outputs.sample }}
+          PIPELINE_RUN_URL: ${{ steps.classify.outputs.run_url }}
+          PIPELINE_WORKFLOW: ${{ steps.classify.outputs.workflow_name }}
+          PIPELINE_ATTEMPT: ${{ steps.classify.outputs.attempt }}
+        run: uv run python scripts/notify_pipeline_failure.py
+
+      - name: Log permanent failure (no retry)
+        if: steps.classify.outputs.verdict == 'permanent'
+        env:
+          # Funnel classifier strings through env so a stray quote or backtick
+          # in `sample` cannot corrupt the shell parse of the run block.
+          REASON: ${{ steps.classify.outputs.reason }}
+          RUN_URL: ${{ steps.classify.outputs.run_url }}
+          SAMPLE: ${{ steps.classify.outputs.sample }}
+        run: |
+          echo "::error::Permanent pipeline failure — not retrying. Reason: ${REASON}"
+          echo "Run URL: ${RUN_URL}"
+          echo "Sample log line: ${SAMPLE}"
