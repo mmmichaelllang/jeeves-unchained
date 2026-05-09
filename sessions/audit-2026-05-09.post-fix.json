@@ -1,0 +1,66 @@
+{
+  "date": "2026-05-09",
+  "briefing_chars": 25264,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete"
+  ],
+  "detectors_skipped": [
+    "D7_narrative_flow",
+    "D9_writing_quality"
+  ],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "30 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 30,
+        "samples": [
+          "https://myedmondsnews.com/2026/05/council-postpones-vote-on-city-administrator-advances-measure-on-salary-commission",
+          "https://limitless.ai",
+          "https://www.aljazeera.com/news/2026/5/7/us-issues-new-cuba-sanctions-as-un-experts-warn-of-energy-starvation",
+          "https://www.aljazeera.com/news/2026/5/7/gulf-states-urge-un-action-to-ensure-strait-of-hormuz-safety",
+          "https://humy.ai"
+        ]
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Reading Room",
+      "detail": "section under 30 words (13) but sectors ['intellectual_journals', 'enriched_articles'] have available data",
+      "evidence": {
+        "word_count": 13,
+        "data_signals": [
+          "intellectual_journals=5items",
+          "enriched_articles=3items"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_correspondence",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "correspondence handoff text present but no preview in greeting",
+      "evidence": {
+        "handoff_preview": "- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Daily Pipeline.\n- [escalation] mmm"
+      }
+    }
+  ],
+  "section_count": 8,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 1,
+  "aside_template_count": 0,
+  "narrative_flow_score": null,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": null
+}

@@ -1,0 +1,206 @@
+{
+  "date": "2026-05-09",
+  "briefing_chars": 24420,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D7_narrative_flow",
+    "D9_writing_quality",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete"
+  ],
+  "detectors_skipped": [],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "30 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 30,
+        "samples": [
+          "https://www.nomos-elibrary.de/880328.pdf",
+          "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom",
+          "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
+          "https://www.nybooks.com/online/2026/03/10/the-new-war-on-speech-trump",
+          "https://www.themarginalian.org/2026/02/24/diane-ackerman-the-planets"
+        ]
+      }
+    },
+    {
+      "type": "narrative_flow_issue",
+      "severity": "low",
+      "section": "Opening paragraph",
+      "detail": "Abrupt shift from CSS styling to narrative voice without transition",
+      "evidence": {
+        "score": 7,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "narrative_flow_issue",
+      "severity": "low",
+      "section": "GitHub/CI failures",
+      "detail": "Technical jargon introduced without contextual framing, disrupting narrative flow",
+      "evidence": {
+        "score": 7,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "narrative_flow_issue",
+      "severity": "low",
+      "section": "Domestic Sphere",
+      "detail": "Unexplained jump from technical matters to municipal politics without thematic bridge",
+      "evidence": {
+        "score": 7,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "narrative_flow_issue",
+      "severity": "low",
+      "section": "Beyond the Geofence",
+      "detail": "Geopolitical summary lacks causal or narrative cohesion\u2014events listed sequentially without thematic grouping or escalation logic",
+      "evidence": {
+        "score": 7,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "narrative_flow_issue",
+      "severity": "low",
+      "section": "Intellectual Journals",
+      "detail": "Multiple distinct texts presented as a single paragraph, each with abrupt topic shifts and inconsistent depth",
+      "evidence": {
+        "score": 7,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "writing_quality_issue",
+      "severity": "low",
+      "section": null,
+      "detail": "filler: The world has not improved overnight, though it has at least produced several new opportunities to observe it failing.",
+      "evidence": {
+        "score": 8,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "writing_quality_issue",
+      "severity": "low",
+      "section": null,
+      "detail": "vague: These alerts indicate that the workflows for these phases have failed for the repository mmmichaelllang/jeeves-memory.",
+      "evidence": {
+        "score": 8,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "writing_quality_issue",
+      "severity": "low",
+      "section": null,
+      "detail": "repetition: The Domestic Sphere / Beyond the Geofence / The Intellectual Journals / The Specific Enquiries / The Autonomous-Research Front / The Disclosure Front / The Comm",
+      "evidence": {
+        "score": 8,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "writing_quality_issue",
+      "severity": "low",
+      "section": null,
+      "detail": "aside_overuse: Sir, I take the liberty of reading from this week's Talk of the Town in The New Yorker.",
+      "evidence": {
+        "score": 8,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "writing_quality_issue",
+      "severity": "low",
+      "section": null,
+      "detail": "vague: Mrs. Lang may be interested to know that Seattle Pro Musica is holding auditions, though the specifics of the ensemble and repertoire are not immediately clear ",
+      "evidence": {
+        "score": 8,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "writing_quality_issue",
+      "severity": "low",
+      "section": null,
+      "detail": "filler: The teaching job boards are quiet this morning, Sir \u2014 nothing new has surfaced within thirty miles.",
+      "evidence": {
+        "score": 8,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://www.seattlepromusica.org/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.seattlepromusica.org/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://www.edmondslibrary.org/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.edmondslibrary.org/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "section under 30 words (0) but sectors ['literary_pick'] have available data",
+      "evidence": {
+        "word_count": 0,
+        "data_signals": [
+          "literary_pick=populated"
+        ]
+      }
+    },
+    {
+      "type": "missing_section",
+      "severity": "high",
+      "section": "The Reading Room",
+      "detail": "h3 'The Reading Room' absent but sectors ['intellectual_journals', 'enriched_articles'] have data",
+      "evidence": {
+        "sectors": [
+          "intellectual_journals",
+          "enriched_articles"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
+      "evidence": {
+        "weather_preview": "Partly cloudy this morning, becoming overcast by afternoon. High 58\u00b0F, low 47\u00b0F. Light rain possible"
+      }
+    }
+  ],
+  "section_count": 7,
+  "hallucinated_url_count": 2,
+  "empty_section_count": 1,
+  "aside_template_count": 0,
+  "narrative_flow_score": 7,
+  "writing_quality_score": 8,
+  "dedup_score": null,
+  "audit_model_used": "qwen/qwen3-next-80b-a3b-instruct:free"
+}
