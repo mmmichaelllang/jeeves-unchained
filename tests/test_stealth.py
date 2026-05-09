@@ -24,8 +24,25 @@ import pytest
 @pytest.fixture(autouse=True)
 def _isolate(monkeypatch, tmp_path):
     """Route telemetry to a tmp dir + clear stealth env so tests are
-    independent of the developer's own environment."""
+    independent of the developer's own environment.
+
+    The telemetry module caches its open file handle in a module-level
+    ``_FH`` global. Without resetting it, a prior test's tmp_path is
+    re-used by ``_open_handle()``'s same-day short-circuit even though
+    JEEVES_TELEMETRY_DIR has changed. Clear the cache so each test gets
+    a fresh handle pointing at its own tmp_path.
+    """
     monkeypatch.setenv("JEEVES_TELEMETRY_DIR", str(tmp_path))
+    from jeeves.tools import telemetry as _tel
+    with _tel._LOCK:
+        if _tel._FH is not None:
+            try:
+                _tel._FH.close()
+            except Exception:
+                pass
+        _tel._FH = None
+        _tel._FH_DATE = ""
+        _tel._FH_PATH = None
     for var in (
         "JEEVES_USE_STEALTH",
         "JEEVES_USE_CAMOUFOX",
