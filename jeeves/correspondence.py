@@ -538,6 +538,8 @@ def _counts_by_classification(classified: list[ClassifiedMessage]) -> dict[str, 
 BANNED_WORDS = ["in a vacuum", "tapestry"]
 BANNED_TRANSITIONS = ["Moving on,", "Next,", "Turning to,", "In other news,"]
 # AI-filler phrases logged as warnings so violations are visible in CI/Actions.
+# Match is case-insensitive substring. Add new entries only after seeing them
+# in a real briefing (false-positive risk on legitimate prose otherwise).
 BANNED_FILLER = [
     "I shall ensure to keep you informed",
     "I shall be here to assist you in any way I can",
@@ -559,7 +561,48 @@ BANNED_FILLER = [
     "We have several escalations",
     "we have a few reply-needed",
     "we also have a plethora",
+    # 2026-05-08 sweep — recurring openers + recommendation pile-on patterns.
+    # Each phrase below has been observed in a real briefing the user flagged.
+    "As previously noted, Sir,",
+    "On a separate note",
+    "On a related note",
+    "I would like to bring to your attention",
+    "I would like to remind you",
+    "I would recommend reviewing",
+    "I would also recommend",
+    "you may want to consider",
+    "you may also want to consider",
+    "you may want to examine",
+    "the priority-contacts block",
+    "today's correspondence is relatively light",
+    "today's correspondence is relatively heavy",
+    "with a focus on routine updates",
+    "After yesterday's demanding post",
+    "After yesterday's rather demanding",
+    "As the morning sunlight",
+    "casts a warm glow",
+    "On this fine morning",
 ]
+
+# Banned-opener patterns — applied ONLY to the first <p> body (a stricter
+# slot than BANNED_FILLER). The full body might legitimately mention "the
+# morning brings X" mid-prose; the opener must not. Substrings, lowercased.
+BANNED_OPENERS = [
+    "as the morning sunlight",
+    "as the morning",
+    "after yesterday's demanding post",
+    "after yesterday's rather demanding",
+    "on this fine morning",
+    "the morning brings",
+    "i trust you slept",
+    "casts a warm glow",
+]
+
+# Hard length cap from the prompt. Briefings beyond this are flagged as
+# defective (the "padding" failure mode the user described on 2026-05-08).
+CORRESPONDENCE_LENGTH_HARD_CAP = 1000
+# Below this is also flagged — the model truncated or skipped material.
+CORRESPONDENCE_LENGTH_FLOOR = 250
 PROFANE_FRAGMENTS = [
     "clusterfuck", "shitshow", "fuckfest", "horse-shit", "fucked", "goddamn",
     "fuck-ton", "thundercunt", "shittery", "omnishambles", "shit-storm",
@@ -573,8 +616,31 @@ PROFANE_FRAGMENTS = [
 ]
 
 
+def _extract_first_paragraph_text(html: str) -> str:
+    """Return the lowercased text of the first <p> in the body, or "" if none.
+
+    Used by the banned-opener check — recurring stock openers ("As the morning
+    sunlight casts a warm glow…") only matter when they're the first thing the
+    user reads. Mid-body mentions of "the morning brings" can be legitimate.
+    """
+    m = re.search(r"<p[^>]*>(.*?)</p>", html, re.DOTALL | re.IGNORECASE)
+    if not m:
+        return ""
+    return _strip_tags(m.group(1)).lower()
+
+
 def postprocess_html(raw: str) -> tuple[str, int, int, list[str], list[str], list[str]]:
-    """Clean model output; return (html, word_count, profane_count, banned_words, banned_transitions, banned_filler)."""
+    """Clean model output; return (html, word_count, profane_count, banned_words, banned_transitions, banned_filler).
+
+    The ``banned_filler`` return list now includes synthetic markers for the
+    new opener / length checks so a single downstream consumer (the run
+    manifest, CI logs, telemetry report) sees ALL correspondence-level
+    violations through one channel:
+
+      - "opener:<phrase>"          — banned opener detected in first paragraph
+      - "length_over_cap:<N>"      — body exceeded CORRESPONDENCE_LENGTH_HARD_CAP
+      - "length_under_floor:<N>"   — body under CORRESPONDENCE_LENGTH_FLOOR
+    """
 
     html = _strip_markdown_fences(raw.strip())
     html = _ensure_doctype(html)
@@ -595,8 +661,26 @@ def postprocess_html(raw: str) -> tuple[str, int, int, list[str], list[str], lis
             if re.search(r"\b" + re.escape(t_lower) + r"\b", body_lower):
                 banned_transitions.append(t)
     banned_filler = [f for f in BANNED_FILLER if f.lower() in body_text.lower()]
+
+    # Banned-opener check — applies only to the first <p> body so that a mid-
+    # briefing weather mention is not falsely flagged.
+    opener = _extract_first_paragraph_text(html)
+    if opener:
+        for phrase in BANNED_OPENERS:
+            if phrase in opener:
+                marker = f"opener:{phrase}"
+                if marker not in banned_filler:
+                    banned_filler.append(marker)
+
+    # Length check — flag both ends. The hard cap catches the "padding pile-on"
+    # failure mode (closing summary, recommendation list, weather suggestions).
+    if word_count > CORRESPONDENCE_LENGTH_HARD_CAP:
+        banned_filler.append(f"length_over_cap:{word_count}")
+    elif word_count < CORRESPONDENCE_LENGTH_FLOOR:
+        banned_filler.append(f"length_under_floor:{word_count}")
+
     if banned_filler:
-        log.warning("correspondence: banned filler detected: %s", banned_filler)
+        log.warning("correspondence: banned filler / violations detected: %s", banned_filler)
     return html, word_count, profane_count, banned_words, banned_transitions, banned_filler
 
 
