@@ -138,6 +138,47 @@ SECTOR_SPECS: list[SectorSpec] = [
         default={},
     ),
     SectorSpec(
+        name="english_lesson_plans",
+        shape="dict",
+        instruction=(
+            "High-school English/Language-Arts lesson plans and resources Mister Lang "
+            "(teacher candidate) can adapt or steal from. Cover both:\n"
+            "  - 'classroom_ready': complete, freely-available lesson plans (rubrics, "
+            "    discussion-question sets, full unit plans) keyed to common HS texts "
+            "    (The Great Gatsby, Macbeth, Their Eyes Were Watching God, 1984, "
+            "    Beloved, Frankenstein, A Raisin in the Sun, etc.) or to common HS "
+            "    skills (close reading, argumentative essay, rhetorical analysis, "
+            "    Socratic seminar). Source from: Folger Shakespeare Library, "
+            "    ReadWriteThink, the Stanford History Education Group's literacy "
+            "    spinoffs, Edutopia, NCTE journals, the Bill of Rights Institute "
+            "    English plans, Facing History and Ourselves.\n"
+            "  - 'pedagogy_pieces': short essays or articles on HS English pedagogy "
+            "    that have shipped recently (Edutopia, English Journal, ASCD, "
+            "    Common Sense Education, Cult of Pedagogy).\n\n"
+            "MANDATORY FIRST STEP — dispatch THREE searches in parallel right now:\n"
+            "1. serper_search(query='high school English lesson plan free 2026', "
+            "tbs='qdr:m')\n"
+            "2. exa_search(query='high school English language arts lesson plan free "
+            "2026', search_type='auto', num_results=4, text_max_chars=4000)\n"
+            "3. serper_search(query='Folger ReadWriteThink Edutopia English Journal "
+            "lesson plan')\n"
+            "Read the actual page via tavily_extract before including any item — "
+            "do not summarise from the search snippet alone.\n"
+            "MANDATORY DEDUP RULE: any URL in `prior_urls` MUST be filtered out. If "
+            "all top hits are already covered, run another search with a NARROWER "
+            "query (e.g. a specific text or skill not yet covered) until at least "
+            "one URL is new. Returning a previously-covered URL is a hard failure.\n"
+            "Return a JSON object: "
+            "{classroom_ready: [{title, source, url, grade_band, topic, summary}, ...], "
+            "pedagogy_pieces: [{title, source, url, summary}, ...], "
+            "notes: '...'}. "
+            "Aim for 3-5 classroom_ready items and 1-2 pedagogy_pieces. "
+            "If the field is genuinely thin, return an empty array for the thin "
+            "subkey rather than padding with off-topic results."
+        ),
+        default={"classroom_ready": [], "pedagogy_pieces": [], "notes": ""},
+    ),
+    SectorSpec(
         name="family",
         shape="dict",
         instruction=(
@@ -257,8 +298,19 @@ SECTOR_SPECS: list[SectorSpec] = [
             "'wearable_devices': lifelogging pendants, pins, smart glasses. "
             "Use exa_search (returns full text) or tavily_extract after serper for each "
             "device/tool you include — read the actual product page or article, not just "
-            "the headline. Return a JSON array of {category, findings, urls}, one entry "
-            "per subsection."
+            "the headline.\n"
+            "MANDATORY DEDUP RULE: FILTER OUT any URL already in `prior_urls`. Audria, "
+            "Humy.ai, Nirva, Friend pendant, and the standard MagicSchool/Diffit/Brisk "
+            "trio have shipped repeatedly. If your top hits are all in prior_urls, "
+            "run another search — try queries like: 'AI wearable launch 2026 [month]', "
+            "'EdTech English teacher tool launch 2026', 'lifelogging pendant new product "
+            "2026', 'AI glasses launch 2026' — until at least one URL per subsection is "
+            "NOT in `prior_urls`. If a subsection genuinely has no new product since "
+            "prior coverage, return ONE sentence in findings explicitly stating that "
+            "(e.g. 'No new voice-pendant launches since prior coverage.') and include "
+            "an empty urls array for that subsection. Returning a previously-covered "
+            "URL is a hard failure. "
+            "Return a JSON array of {category, findings, urls}, one entry per subsection."
         ),
         default=[],
     ),
@@ -274,9 +326,20 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Then call a second search if needed:\n"
             "  exa_search(query='quantum perichoresis trinitarian philosophy new paper', "
             "search_type='auto', num_results=2, text_max_chars=3000)\n"
-            "IMPORTANT: the same series (e.g. Karl-Alber 'Studies on Triadic "
-            "Ontology') may appear in prior coverage. Prefer to find the NEXT uncovered "
-            "volume, paper, or author — check prior_urls and avoid repeating what is there. "
+            "MANDATORY DEDUP RULE — read carefully:\n"
+            "  After every search, FILTER OUT any URL that already appears in "
+            "  `prior_urls`. Do NOT include a URL that is in `prior_urls`. The "
+            "  Karl-Alber 'Studies on Triadic Ontology' series, Migliorini's "
+            "  'Relational Ontologies and Trinitarian Metaphysics', and Tricard's "
+            "  'Ultimate Argument Against Nominalistic Relationalism' have ALREADY "
+            "  shipped on multiple prior days. If those (or any other prior_urls "
+            "  match) are still your top hits, run ANOTHER search with a NARROWER "
+            "  query — try: 'process metaphysics paper 2026', 'open theism "
+            "  trinitarian 2026', 'Peirce semiotics triadic logic 2026', "
+            "  'co-constitution relata 2026' — and keep searching until at least "
+            "  one of your final URLs is NOT in `prior_urls`. Returning a "
+            "  previously-covered URL with paraphrased findings prose is a hard "
+            "  failure for this sector. "
             "Begin your findings prose with the specific TITLE and AUTHOR of each paper or "
             "volume discussed so that covered-headline matching works correctly. "
             "CRITICAL: 'findings' MUST be a single prose string (500-1000 chars), NOT an "
@@ -296,6 +359,19 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Then optionally:\n"
             "  exa_search(query='reasoning model prompt engineering advances 2025 2026', "
             "search_type='auto', num_results=2, text_max_chars=3000)\n"
+            "MANDATORY DEDUP RULE — read carefully:\n"
+            "  After every search, FILTER OUT any URL that already appears in "
+            "  `prior_urls`. Do NOT include a URL that is in `prior_urls`. The "
+            "  DOVA paper (arxiv 2603.13327), Mimosa, and InternAgent-1.5 have "
+            "  ALREADY shipped on multiple prior days. If those (or any other "
+            "  prior_urls match) are still your top hits, run ANOTHER search with "
+            "  a NARROWER query — try: 'multi-agent ScienceAgentBench 2026 paper', "
+            "  'reasoning model inference budget paper 2026', 'agent self-evolution "
+            "  loop 2026', 'prompt optimization without labels 2026', 'tool-use "
+            "  failure recovery agent 2026' — and keep searching until at least one "
+            "  of your final URLs is NOT in `prior_urls`. Returning a "
+            "  previously-covered URL with paraphrased findings prose is a hard "
+            "  failure for this sector. "
             "CRITICAL: 'findings' MUST be a single prose string (500-1000 chars), NOT an "
             "array or list. Return exactly: {\"findings\": \"<prose string>\", \"urls\": [...]}. "
             "Do not put an array in the findings field."
@@ -336,8 +412,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "  3. Wearable AI / tech product pages\n"
             "  4. UAP / triadic ontology / AI systems sources\n"
             "  5. Edmonds local news (lowest priority — already well-covered)\n"
-            "IMPORTANT — Reuters blocks direct fetches with 401. Before picking Reuters URLs, "
-            "prefer alternative sources covering the same story (BBC, Guardian, AP, Al Jazeera). "
+            "MANDATORY — Reuters blocks direct fetches with 401. You MUST replace any "
+            "Reuters URL with an equivalent BBC, Guardian, AP, or Al Jazeera URL covering "
+            "the same story. A Reuters URL in your output is a hard failure for this sector. "
             "Call tavily_extract on your 5 chosen URLs in ONE batch call. "
             "Fall back to fetch_article_text for any Tavily refuses. "
             "If a URL fails (401, 403, timeout, or fetch_failed=true in the result), DO NOT "
@@ -388,24 +465,25 @@ Do not fabricate sources; every URL you include must come from a tool response.
 **FRESHNESS WINDOW — MANDATORY for non-breaking sectors:**
 Default search providers favour evergreen high-authority pages. Without a
 freshness filter, the same articles re-rank into top results day after day,
-producing repetitive briefings. For every search call, bias toward content
-published in the last 7 days:
+producing repetitive briefings. Every search call MUST request content from
+the last 7 days:
   - serper_search: pass tbs='qdr:w' (last 7 days) or tbs='qdr:d' (last 24h
     for breaking).
   - tavily_search: pass time_range='week' (or 'day' for breaking).
   - exa_search: pass start_published_date='{seven_days_ago}'.
 Override this rule ONLY when a sector instruction explicitly asks for
 open-ended results (e.g., literary_pick covers 2004–2024). For all other
-sectors, queries without a freshness parameter are considered defective.
+sectors, queries without a freshness parameter are defective and MUST be
+re-issued with the freshness filter set.
 
-**SOURCE-ROTATION GUIDANCE — read carefully:**
-The user has explicitly asked: when an article from a given source has been
-covered yesterday, prefer the next-most-relevant article from THAT SAME source
-today, not a different source. Apply this rule when a sector hits 4+ candidate
-articles from the same publisher: keep one (the most relevant), and prefer
-articles from publishers NOT yet in `prior_urls_sample` for the rest. Do not
-repeatedly cite an article that you can see (by URL or headline match) is
-already in the prior coverage.
+**SOURCE-ROTATION RULE — MANDATORY:**
+When an article from a given source was covered yesterday, you MUST select
+the next-most-relevant article from THAT SAME source today, NOT a different
+source. When a sector hits 4+ candidate articles from the same publisher,
+you MUST keep one (the most relevant) and MUST select articles from
+publishers NOT in `prior_urls_sample` for the rest. Citing an article whose
+URL or headline appears in prior coverage is a hard failure for the sector
+and the result will be discarded.
 
 **MANDATORY FIRST STEP — search before you write:**
 Your training-data knowledge is STALE. You MUST call at least one search tool
@@ -423,14 +501,15 @@ you plan to include in your output:
 - fetch_article_text is a fallback for URLs tavily_extract cannot reach.
 Write findings only from content you have actually read, not guessed.
 
-Research discipline — complete at least TWO rounds before writing your output:
+Research discipline — you MUST complete TWO rounds before writing your output:
   Round 1 (search): dispatch 2-4 search tools in parallel.
   Round 2 (read): call tavily_extract on top results that exa did NOT already
   return full text for (batch up to 5 URLs per call); OR run a second targeted
   search to fill coverage gaps.
-Only after Round 2 should you write the final JSON. A single search round
-followed immediately by output is shallow research and produces a thin
-briefing. Aim for 6-10 total tool calls. Do NOT stop early.
+You MUST NOT write the final JSON before Round 2 has completed. A single
+search round followed immediately by output is shallow research and the
+result will be discarded. Issue at least 6 tool calls per sector — fewer is
+defective. Do NOT stop early.
 {quota_summary}
 SECTOR: {sector_name}
 INSTRUCTION: {instruction}
@@ -859,8 +938,8 @@ def _build_user_prompt(
             sources_block = (
                 "\n**Source-rotation hints** (host → titles already covered):\n"
                 + "\n".join(rows)
-                + "\n\nFor any host listed above, prefer a DIFFERENT article from "
-                "that same host today; do not re-cite the listed titles.\n"
+                + "\n\nFor any host listed above, you MUST select a DIFFERENT article from "
+                "that same host today. Re-citing any listed title is a hard failure.\n"
             )
     base = CONTEXT_HEADER.format(
         date=run_date,
@@ -873,6 +952,23 @@ def _build_user_prompt(
     )
     if sources_block:
         base = base + sources_block
+
+    # Site skills (Autobrowse-pattern lift, 2026-05-09). Splice the relevant
+    # markdown skills for this sector ahead of the instruction so the agent
+    # reads the durable workflow notes BEFORE its first tool call. Keep the
+    # block bounded — free-tier NIM eats ~12K input tokens before throttling.
+    try:
+        from jeeves.site_skills import skills_for_sector, render_skills_block
+        skills_for_this = skills_for_sector(spec.name)
+        if skills_for_this:
+            skills_block = render_skills_block(skills_for_this, max_chars=4000)
+            if skills_block:
+                base = base + "\n\n" + skills_block
+    except Exception as exc:
+        # Site-skills loading is enrichment, not load-bearing. A bad skill
+        # file MUST NOT break the research pipeline — log and proceed.
+        log.warning("site_skills load failed for sector %s: %s", spec.name, exc)
+
     return f"{base}\n\n{extra}" if extra else base
 
 

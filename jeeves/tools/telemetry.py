@@ -154,6 +154,53 @@ def current_path() -> Optional[Path]:
     return _FH_PATH
 
 
+def emit_llm_call(
+    *,
+    provider: str,
+    model: str = "",
+    label: str = "",
+    sector: str = "",
+    prompt_tokens: int | None = None,
+    completion_tokens: int | None = None,
+    total_tokens: int | None = None,
+    latency_ms: float | None = None,
+    ok: bool = True,
+    error: str = "",
+) -> None:
+    """Convenience wrapper around ``emit`` for LLM-call accounting.
+
+    Records a ``llm_call`` event per LLM invocation. Token fields are
+    optional — providers that surface ``response.usage`` should pass them;
+    paths that lack token visibility (Kimi-on-NIM streaming, where usage
+    is not always returned) can omit and the rollup will still aggregate
+    by call-count and latency.
+
+    Failure mode: same as emit — swallow everything; never break the
+    pipeline because of telemetry.
+    """
+    fields: dict[str, Any] = {
+        "provider": provider,
+        "ok": bool(ok),
+    }
+    if model:
+        fields["model"] = model
+    if label:
+        fields["label"] = label
+    if sector:
+        fields["sector"] = sector
+    if prompt_tokens is not None:
+        fields["prompt_tokens"] = int(prompt_tokens)
+    if completion_tokens is not None:
+        fields["completion_tokens"] = int(completion_tokens)
+    if total_tokens is not None:
+        fields["total_tokens"] = int(total_tokens)
+    if latency_ms is not None:
+        fields["latency_ms"] = round(float(latency_ms), 1)
+    if error:
+        fields["error"] = error[:200]
+    emit("llm_call", **fields)
+
+
 def _close() -> None:
     global _FH, _FH_PATH, _FH_DATE
     with _LOCK:

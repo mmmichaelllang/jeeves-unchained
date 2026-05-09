@@ -158,6 +158,87 @@ BANNED_TRANSITIONS = [
     "will be important to monitor",
     "worth watching in the coming",
 ]
+
+# 2026-05-09 sweep — staleness narration, recommendation pile-on, and closing
+# summary patterns observed in real briefings. Each fires a quality_warnings
+# entry tagged with one of three buckets so the weekly telemetry surfaces the
+# pattern by category rather than by individual phrase.
+#
+# Format: {bucket: [phrases...]}. Bucket name lands as the prefix in
+# quality_warnings (e.g. "staleness_narration:nothing has surfaced...").
+BANNED_PHRASES_BY_BUCKET: dict[str, list[str]] = {
+    "staleness_narration": [
+        # PART6/PART7 staleness padding the model adds AFTER the prompted
+        # all-covered canned phrase, against the "STOP" instruction.
+        "no new developments have been reported",
+        "thus our attention turns to other matters",
+        "must await further advancements",
+        "without new developments",
+        "our discussion of these topics must await",
+        "remain relevant, but our attention must turn",
+        "must turn to other areas of inquiry",
+    ],
+    "recommendation_pile_on": [
+        # PART4 family / PART2 local — unsolicited child-rearing or general
+        # life advice the model adds when sectors are thin.
+        "essential for her development",
+        "essential for his development",
+        "providing valuable social interaction",
+        "foundational learning experiences",
+        "I would recommend reviewing the logs",
+        "I would also recommend",
+        "I would recommend taking",
+        "you may want to consider",
+        "you may also want to consider",
+        "you may want to examine",
+    ],
+    "closing_summary": [
+        # End-of-section interpretive coda that re-states what was just covered.
+        "These developments show",
+        "These developments highlight",
+        "These developments underscore",
+        "These advancements, as reported",
+        "These advancements signal",
+        "signal progress in the development",
+        "underscores the humanitarian concerns",
+        "underscores the potential for",
+        "highlights the global economic ramifications",
+        "marks a significant development",
+        "marking a new era",
+        "marking a significant",
+        "broader international concern over",
+        "reflects the broader",
+        "highlights the rapid evolution",
+        "implications for the research agenda",
+        "is poised to transform",
+        "signals progress in",
+        "synthesis of these findings highlights",
+    ],
+    # Asides-floor and opener-banned categories. Each marker fires from a
+    # different code path (postprocess profane-count check; opener regex)
+    # but the bucket prefix routes both into the weekly telemetry the same
+    # way the others do.
+    "asides_floor": [
+        # No phrases here — this bucket is populated programmatically when
+        # profane_aside_count drops below ASIDES_FLOOR. Listed for the
+        # telemetry script's bucket-name allowlist.
+    ],
+    "banned_opener": [
+        # PART1 carry-overs from correspondence's banned-opener list.
+        "I trust you slept well",
+        "I shall ensure these issues are addressed",
+        "I shall ensure to keep you informed",
+        "I shall be here to assist",
+        "I shall begin by reading",
+        "as the morning sunlight",
+        "casts a warm glow",
+    ],
+}
+
+# Profane-aside floor — empirically the OR narrative editor lands 5 asides
+# when it runs cleanly. A briefing with fewer than 2 means either the
+# editor skipped or the model removed them; flag for telemetry visibility.
+ASIDES_FLOOR = 2
 # Lower-cased fragments drawn from the pre-approved aside list. Used to count asides.
 PROFANE_FRAGMENTS = [
     "clusterfuck",
@@ -336,7 +417,7 @@ def build_user_prompt_from_payload(payload: dict[str, Any]) -> str:
 PART_PLAN: list[tuple[str, list[str]]] = [
     ("part1", ["correspondence", "weather"]),
     ("part2", ["local_news"]),
-    ("part3", ["career"]),
+    ("part3", ["career", "english_lesson_plans"]),
     ("part4", ["family", "global_news", "newyorker_hint"]),
     ("part5", ["intellectual_journals", "enriched_articles"]),
     ("part6", ["triadic_ontology", "ai_systems"]),
@@ -755,7 +836,7 @@ PART3_INSTRUCTIONS = CONTINUATION_RULES + """
 
 ---
 
-## PART 3 of 9 — teaching jobs
+## PART 3 of 9 — teaching jobs + English lesson plans
 
 Parts 1-2 covered Sector 1 (greeting, correspondence, weather, local news).
 You pick up from there.
@@ -765,9 +846,12 @@ Part 2 already opened that section. Begin directly with a sentence about
 teaching jobs — no header, no preamble. The reader is already inside
 The Domestic Sphere.
 
-Your scope — write ONLY about these:
+Your scope — write ONLY about these, in this order:
 - HS English / History teaching openings within ~30 miles of Edmonds,
   drawn from `career`. This is a job-board sweep.
+- English-classroom lesson plans + pedagogy pieces, drawn from
+  `english_lesson_plans`. This is a single short paragraph that
+  follows the job-board section.
 
 **EMPTY CAREER FEED — HARD RULE:**
 If `career` is an empty object `{}`, or contains no `openings` key, or
@@ -823,6 +907,28 @@ words on it. Five new postings → up to 600 words. All-repeats → one sentence
 acknowledging the board is quiet, plus the closing observation if it earns
 its keep. Do NOT pad. No profane asides in draft — the final editor adds
 them.
+
+**English-lesson-plans paragraph — REQUIRED (one paragraph after job-board
+content, even when the job-board path was the empty-feed branch):**
+
+After the teaching-jobs content (and before `<!-- PART3 END -->`), write
+ONE paragraph drawn from `english_lesson_plans`. Goal: surface 2-3 of the
+day's freshest classroom-ready resources for Mister Lang to lift, with one
+linked sentence about the most interesting pedagogy piece if any.
+
+Rules:
+- The paragraph MUST link the items via `<a href="URL">title or source</a>`.
+  Do not list URLs raw.
+- Lead with the most useful classroom_ready item — name the text, skill,
+  or grade band it targets and what makes it more than a bare worksheet.
+- If `english_lesson_plans` is empty (`{}`, missing, or both subkey arrays
+  empty), write EXACTLY this one sentence and skip the paragraph:
+    *"The lesson-plan well is dry this morning, Sir — I shall fish again tomorrow."*
+- Apply the same dedup discipline as the job-board section — items in
+  `dedup.covered_headlines` get one embedded clause, not a sentence.
+- Do NOT write generic teaching advice ("a robust lesson plan is essential
+  for student engagement", etc.) — that is filler. Surface the actual
+  resources or stay silent.
 
 When done, emit `<!-- PART3 END -->` and STOP. Do NOT close outer tags.
 """
@@ -892,6 +998,16 @@ recurring ones.
 4. **Never pad**: do not describe the general value of toddler socialisation,
    the developmental importance of play, or other generic observations. If the
    data is thin, be thin. Move to global news.
+
+   **FORBIDDEN PHRASES** (each is a hard failure — DELETE if drafted):
+   - "essential for her development"
+   - "essential for his development"
+   - "providing valuable social interaction"
+   - "foundational learning experiences"
+   - "valuable for her growth"
+   - any sentence that explains why a 2-year-old benefits from socialisation.
+
+   The reader is a parent. He knows what storytime is for.
 
 **Global news — synthesis over repetition (CRITICAL):**
 
@@ -1064,6 +1180,22 @@ after day. Follow this exact logic:
      since our last review that materially advances the argument."*
      Do NOT summarise any covered paper. Do NOT restate the thesis. Do NOT
      paraphrase. The reader has the full treatment from a prior briefing.
+
+     **FORBIDDEN ADDITIONS after the canned phrase** — each is a hard
+     failure; postprocess will TRUNCATE everything between this sentence and
+     the next sub-section. Never write any of:
+     - "Our previous examination of [paper], which united/argued/proposed…"
+     - "[Paper] remains the benchmark."
+     - "The [series] also remains a key reference…"
+     - "However, no new developments have been reported, and thus our
+       attention turns to other matters."
+     - "Without new developments, our discussion of these topics must await…"
+     - "[Topic] remain relevant, but our attention must turn to other areas
+       of inquiry."
+     - Any sentence that re-summarises a paper already in prior coverage.
+
+     The canned sentence is the ENTIRE output for this branch. Period. Move
+     to `ai_systems`.
    - **If at least one paper is NEW**: write ONE clause acknowledging covered
      work ("Migliorini's volume, which we examined last time, is unchanged —
      ") and then cover the NEW paper(s) in full (250–350 words each).
@@ -1089,6 +1221,17 @@ for days. Apply the SAME REPEAT-DETECTION HARD RULE used above:
    do NOT explain implications:
    *"The autonomous-research front advances, Sir, but nothing fresh has
    surfaced since our last review."*
+
+   **FORBIDDEN ADDITIONS after the canned phrase** (postprocess will
+   TRUNCATE if you write any of these after the canned sentence):
+   - "The [model/paper], which introduced/proposed…, was previously discussed."
+   - "The [framework] also remains a topic of interest."
+   - "Without new developments, our discussion of these topics must await
+     further advancements."
+   - "Our attention must turn to other matters / other areas of inquiry."
+   - Any backstory recap of a previously-covered model, paper, or benchmark.
+
+   The canned sentence is the ENTIRE output. Move to `<!-- PART6 END -->`.
 3. **If at least one item is NEW**: write ONE bridging clause about the
    covered item and cover the NEW one(s) in 200–300 words.
 4. **If genuinely new across the board**: 300–400 words — what the model
@@ -1777,10 +1920,45 @@ def _clamp_groq_max_tokens(system: str, user: str, max_tokens: int) -> tuple[int
     return effective, input_tokens
 
 
+def _extract_llm_usage(resp) -> tuple[int | None, int | None, int | None]:
+    """Best-effort `(prompt_tokens, completion_tokens, total_tokens)` from an
+    LLM response object.
+
+    LlamaIndex / Groq / OpenAI SDKs all stash usage on slightly different
+    attribute paths. Try every shape we know about; return ``(None, None,
+    None)`` if nothing surfaces. Telemetry consumers tolerate Nones — call
+    counts and latency are still useful.
+    """
+    usage = (
+        getattr(resp, "usage", None)
+        or getattr(getattr(resp, "raw", None), "usage", None)
+        or getattr(getattr(resp, "raw", {}), "get", lambda *_: None)("usage") if isinstance(getattr(resp, "raw", None), dict) else None
+    )
+    if usage is None:
+        return None, None, None
+
+    def _get(o, key):
+        if isinstance(o, dict):
+            return o.get(key)
+        return getattr(o, key, None)
+
+    pt = _get(usage, "prompt_tokens") or _get(usage, "input_tokens")
+    ct = _get(usage, "completion_tokens") or _get(usage, "output_tokens")
+    tt = _get(usage, "total_tokens")
+    # Coerce to int when present.
+    return (
+        int(pt) if pt is not None else None,
+        int(ct) if ct is not None else None,
+        int(tt) if tt is not None else None,
+    )
+
+
 def _invoke_groq(cfg: Config, system: str, user: str, *, max_tokens: int, label: str) -> str:
+    import time
     from llama_index.core.base.llms.types import ChatMessage, MessageRole
 
     from .llm import build_groq_llm
+    from .tools.telemetry import emit_llm_call
 
     effective_max_tokens, input_tokens = _clamp_groq_max_tokens(system, user, max_tokens)
     if effective_max_tokens != max_tokens:
@@ -1797,10 +1975,35 @@ def _invoke_groq(cfg: Config, system: str, user: str, *, max_tokens: int, label:
         cfg.groq_model_id, label, effective_max_tokens, len(system), len(user),
         input_tokens,
     )
-    resp = llm.chat([
-        ChatMessage(role=MessageRole.SYSTEM, content=system),
-        ChatMessage(role=MessageRole.USER, content=user),
-    ])
+    t0 = time.monotonic()
+    try:
+        resp = llm.chat([
+            ChatMessage(role=MessageRole.SYSTEM, content=system),
+            ChatMessage(role=MessageRole.USER, content=user),
+        ])
+    except Exception as exc:
+        # Emit failure telemetry before re-raising so the rollup tracks
+        # error rates, not just successes.
+        emit_llm_call(
+            provider="groq",
+            model=cfg.groq_model_id,
+            label=label,
+            latency_ms=(time.monotonic() - t0) * 1000,
+            ok=False,
+            error=type(exc).__name__,
+        )
+        raise
+    pt, ct, tt = _extract_llm_usage(resp)
+    emit_llm_call(
+        provider="groq",
+        model=cfg.groq_model_id,
+        label=label,
+        prompt_tokens=pt,
+        completion_tokens=ct,
+        total_tokens=tt,
+        latency_ms=(time.monotonic() - t0) * 1000,
+        ok=True,
+    )
     return str(resp.message.content or "")
 
 
@@ -2259,6 +2462,7 @@ def _invoke_nim_write(cfg: Config, system: str, user: str, *, max_tokens: int, l
     from llama_index.core.base.llms.types import ChatMessage, MessageRole
 
     from .llm import build_nim_write_llm
+    from .tools.telemetry import emit_llm_call
 
     global _NIM_WRITE_DEAD
 
@@ -2284,10 +2488,30 @@ def _invoke_nim_write(cfg: Config, system: str, user: str, *, max_tokens: int, l
     # Two attempts max: initial + ONE 60s rate-limit retry. No retry on timeout
     # — if NIM is hanging, retrying just burns more budget.
     for attempt in range(2):
+        t0 = time.monotonic()
         try:
             resp = llm.chat(messages)
+            pt, ct, tt = _extract_llm_usage(resp)
+            emit_llm_call(
+                provider="nim",
+                model=cfg.nim_write_model_id,
+                label=label,
+                prompt_tokens=pt,
+                completion_tokens=ct,
+                total_tokens=tt,
+                latency_ms=(time.monotonic() - t0) * 1000,
+                ok=True,
+            )
             return str(resp.message.content or "")
         except Exception as exc:
+            emit_llm_call(
+                provider="nim",
+                model=cfg.nim_write_model_id,
+                label=label,
+                latency_ms=(time.monotonic() - t0) * 1000,
+                ok=False,
+                error=type(exc).__name__,
+            )
             if _is_nim_rate_limit(exc) and attempt == 0:
                 log.warning(
                     "NIM write [%s] got 429 (attempt 1/2); waiting 60s for window to clear",
@@ -2668,6 +2892,216 @@ def _maybe_inject_part7_fallbacks(
         _PART7_END_MARKER,
     )
     return (raw_part or "").rstrip() + block
+
+
+# --------------------------------------------------------------------------
+# Patch G (2026-05-09) — PART6 stop-rule enforcement.
+#
+# When PART6 takes the all-covered branch, the prompt instructs the model to
+# emit ONE canned sentence and STOP. The model frequently violates this and
+# adds a paragraph of staleness narration ("Our previous examination of …
+# remains the benchmark", "However, no new developments have been reported,
+# and thus our attention turns to other matters"). This helper deletes any
+# prose between a canned sentence and the next subsection start so the user
+# sees the canned sentence alone.
+# --------------------------------------------------------------------------
+
+# Canonical canned sentences from PART6_INSTRUCTIONS for each subsection.
+# Match is substring on the text content; case-insensitive.
+_PART6_TRIADIC_CANNED = (
+    "the triadic-ontology series continues, sir, though nothing has surfaced "
+    "since our last review"
+)
+_PART6_AI_CANNED = (
+    "the autonomous-research front advances, sir, but nothing fresh has surfaced "
+    "since our last review"
+)
+
+
+def _enforce_part6_stop_rule(raw_part: str, quality_warnings: list[str]) -> str:
+    """Truncate forbidden additions after the canned all-covered sentences.
+
+    Detects each canned sentence's containing <p>...</p> and deletes any
+    subsequent sibling <p> elements until either:
+      - the OTHER canned sentence's <p> is hit (subsection boundary),
+      - <!-- PART6 END --> is hit, or
+      - end-of-string.
+
+    Logs ``part6_padding_truncated:<which>`` markers to quality_warnings.
+    Returns the cleaned fragment. If neither canned sentence appears, this
+    is a no-op (the model wrote real new-paper content, which is fine).
+    """
+    text_lc = raw_part.lower()
+    has_triadic = _PART6_TRIADIC_CANNED in text_lc
+    has_ai = _PART6_AI_CANNED in text_lc
+    if not (has_triadic or has_ai):
+        return raw_part
+
+    # Walk paragraphs in order. For each <p>, classify it as:
+    #   - "triadic_canned"  contains the triadic canned sentence
+    #   - "ai_canned"       contains the ai canned sentence
+    #   - "other"           any other paragraph
+    # Then walk again applying the truncation rule: after a canned-paragraph,
+    # drop subsequent "other" paragraphs until the other canned-paragraph
+    # appears (or end of fragment).
+    para_re = re.compile(r"<p\b[^>]*>(.*?)</p>", re.IGNORECASE | re.DOTALL)
+    matches = list(para_re.finditer(raw_part))
+    if not matches:
+        return raw_part
+
+    def _classify(m: "re.Match[str]") -> str:
+        body_lc = _strip_tags(m.group(0)).lower()
+        if _PART6_TRIADIC_CANNED in body_lc:
+            return "triadic_canned"
+        if _PART6_AI_CANNED in body_lc:
+            return "ai_canned"
+        return "other"
+
+    classes = [_classify(m) for m in matches]
+
+    # Indices of paragraphs we will delete from raw_part.
+    delete_idx: set[int] = set()
+    state = "before_canned"  # → "after_triadic" → "after_ai" → "after_both"
+    truncated_buckets: set[str] = set()
+    for i, cls in enumerate(classes):
+        if state == "before_canned":
+            if cls == "triadic_canned":
+                state = "after_triadic"
+            elif cls == "ai_canned":
+                state = "after_ai"
+        elif state == "after_triadic":
+            if cls == "ai_canned":
+                state = "after_ai"
+            elif cls == "other":
+                delete_idx.add(i)
+                truncated_buckets.add("triadic")
+        elif state == "after_ai":
+            if cls == "other":
+                delete_idx.add(i)
+                truncated_buckets.add("ai")
+
+    if not delete_idx:
+        return raw_part
+
+    # Splice out doomed paragraphs in reverse order to preserve offsets.
+    cleaned = raw_part
+    for i in sorted(delete_idx, reverse=True):
+        m = matches[i]
+        cleaned = cleaned[: m.start()] + cleaned[m.end():]
+    # Collapse the whitespace gap left behind.
+    cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
+
+    for bucket in sorted(truncated_buckets):
+        marker = f"part6_padding_truncated:{bucket}"
+        if marker not in quality_warnings:
+            quality_warnings.append(marker)
+    log.warning(
+        "part6 stop-rule: truncated %d padding paragraph(s) in buckets %s",
+        len(delete_idx), sorted(truncated_buckets),
+    )
+    return cleaned
+
+
+# --------------------------------------------------------------------------
+# Patch F (2026-05-09) — literary_pick rescue into PART8.
+#
+# PART7 ROUTE B (UAP has new material) skips literary_pick by design — the
+# prompt branches into UAP coverage and never presents the book pick. PART8
+# reads `vault_insight`, NOT `literary_pick`, so on UAP-active days when
+# vault_insight is empty (which is most days), the book pick is dropped
+# entirely from the briefing despite costing a search budget to research.
+#
+# When PART8's draft is the empty placeholder AND PART7 took ROUTE B AND
+# literary_pick is available, we splice the literary fallback paragraph
+# into PART8 with a Library-Stacks framing.
+# --------------------------------------------------------------------------
+
+# Empty placeholder PART8 emits when vault_insight.available !== true.
+_PART8_EMPTY_PLACEHOLDER_RE = re.compile(
+    r"<p>\s*</p>", re.IGNORECASE,
+)
+
+
+def _maybe_rescue_literary_to_part8(
+    raw_part: str,
+    payload: dict,
+    *,
+    part7_took_route_b: bool,
+    quality_warnings: list[str],
+) -> str:
+    """Replace PART8's empty placeholder with the literary fallback when
+    the book pick has nowhere else to go.
+
+    Returns raw_part unchanged when:
+      - PART7 didn't take ROUTE B (literary_pick still has a home in PART7).
+      - vault_insight is available (PART8 has its own real content).
+      - PART8 isn't a clean empty placeholder (model wrote something else).
+      - literary_pick is unavailable.
+
+    Logs ``part8_literary_rescue_injected`` to quality_warnings on success.
+    """
+    if not isinstance(payload, dict):
+        return raw_part
+    if not part7_took_route_b:
+        return raw_part
+
+    vault = payload.get("vault_insight")
+    if isinstance(vault, dict) and bool(vault.get("available")):
+        return raw_part
+
+    lit = payload.get("literary_pick") or {}
+    if not isinstance(lit, dict):
+        return raw_part
+    if not bool(lit.get("available")):
+        return raw_part
+    title = (lit.get("title") or "").strip()
+    if not title:
+        return raw_part
+
+    # Confirm the part is the empty placeholder shape; otherwise leave alone.
+    # Also accept variants the model has produced: <p></p>, <p> </p>,
+    # <p>&nbsp;</p> (rare but possible).
+    body_no_marker = raw_part
+    for marker in ("<!-- PART8 END -->", "<!--PART8 END-->"):
+        body_no_marker = body_no_marker.replace(marker, "")
+    body_no_marker = body_no_marker.strip()
+    canonical = re.sub(r"\s+", "", body_no_marker).lower()
+    canonical = canonical.replace("&nbsp;", "")
+    if canonical not in ("<p></p>", ""):
+        return raw_part
+
+    chunk = _build_literary_fallback_html(lit)
+    if not chunk:
+        return raw_part
+
+    # PART8's normal opener line. Wrap the literary paragraph in a
+    # Library-Stacks-toned intro so the section feels deliberate, not patched.
+    library_intro = (
+        '<p>The library has, as it tends to, supplied the absent insight, Sir, '
+        'in the form of an arresting volume.</p>'
+    )
+    block = "\n" + library_intro + "\n" + chunk + "\n"
+
+    if "<!-- PART8 END -->" in raw_part:
+        rebuilt = block + "<!-- PART8 END -->"
+        cleaned = re.sub(
+            r"<p>\s*(?:&nbsp;)?\s*</p>\s*",
+            "",
+            raw_part.replace("<!-- PART8 END -->", "", 1),
+        ).strip()
+        cleaned = (cleaned + rebuilt).strip()
+    else:
+        cleaned = re.sub(
+            r"<p>\s*(?:&nbsp;)?\s*</p>\s*", "", raw_part,
+        ).strip()
+        cleaned = cleaned + block
+
+    quality_warnings.append("part8_literary_rescue_injected")
+    log.warning(
+        "part8 literary rescue: injecting %r by %r into empty Library Stacks",
+        title, (lit.get("author") or "").strip(),
+    )
+    return cleaned
 
 
 def _ensure_tott_scaffolding(part9_html: str, newyorker_available: bool, ny_url: str = "") -> str:
@@ -4996,12 +5430,27 @@ async def generate_briefing(
         if fragment_warnings:
             quality_warnings.extend(fragment_warnings)
 
+        # Part 6 stop-rule enforcement (Patch G). When PART6 takes the
+        # all-covered branch the prompt instructs the model to emit ONE
+        # canned sentence and STOP; the model regularly violates this and
+        # appends staleness narration. Truncate any prose between a canned
+        # sentence and the next sub-section.
+        if label == "part6":
+            try:
+                raw_part = _enforce_part6_stop_rule(raw_part, quality_warnings)
+            except Exception as exc:
+                log.warning("part6 stop-rule enforcer raised: %s", exc)
+
         # Part 7 content-drop detector + fallback injector. PART7 is supposed
         # to cover UAP + wearable_ai + literary_pick. When the session HAS
         # populated uap or literary_pick data but the model omits them from
         # its draft, we (a) flag it in quality_warnings and (b) synthesize a
         # fallback paragraph from the session data and splice it in before
         # PART7 END so the briefing stops shipping with these holes.
+        #
+        # We also record whether PART7 took ROUTE B (UAP active) — used by
+        # the PART8 literary-rescue (Patch F) below to decide whether the
+        # book pick has nowhere else to go.
         if label == "part7":
             try:
                 raw_part = _maybe_inject_part7_fallbacks(
@@ -5009,6 +5458,33 @@ async def generate_briefing(
                 )
             except Exception as exc:
                 log.warning("part7 fallback injector raised: %s", exc)
+
+        # Part 8 literary rescue (Patch F). When PART7 took ROUTE B the
+        # literary_pick has been consciously skipped per prompt routing;
+        # if PART8 then renders the empty placeholder (vault_insight not
+        # available), splice the literary_pick into PART8's Library Stacks
+        # so the day's book pick is not silently dropped.
+        if label == "part8":
+            try:
+                # Reconstruct route-B status from PART7's draft. ROUTE B
+                # means the prompt gave UAP coverage (uap had data and
+                # uap_has_new=True, default True for legacy sessions). We
+                # check the session data identically to the part7 helper.
+                uap_data = payload.get("uap") or {}
+                if not isinstance(uap_data, dict):
+                    uap_data = {}
+                uap_text = (uap_data.get("findings") or "").strip()
+                uap_urls = uap_data.get("urls") or []
+                uap_has_new = bool(payload.get("uap_has_new", True))
+                route_b = uap_has_new and bool(uap_text or uap_urls)
+                raw_part = _maybe_rescue_literary_to_part8(
+                    raw_part,
+                    payload,
+                    part7_took_route_b=route_b,
+                    quality_warnings=quality_warnings,
+                )
+            except Exception as exc:
+                log.warning("part8 literary rescue raised: %s", exc)
 
         # Part 9 scaffolding hardening — guarantee TOTT intro + placeholder
         # are present so _inject_newyorker_verbatim can splice in the verbatim
@@ -5222,6 +5698,36 @@ def postprocess_html(
         pattern = r"\b" + re.escape(t_lower) + r"\b"
         if re.search(pattern, body_lower):
             banned_transition_hits.append(t)
+
+    # Patch E (2026-05-09) — staleness / recommendation pile-on / closing-
+    # summary detection. Each bucket lands its hits in quality_warnings as
+    # "<bucket>:<phrase>" so the weekly telemetry's prefix-bucket aggregation
+    # surfaces patterns rather than individual phrases.
+    for bucket_name, phrases in BANNED_PHRASES_BY_BUCKET.items():
+        for phrase in phrases:
+            if not phrase:
+                continue
+            if phrase.lower() in body_lower:
+                marker = f"{bucket_name}:{phrase}"
+                if marker not in quality_warnings_list:
+                    quality_warnings_list.append(marker)
+                    log.warning(
+                        "postprocess: banned phrase (%s) detected: %r",
+                        bucket_name, phrase,
+                    )
+
+    # Asides-floor guard. The OR narrative editor is supposed to land exactly
+    # five profane asides. When the editor fails or is skipped, the count
+    # drops to zero and the briefing reads sterile. Surface this in the
+    # weekly telemetry so the regression is visible without manual review.
+    if profane_count < ASIDES_FLOOR:
+        marker = f"asides_floor:count={profane_count}"
+        quality_warnings_list.append(marker)
+        log.warning(
+            "postprocess: profane-asides floor breached (count=%d, floor=%d). "
+            "OR narrative-editor pass likely failed or skipped.",
+            profane_count, ASIDES_FLOOR,
+        )
 
     # Wrong-signoff replacement.
     # Covers: "Yours faithfully", "Your faithfully" (typo), with optional
