@@ -1,6 +1,6 @@
 {
   "date": "2026-05-09",
-  "briefing_chars": 24420,
+  "briefing_chars": 24953,
   "session_status": "complete",
   "detectors_run": [
     "D8_dedup",
@@ -19,65 +19,25 @@
       "type": "dedup_cross_day_overlap",
       "severity": "medium",
       "section": null,
-      "detail": "30 URLs already covered in prior briefings",
+      "detail": "29 URLs already covered in prior briefings",
       "evidence": {
-        "overlap_count": 30,
+        "overlap_count": 29,
         "samples": [
-          "https://www.nomos-elibrary.de/880328.pdf",
-          "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom",
-          "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
-          "https://www.nybooks.com/online/2026/03/10/the-new-war-on-speech-trump",
-          "https://www.themarginalian.org/2026/02/24/diane-ackerman-the-planets"
+          "https://www.bbc.com/news/articles/cnv8l99r3yyo",
+          "https://audria.tech",
+          "https://aeon.co/essays/the-wests-forgotten-republican-heritage",
+          "https://humy.ai",
+          "https://link.springer.com/article/10.1007/s12136-025-00635-5"
         ]
       }
     },
     {
-      "type": "narrative_flow_issue",
+      "type": "writing_quality_issue",
       "severity": "low",
-      "section": "Opening paragraph",
-      "detail": "Abrupt shift from CSS styling to narrative voice without transition",
+      "section": null,
+      "detail": "aside_overuse: a proper omnishambles of a decision, Sir",
       "evidence": {
-        "score": 7,
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
-      }
-    },
-    {
-      "type": "narrative_flow_issue",
-      "severity": "low",
-      "section": "GitHub/CI failures",
-      "detail": "Technical jargon introduced without contextual framing, disrupting narrative flow",
-      "evidence": {
-        "score": 7,
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
-      }
-    },
-    {
-      "type": "narrative_flow_issue",
-      "severity": "low",
-      "section": "Domestic Sphere",
-      "detail": "Unexplained jump from technical matters to municipal politics without thematic bridge",
-      "evidence": {
-        "score": 7,
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
-      }
-    },
-    {
-      "type": "narrative_flow_issue",
-      "severity": "low",
-      "section": "Beyond the Geofence",
-      "detail": "Geopolitical summary lacks causal or narrative cohesion\u2014events listed sequentially without thematic grouping or escalation logic",
-      "evidence": {
-        "score": 7,
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
-      }
-    },
-    {
-      "type": "narrative_flow_issue",
-      "severity": "low",
-      "section": "Intellectual Journals",
-      "detail": "Multiple distinct texts presented as a single paragraph, each with abrupt topic shifts and inconsistent depth",
-      "evidence": {
-        "score": 7,
+        "score": 9,
         "model": "qwen/qwen3-next-80b-a3b-instruct:free"
       }
     },
@@ -85,9 +45,9 @@
       "type": "writing_quality_issue",
       "severity": "low",
       "section": null,
-      "detail": "filler: The world has not improved overnight, though it has at least produced several new opportunities to observe it failing.",
+      "detail": "aside_overuse: a total and utter shitshow of a decision, Sir \u2014 but then again, what else is new?",
       "evidence": {
-        "score": 8,
+        "score": 9,
         "model": "qwen/qwen3-next-80b-a3b-instruct:free"
       }
     },
@@ -95,9 +55,9 @@
       "type": "writing_quality_issue",
       "severity": "low",
       "section": null,
-      "detail": "vague: These alerts indicate that the workflows for these phases have failed for the repository mmmichaelllang/jeeves-memory.",
+      "detail": "aside_overuse: a right old fucking shambles of a project, I'm afraid.",
       "evidence": {
-        "score": 8,
+        "score": 9,
         "model": "qwen/qwen3-next-80b-a3b-instruct:free"
       }
     },
@@ -105,9 +65,9 @@
       "type": "writing_quality_issue",
       "severity": "low",
       "section": null,
-      "detail": "repetition: The Domestic Sphere / Beyond the Geofence / The Intellectual Journals / The Specific Enquiries / The Autonomous-Research Front / The Disclosure Front / The Comm",
+      "detail": "aside_overuse: a staggering, monumental cock-waffle of a task, but someone's got to do it.",
       "evidence": {
-        "score": 8,
+        "score": 9,
         "model": "qwen/qwen3-next-80b-a3b-instruct:free"
       }
     },
@@ -115,29 +75,9 @@
       "type": "writing_quality_issue",
       "severity": "low",
       "section": null,
-      "detail": "aside_overuse: Sir, I take the liberty of reading from this week's Talk of the Town in The New Yorker.",
+      "detail": "aside_overuse: a proper, bespoke, hand-crafted clusterfuck of a system, but it's the only way to keep the wheels turning.",
       "evidence": {
-        "score": 8,
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
-      }
-    },
-    {
-      "type": "writing_quality_issue",
-      "severity": "low",
-      "section": null,
-      "detail": "vague: Mrs. Lang may be interested to know that Seattle Pro Musica is holding auditions, though the specifics of the ensemble and repertoire are not immediately clear ",
-      "evidence": {
-        "score": 8,
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
-      }
-    },
-    {
-      "type": "writing_quality_issue",
-      "severity": "low",
-      "section": null,
-      "detail": "filler: The teaching job boards are quiet this morning, Sir \u2014 nothing new has surfaced within thirty miles.",
-      "evidence": {
-        "score": 8,
+        "score": 9,
         "model": "qwen/qwen3-next-80b-a3b-instruct:free"
       }
     },
@@ -162,15 +102,33 @@
       }
     },
     {
-      "type": "empty_with_data",
+      "type": "hallucinated_url",
       "severity": "high",
-      "section": "The Library Stacks",
-      "detail": "section under 30 words (0) but sectors ['literary_pick'] have available data",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://www.edmondsparksandrec.org/' not present in any session JSON sector",
       "evidence": {
-        "word_count": 0,
-        "data_signals": [
-          "literary_pick=populated"
-        ]
+        "url": "https://www.edmondsparksandrec.org/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "Beyond the Geofence",
+      "detail": "href 'https://www.newyorker.com/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.newyorker.com/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Commercial Ledger",
+      "detail": "href 'https://getbudii.ai/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://getbudii.ai/",
+        "is_homepage": true
       }
     },
     {
@@ -186,21 +144,41 @@
       }
     },
     {
+      "type": "missing_section",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "h3 'The Library Stacks' absent but sectors ['literary_pick'] have data",
+      "evidence": {
+        "sectors": [
+          "literary_pick"
+        ]
+      }
+    },
+    {
       "type": "greeting_missing_weather",
       "severity": "medium",
       "section": "(greeting)",
       "detail": "weather string present in session but not in greeting",
       "evidence": {
-        "weather_preview": "Partly cloudy this morning, becoming overcast by afternoon. High 58\u00b0F, low 47\u00b0F. Light rain possible"
+        "weather_preview": "Mostly cloudy early, then clearing to afternoon sunshine. High 65\u00b0F with light south winds becoming "
+      }
+    },
+    {
+      "type": "greeting_missing_correspondence",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "correspondence handoff text present but no preview in greeting",
+      "evidence": {
+        "handoff_preview": "- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub Actions failure alert for the Jeeves Daily Pipeline.\n- [escalation] mmm"
       }
     }
   ],
-  "section_count": 7,
-  "hallucinated_url_count": 2,
-  "empty_section_count": 1,
+  "section_count": 6,
+  "hallucinated_url_count": 5,
+  "empty_section_count": 0,
   "aside_template_count": 0,
-  "narrative_flow_score": 7,
-  "writing_quality_score": 8,
+  "narrative_flow_score": null,
+  "writing_quality_score": 9,
   "dedup_score": null,
   "audit_model_used": "qwen/qwen3-next-80b-a3b-instruct:free"
 }

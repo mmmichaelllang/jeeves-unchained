@@ -1,7 +1,7 @@
 {
   "date": "2026-05-09",
-  "pre_fix_chars": 24420,
-  "post_fix_chars": 25264,
+  "pre_fix_chars": 24953,
+  "post_fix_chars": 25149,
   "actions": [
     {
       "type": "strip_hallucinated_url",
@@ -22,6 +22,33 @@
       }
     },
     {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.edmondsparksandrec.org/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.edmondsparksandrec.org/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.newyorker.com/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.newyorker.com/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://getbudii.ai/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://getbudii.ai/"
+      }
+    },
+    {
       "type": "inject_missing_section",
       "section": "The Reading Room",
       "detail": "injected empty-feed for The Reading Room",
@@ -31,13 +58,12 @@
       }
     },
     {
-      "type": "rerender_empty_with_data",
+      "type": "inject_missing_section",
       "section": "The Library Stacks",
-      "detail": "re-rendered via qwen/qwen3-next-80b-a3b-instruct:free",
+      "detail": "injected empty-feed for The Library Stacks",
       "status": "applied",
       "evidence": {
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free",
-        "chars": 798
+        "anchor": "The Commercial Ledger"
       }
     },
     {
@@ -47,11 +73,11 @@
       "status": "applied",
       "evidence": {
         "model": "qwen/qwen3-next-80b-a3b-instruct:free",
-        "chars": 693
+        "chars": 600
       }
     }
   ],
-  "pre_fix_defect_count": 17,
+  "pre_fix_defect_count": 15,
   "post_fix_defect_count": null,
   "audit_model_used": "qwen/qwen3-next-80b-a3b-instruct:free"
 }
