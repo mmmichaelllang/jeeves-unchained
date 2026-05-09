@@ -85,6 +85,10 @@ def make_serper_search(cfg: Config, ledger: QuotaLedger):
             for o in organic
         ]
         latency_ms = int((time.monotonic() - t0) * 1000)
+        # 2026-05-09: emit the top-10 result URLs so the body graduator can
+        # correlate query → stuck-URL precisely. Cap at 10 to bound JSONL
+        # line size; full result set still lands in the function return.
+        urls_returned = [r.get("url", "") for r in results if r.get("url")][:10]
         _emit(
             "tool_call",
             provider="serper",
@@ -93,6 +97,7 @@ def make_serper_search(cfg: Config, ledger: QuotaLedger):
             status=status_code,
             results=len(results),
             latency_ms=latency_ms,
+            urls_returned=urls_returned,
         )
 
         # Shadow flags (sprint-19 slice E): fire any opt-in shadows in

@@ -204,6 +204,7 @@ def make_jina_search(cfg: Config, ledger: QuotaLedger):
                     "provider": "jina",
                 }
             )
+        urls_returned = [r_.get("url", "") for r_ in results if r_.get("url")][:10]
         _emit(
             "tool_call",
             provider="jina_search",
@@ -212,6 +213,7 @@ def make_jina_search(cfg: Config, ledger: QuotaLedger):
             status=r.status_code,
             results=len(results),
             latency_ms=int((time.monotonic() - t0) * 1000),
+            urls_returned=urls_returned,
         )
         return json.dumps({"provider": "jina_search", "query": query, "results": results})
 

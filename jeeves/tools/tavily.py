@@ -78,6 +78,7 @@ def make_tavily_search(cfg: Config, ledger: QuotaLedger):
             }
             for r in (resp.get("results") or [])
         ]
+        urls_returned = [r.get("url", "") for r in results if r.get("url")][:10]
         _emit(
             "tool_call",
             provider="tavily",
@@ -86,6 +87,7 @@ def make_tavily_search(cfg: Config, ledger: QuotaLedger):
             ok=True,
             results=len(results),
             latency_ms=int((time.monotonic() - t0) * 1000),
+            urls_returned=urls_returned,
         )
         return json.dumps({
             "provider": "tavily",

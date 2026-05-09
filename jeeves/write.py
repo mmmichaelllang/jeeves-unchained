@@ -2344,6 +2344,10 @@ def _invoke_or_write(
             f"NIM write [{label}] failed AND openai SDK not installed for OR fallback: {e}"
         ) from e
 
+    import time as _t
+
+    from .tools.telemetry import emit_llm_call
+
     client = OpenAI(
         api_key=api_key,
         base_url="https://openrouter.ai/api/v1",
@@ -2355,6 +2359,7 @@ def _invoke_or_write(
     ]
     last_exc: Exception | None = None
     for model_id in _resolve_or_free_models():
+        t0 = _t.monotonic()
         try:
             resp = client.chat.completions.create(
                 model=model_id,
@@ -2363,6 +2368,21 @@ def _invoke_or_write(
                 temperature=0.65,
             )
             text = (resp.choices[0].message.content or "").strip()
+            usage = getattr(resp, "usage", None)
+            pt = getattr(usage, "prompt_tokens", None) if usage else None
+            ct = getattr(usage, "completion_tokens", None) if usage else None
+            tt = getattr(usage, "total_tokens", None) if usage else None
+            emit_llm_call(
+                provider="openrouter",
+                model=model_id,
+                label=label,
+                prompt_tokens=pt,
+                completion_tokens=ct,
+                total_tokens=tt,
+                latency_ms=(_t.monotonic() - t0) * 1000,
+                ok=bool(text),
+                error="" if text else "empty_response",
+            )
             if text:
                 log.warning(
                     "OR write fallback [%s] succeeded via %s (Groq+NIM both failed)",
@@ -2370,6 +2390,14 @@ def _invoke_or_write(
                 )
                 return text
         except Exception as exc:
+            emit_llm_call(
+                provider="openrouter",
+                model=model_id,
+                label=label,
+                latency_ms=(_t.monotonic() - t0) * 1000,
+                ok=False,
+                error=type(exc).__name__,
+            )
             last_exc = exc
             log.debug("OR write [%s] %s failed: %s", label, model_id, exc)
             continue
