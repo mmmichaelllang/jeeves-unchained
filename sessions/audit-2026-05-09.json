@@ -1,6 +1,6 @@
 {
   "date": "2026-05-09",
-  "briefing_chars": 17552,
+  "briefing_chars": 24001,
   "session_status": "complete",
   "detectors_run": [
     "D8_dedup",
@@ -19,15 +19,15 @@
       "type": "dedup_cross_day_overlap",
       "severity": "medium",
       "section": null,
-      "detail": "18 URLs already covered in prior briefings",
+      "detail": "26 URLs already covered in prior briefings",
       "evidence": {
-        "overlap_count": 18,
+        "overlap_count": 26,
         "samples": [
-          "https://www.theguardian.com/politics/2026/may/08/labour-local-elections-keir-starmer-cling-on",
-          "https://www.bbc.com/news/articles/cnv8l99r3yyo",
-          "https://www.npr.org/2026/05/08/nx-s1-5805193/redistricting-virginia-trump-midterms",
-          "https://tech.yahoo.com/wearables/articles/vocci-ring-may-first-ai-163000223.html",
-          "https://www.bbc.com/news/articles/cn0ep28drllo"
+          "https://www.notieai.com/ai-for-history-teachers",
+          "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom",
+          "https://monsha.ai/subject/social-studies",
+          "https://anypin.ai/products/anypin-note-pod-p1",
+          "https://www.goteach.io/for/history-teachers"
         ]
       }
     },
@@ -35,103 +35,70 @@
       "type": "narrative_flow_low",
       "severity": "high",
       "section": null,
-      "detail": "narrative flow score 4/10",
+      "detail": "narrative flow score 3/10",
       "evidence": {
-        "score": 4,
+        "score": 3,
         "issues": [
           {
-            "section": "Opening",
-            "issue": "CSS code block precedes narrative, breaking flow"
+            "section": "Opening CSS",
+            "issue": "Non-narrative styling code disrupts prose flow."
           },
           {
             "section": "Greeting",
-            "issue": "Abrupt shift from code to salutation without transition"
+            "issue": "Sudden shift from code to informal greeting without transition."
           },
           {
-            "section": "Tone",
-            "issue": "Profanity ('fucking', 'thundercunt', 'shitshow') clashes with Jeeves register"
+            "section": "Correspondence summary",
+            "issue": "Dense list of items presented as run-on sentences, lacking logical grouping."
           },
           {
-            "section": "Headings",
-            "issue": "Section titles appear as plain text, creating a choppy structure"
+            "section": "Domestic Sphere",
+            "issue": "Repetitive district listings read like inventory, impeding narrative progression."
           },
           {
-            "section": "Paragraph length",
-            "issue": "Overly long paragraphs bundle unrelated topics, harming progression"
+            "section": "Reading Room",
+            "issue": "Rapid succession of book reviews without connective commentary, feels like a bibliography."
           },
           {
-            "section": "Redundancy",
-            "issue": "Repeated omnishambles phrasing adds unnecessary repetition"
+            "section": "Specific Enquiries",
+            "issue": "Jump from UAP hearings to wearable tech without thematic bridge."
           },
           {
-            "section": "Transition",
-            "issue": "Move from domestic sphere to global news lacks a linking sentence"
+            "section": "Commercial Ledger",
+            "issue": "Continues list of products, maintaining enumerative tone rather than flowing discussion."
           },
           {
-            "section": "Talk of the Town",
-            "issue": "Excerpt inserted without adequate lead\u2011in, disrupting continuity"
+            "section": "New Yorker excerpt",
+            "issue": "Inserted long anecdote disrupts the briefing\u2019s rhythm and voice consistency."
           },
           {
-            "section": "Formatting",
-            "issue": "HTML entity (&middot;) appears in prose, interrupting reading flow"
-          },
-          {
-            "section": "Closing",
-            "issue": "Sign\u2011off follows a dense list without a natural buildup to closure"
+            "section": "Signoff",
+            "issue": "Abrupt return to butler voice after lengthy external excerpt, lacking reorientation."
           }
         ],
         "model": "nvidia/nemotron-3-super-120b-a12b:free"
       }
     },
     {
-      "type": "hallucinated_url",
+      "type": "empty_with_data",
       "severity": "high",
-      "section": "The Domestic Sphere",
-      "detail": "href 'https://www.seattlepromusica.org/' not present in any session JSON sector",
+      "section": "Talk of the Town",
+      "detail": "section under 30 words (4) but sectors ['newyorker'] have available data",
       "evidence": {
-        "url": "https://www.seattlepromusica.org/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Domestic Sphere",
-      "detail": "href 'https://www.edmondswa.gov/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://www.edmondswa.gov/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Domestic Sphere",
-      "detail": "href 'https://www.sno-isle.org/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://www.sno-isle.org/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "Beyond the Geofence",
-      "detail": "href 'https://www.newyorker.com/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://www.newyorker.com/",
-        "is_homepage": true
+        "word_count": 4,
+        "data_signals": [
+          "newyorker=populated"
+        ]
       }
     },
     {
       "type": "missing_section",
       "severity": "high",
-      "section": "The Reading Room",
-      "detail": "h3 'The Reading Room' absent but sectors ['intellectual_journals', 'enriched_articles'] have data",
+      "section": "The Library Stacks",
+      "detail": "h3 'The Library Stacks' absent but sectors ['literary_pick'] have data",
       "evidence": {
         "sectors": [
-          "intellectual_journals",
-          "enriched_articles"
+          "literary_pick"
         ]
       }
     },
@@ -141,24 +108,15 @@
       "section": "(greeting)",
       "detail": "weather string present in session but not in greeting",
       "evidence": {
-        "weather_preview": "Mostly cloudy today in Edmonds, 64\u00b0F high/53\u00b0F low. Light SW winds 5-10 mph, near-zero rain chance. "
-      }
-    },
-    {
-      "type": "greeting_missing_correspondence",
-      "severity": "medium",
-      "section": "(greeting)",
-      "detail": "correspondence handoff text present but no preview in greeting",
-      "evidence": {
-        "handoff_preview": "- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR adding telemetry features.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR adding telemetry features.\n- [e"
+        "weather_preview": "Based on the latest weather data for Edmonds, Washington today:\n\n**Current Conditions:** Overcast wi"
       }
     }
   ],
-  "section_count": 6,
-  "hallucinated_url_count": 4,
-  "empty_section_count": 0,
+  "section_count": 5,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 1,
   "aside_template_count": 0,
-  "narrative_flow_score": 4,
+  "narrative_flow_score": 3,
   "writing_quality_score": null,
   "dedup_score": null,
   "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free"

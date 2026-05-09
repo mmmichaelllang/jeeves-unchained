@@ -1,6 +1,6 @@
 {
   "date": "2026-05-09",
-  "briefing_chars": 17507,
+  "briefing_chars": 24090,
   "session_status": "complete",
   "detectors_run": [
     "D8_dedup",
@@ -20,27 +20,39 @@
       "type": "dedup_cross_day_overlap",
       "severity": "medium",
       "section": null,
-      "detail": "18 URLs already covered in prior briefings",
+      "detail": "26 URLs already covered in prior briefings",
       "evidence": {
-        "overlap_count": 18,
+        "overlap_count": 26,
         "samples": [
-          "https://teachersbuddy.com",
-          "https://www.newsnationnow.com/space/ufo/luna-address-info-nonhuman-origin",
-          "https://stylus.education",
-          "https://www.bbc.com/news/articles/cnv8l99r3yyo",
-          "https://www.kuraplan.com/us/plans/text-analysis-focus-4353e088"
+          "https://www.goteach.io/for/history-teachers",
+          "https://www.applitrack.com/everettsd/onlineapp/default.aspx",
+          "https://northshore.tedk12.com/hire/index.aspx",
+          "https://legenddevice.com",
+          "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps"
         ]
       }
     },
     {
       "type": "empty_with_data",
       "severity": "high",
-      "section": "The Reading Room",
-      "detail": "section under 30 words (13) but sectors ['intellectual_journals', 'enriched_articles'] have available data",
+      "section": "The Library Stacks",
+      "detail": "section under 30 words (10) but sectors ['literary_pick'] have available data",
       "evidence": {
-        "word_count": 13,
+        "word_count": 10,
         "data_signals": [
-          "enriched_articles=3items"
+          "literary_pick=populated"
+        ]
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "Talk of the Town",
+      "detail": "section under 30 words (4) but sectors ['newyorker'] have available data",
+      "evidence": {
+        "word_count": 4,
+        "data_signals": [
+          "newyorker=populated"
         ]
       }
     },
@@ -50,22 +62,13 @@
       "section": "(greeting)",
       "detail": "weather string present in session but not in greeting",
       "evidence": {
-        "weather_preview": "Mostly cloudy today in Edmonds, 64\u00b0F high/53\u00b0F low. Light SW winds 5-10 mph, near-zero rain chance. "
-      }
-    },
-    {
-      "type": "greeting_missing_correspondence",
-      "severity": "medium",
-      "section": "(greeting)",
-      "detail": "correspondence handoff text present but no preview in greeting",
-      "evidence": {
-        "handoff_preview": "- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR adding telemetry features.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR adding telemetry features.\n- [e"
+        "weather_preview": "Based on the latest weather data for Edmonds, Washington today:\n\n**Current Conditions:** Overcast wi"
       }
     }
   ],
-  "section_count": 7,
+  "section_count": 6,
   "hallucinated_url_count": 0,
-  "empty_section_count": 1,
+  "empty_section_count": 2,
   "aside_template_count": 0,
   "narrative_flow_score": null,
   "writing_quality_score": null,

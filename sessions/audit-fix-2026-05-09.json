@@ -1,65 +1,39 @@
 {
   "date": "2026-05-09",
-  "pre_fix_chars": 17552,
-  "post_fix_chars": 17507,
+  "pre_fix_chars": 24001,
+  "post_fix_chars": 24090,
   "actions": [
     {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://www.seattlepromusica.org/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://www.seattlepromusica.org/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://www.edmondswa.gov/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://www.edmondswa.gov/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://www.sno-isle.org/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://www.sno-isle.org/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://www.newyorker.com/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://www.newyorker.com/"
-      }
-    },
-    {
       "type": "inject_missing_section",
-      "section": "The Reading Room",
-      "detail": "injected empty-feed for The Reading Room",
+      "section": "The Library Stacks",
+      "detail": "injected empty-feed for The Library Stacks",
       "status": "applied",
       "evidence": {
-        "anchor": "Beyond the Geofence"
+        "anchor": "The Commercial Ledger"
+      }
+    },
+    {
+      "type": "rerender_empty_with_data",
+      "section": "Talk of the Town",
+      "detail": "validator rejected: non-html prefix: 'We need to write a paragraph (or two if data demands) 60-180'",
+      "status": "failed",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to write a paragraph (or two if data demands) 60-180 words, voice: dry, precise, occasionally barbed; only swear"
       }
     },
     {
       "type": "rerender_greeting",
       "section": "(greeting)",
-      "detail": "validator rejected: non-html prefix: 'We need to output a single HTML <p> paragraph, 80-150 words,'",
+      "detail": "validator rejected: non-html prefix: 'We need to produce a single <p> paragraph, 80-150 words, dry'",
       "status": "failed",
       "evidence": {
         "model": "nvidia/nemotron-3-super-120b-a12b:free",
-        "preview": "We need to output a single HTML <p> paragraph, 80-150 words, dry precise butler voice. Mention weekday, weather, and a o"
+        "preview": "We need to produce a single <p> paragraph, 80-150 words, dry precise butler voice, mention weekday, weather, and a one-l"
       }
     }
   ],
-  "pre_fix_defect_count": 9,
+  "pre_fix_defect_count": 5,
   "post_fix_defect_count": null,
   "audit_model_used": null
 }
