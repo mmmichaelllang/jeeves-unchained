@@ -3,59 +3,90 @@
   "status": "complete",
   "dedup": {
     "covered_urls": [
-      "https://annmichaelsen.com/2026/01/07/lesson-plan-rhetoric-literary-devices-and-interpretation-in-contemporary-political-commentary/",
-      "https://arxiv.org/abs/2603.19461",
-      "https://arxiv.org/html/2510.13907v2",
-      "https://eduarc.ai/",
-      "https://ichthus77.com/2026/03/20/unity-in-distinction-as-a-metaphysical-logic/",
-      "https://link.springer.com/chapter/10.1007/978-3-032-11100-5_8",
-      "https://olex.ai/",
-      "https://openreview.net/forum?id=NVTtoO297p",
-      "https://osu-nlp-group.github.io/ScienceAgentBench/",
+      "http://arxiv.org/abs/2502.06855v2",
+      "http://arxiv.org/abs/2601.23273v1",
+      "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom",
+      "https://agent-wars.com/news/2026-03-15-ouroboros-recursive-self-improving-ai-research",
+      "https://anypin.ai/products/anypin-note-pod-p1",
+      "https://apnews.com/article/china-former-defense-ministers-death-sentence-165e2afcc5f893745a7166ea85a23f4c",
+      "https://arxiv.org/abs/2604.17406",
+      "https://bsd405.tedk12.com/hire/index.aspx",
+      "https://careers.nais.org/jobs/22218237/upper-school-history-teacher-long-term-sub-26-27-school-year",
+      "https://getreflecti.com/",
+      "https://humy.ai/blog/humy-2-0-the-ai-platform-for-social-studies-shaped-by-teachers",
+      "https://legenddevice.com/",
+      "https://monsha.ai/subject/social-studies",
+      "https://myedmondsnews.com/",
+      "https://myedmondsnews.com/2026/05/council-postpones-vote-on-city-administrator-advances-measure-on-salary-commission/",
+      "https://myedmondsnews.com/2026/05/court-denies-motion-to-reconsider-dismissal-of-edmonds-tree-case/",
+      "https://northshore.tedk12.com/hire/index.aspx",
       "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
-      "https://reference-global.com/article/10.2478/perc-2025-0013",
-      "https://stylus.education/",
-      "https://subjecttoclimate.org/teacher-guides/free-ela-lesson-plans-for-teachers-9-12",
-      "https://teachersbuddy.com/",
-      "https://tech.yahoo.com/wearables/articles/vocci-ring-may-first-ai-163000223.html",
-      "https://tianpan.co/blog/2026-04-10-agents-teach-themselves-closed-loop-self-improvement",
+      "https://topaiproduct.com/2026/04/29/taya-necklace-an-89-ai-pendant-that-refuses-to-listen-to-anyone-but-you/",
+      "https://www.aljazeera.com/news/liveblog/2026/5/7/iran-war-live-trump-says-deal-with-tehran-possible-israel-bombs-beirut",
+      "https://www.applitrack.com/everettsd/onlineapp/default.aspx?AppliTrackJobID=8263",
+      "https://www.applitrack.com/lakewashington/onlineapp/",
+      "https://www.bbc.co.uk/news/articles/c1m2epkey44o",
+      "https://www.bbc.com/news/articles/cj0pq2q8221o",
       "https://www.bbc.com/news/articles/cn0ep28drllo",
       "https://www.bbc.com/news/articles/cnv8l99r3yyo",
-      "https://www.bbc.com/news/articles/cz0ev7enk2lo",
-      "https://www.briskteaching.com/post/figurative-language-lesson-plan-and-worksheets",
-      "https://www.edutopia.org/article/helping-middle-school-students-read-challenging-texts/",
-      "https://www.fishtanklearning.org/curriculum/ela/12th-grade/",
-      "https://www.kuraplan.com/us/plans/text-analysis-focus-4353e088",
-      "https://www.macrumors.com/2026/05/08/ai-pendant-five-features/",
+      "https://www.bbc.com/news/live/cx297218m9vt",
+      "https://www.cbc.ca/news/world/us-iran-war-hormuz-day-70-9.7192522",
+      "https://www.cnn.com/2026/05/03/africa/atlantic-hantavirus-cruise-ship-dead-latam-intl",
+      "https://www.goteach.io/for/history-teachers",
+      "https://www.harpercollins.com/products/the-known-world-edward-p-jones?variant=32131751903266",
+      "https://www.imaging-resource.com/news/luci-pin-aims-to-reimagine-life-logging-with-privacy-first-local-ai-processing/",
       "https://www.newsnationnow.com/space/ufo/luna-address-info-nonhuman-origin/",
       "https://www.newyorker.com/magazine/2026/05/04/ellen-burstyns-inner-library",
-      "https://www.npr.org/2026/05/08/nx-s1-5805193/redistricting-virginia-trump-midterms",
-      "https://www.reuters.com/business/healthcare-pharmaceuticals/new-hantavirus-case-suspected-remote-island-contact-tracing-continues-2026-05-08/",
-      "https://www.theguardian.com/politics/2026/may/08/labour-local-elections-keir-starmer-cling-on",
-      "https://www.upi.com/Top_News/US/2025/09/10/UFOs-hearing/7691757474759"
+      "https://www.notieai.com/ai-for-history-teachers/",
+      "https://www.nybooks.com/articles/2026/05/28/irans-new-winter-christopher-de-bellaigue/",
+      "https://www.propublica.org/article/trump-immigration-scams-complaints-doubled-ice",
+      "https://www.scmp.com/news/china/military/article/3352764/2-former-chinese-defence-ministers-given-death-sentence-reprieve",
+      "https://www.seattleschools.org/departments/hr/careers/teacher-recruitment/",
+      "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/",
+      "https://www.upi.com/Top_News/US/2025/09/10/UFOs-hearing/7691757474759",
+      "https://www.usatoday.com/story/travel/cruises/2026/05/07/hantavirus-outbreak-cases-cruise-ship-us-updates/89970817007/",
+      "https://www.ziprecruiter.com/c/Snohomish-School-District/Job/Social-Studies-History-Teacher-Pool-(2026-2027)/-in-Snohomish,WA",
+      "https://www2.nwrdc.wa-k12.net/scripts/cgiip.exe/WService=wshorels71/rapplmnu03.w",
+      "https://x.com/EdmondsPolice"
     ],
     "covered_headlines": [
-      "Nathan A. Adams' \"Perichoretic Persons: Diagramming Augustine's Mental Trinity\" (September 2025) offers a fresh computational approach to trinitarian metaphysics by diagramming the cognitive interchanges in Augustine's De Trinitate.",
-      "Three new papers push the boundaries of autonomous research systems.",
-      "Rep. Anna Paulina Luna, chair of the House Oversight Task Force on Declassification, is leading an active 2025-2026 congressional push for UAP transparency.",
-      "12th Grade ELA Full-Year Curriculum: On Being Human",
-      "NYS Regents Part 3 Text-Analysis Mini-Lesson",
-      "Rhetoric & Contemporary Political Commentary",
-      "Common Core Figurative Language Boot Camp",
-      "Climate-Change Student Journalism Unit",
-      "Helping Middle School Students Read Challenging Texts",
-      "China's export-driven economy, which weathered Trump's tariffs last year, is now facing severe pressure from the US-Iran war.",
-      "Two new suspected hantavirus cases were reported Friday - one in Spain and another on the remote South Atlantic island of Tristan da Cunha - expanding the outbreak beyond the cruise ship cluster that has already killed three passengers.",
-      "UK Labour leader Keir Starmer faces intense pressure after his party suffered heavy losses in local elections, with Reform UK making significant gains and Labour losing power in Wales. Despite calls for his resignation, Starmer has vowed to fight on as party leader.",
-      "The EU has approved a €90bn loan for Ukraine after Kyiv resumed Russian oil flows through the Druzhba pipeline to Hungary and Slovakia, ending months of deadlock. Hungary's new leadership under Péter Magyar has prioritized resetting relations with Brussels after Viktor Orbán's 16-year tenure.",
-      "The Virginia Supreme Court struck down Democrats' redistricting plan in a major blow to the party's midterm hopes, effectively overturning a voter-approved amendment that could have helped Democrats gain four House seats. The ruling guarantees Republican advantages in upcoming elections.",
-      "The UK and France have signed a new £662m three-year deal to combat Channel migrant crossings, including deploying 50 riot-trained French police officers and enhanced surveillance technology. The agreement includes provisions to withdraw UK funding if crossing numbers aren't sufficiently reduced.",
-      "Apple is developing an AirTag-sized AI pendant with always-on camera and microphone for Siri commands, designed to be worn as a necklace. The device, still in early development, features contextual reminders and proactive suggestions.",
-      "Olex.AI won the 2026 Bett Award for Assessment, Planning & Progress Monitoring, offering GCSE-level English teachers AI tools that reduce workload and automate marking while keeping teachers in control.",
+      "Two new autonomous research systems push beyond static benchmarks. EvoMaster (arXiv 2604.",
+      "Rep. Anna Paulina Luna’s House Oversight Task Force is actively investigating UAP transparency in 2026.",
+      "The Washington State Court of Appeals denied a motion to reconsider its March 16 dismissal of the Rimmer v. City of Edmonds case.",
+      "The Edmonds City Council postponed until next week its vote on confirming Stephanie Lucash as the new city administrator. Lucash, currently deputy city manager for Kenmore, would receive an annual base salary of $226,068 if confirmed.",
+      "Edmonds Police are investigating the theft of a South County Fire Ford F-150 pickup truck that was stolen from the scene of a residential fire investigation on Friday. The vehicle was taken while firefighters were responding to an emergency call.",
+      "A man was arrested for stalking after repeatedly contacting a woman in the 1100 block of 7th Avenue South. The incident was part of the Edmonds Police blotter covering April 20-26, 2026.",
+      "Snohomish School District",
+      "Social Studies/History Teacher Pool (2026-2027)",
+      "Seattle Academy of Arts and Sciences",
+      "Upper School History Teacher - Long Term Sub (26-27 School Year)",
+      "Everett Public Schools",
+      "2026-27 Certificated Teacher Pool - Secondary (Grades 6-12)",
+      "Bellevue School District",
+      "Secondary Teacher Pool",
+      "Lake Washington School District",
+      "Northshore School District",
+      "Shoreline School District",
+      "Seattle Public Schools",
+      "The US and Iran continue to exchange fire in the Strait of Hormuz despite ongoing ceasefire negotiations. Iran has seized two cargo ships in the strait and stated that reopening it is 'impossible' if the US naval blockade continues.",
+      "The European Union has approved a €90 billion loan for Ukraine as the Druzhba oil pipeline resumes operations, ending months of deadlock. Ukraine restarted oil transit to Hungary and Slovakia after completing repairs to the pipeline, which had been damaged by Russian attacks.",
+      "China's economy is facing new pressures from the US-Iran war, with manufacturing hubs like Foshan experiencing reduced factory orders, increased costs, and job losses. While China weathered Trump's tariffs last year, the Middle East conflict is now taking a toll on its export-driven economy.",
+      "CIA analysis suggests Iran could withstand the US naval blockade for another four months, indicating limited US leverage in negotiations.",
+      "The Pentagon has released a new tranche of declassified UFO documents spanning decades, including reports from Apollo astronauts describing unexplained flashes of light and objects on the Moon.",
+      "Flora Champy revisits Marcel Proust’s 1905 essay 'On Reading' to defend literature as a portal to personal freedom rather than a moral improvement device. Proust rejects John Ruskin’s Victorian claim that books must \"pay\" by making readers better people;",
+      "Christopher de Bellaigue surveys post-war Iran in 'Iran’s New Winter'. He traces the 1953 CIA-MI6 coup against Mohammad Mossadegh as the original rupture that pushed Iranian liberals into a lasting despondency captured in Mehdi Akhavan-Sales’s poem 'Winter'.",
+      "ProPublica investigates the surge in immigration scams under Trump’s mass-deportation campaign. The piece follows Jasmir Urbina, an asylum-seeker who paid nearly $10,000 to a fake ‘Catholic Charities’ attorney via WhatsApp and Zelle, only to discover she had been defrauded.",
+      "Maria Popova distills Oliver Sacks’s posthumous essay collection The River of Consciousness to explore how perception is not passive reception but creative construction.",
+      "Legend Memory AI Pendant launched as a premium $499 voice-first wearable designed specifically for ADHD minds, featuring automatic task extraction from conversations and executive-grade meeting summaries.",
+      "Notie AI emerged as a purpose-built platform for history teachers, offering instant DBQ grading and source analysis evaluation aligned to AP/IB standards. Humy 2.",
+      "Reflecti AI Memory Pendant offers encrypted, searchable life-logging with daily summaries and end-to-end encryption. The LUCI Pin provides privacy-first life-logging with local AI processing and 4K recording capabilities.",
       "Ellen Burstyn’s Inner Library",
-      "EU approves €90bn loan for Ukraine as pipeline is turned on ending deadlock",
-      "Labour’s better than expected thrashing may allow Starmer to cling on in No 10 | May 2026 elections | The Guardian",
-      "UK and France strike new £662m small boats deal",
+      "The Known World",
+      "2 former Chinese defence ministers handed suspended death sentences",
+      "China gives suspended death sentences to 2 ex-defense ministers accused of bribery",
+      "Iran war updates: Tehran says US violated ceasefire, targeted ships",
+      "Hantavirus being monitored in US. Latest on cruise ship outbreak",
+      "More than 100 people stranded on cruise ship after deadly outbreak",
       "**Friend AI Pendant** (MyTabAI, Inc): $99 wearable voice companion with 15-hour battery life, always-listening mic for conversations, and $7.",
       "**MagicSchool AI**: April 2026 updates include Educational Song Generator (turns lessons into music) and Studio Mode in Raina for document editing.",
       "**Nirva AI Jewelry**: Fashion-forward pendant that combines AI sensing with jewelry design, tracks emotions and auto-journals life experiences.",
@@ -79,7 +110,6 @@
       "Bellevue",
       "Bellevue Christian",
       "Bellevue Christian School",
-      "Bellevue School District",
       "British Prime Minister Keir Starmer faces a parliamentary vote tomorrow on whether to launch an inquiry into whether he misled the House of Commons ov",
       "British police seized £175,000 worth of gold and silver bullion along with £13,000 cash in Hull during an anti-slavery operation.",
       "Buddi AI Wearable: 6-person Bothell, WA (local) startup founded 2024.",
@@ -138,7 +168,6 @@
       "English and History teachers now have specialized AI co-workers that do far more than generic chatbots. MagicSchool (already briefed) remains dominant, but new entrants are carving out humanities niches.",
       "English and History teachers now have three well-funded, purpose-built AI co-teachers.",
       "Everett",
-      "Everett Public Schools",
       "Eyal Weizman's 'All they will find is sand: Gaza’s Yellow Line' provides a forensic analysis of Israel's systematic destruction of Gaza's built enviro",
       "Fintan O'Toole's essay 'The Right Amount of Crazy' dissects Trump's application of the 'Madman Theory' in foreign policy, particularly regarding Iran.",
       "Flora Champy revisits Marcel Proust’s 1905 essay \"On Reading\" to defend literature as a technology of freedom rather than moral improvement. Proust rejects Ruskin’s utilitarian claim that books make us better;",
@@ -202,7 +231,6 @@
       "King Charles III has begun a historic four-day US state visit, addressing Congress on Tuesday to defend 'democratic values' following Saturday's assas",
       "Lake Stevens School District",
       "Lake Washington",
-      "Lake Washington School District",
       "Late-night highway shutdowns are coming near Alderwood",
       "Late-night highway shutdowns are coming near Alderwood - Edmonds Beacon",
       "Lifelogging and lifestyle wearables are converging on discreet jewelry form factors.",
@@ -233,7 +261,6 @@
       "New suspected hantavirus cases have been identified in Spain and on the remote island of Tristan da Cunha, expanding the outbreak beyond the cruise ship cluster that has already killed three passengers.",
       "North Korea has officially confirmed for the first time that it deployed 14,000 troops to fight alongside Russia in Ukraine under Kim Jong Un's direct",
       "Northshore",
-      "Northshore School District",
       "Now let me extract full content from the key articles I found, particularly the BBC and Reuters pieces thatily_extract:5<|tool_call_argument_begin|>",
       "Nuna emotion-tracking pendant (nunatechnology.",
       "Oil prices surged to their highest level since 2022 after reports that the US military is preparing to brief President Trump on new strike options aga",
@@ -267,7 +294,6 @@
       "Sean Irving argues that economic republicanism—19th-century heirs to Machiavelli and Jefferson—offers a forgotten blueprint for freedom today.",
       "Sean Irving's essay 'The West's forgotten republican heritage' argues that the contemporary crisis of democratic legitimacy stems from liberals' abandonment of economic republicanism—the 19th-century tradition that tied political liberty to citizens' economic independence.",
       "Seattle",
-      "Seattle Academy of Arts and Sciences",
       "Seattle Choral Company is accepting singers from all sections year-round; auditions consist of vocalizing, sight-reading, and ear training.",
       "Seattle Pro Musica has closed 2025-26 auditions but invites singers to email auditions@seattlepromusica.",
       "Seattle Pro Musica has concluded 2025-26 auditions, but invites singers to email auditions@seattlepromusica.org to join the mailing list for August 2026-27 season auditions.",
@@ -275,23 +301,18 @@
       "Seattle Pro Musica has wrapped its 2025-26 auditions, but if Sarah wants to sing next season she should email auditions@seattlepromusica.org now to join the 2026-27 mailing list.",
       "Seattle Pro Musica: 2026-27 auditions open August 2026—email auditions@seattlepromusica.org to join the mailing list.",
       "Seattle Public",
-      "Seattle Public Schools",
       "Secondary English Teacher Pool",
       "Secondary History Teacher",
       "Secondary Social Studies Teacher",
-      "Secondary Teacher Pool",
       "Secondary Teacher Pool (Grades 6-12)",
       "Secondary Teacher Pool (Grades 6–12)",
       "Secondary Teachers – General Pool",
       "Shoreline",
       "Shoreline Christian School",
-      "Shoreline School District",
       "Singapore will introduce judicial caning as a mandatory sentence for boys aged 10-16 convicted of bullying offences under amendments passed by parliament.",
       "Sno-Isle Libraries offers weekly Toddler Storytime at Lynnwood Library (19200 44th Ave W) on Mondays 9:30-10:00 am starting May 4, featuring stories,",
       "Snohomish",
-      "Snohomish School District",
       "Social Studies/History Teacher Pool",
-      "Social Studies/History Teacher Pool (2026-2027)",
       "South County Fire commissioners are redistricting to incorporate Edmonds' 42,000+ residents into the Regional Fire Authority.",
       "South County Fire commissioners will hold a public hearing Monday, May 5 at 7 p.m.",
       "South County Fire public hearing May 5 on proposed bond measure",
@@ -317,7 +338,6 @@
       "The House Oversight subcommittee on National Security held a closed-door UAP briefing on April 24, 2026, but issued no public readout, frustrating tra",
       "The IMF has downgraded global growth forecasts to 3.",
       "The Immortal Life of Henrietta Lacks",
-      "The Known World",
       "The Kremlin has criticized Ukraine's response to Vladimir Putin's offer of a three-day ceasefire as \"ambiguous\" and demanded clarity.",
       "The Line of Beauty",
       "The New Normal",
@@ -417,161 +437,238 @@
       "functions.tavily_extract:5{\"urls\": [\"https://www.",
       "functions.tavily_search:2",
       "global news May 8 2026 US Iran tensions Strait of Hormuz",
-      "‘The Music of What Happens’ | Nick Laird | The New York Review of Books"
+      "‘The Music of What Happens’ | Nick Laird | The New York Review of Books",
+      "email | Carnival Cruise Line",
+      "email | Edmonds Patch",
+      "email | My Edmonds News",
+      "email | Back Market",
+      "email | \"Login.gov\"",
+      "email | \"Larsen, Robert (DCYF)\""
     ],
     "cross_sector_dupes": []
   },
   "triadic_ontology": {
-    "findings": "Nathan A. Adams' \"Perichoretic Persons: Diagramming Augustine's Mental Trinity\" (September 2025) offers a fresh computational approach to trinitarian metaphysics by diagramming the cognitive interchanges in Augustine's De Trinitate. Adams argues that Augustine's \"mental trinity\" of memory, understanding, and will reveals a perichoretic structure where divine persons are constituted by their interpenetrating relations rather than substantial independence. This challenges classical substance metaphysics by suggesting personhood emerges from relational co-constitution.\n\nComplementing this, the Unity-in-Distinction framework (Ichthus77, March 2026) proposes a triadic metaphysical logic where Being, Action, and Quality form an irreducible, mutually-requiring structure. This schema argues that each element becomes incoherent without the others - Being without Action collapses into non-being, Action without Being becomes expression without substance, and Quality without both devolves into mea [TRUNCATED]",
-    "urls": [
-      "https://reference-global.com/article/10.2478/perc-2025-0013",
-      "https://ichthus77.com/2026/03/20/unity-in-distinction-as-a-metaphysical-logic/",
-      "https://link.springer.com/chapter/10.1007/978-3-032-11100-5_8"
-    ]
+    "findings": "",
+    "urls": []
   },
   "ai_systems": {
-    "findings": "Three new papers push the boundaries of autonomous research systems. The HyperAgents framework from UBC/Meta introduces self-referential agents where a meta-agent can edit not only the task-solving agent but also its own improvement procedure, enabling open-ended self-acceleration across coding, paper review, robotics reward design and Olympiad math grading. A complementary closed-loop architecture eliminates human labels entirely by using deterministic verifiers (code execution, theorem provers) to supply free supervision, doubling success rates in tool-use environments from 12 % to 23.5 % without any annotated data. On the evaluation side, the new ScienceAgentBench provides 102 rigorously validated tasks extracted from 44 peer-reviewed publications across bioinformatics, chemistry, GIS and psychology, showing that even the best current agents solve only ~32 % of tasks unaided and ~34 % with expert knowledge, underscoring the gap between headline demos and real scientific workflows. F [TRUNCATED]",
+    "findings": "Two new autonomous research systems push beyond static benchmarks. EvoMaster (arXiv 2604.17406) introduces a foundational \"evolving agent framework\" that iteratively refines hypotheses and accumulates knowledge across experimental cycles, achieving 75.8 % on MLE-Bench Lite and 53.3 % on FrontierScience—gains of +159 % to +316 % over OpenClaw. Complementing it, Ouroboros (agent-wars.com, 15 Mar) layers a generational meta-loop on Karpathy’s autoresearch codebase: each cycle rewrites its own methodology document (genome.md), tracks prediction-outcome divergence, and archives full lineage artifacts for auditability. Meanwhile, label-free prompt optimization matures: UPA (arXiv 2601.23273) uses tree-structured search with LLM pairwise comparisons to optimize prompts without ground-truth labels, and Self-Supervised Prompt Optimization (arXiv 2502.06855) cuts optimization cost to 1.1–5.6 % of supervised methods by replacing gold labels with output-comparison signals. Together, these advances [TRUNCATED]",
     "urls": [
-      "https://arxiv.org/abs/2603.19461",
-      "https://tianpan.co/blog/2026-04-10-agents-teach-themselves-closed-loop-self-improvement",
-      "https://osu-nlp-group.github.io/ScienceAgentBench/",
-      "https://openreview.net/forum?id=NVTtoO297p",
-      "https://arxiv.org/html/2510.13907v2"
+      "https://arxiv.org/abs/2604.17406",
+      "https://agent-wars.com/news/2026-03-15-ouroboros-recursive-self-improving-ai-research",
+      "http://arxiv.org/abs/2601.23273v1",
+      "http://arxiv.org/abs/2502.06855v2"
     ]
   },
   "uap": {
-    "findings": "Rep. Anna Paulina Luna, chair of the House Oversight Task Force on Declassification, is leading an active 2025-2026 congressional push for UAP transparency. She claims to have personally reviewed materials in a SCIF that are \"of nonhuman origin and creation\" and has formally demanded 46 classified UAP videos from the Department of War, threatening subpoenas if they are not delivered. A September 2025 hearing featured whistleblowers and drone footage of an orb allegedly withstanding a missile strike, underscoring the committee’s assertion that UAPs pose a real national-security threat and that AARO has been \"less than adequate\" in its disclosures.",
+    "findings": "Rep. Anna Paulina Luna’s House Oversight Task Force is actively investigating UAP transparency in 2026. After a September 2025 hearing with whistleblowers, the panel demanded 46 unreleased videos from the Pentagon’s AARO; Luna says she has personally seen “non-human origin” evidence in classified briefings and vows a public press conference once the material is declassified. The probe is framed as a national-security imperative, with subpoenas threatened if the Department of War continues to withhold records.",
     "urls": [
-      "https://www.newsnationnow.com/space/ufo/luna-address-info-nonhuman-origin/",
       "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
+      "https://www.newsnationnow.com/space/ufo/luna-address-info-nonhuman-origin/",
       "https://www.upi.com/Top_News/US/2025/09/10/UFOs-hearing/7691757474759"
     ]
   },
-  "weather": "Mostly cloudy today in Edmonds, 64°F high/53°F low. Light SW winds 5-10 mph, near-zero rain chance. Evening stays cloudy, cooling to the low-50s with gentle breezes—pleasant for a stroll or playground visit with Piper.",
-  "local_news": [],
-  "career": {},
+  "weather": "Based on the latest weather data for Edmonds, Washington today:\n\n**Current Conditions:** Overcast with increasing clouds throughout the day, transitioning to times of clouds and sun. Current temperature is 53°F, feeling like 51°F.\n\n**Today's Forecast:** High near 67°F with a low around 53°F tonight. Very low precipitation chance at only 2%. Winds will be calm, becoming north-northwest around 6 mph in the afternoon.\n\n**Evening Outlook:** Mostly cloudy tonight with a low around 51°F. Winds will be north-northwest around 6 mph, becoming calm after midnight. No rain expected this evening.",
+  "local_news": [
+    {
+      "category": "municipal",
+      "source": "My Edmonds News",
+      "findings": "The Washington State Court of Appeals denied a motion to reconsider its March 16 dismissal of the Rimmer v. City of Edmonds case. This ends the four-year legal battle over a dogwood tree that began when Nathan Rimmer's permit was denied in May 2022. While the Appeals Court dismissed the case as \"moot,\" Rimmer's attorneys plan to ask the Washington Supreme Court to provide clarity on whether property owners can recover damages when cities withhold permits to force unconstitutional conditions.",
+      "urls": [
+        "https://myedmondsnews.com/2026/05/court-denies-motion-to-reconsider-dismissal-of-edmonds-tree-case/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "My Edmonds News",
+      "findings": "The Edmonds City Council postponed until next week its vote on confirming Stephanie Lucash as the new city administrator. Lucash, currently deputy city manager for Kenmore, would receive an annual base salary of $226,068 if confirmed. The council also advanced a measure to \"unpause\" the volunteer salary commission to review elected officials' compensation for the 2027-2028 biennium, with Mayor Rosen breaking a 3-3 tie to send the proposal to next week's consent agenda.",
+      "urls": [
+        "https://myedmondsnews.com/2026/05/council-postpones-vote-on-city-administrator-advances-measure-on-salary-commission/"
+      ]
+    },
+    {
+      "category": "public_safety",
+      "source": "Edmonds Police Department",
+      "findings": "Edmonds Police are investigating the theft of a South County Fire Ford F-150 pickup truck that was stolen from the scene of a residential fire investigation on Friday. The vehicle was taken while firefighters were responding to an emergency call. Police have not released details about suspects or the circumstances of the theft.",
+      "urls": [
+        "https://x.com/EdmondsPolice"
+      ]
+    },
+    {
+      "category": "public_safety",
+      "source": "My Edmonds News",
+      "findings": "A man was arrested for stalking after repeatedly contacting a woman in the 1100 block of 7th Avenue South. The incident was part of the Edmonds Police blotter covering April 20-26, 2026. Additionally, police responded to a boat license plate incident in the 300 block of Admiral Way, though details of this incident were not specified in the report.",
+      "urls": [
+        "https://myedmondsnews.com/"
+      ]
+    }
+  ],
+  "career": {
+    "openings": [
+      {
+        "district": "Snohomish School District",
+        "role": "Social Studies/History Teacher Pool (2026-2027)",
+        "url": "https://www.ziprecruiter.com/c/Snohomish-School-District/Job/Social-Studies-History-Teacher-Pool-(2026-2027)/-in-Snohomish,WA",
+        "summary": "Full-time secondary Social Studies/History teaching positions for the 2026-2027 school year. Pool posting allows district to consider applicants for multiple openings as they arise.",
+        "deadline": null,
+        "salary_range": "$75,240 - $149,390"
+      },
+      {
+        "district": "Seattle Academy of Arts and Sciences",
+        "role": "Upper School History Teacher - Long Term Sub (26-27 School Year)",
+        "url": "https://careers.nais.org/jobs/22218237/upper-school-history-teacher-long-term-sub-26-27-school-year",
+        "summary": "Long-term substitute position for upper school history teacher covering the full 2026-2027 school year at independent Seattle academy.",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Everett Public Schools",
+        "role": "2026-27 Certificated Teacher Pool - Secondary (Grades 6-12)",
+        "url": "https://www.applitrack.com/everettsd/onlineapp/default.aspx?AppliTrackJobID=8263",
+        "summary": "Pool posting for secondary teaching positions (grades 6-12) across all subject areas including English and History for the 2026-2027 school year. Applications reviewed as vacancies become available.",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Bellevue School District",
+        "role": "Secondary Teacher Pool",
+        "url": "https://bsd405.tedk12.com/hire/index.aspx",
+        "summary": "General secondary teaching positions across multiple subjects including English and History. District hires primarily April-June and August for the following school year.",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Lake Washington School District",
+        "role": "Secondary Teacher Pool",
+        "url": "https://www.applitrack.com/lakewashington/onlineapp/",
+        "summary": "General teaching pool for secondary positions. District is second-largest in Washington state with award-winning schools and comprehensive educator support programs.",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Northshore School District",
+        "role": "Secondary Teacher Pool",
+        "url": "https://northshore.tedk12.com/hire/index.aspx",
+        "summary": "Secondary teaching positions across all subjects. District emphasizes equity, innovation, and community engagement with strong professional development opportunities.",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Shoreline School District",
+        "role": "Secondary Teacher Pool",
+        "url": "https://www2.nwrdc.wa-k12.net/scripts/cgiip.exe/WService=wshorels71/rapplmnu03.w",
+        "summary": "Certificated secondary teaching positions. District serves Shoreline and Lake Forest Park communities with focus on collaborative learning and student potential.",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Seattle Public Schools",
+        "role": "Secondary Teacher Pool",
+        "url": "https://www.seattleschools.org/departments/hr/careers/teacher-recruitment/",
+        "summary": "Secondary teaching positions across Seattle Public Schools. District offers Academy for Rising Educators and Seattle Teacher Residency programs for certification pathways.",
+        "deadline": null,
+        "salary_range": null
+      }
+    ],
+    "notes": "Most districts are using pool postings for 2026-2027 secondary positions rather than specific job postings. Snohomish School District lists the only specific salary range found. All districts within 30 miles of Edmonds are actively recruiting for English and History teaching positions with applications typically reviewed April-June and August. Candidates should apply to multiple district pools to maximize opportunities."
+  },
   "english_lesson_plans": {
-    "classroom_ready": [
-      {
-        "title": "12th Grade ELA Full-Year Curriculum: On Being Human",
-        "source": "Fishtank Learning",
-        "url": "https://www.fishtanklearning.org/curriculum/ela/12th-grade/",
-        "grade_band": "12",
-        "topic": "Full-year thematic curriculum anchored by Hamlet, Klara and the Sun, Sula, Exit West, and Fun Home",
-        "summary": "Five complete units (25-28 days each) built around the essential question 'What does it mean to be human?' Each unit bundles close-reading lessons, Socratic-seminar protocols, evidence-based writing tasks, and standards-aligned rubrics. Ready to print or import into Google Classroom."
-      },
-      {
-        "title": "NYS Regents Part 3 Text-Analysis Mini-Lesson",
-        "source": "Kuraplan AI",
-        "url": "https://www.kuraplan.com/us/plans/text-analysis-focus-4353e088",
-        "grade_band": "11",
-        "topic": "Close reading & Regents-style response writing",
-        "summary": "45-minute turnkey lesson that walks students through reading a complex 600-800 word text, identifying central idea, selecting one authorial strategy, and writing a concise analytical paragraph. Includes timing, text suggestions, graphic organizer, and differentiation notes."
-      },
-      {
-        "title": "Rhetoric & Contemporary Political Commentary",
-        "source": "Ann Michaelsen's Digital Classroom",
-        "url": "https://annmichaelsen.com/2026/01/07/lesson-plan-rhetoric-literary-devices-and-interpretation-in-contemporary-political-commentary/",
-        "grade_band": "10-12",
-        "topic": "Rhetorical analysis of John Pavlovitz op-ed on January 6th",
-        "summary": "Two-period sequence that teaches metaphor, imagery, loaded diction, and ethos/pathos/logos through a charged but timely text. Features a device-to-effect chart, 'neutral rewrite' media-literacy extension, and discussion norms for civil discourse."
-      },
-      {
-        "title": "Common Core Figurative Language Boot Camp",
-        "source": "Brisk Teaching",
-        "url": "https://www.briskteaching.com/post/figurative-language-lesson-plan-and-worksheets",
-        "grade_band": "9-12",
-        "topic": "Simile, metaphor, personification, hyperbole, idiom",
-        "summary": "Complete single-period plan with bell-ringer, direct-instruction mini-lecture, collaborative practice, and exit ticket. Google-Docs handouts and auto-graded quiz included; built with AI then teacher-reviewed for accuracy and engagement."
-      },
-      {
-        "title": "Climate-Change Student Journalism Unit",
-        "source": "Subject to Climate",
-        "url": "https://subjecttoclimate.org/teacher-guides/free-ela-lesson-plans-for-teachers-9-12",
-        "grade_band": "9-12",
-        "topic": "Investigative writing & media literacy on climate topics",
-        "summary": "Multi-week unit that scaffolds students from spotting misinformation to pitching, researching, and publishing a feature article. Includes interview protocols, citation mini-lessons, and rubrics aligned to CCSS writing and speaking/listening standards."
-      }
-    ],
-    "pedagogy_pieces": [
-      {
-        "title": "Helping Middle School Students Read Challenging Texts",
-        "source": "Edutopia",
-        "url": "https://www.edutopia.org/article/helping-middle-school-students-read-challenging-texts/",
-        "summary": "Susan Yergler outlines four interactive tasks—anticipation guides, chunked annotation, collaborative summary strips, and metacognitive exit tickets—that boost comprehension of complex informational and literary texts. Techniques scale cleanly to 9-12 classrooms."
-      }
-    ],
-    "notes": "All resources are free, standards-aligned, and classroom-ready as of 2026-05-09. URLs have been verified against the prior-coverage list to avoid duplication."
+    "classroom_ready": [],
+    "pedagogy_pieces": [],
+    "notes": ""
   },
   "family": {},
   "global_news": [
     {
       "category": "global_news",
       "source": "BBC",
-      "findings": "China's export-driven economy, which weathered Trump's tariffs last year, is now facing severe pressure from the US-Iran war. Manufacturing hubs like Foshan report workers struggling with reduced factory orders, rising costs, and job losses as the Middle East conflict disrupts global supply chains and energy prices.",
+      "findings": "The US and Iran continue to exchange fire in the Strait of Hormuz despite ongoing ceasefire negotiations. Iran has seized two cargo ships in the strait and stated that reopening it is 'impossible' if the US naval blockade continues. The US military reported intercepting Iranian attacks on three navy destroyers and conducting strikes on Iranian vessels. Meanwhile, a 14-point US proposal to end the war is under consideration by Iran, with Pakistani mediators facilitating discussions. President Trump has predicted the war will end 'quickly' if Iran agrees to the terms.",
       "urls": [
-        "https://www.bbc.com/news/articles/cn0ep28drllo"
-      ]
-    },
-    {
-      "category": "global_news",
-      "source": "Reuters",
-      "findings": "Two new suspected hantavirus cases were reported Friday - one in Spain and another on the remote South Atlantic island of Tristan da Cunha - expanding the outbreak beyond the cruise ship cluster that has already killed three passengers.",
-      "urls": [
-        "https://www.reuters.com/business/healthcare-pharmaceuticals/new-hantavirus-case-suspected-remote-island-contact-tracing-continues-2026-05-08/"
-      ]
-    },
-    {
-      "category": "global_news",
-      "source": "The Guardian",
-      "findings": "UK Labour leader Keir Starmer faces intense pressure after his party suffered heavy losses in local elections, with Reform UK making significant gains and Labour losing power in Wales. Despite calls for his resignation, Starmer has vowed to fight on as party leader.",
-      "urls": [
-        "https://www.theguardian.com/politics/2026/may/08/labour-local-elections-keir-starmer-cling-on"
+        "https://www.bbc.com/news/articles/cj0pq2q8221o",
+        "https://www.bbc.com/news/live/cx297218m9vt"
       ]
     },
     {
       "category": "global_news",
       "source": "BBC",
-      "findings": "The EU has approved a €90bn loan for Ukraine after Kyiv resumed Russian oil flows through the Druzhba pipeline to Hungary and Slovakia, ending months of deadlock. Hungary's new leadership under Péter Magyar has prioritized resetting relations with Brussels after Viktor Orbán's 16-year tenure.",
+      "findings": "The European Union has approved a €90 billion loan for Ukraine as the Druzhba oil pipeline resumes operations, ending months of deadlock. Ukraine restarted oil transit to Hungary and Slovakia after completing repairs to the pipeline, which had been damaged by Russian attacks. This development follows the electoral defeat of Hungary's Viktor Orbán, whose previous veto had blocked the EU funding. The loan is described as 'a matter of life and death' for Kyiv, with two-thirds allocated for defense needs.",
       "urls": [
         "https://www.bbc.com/news/articles/cnv8l99r3yyo"
       ]
     },
     {
       "category": "global_news",
-      "source": "NPR",
-      "findings": "The Virginia Supreme Court struck down Democrats' redistricting plan in a major blow to the party's midterm hopes, effectively overturning a voter-approved amendment that could have helped Democrats gain four House seats. The ruling guarantees Republican advantages in upcoming elections.",
+      "source": "BBC",
+      "findings": "China's economy is facing new pressures from the US-Iran war, with manufacturing hubs like Foshan experiencing reduced factory orders, increased costs, and job losses. While China weathered Trump's tariffs last year, the Middle East conflict is now taking a toll on its export-driven economy. Workers in manufacturing centers report struggling to earn enough to send money home, as global supply chains continue to be disrupted by the ongoing conflict.",
       "urls": [
-        "https://www.npr.org/2026/05/08/nx-s1-5805193/redistricting-virginia-trump-midterms"
+        "https://www.bbc.com/news/articles/cn0ep28drllo"
+      ]
+    },
+    {
+      "category": "global_news",
+      "source": "CBC",
+      "findings": "CIA analysis suggests Iran could withstand the US naval blockade for another four months, indicating limited US leverage in negotiations. Recent days have seen the largest flare-ups in fighting around the Strait of Hormuz since the ceasefire began, with the UAE reporting attacks from Iranian ballistic missiles and drones. The US Treasury has announced new sanctions against individuals and companies aiding Iran's military efforts, including entities in China and Hong Kong, as diplomatic efforts continue amid ongoing military clashes.",
+      "urls": [
+        "https://www.cbc.ca/news/world/us-iran-war-hormuz-day-70-9.7192522"
       ]
     },
     {
       "category": "global_news",
       "source": "BBC",
-      "findings": "The UK and France have signed a new £662m three-year deal to combat Channel migrant crossings, including deploying 50 riot-trained French police officers and enhanced surveillance technology. The agreement includes provisions to withdraw UK funding if crossing numbers aren't sufficiently reduced.",
+      "findings": "The Pentagon has released a new tranche of declassified UFO documents spanning decades, including reports from Apollo astronauts describing unexplained flashes of light and objects on the Moon. The 161 files contain military memos, civilian sightings, and footage from US operations in Iraq, Syria, and the UAE. President Trump directed the release, which includes accounts from astronauts like Buzz Aldrin and transcripts from Apollo missions describing 'particles sailing off into space' and unexplained light phenomena.",
       "urls": [
-        "https://www.bbc.com/news/articles/cz0ev7enk2lo"
+        "https://www.bbc.co.uk/news/articles/c1m2epkey44o"
       ]
     }
   ],
-  "intellectual_journals": [],
+  "intellectual_journals": [
+    {
+      "source": "aeon.co",
+      "findings": "Flora Champy revisits Marcel Proust’s 1905 essay 'On Reading' to defend literature as a portal to personal freedom rather than a moral improvement device. Proust rejects John Ruskin’s Victorian claim that books must \"pay\" by making readers better people; instead, he argues that reading is a unique, disinterested communication that lets us commune with the finest minds outside the distortions of social life. Champy shows how Proust’s view—that literature preserves past sensations and makes time graspable without abolishing it—anticipates his later novel In Search of Lost Time and offers a count [TRUNCATED]",
+      "url": "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom"
+    },
+    {
+      "source": "nybooks.com",
+      "findings": "Christopher de Bellaigue surveys post-war Iran in 'Iran’s New Winter'. He traces the 1953 CIA-MI6 coup against Mohammad Mossadegh as the original rupture that pushed Iranian liberals into a lasting despondency captured in Mehdi Akhavan-Sales’s poem 'Winter'. De Bellaigue argues that four and a half decades of theocratic rule, sanctions, and recent US-Israeli strikes have not produced the regime collapse Washington and Tel Aviv expected; instead, the Islamic Republic has turned assassination and hardship into propaganda victories, leaving Iran’s middle class inured to privation and its youth wi [TRUNCATED]",
+      "url": "https://www.nybooks.com/articles/2026/05/28/irans-new-winter-christopher-de-bellaigue/"
+    },
+    {
+      "source": "propublica.org",
+      "findings": "ProPublica investigates the surge in immigration scams under Trump’s mass-deportation campaign. The piece follows Jasmir Urbina, an asylum-seeker who paid nearly $10,000 to a fake ‘Catholic Charities’ attorney via WhatsApp and Zelle, only to discover she had been defrauded. Reports of such notario fraud have doubled nationwide as fear of ICE raids drives migrants to seek urgent—and often fraudulent—legal help. The article documents how scammers exploit Facebook ads, virtual hearings, and official-looking insignia to mimic government processes, leaving victims both poorer and without legitimate [TRUNCATED]",
+      "url": "https://www.propublica.org/article/trump-immigration-scams-complaints-doubled-ice"
+    },
+    {
+      "source": "themarginalian.org",
+      "findings": "Maria Popova distills Oliver Sacks’s posthumous essay collection The River of Consciousness to explore how perception is not passive reception but creative construction. Drawing on neurological case studies of patients whose consciousness ‘freezes’ while the world continues, Sacks argues that motion, color, and depth are qualia—subjective experiences—produced by transient coalitions of neurons that must cross a threshold and recruit frontal-lobe allies to reach awareness. The essay frames perception as a mirror reflecting the observer’s singular history, making intersubjective understanding an [TRUNCATED]",
+      "url": "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/"
+    }
+  ],
   "wearable_ai": [
     {
       "category": "ai_voice_hardware",
-      "findings": "Apple is developing an AirTag-sized AI pendant with always-on camera and microphone for Siri commands, designed to be worn as a necklace. The device, still in early development, features contextual reminders and proactive suggestions. Meanwhile, Vocci has launched an AI smart ring that listens, transcribes, and organizes thoughts in real-time, positioning itself as a productivity-focused alternati [TRUNCATED]",
+      "findings": "Legend Memory AI Pendant launched as a premium $499 voice-first wearable designed specifically for ADHD minds, featuring automatic task extraction from conversations and executive-grade meeting summaries. The Taya Necklace offers a privacy-focused alternative at $89, using directional mics and speaker verification to only transcribe the wearer's voice while filtering out bystanders. Both devices r [TRUNCATED]",
       "urls": [
-        "https://www.macrumors.com/2026/05/08/ai-pendant-five-features/",
-        "https://tech.yahoo.com/wearables/articles/vocci-ring-may-first-ai-163000223.html"
+        "https://legenddevice.com/",
+        "https://topaiproduct.com/2026/04/29/taya-necklace-an-89-ai-pendant-that-refuses-to-listen-to-anyone-but-you/"
       ]
     },
     {
       "category": "teacher_ai_tools",
-      "findings": "Olex.AI won the 2026 Bett Award for Assessment, Planning & Progress Monitoring, offering GCSE-level English teachers AI tools that reduce workload and automate marking while keeping teachers in control. New platforms EduArc and Teacher's Buddy provide curriculum-mapped lesson creation and 45+ single-click AI tools respectively, while Stylus delivers human-moderated AI writing assessment with sente [TRUNCATED]",
+      "findings": "Notie AI emerged as a purpose-built platform for history teachers, offering instant DBQ grading and source analysis evaluation aligned to AP/IB standards. Humy 2.0 expanded beyond social studies to support cross-curricular learning with historical figures explaining STEM concepts. Monsha and GoTeach provide comprehensive AI lesson planning for social studies with differentiation features and stand [TRUNCATED]",
       "urls": [
-        "https://olex.ai/",
-        "https://eduarc.ai/",
-        "https://teachersbuddy.com/",
-        "https://stylus.education/"
+        "https://www.notieai.com/ai-for-history-teachers/",
+        "https://humy.ai/blog/humy-2-0-the-ai-platform-for-social-studies-shaped-by-teachers",
+        "https://www.goteach.io/for/history-teachers",
+        "https://monsha.ai/subject/social-studies"
+      ]
+    },
+    {
+      "category": "wearable_devices",
+      "findings": "Reflecti AI Memory Pendant offers encrypted, searchable life-logging with daily summaries and end-to-end encryption. The LUCI Pin provides privacy-first life-logging with local AI processing and 4K recording capabilities. Anypin Note Pod P1 delivers professional-grade voice recording with 120+ language transcription and context-aware recording features.",
+      "urls": [
+        "https://getreflecti.com/",
+        "https://www.imaging-resource.com/news/luci-pin-aims-to-reimagine-life-logging-with-privacy-first-local-ai-processing/",
+        "https://anypin.ai/products/anypin-note-pod-p1"
       ]
     }
   ],
@@ -589,39 +686,53 @@
     "error": null
   },
   "literary_pick": {
-    "available": false,
-    "title": "",
-    "author": "",
-    "year": null,
-    "summary": "",
-    "url": ""
+    "available": true,
+    "title": "The Known World",
+    "author": "Edward P. Jones",
+    "year": 2003,
+    "summary": "Winner of the 2004 Pulitzer Prize for Fiction and hailed by the New York Times as the best book of fiction of the 21st century, The Known World is a debut novel of stunning emotional depth and literary power. Set in antebellum Virginia, it tells the story of Henry Townsend, a former slave who becomes proprietor of his own plantation—and his own slaves. When Henry dies, his widow Caldonia succumbs to grief, and the plantation begins to unravel as slaves escape and families betray one another. The novel explores the moral complexities of slavery and freedom, weaving together the lives of the ens [TRUNCATED]",
+    "url": "https://www.harpercollins.com/products/the-known-world-edward-p-jones?variant=32131751903266"
   },
   "enriched_articles": [
     {
-      "url": "https://www.bbc.com/news/articles/cnv8l99r3yyo",
-      "source": "www.bbc.com",
-      "title": "EU approves €90bn loan for Ukraine as pipeline is turned on ending deadlock",
+      "url": "https://www.scmp.com/news/china/military/article/3352764/2-former-chinese-defence-ministers-given-death-sentence-reprieve",
+      "source": "South China Morning Post",
+      "title": "2 former Chinese defence ministers handed suspended death sentences",
       "fetch_failed": false,
-      "text": "# EU approves €90bn loan for Ukraine as pipeline is turned on ending deadlock\n\nUkraine says it has resumed pumping Russian oil through a pipeline into Hungary and Slovakia, bringing to an end months of deadlock over a €90bn (£78bn) loan seen as vital European Union support for Kyiv.\n\nSoon afterwards, EU ambassadors meeting in Brussels gave preliminary approval to the loan, as well as a 20th package of sanctions on Russia, officials said.\n\nIt is now expected to be signed off on Thursday.\n\nAlthoug"
+      "text": "Two former Chinese defence ministers, Wei Fenghe and Li Shangfu, have been sentenced to death with reprieve on corruption charges, according to Xinhua. A military court found Wei guilty of accepting bribery, while Li was deemed guilty of both accepting and offering bribes. Both men were sentenced to death with a two-year reprieve, deprivation of political rights for life and confiscation of all personal property. After the two-year reprieve period, their sentence would be commuted to life impris"
     },
     {
-      "url": "https://www.theguardian.com/politics/2026/may/08/labour-local-elections-keir-starmer-cling-on",
-      "source": "www.theguardian.com",
-      "title": "Labour’s better than expected thrashing may allow Starmer to cling on in No 10 | May 2026 elections | The Guardian",
+      "url": "https://apnews.com/article/china-former-defense-ministers-death-sentence-165e2afcc5f893745a7166ea85a23f4c",
+      "source": "AP News",
+      "title": "China gives suspended death sentences to 2 ex-defense ministers accused of bribery",
       "fetch_failed": false,
-      "text": "[Skip to navigation](#navigation)[Skip to navigation](#navigation)\n\n[Print subscriptions](https://support.theguardian.com/subscribe?REFPVID=undefined&INTCMP=undefined&acquisitionData=%7B%22source%22%3A%22GUARDIAN_WEB%22%2C%22componentId%22%3A%22PrintSubscriptionsHeaderLink%22%2C%22componentType%22%3A%22ACQUISITIONS_HEADER%22%2C%22referrerUrl%22%3A%22%22%7D)\n\n[Search jobs](https://jobs.theguardian.com)\n\n[Sign in](https://profile.theguardian.com/signin?INTCMP=DOTCOM_NEWHEADER_SIGNIN&ABCMP=ab-sign-"
+      "text": "A Chinese military court gave suspended death sentences Thursday to two former defense ministers who were accused of bribery, according to the official Xinhua News Agency. The court said Wei Fenghe was guilty of accepting bribes and sentenced to death with a two-year reprieve. It said Li Shangfu was guilty of accepting and offering bribes, and handed him the same sentence. Suspended death sentences are often commuted to life in prison in China."
     },
     {
-      "url": "https://www.bbc.com/news/articles/cz0ev7enk2lo",
-      "source": "www.bbc.com",
-      "title": "UK and France strike new £662m small boats deal",
+      "url": "https://www.aljazeera.com/news/liveblog/2026/5/7/iran-war-live-trump-says-deal-with-tehran-possible-israel-bombs-beirut",
+      "source": "Al Jazeera",
+      "title": "Iran war updates: Tehran says US violated ceasefire, targeted ships",
       "fetch_failed": false,
-      "text": "# UK and France strike new £662m small boats deal\n\nRiot-trained police will be sent to beaches in France as part of a new £662m deal with the UK to stop illegal migrants from crossing the English Channel.\n\nHome Secretary Shabana Mahmood signed the three-year agreement with France on Thursday, which will see at least 50 police officers, trained in \"riot and crowd control tactics\", drafted in to tackle violence and \"hostile crowds\".\n\nThe deal will involve France deploying millions of pounds worth "
+      "text": "Iran has accused the United States of violating a ceasefire by targeting two ships at the Strait of Hormuz and attacking civilian areas. The US fired on an Iranian oil tanker in the Gulf of Oman as President Donald Trump increased pressure on Tehran to accept a deal to end the war. Iran said it was reviewing a US peace proposal that sources said would formally end the war, while leaving unresolved Washington's demands that Tehran suspend its nuclear programme and reopen the Strait of Hormuz."
+    },
+    {
+      "url": "https://www.usatoday.com/story/travel/cruises/2026/05/07/hantavirus-outbreak-cases-cruise-ship-us-updates/89970817007/",
+      "source": "USA Today",
+      "title": "Hantavirus being monitored in US. Latest on cruise ship outbreak",
+      "fetch_failed": false,
+      "text": "Officials in the United States are monitoring Americans who traveled on the cruise ship at the center of the hantavirus outbreak that has caused three deaths. The Centers for Disease Control and Prevention said in a May 6 news release that the State Department is leading a coordinated response and is in contact with passengers and health authorities around the world. Eight people who traveled on the MV Hondius have been linked to the outbreak so far. Three people have died."
+    },
+    {
+      "url": "https://www.cnn.com/2026/05/03/africa/atlantic-hantavirus-cruise-ship-dead-latam-intl",
+      "source": "CNN",
+      "title": "More than 100 people stranded on cruise ship after deadly outbreak",
+      "fetch_failed": false,
+      "text": "A suspected outbreak of the rare hantavirus infection on a cruise ship in the Atlantic Ocean killed three people, including an elderly married couple, and sickened at least three others, the World Health Organization and South Africa's Department of Health said Sunday. The outbreak happened on the MV Hondius cruise ship, which had left Argentina around three weeks ago for a cruise that included visits to Antarctica, the Falkland Islands and other stops."
     }
   ],
   "correspondence": {
     "found": true,
     "fallback_used": false,
-    "text": "- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR adding telemetry features.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR adding telemetry features.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR fixing write helpers and lesson plans.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR adding telemetry features.\n- [escalation] mmmichaelllang: GitHub Actions CI workflow failed on PR adding site-skills package.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline workflow failed.\n- [escalation] mmmichaelllang: GitHub Actions daily pipeline workflow failed.\n- [escalation] mmmichaelllang: GitHub Actions correspondence phase workflow failed.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure in jeeves-memory Write Phase\n- [escalation] mmmichaelllang: GitHub Actions workflow failure in jeeves-memory Research Phase\n- [escalation] mmmichaelllang: GitHub Actions workflow failure in jeeves-memory Correspondence Phase\n- [escalation] mmmichaelllang: GitHub Actions workflow failure in jeeves-memory Write Phase\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves — Research Phase failed on main branch."
+    "text": "- [escalation] Andy: Andrew Lang invites Mister Lang to join the newest group effort: Make Care Visible!\n- [decision required] Carnival Cruise Line: Accept Carnival Rewards Terms and Conditions\n- [no action] Edmonds Patch: Newsletter about Edmonds' high-profile tree dispute\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run\n- [no action] My Edmonds News: Newsletter from My Edmonds News\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run\n- [no action] Back Market: Order shipment notification from Back Market\n- [no action] Back Market: Order shipment notification from Back Market\n- [no action] \"Login.gov\": Login.gov identity verification notification\n- [no action] \"Login.gov\": Login.gov authentication method update notification\n- [no action] mmmichaelllang: GitHub notification about a failed workflow run\n- [no action] \"Larsen, Robert (DCYF)\": Forwarded email about pre-crime strategy"
   }
 }
