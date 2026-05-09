@@ -116,6 +116,9 @@ class SessionModel(BaseModel):
     weather: str = ""
     local_news: list[Finding] = Field(default_factory=list)
     career: dict[str, Any] = Field(default_factory=dict)
+    # 2026-05-09: HS English lesson plans + pedagogy pieces. Read in PART3 next
+    # to career so Jeeves's job-hunt-and-prep block is one coherent stretch.
+    english_lesson_plans: dict[str, Any] = Field(default_factory=dict)
     family: dict[str, Any] = Field(default_factory=dict)
     global_news: list[Finding] = Field(default_factory=list)
     intellectual_journals: list[Finding] = Field(default_factory=list)
