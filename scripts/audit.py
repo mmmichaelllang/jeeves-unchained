@@ -537,6 +537,80 @@ def detect_greeting_incomplete(
     return flagged
 
 
+# 2026-05-10 PR #113 follow-up — recurrence detection thresholds.
+# Two signals; either firing produces a defect:
+#   1. Jaccard similarity on stopword-stripped token sets >= JACCARD threshold.
+#   2. A distinctive content N-gram (>=4 consecutive non-stopword tokens)
+#      shared between today's opener and a prior briefing's opener.
+# The N-gram signal catches paraphrases that swap a few content words
+# (where Jaccard alone underweights the overlap). Calibrated empirically
+# to flag "world has not improved overnight ... opportunities to ...
+# failing" against "world has not improved overnight ... fresh
+# opportunities to watch it fail" while leaving genuinely-different
+# openers (different anchors, different verbs) below threshold.
+_RECURRING_OPENER_JACCARD_THRESHOLD: float = 0.30
+_RECURRING_OPENER_NGRAM_LEN: int = 4
+
+# Stopwords to strip before computing Jaccard. Keep the list short and
+# common — overstripping gives false positives (every opener uses the
+# same residual content words and the threshold gets gamed).
+_OPENER_STOPWORDS: frozenset[str] = frozenset({
+    "a", "an", "the", "and", "or", "but", "of", "to", "in", "is", "it",
+    "this", "that", "these", "those", "with", "at", "on", "for", "as",
+    "be", "by", "has", "have", "had", "i", "you", "we", "they", "them",
+    "us", "our", "your", "their", "my", "me", "he", "she", "his", "her",
+    "not", "no", "yes", "so", "if", "than", "then", "do", "does", "did",
+    "are", "was", "were", "been", "being", "am", "will", "would", "could",
+    "should", "shall", "may", "might", "can", "from", "into", "out", "up",
+    "down", "over", "under", "about",
+})
+
+
+def _opener_token_set(text: str) -> set[str]:
+    """Tokenize → lowercase → strip stopwords. Used for Jaccard compare."""
+    if not text:
+        return set()
+    tokens = re.findall(r"[a-z]+", text.lower())
+    return {t for t in tokens if t not in _OPENER_STOPWORDS and len(t) > 1}
+
+
+def _opener_jaccard(a: str, b: str) -> float:
+    """Jaccard similarity of two opener strings on token sets.
+
+    Returns 0.0 when either side has no content tokens. Symmetric.
+    """
+    ta = _opener_token_set(a)
+    tb = _opener_token_set(b)
+    if not ta or not tb:
+        return 0.0
+    return len(ta & tb) / len(ta | tb)
+
+
+def _opener_token_sequence(text: str) -> list[str]:
+    """Stopword-stripped ordered token list for N-gram comparison."""
+    if not text:
+        return []
+    tokens = re.findall(r"[a-z]+", text.lower())
+    return [t for t in tokens if t not in _OPENER_STOPWORDS and len(t) > 1]
+
+
+def _shared_ngram(a: str, b: str, n: int) -> str | None:
+    """Return the first content N-gram shared between two openers, or None.
+
+    Used to catch paraphrases where Jaccard underweights the overlap.
+    """
+    seq_a = _opener_token_sequence(a)
+    seq_b = _opener_token_sequence(b)
+    if len(seq_a) < n or len(seq_b) < n:
+        return None
+    grams_b = {tuple(seq_b[i:i + n]) for i in range(len(seq_b) - n + 1)}
+    for i in range(len(seq_a) - n + 1):
+        gram = tuple(seq_a[i:i + n])
+        if gram in grams_b:
+            return " ".join(gram)
+    return None
+
+
 def detect_recurring_opener(
     html: str, session: dict, sessions_dir: Path,
     defects: list[Defect],
@@ -548,9 +622,11 @@ def detect_recurring_opener(
     observe it failing." shipped 2026-04-28, 2026-05-09, AND 2026-05-10 —
     day-over-day recurrence the auditor must flag for F7 to rewrite.
 
-    Compares the first ~250 chars of today's first <p> in the greeting
-    region against the same slice from each of the last 4 days' briefings
-    on disk. Exact (case-insensitive) match → recurring_opener defect.
+    2026-05-10 PR #113 follow-up: switched from exact 250-char match to
+    Jaccard similarity (token-set, stopword-stripped). Exact-match missed
+    paraphrased recurrence ("produced" → "furnished"). Threshold is
+    _RECURRING_OPENER_JACCARD_THRESHOLD (0.50). Compared across last 4
+    days of briefings on disk; first match above threshold flagged.
     """
     from datetime import date as _date_t, timedelta
 
@@ -603,18 +679,32 @@ def detect_recurring_opener(
             continue
         prior_text = re.sub(r"<[^>]+>", " ", prior_first.group(1))
         prior_text = re.sub(r"\s+", " ", prior_text).strip().lower()[:250]
-        if prior_text and prior_text == today_text:
+        if not prior_text:
+            continue
+        sim = _opener_jaccard(today_text, prior_text)
+        ngram = _shared_ngram(today_text, prior_text, _RECURRING_OPENER_NGRAM_LEN)
+        jaccard_hit = sim >= _RECURRING_OPENER_JACCARD_THRESHOLD
+        ngram_hit = ngram is not None
+        if jaccard_hit or ngram_hit:
+            triggers: list[str] = []
+            if jaccard_hit:
+                triggers.append(f"Jaccard={sim:.0%}")
+            if ngram_hit:
+                triggers.append(f"shared {_RECURRING_OPENER_NGRAM_LEN}-gram {ngram!r}")
             defects.append(Defect(
                 type="recurring_opener",
                 severity="medium",
                 section="(greeting)",
                 detail=(
-                    f"today's first paragraph matches {prior.isoformat()} "
-                    "briefing — opener has been recycled."
+                    f"today's first paragraph recurs vs {prior.isoformat()} "
+                    f"({'; '.join(triggers)})."
                 ),
                 evidence={
                     "matches_date": prior.isoformat(),
                     "opener_preview": today_text[:120],
+                    "prior_opener_preview": prior_text[:120],
+                    "jaccard_similarity": round(sim, 3),
+                    "shared_ngram": ngram,
                 },
             ))
             flagged += 1

@@ -378,6 +378,206 @@ def test_extract_urls_from_parsed_handles_shapes():
     assert _extract_urls_from_parsed({"url": "not-a-url"}) == []
 
 
+def test_url_quality_score_authority_table():
+    """High-authority publications score above the default; unknown hosts
+    fall to the default. Homepages and tag pages are penalised."""
+    from jeeves.research_sectors import (
+        _score_intellectual_journals_url,
+        _INTELLECTUAL_JOURNAL_DEFAULT_SCORE,
+    )
+    # NYRB long-form essay → near top of table.
+    s_nybooks = _score_intellectual_journals_url(
+        "https://www.nybooks.com/articles/2026/05/28/irans-new-winter"
+    )
+    assert s_nybooks >= 0.9
+    # Aeon essay → high.
+    s_aeon = _score_intellectual_journals_url("https://aeon.co/essays/some-piece")
+    assert s_aeon >= 0.85
+    # Unknown blog at default.
+    s_unknown = _score_intellectual_journals_url("https://random-blog.example.com/post")
+    assert s_unknown == _INTELLECTUAL_JOURNAL_DEFAULT_SCORE
+    # Homepage penalty.
+    s_homepage = _score_intellectual_journals_url("https://www.nybooks.com/")
+    assert s_homepage < s_nybooks
+    # Tag/category page penalty.
+    s_tag = _score_intellectual_journals_url("https://aeon.co/tag/philosophy/")
+    assert s_tag < s_aeon
+    # Empty / non-URL → 0.
+    assert _score_intellectual_journals_url("") == 0.0
+    assert _score_intellectual_journals_url("not a url") == 0.0
+
+
+def test_url_quality_avg_empty_loses_gate():
+    """Empty URL list scores 0.0 — fails the adoption gate vs any non-empty
+    competitor by design (prevents adopting a retry that returned nothing)."""
+    from jeeves.research_sectors import _avg_score_intellectual_journals
+    assert _avg_score_intellectual_journals([]) == 0.0
+
+
+def test_opener_jaccard_similarity():
+    """Jaccard supplies the count-based recurrence signal. Threshold is
+    0.30, picked low because heavy paraphrases preserve only a fraction
+    of content tokens; the N-gram check catches the rest."""
+    from scripts.audit import _opener_jaccard
+
+    a = ("The world has not improved overnight, but it has at least "
+         "produced several new opportunities to observe it failing.")
+    # Near-paraphrase: swap a few content words.
+    b = ("The world has not improved overnight, but it has at least "
+         "furnished fresh opportunities to watch it fail.")
+    sim_paraphrase = _opener_jaccard(a, b)
+    assert sim_paraphrase >= 0.30, f"paraphrase sim={sim_paraphrase}"
+
+    # Genuinely different opener — should fall well below threshold.
+    c = ("A clear morning, Sir; sixty-five degrees and the wastewater "
+         "plant remains a debacle, the council still arguing.")
+    sim_diff = _opener_jaccard(a, c)
+    assert sim_diff < 0.30, f"diff sim={sim_diff}"
+
+    # Identical → 1.0.
+    assert _opener_jaccard(a, a) == 1.0
+
+
+def test_opener_shared_ngram_catches_paraphrase():
+    """N-gram check catches paraphrases that preserve a distinctive run
+    of content words but swap surrounding ones — the failure mode that
+    Jaccard alone underweights."""
+    from scripts.audit import _shared_ngram
+
+    a = ("The world has not improved overnight, but it has at least "
+         "produced several new opportunities to observe it failing.")
+    b = ("The world has not improved overnight, but it has at least "
+         "furnished fresh opportunities to watch it fail.")
+    # Both openers share "world improved overnight ..." (4-gram of content
+    # tokens). Helper returns the matched gram.
+    matched = _shared_ngram(a, b, 4)
+    assert matched is not None
+    assert "world" in matched and "improved" in matched and "overnight" in matched
+
+    # Genuinely different opener has no 4-gram in common.
+    c = ("A clear morning, Sir; sixty-five degrees and the wastewater "
+         "plant remains a debacle, the council still arguing.")
+    assert _shared_ngram(a, c, 4) is None
+
+
+def test_recurring_opener_detector_catches_paraphrase(tmp_path):
+    """D10 must catch a paraphrased recurrence (was missed by exact match)."""
+    from scripts.audit import detect_recurring_opener, Defect
+
+    sessions = tmp_path
+    (sessions / "briefing-2026-05-09.html").write_text(
+        '<html><body><p>The world has not improved overnight, but it has '
+        'at least produced several new opportunities to observe it '
+        'failing.</p></body></html>',
+        encoding="utf-8",
+    )
+    today_html = (
+        '<html><body><p>The world has not improved overnight, but it has '
+        'at least furnished fresh opportunities to watch it fail.</p>'
+        '<p>body</p></body></html>'
+    )
+    session = {"date": "2026-05-10"}
+    defects: list[Defect] = []
+    flagged = detect_recurring_opener(today_html, session, sessions, defects)
+    assert flagged == 1
+    assert defects[0].type == "recurring_opener"
+    assert "jaccard_similarity" in defects[0].evidence
+    # The evidence must include either a Jaccard >= 0.30 OR a shared 4-gram —
+    # both signals are valid recurrence triggers.
+    ev = defects[0].evidence
+    assert ev["jaccard_similarity"] >= 0.30 or ev.get("shared_ngram")
+
+
+def test_extract_body_excerpts_skips_greeting_and_signoff():
+    """F7 helper pulls excerpts from BODY (post-greeting, pre-signoff)."""
+    from scripts.audit_fix import _extract_body_excerpts
+
+    html = (
+        '<html><body>'
+        '<p>The greeting paragraph the auditor wants to replace.</p>'
+        '<h3>The Domestic Sphere</h3>'
+        '<p>The Edmonds City Council postponed the vote on Stephanie '
+        'Lucash as city administrator until next week.</p>'
+        '<p>A new statewide housing law takes effect June 11 requiring '
+        'cities to expand homeless housing zones.</p>'
+        '<p>Edmonds Police are searching for suspects who assaulted two '
+        'women on a local trail.</p>'
+        '<p>Fourth body paragraph that should not appear (cap=3).</p>'
+        '<div class="signoff"><p>signoff text</p></div>'
+        '</body></html>'
+    )
+    out = _extract_body_excerpts(html, max_paragraphs=3, max_chars=2000)
+    assert "greeting paragraph" not in out
+    assert "Stephanie Lucash" in out
+    assert "housing law" in out
+    assert "trail" in out
+    # Cap respected.
+    assert "Fourth body paragraph" not in out
+    # Signoff skipped.
+    assert "signoff text" not in out
+
+
+def test_f7_recurring_opener_prompt_includes_body_excerpts():
+    """F7 prompt for a recurring_opener defect must include actual body
+    excerpts so the model anchors the rewrite on today's content."""
+    from scripts.audit_fix import fix_greeting_incomplete, FixAction
+    from unittest.mock import patch
+
+    html = (
+        '<html><body>'
+        '<p>The world has not improved overnight, but it has at least '
+        'furnished fresh opportunities to watch it fail.</p>'
+        '<h3>The Domestic Sphere</h3>'
+        '<p>Edmonds City Council postponed Stephanie Lucash confirmation.</p>'
+        '<p>A statewide housing law takes effect June 11.</p>'
+        '<p>Edmonds Police investigating trail assault.</p>'
+        '</body></html>'
+    )
+    defects = [{
+        "type": "recurring_opener",
+        "severity": "medium",
+        "section": "(greeting)",
+        "detail": "65% Jaccard similar",
+        "evidence": {
+            "matches_date": "2026-05-09",
+            "opener_preview": "the world has not improved overnight ...",
+            "prior_opener_preview": "the world has not improved overnight ...",
+            "jaccard_similarity": 0.65,
+        },
+    }]
+    session = {
+        "date": "2026-05-10",
+        "weather": "65°F partly cloudy",
+        "correspondence": {"text": "- [escalation] Andrew Lang: invitation"},
+    }
+    actions: list[FixAction] = []
+    captured: list[str] = []
+
+    def fake_call(prompt, system="", max_tokens=400):
+        captured.append(prompt)
+        return ('<p>Stephanie Lucash, Sir, has had her confirmation '
+                'postponed by the council — a small mercy, given the '
+                'wastewater plant continues to leak news as reliably as '
+                'effluent. The statewide housing law looms June 11, and '
+                'Andrew Lang has extended yet another invitation.</p>',
+                "fake-model")
+
+    with patch("scripts.audit_fix._call_audit_model", side_effect=fake_call):
+        fix_greeting_incomplete(html, defects, session, actions)
+
+    prompt = captured[0]
+    # Body excerpts threaded through.
+    assert "Stephanie Lucash" in prompt
+    assert "housing law" in prompt
+    # Banned-phrase block present.
+    assert "FRESHNESS REQUIREMENT" in prompt
+    assert "world has not improved overnight" in prompt.lower()
+    # Anchor instruction present.
+    assert "ANCHOR ON SPECIFIC CONTENT" in prompt
+    # Similarity percent communicated.
+    assert "65%" in prompt or "Jaccard" in prompt
+
+
 def test_recurring_opener_detector_flags_match(tmp_path):
     """audit.detect_recurring_opener flags exact-match opener vs prior briefing."""
     from scripts.audit import detect_recurring_opener, Defect

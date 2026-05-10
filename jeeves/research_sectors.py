@@ -21,6 +21,7 @@ import json
 import logging
 import re
 from dataclasses import dataclass
+from collections.abc import Iterable
 from typing import Any
 
 from .config import Config
@@ -1090,6 +1091,92 @@ _FORCE_RETRY_ON_OVERLAP: frozenset[str] = frozenset({"intellectual_journals"})
 _OVERLAP_RETRY_THRESHOLD = 0.5
 
 
+# 2026-05-10 (PR #113 follow-up). Host-authority table for the
+# intellectual_journals sticky-URL retry adoption gate. Higher = more
+# trusted long-form publication; default 0.4 for unknown hosts. Used to
+# prevent adopting a retry that swaps three sticky high-quality URLs
+# (NYRB, Aeon, Marginalian) for four blogspam URLs.
+_INTELLECTUAL_JOURNAL_HOST_SCORES: dict[str, float] = {
+    "nybooks.com": 0.92, "www.nybooks.com": 0.92,
+    "lrb.co.uk": 0.92, "www.lrb.co.uk": 0.92,
+    "aeon.co": 0.88, "www.aeon.co": 0.88,
+    "themarginalian.org": 0.85, "www.themarginalian.org": 0.85,
+    "harpers.org": 0.88, "www.harpers.org": 0.88,
+    "newyorker.com": 0.85, "www.newyorker.com": 0.85,
+    "propublica.org": 0.85, "www.propublica.org": 0.85,
+    "theintercept.com": 0.82, "www.theintercept.com": 0.82,
+    "jacobin.org": 0.78, "www.jacobin.org": 0.78,
+    "jacobinmag.com": 0.78, "www.jacobinmag.com": 0.78,
+    "jewishcurrents.org": 0.78, "www.jewishcurrents.org": 0.78,
+    "nplusonemag.com": 0.85, "www.nplusonemag.com": 0.85,
+    "dissentmagazine.org": 0.78, "www.dissentmagazine.org": 0.78,
+    "thebaffler.com": 0.78, "www.thebaffler.com": 0.78,
+    "bostonreview.net": 0.78, "www.bostonreview.net": 0.78,
+    "nybooks.org": 0.92,  # alias seen in some redirect URLs
+    "scientificamerican.com": 0.72,
+    "www.scientificamerican.com": 0.72,
+    "bigthink.com": 0.65, "www.bigthink.com": 0.65,
+    "kottke.org": 0.7,
+    "tabletmag.com": 0.7, "www.tabletmag.com": 0.7,
+    # Mass-market quality (lower than literary journals but still substantive)
+    "theatlantic.com": 0.7, "www.theatlantic.com": 0.7,
+    "newrepublic.com": 0.7, "www.newrepublic.com": 0.7,
+    "newstatesman.com": 0.7, "www.newstatesman.com": 0.7,
+}
+# Default for hosts not in the table — generic blog/unknown.
+_INTELLECTUAL_JOURNAL_DEFAULT_SCORE: float = 0.4
+
+
+def _score_intellectual_journals_url(url: str) -> float:
+    """Deterministic quality score for an intellectual_journals retry URL.
+
+    Score in [0, 1]. Combines:
+      - host authority (looked up vs known long-form publications)
+      - path-quality penalties (homepages, tag/category pages, search
+        results — these are NOT actual essays)
+
+    Used to gate the IJ overlap-retry adoption: a retry that returns
+    only homepages or low-authority hosts is rejected even if it has
+    "more new URLs" than the original.
+    """
+    if not isinstance(url, str) or not url.startswith(("http://", "https://")):
+        return 0.0
+    from urllib.parse import urlparse
+    parsed = urlparse(url)
+    host = parsed.netloc.lower()
+    base = _INTELLECTUAL_JOURNAL_HOST_SCORES.get(
+        host, _INTELLECTUAL_JOURNAL_DEFAULT_SCORE
+    )
+    path = parsed.path.lower()
+    # Homepage / no path → likely top-of-site, not an essay.
+    if path in ("", "/"):
+        base -= 0.4
+    # Tag/category/search/topic listing pages — index, not content.
+    for marker in ("/tag/", "/tags/", "/category/", "/categories/",
+                   "/topic/", "/topics/", "/search", "/page/", "/issue/"):
+        if marker in path:
+            base -= 0.25
+            break
+    # Bonus when path contains a date pattern (e.g. /2026/05/) — signal of
+    # a real article, not an evergreen page.
+    import re as _re
+    if _re.search(r"/20\d{2}/(0?[1-9]|1[0-2])/", path):
+        base += 0.05
+    return max(0.0, min(1.0, base))
+
+
+def _avg_score_intellectual_journals(urls: Iterable[str]) -> float:
+    """Mean URL-quality score for a set of intellectual_journals URLs.
+
+    Empty sequence returns 0.0 (which always loses the adoption gate
+    against any non-empty competitor — by design).
+    """
+    urls = list(urls)
+    if not urls:
+        return 0.0
+    return sum(_score_intellectual_journals_url(u) for u in urls) / len(urls)
+
+
 def _extract_urls_from_parsed(parsed: Any) -> list[str]:
     """Pull every URL string out of a parsed sector result (any shape).
 
@@ -1590,20 +1677,46 @@ async def run_sector(
                 retry_parsed = await _deep_sector_forced_retry(
                     cfg, spec, prior_urls_sample, ledger, sector_max_tokens
                 )
-                # Only adopt the retry if it actually returned NEW URLs.
+                # 2026-05-10 (PR #113 follow-up). Adoption gate now scores
+                # the URLs by host-authority + path-quality. Adopt the
+                # retry only when both:
+                #   (a) it has at least as many NEW (not-in-prior) URLs as
+                #       the original had sticky URLs, AND
+                #   (b) the average quality score of the retry's NEW URLs
+                #       is at least 0.05 above the original's sticky URLs.
+                # Prevents trading three high-authority sticky URLs (NYRB
+                # / Aeon / Marginalian) for four blogspam URLs.
                 retry_urls = _extract_urls_from_parsed(retry_parsed)
-                retry_new = sum(1 for u in retry_urls if u not in prior_set)
-                if retry_urls and retry_new > overlap:
+                retry_new_urls = [u for u in retry_urls if u not in prior_set]
+                sticky_urls = [u for u in parsed_urls if u in prior_set]
+                if spec.name == "intellectual_journals":
+                    new_avg = _avg_score_intellectual_journals(retry_new_urls)
+                    sticky_avg = _avg_score_intellectual_journals(sticky_urls)
+                else:
+                    # Non-IJ sectors fall back to count-based gate.
+                    new_avg = float(len(retry_new_urls))
+                    sticky_avg = float(len(sticky_urls))
+                quality_uplift = new_avg - sticky_avg
+                count_threshold = len(retry_new_urls) >= len(sticky_urls)
+                quality_threshold = (
+                    spec.name != "intellectual_journals"
+                    or quality_uplift >= 0.05
+                )
+                if retry_urls and count_threshold and quality_threshold:
                     log.info(
-                        "sector %s: forced-retry brought %d new URLs (was 0) — adopted.",
-                        spec.name, retry_new,
+                        "sector %s: forced-retry adopted "
+                        "(new=%d, sticky=%d, new_avg=%.3f, sticky_avg=%.3f, uplift=%+.3f).",
+                        spec.name, len(retry_new_urls), len(sticky_urls),
+                        new_avg, sticky_avg, quality_uplift,
                     )
                     parsed = retry_parsed
                 else:
                     log.warning(
-                        "sector %s: forced-retry produced no improvement "
-                        "(retry_new=%d vs overlap=%d) — keeping original.",
-                        spec.name, retry_new, overlap,
+                        "sector %s: forced-retry rejected "
+                        "(new=%d, sticky=%d, new_avg=%.3f, sticky_avg=%.3f, "
+                        "uplift=%+.3f) — keeping original.",
+                        spec.name, len(retry_new_urls), len(sticky_urls),
+                        new_avg, sticky_avg, quality_uplift,
                     )
 
     log.info(

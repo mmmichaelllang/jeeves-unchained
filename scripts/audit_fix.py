@@ -744,6 +744,48 @@ def fix_empty_with_data(html: str, defects: list[dict], session: dict,
     return html, model_used
 
 
+_GREETING_FIRST_P_RE = re.compile(r"<p[^>]*>([\s\S]*?)</p>", re.IGNORECASE)
+
+
+def _extract_body_excerpts(
+    html: str, *, max_paragraphs: int = 3, max_chars: int = 1200,
+) -> str:
+    """Return prose excerpts from the briefing's BODY (after the greeting).
+
+    Used by F7 (recurring_opener) to give the rewrite model concrete
+    content to anchor on. Skips the greeting <p> (first body paragraph)
+    and any signoff/coverage wrappers; pulls up to ``max_paragraphs``
+    subsequent <p> tags, joined with ` · ` separators, capped at
+    ``max_chars``.
+    """
+    if not html:
+        return ""
+    body = re.sub(r"<head>[\s\S]*?</head>", "", html, flags=re.IGNORECASE)
+    body = re.sub(r"<style>[\s\S]*?</style>", "", body, flags=re.IGNORECASE)
+    paragraphs: list[str] = []
+    seen_first = False
+    for m in _GREETING_FIRST_P_RE.finditer(body):
+        block = m.group(0).lower()
+        if 'class="signoff"' in block or "coverage_log" in block:
+            continue
+        text = re.sub(r"<[^>]+>", " ", m.group(1))
+        text = re.sub(r"\s+", " ", text).strip()
+        if not text:
+            continue
+        if not seen_first:
+            seen_first = True
+            continue  # skip greeting itself
+        paragraphs.append(text)
+        if len(paragraphs) >= max_paragraphs:
+            break
+    if not paragraphs:
+        return ""
+    out = "  - " + "\n  - ".join(paragraphs)
+    if len(out) > max_chars:
+        out = out[:max_chars].rstrip() + " […]"
+    return out
+
+
 def fix_greeting_incomplete(html: str, defects: list[dict], session: dict,
                             actions: list[FixAction]) -> tuple[str, str | None]:
     """F7: re-render Part 1 with weather + correspondence + date.
@@ -761,15 +803,20 @@ def fix_greeting_incomplete(html: str, defects: list[dict], session: dict,
         return html, None
 
     # Extract the recurring-opener evidence if present so we can tell the
-    # model exactly which phrasing to avoid.
+    # model exactly which phrasing to avoid AND give it the briefing
+    # excerpts it should anchor on.
     recurring_defects = [d for d in greeting_defects
                          if d["type"] == "recurring_opener"]
     recurring_avoid_phrase: str | None = None
     recurring_match_date: str | None = None
+    recurring_prior_phrase: str | None = None
+    recurring_jaccard: float | None = None
     if recurring_defects:
         ev = recurring_defects[0].get("evidence", {})
         recurring_avoid_phrase = ev.get("opener_preview")
         recurring_match_date = ev.get("matches_date")
+        recurring_prior_phrase = ev.get("prior_opener_preview")
+        recurring_jaccard = ev.get("jaccard_similarity")
 
     weather = session.get("weather") or ""
     corr = (session.get("correspondence") or {}).get("text", "")
@@ -801,17 +848,41 @@ def fix_greeting_incomplete(html: str, defects: list[dict], session: dict,
         "Write the greeting paragraph in Jeeves voice.",
     ]
     if recurring_avoid_phrase:
+        # 2026-05-10 PR #113 follow-up. Beyond banning the prior phrase,
+        # give the model excerpts of what TODAY'S briefing actually
+        # contains so it can anchor the new opener on a specific named
+        # item — that's the only durable defence against recurrence.
+        # Pull the next 3 <p> after the greeting (the body section
+        # starts) so the model sees the actual content of the day.
+        body_excerpts = _extract_body_excerpts(html, max_paragraphs=3, max_chars=1200)
+        sim_str = (
+            f"~{round(recurring_jaccard * 100)}% Jaccard similar"
+            if recurring_jaccard is not None
+            else "near-identical"
+        )
         prompt_lines.extend([
             "",
-            "FRESHNESS REQUIREMENT — this opener has been used recently:",
-            f"  PRIOR ({recurring_match_date or 'last 4 days'}): "
-            f"{recurring_avoid_phrase!r}",
-            "Your rewrite MUST avoid that exact framing. No 'world has not "
-            "improved overnight', no 'opportunities to observe it failing', "
-            "no minor variant. Open from a different observational angle "
-            "(weather-as-portent, the morning's specific dispatch, a single "
-            "named correspondent's matter). The rewrite must read as a "
-            "different opener, not a paraphrase.",
+            "FRESHNESS REQUIREMENT — this opener has recurred:",
+            f"  TODAY (current draft): {recurring_avoid_phrase!r}",
+            (f"  PRIOR ({recurring_match_date}): {recurring_prior_phrase!r}"
+             if recurring_prior_phrase
+             else f"  PRIOR ({recurring_match_date or 'last 4 days'}): "
+             f"{recurring_avoid_phrase!r}"),
+            f"  ({sim_str}.)",
+            "",
+            "Your rewrite MUST be COMPLETELY UNIQUE — not a paraphrase, "
+            "not a rearrangement, not a tonal cousin of the prior. Banned "
+            "verbatim phrases include 'world has not improved overnight', "
+            "'opportunities to observe it failing', and any close synonym.",
+            "",
+            "ANCHOR ON SPECIFIC CONTENT FROM TODAY — the briefing body "
+            "begins with the following named items. Pick ONE and open the "
+            "greeting around it (a wry observation that names it directly, "
+            "not a generic 'the world is bleak' frame):",
+            body_excerpts or "  (no body excerpts extracted — fall back to weather + correspondence anchors)",
+            "",
+            "The opener must read like a butler discovering today's "
+            "specific paper, not delivering a recurring epigraph.",
         ])
     prompt = "\n".join(prompt_lines)
     text, model = _call_audit_model(prompt, system=system, max_tokens=400)
