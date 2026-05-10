@@ -114,10 +114,14 @@ def _compute_quality_score(result: "BriefingResult") -> int:
 # --- Signoff guard ---------------------------------------------------------
 _SIGNOFF_REPLACEMENT = "Your reluctantly faithful Butler,"
 
-# `Yours faithfully`, `Your faithfully` (typo), with optional `Butler` and `,`
+# `Yours faithfully`, `Your faithfully` (typo), `Your faithful Butler`
+# (adjective regression observed 2026-05-09), with optional ` Butler` and `,`.
 # Group 0 captures the entire thing for replacement.
+# IMPORTANT: the alternation `faithful|faithfully` does NOT match the correct
+# signoff "Your reluctantly faithful Butler" because "reluctantly" sits
+# between "Your" and "faithful" — the `\s+` is single-token only.
 _WRONG_SIGNOFF_FAITHFULLY = re.compile(
-    r"\bYours?\s+faithfully(?:\s+Butler)?,?",
+    r"\bYours?\s+(?:faithfully|faithful)(?:\s+Butler)?,?",
     re.IGNORECASE,
 )
 # Other generic sign-offs that the model occasionally regresses to.
@@ -177,6 +181,19 @@ BANNED_PHRASES_BY_BUCKET: dict[str, list[str]] = {
         "our discussion of these topics must await",
         "remain relevant, but our attention must turn",
         "must turn to other areas of inquiry",
+        # 2026-05-09 sweep — domestic-sphere stale-listing cadence observed
+        # when a sector returns prior-day items with no new content. Model
+        # narrates "X remains posted, Y still listed, Z unchanged" instead
+        # of pruning to one-line acknowledgement.
+        "unchanged since our last",
+        "since our prior briefing",
+        "no new information since",
+        "unchanged from previous reports",
+        "as noted earlier",
+        "without alteration",
+        "since our last review",
+        "since our last glance",
+        "remains unchanged since",
     ],
     "recommendation_pile_on": [
         # PART4 family / PART2 local — unsolicited child-rearing or general
@@ -213,6 +230,17 @@ BANNED_PHRASES_BY_BUCKET: dict[str, list[str]] = {
         "is poised to transform",
         "signals progress in",
         "synthesis of these findings highlights",
+        # 2026-05-09 sweep — Reading Room interpretive coda observed:
+        # "The juxtaposition of [X] with [Y] underscores a shared theme:
+        #  both assert that..." — banned per CONTINUATION_RULES rule 13
+        # (no closing meta-summary) but model regressed.
+        "underscores a shared theme",
+        "underscores a shared",
+        "underscores the shared",
+        "underscores a common",
+        "the juxtaposition of",
+        "both assert that",
+        "shared theme: both",
     ],
     # Asides-floor and opener-banned categories. Each marker fires from a
     # different code path (postprocess profane-count check; opener regex)
@@ -3376,6 +3404,12 @@ _DOMAIN_NICE_NAMES: dict[str, list[str]] = {
     "newsweek.com": ["Newsweek"],
     "bigthink.com": ["Big Think"],
     "frontline": ["FRONTLINE", "Frontline"],
+    # 2026-05-09 — outlets quoted in briefings without prose-name coverage.
+    # The Specific Enquiries / Reading Room sections cite these regularly.
+    "cbc.ca": ["CBC", "CBC News"],
+    "upi.com": ["UPI", "United Press International"],
+    "newsnationnow.com": ["News Nation Now", "News Nation"],
+    "congress.gov": ["Congressional release", "the House Oversight Committee"],
     # Local Edmonds + Snohomish County publications. Sprint-19: e-reader
     # listening exposed `myedmondsnews.com reports` as poor TTS material.
     "myedmondsnews.com": ["My Edmonds News"],
@@ -3512,21 +3546,35 @@ def _build_source_url_map(session: SessionModel) -> dict[str, str]:
     mapping: dict[str, str] = {}
 
     def _add_with_aliases(name: str | None, url: str | None) -> None:
-        if not name or not url:
+        # Updated 2026-05-09 — observed briefing failure where bare prose
+        # mentions ("The BBC reports", "ProPublica investigates", "Aeon
+        # revisits") shipped without anchors. Two fixes:
+        #
+        # (1) URL-domain inference fallback. Previously the domain-fragment
+        # check only ran against the source NAME (e.g. fails when Kimi sets
+        # source="BBC" because "bbc.com" is not a substring of "bbc").
+        # Now: probe domain fragments against the URL too — same nice prose
+        # names resolve either way.
+        #
+        # (2) Case-insensitive alias canonical match. Previously source="bbc"
+        # missed canonical "BBC". Now: lowercase both sides.
+        if not url:
             return
-        _add(name, url)
-        # Expand domain-style sources to nice prose names.
+        if name:
+            _add(name, url)
+        name_lc = (name or "").lower()
+        url_lc = url.lower()
         for domain_frag, nice_names in _DOMAIN_NICE_NAMES.items():
-            if domain_frag in name.lower():
+            if domain_frag in name_lc or domain_frag in url_lc:
                 for nice in nice_names:
                     _add(nice, url)
                 return
-        # Expand known prose aliases.
-        for canonical, aliases in _SOURCE_ALIASES.items():
-            if name == canonical:
-                for alias in aliases:
-                    _add(alias, url)
-                return
+        if name:
+            for canonical, aliases in _SOURCE_ALIASES.items():
+                if name.lower() == canonical.lower():
+                    for alias in aliases:
+                        _add(alias, url)
+                    return
 
     def _add(name: str | None, url: str | None) -> None:
         if name and url and name not in mapping:
@@ -4987,6 +5035,122 @@ def _invoke_openrouter_narrative_edit(
 
     log.warning("All OpenRouter models exhausted; using unedited document")
     return html
+
+
+def _invoke_cerebras_narrative_edit(
+    cfg: Config, html: str, *, recently_used_asides: list[str] | None = None
+) -> str:
+    """GATE C secondary fallback — narrative edit via Cerebras (non-OR).
+
+    Same contract as ``_invoke_openrouter_narrative_edit``: takes briefing
+    HTML, returns edited HTML, falls back to original on any failure.
+    Cerebras runs llama-3.3-70b at much higher TPS than free-tier OR with
+    a separate provider footprint, so it's a real failover when OR is
+    throttled or down.
+
+    Skipped silently when ``cfg.cerebras_api_key`` is empty.
+
+    Same TOTT-extract / quality-gate pipeline as the OR path so the
+    output is interchangeable.
+    """
+    if not cfg.cerebras_api_key:
+        log.debug("CEREBRAS_API_KEY not set; skipping cerebras narrative edit")
+        return html
+
+    from openai import OpenAI
+
+    ny_match = _NY_BLOCK_RE.search(html)
+    if ny_match:
+        ny_block = ny_match.group(0)
+        html_for_edit = _NY_BLOCK_RE.sub(_NY_EDIT_PLACEHOLDER, html, count=1)
+    else:
+        ny_block = None
+        html_for_edit = html
+
+    system = _build_narrative_edit_system(recently_used_asides or [])
+    try:
+        client = OpenAI(
+            api_key=cfg.cerebras_api_key,
+            base_url=cfg.cerebras_base_url,
+            timeout=120.0,
+        )
+    except Exception as exc:
+        log.warning("Cerebras client init failed (%s); using original", exc)
+        return html
+
+    log.info(
+        "Cerebras narrative edit [%s] (%d chars input, TOTT %s)",
+        cfg.cerebras_model_id,
+        len(html_for_edit),
+        "extracted" if ny_block else "absent",
+    )
+    try:
+        resp = client.chat.completions.create(
+            model=cfg.cerebras_model_id,
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user",
+                 "content": f"Edit the following HTML briefing:\n\n{html_for_edit}"},
+            ],
+            max_tokens=_OR_NARRATIVE_MAX_TOKENS,
+            temperature=0.4,
+        )
+        choices = getattr(resp, "choices", None) or []
+        if not choices:
+            log.warning("Cerebras: response had no choices; returning original")
+            return html
+        choice0 = choices[0]
+        message = getattr(choice0, "message", None)
+        content = getattr(message, "content", None) if message else None
+        edited = (content or "").strip()
+        if not edited:
+            log.warning("Cerebras: empty content; returning original")
+            return html
+
+        edited_lower = edited.lstrip().lower()
+        if not (edited_lower.startswith("<!doctype html") or edited_lower.startswith("<html")):
+            log.warning(
+                "Cerebras: returned non-HTML (starts %.60r); returning original",
+                edited[:60],
+            )
+            return html
+        if "</html>" not in edited.lower() and "</body>" not in edited.lower():
+            log.warning(
+                "Cerebras: response truncated (%d chars); returning original",
+                len(edited),
+            )
+            return html
+        if "<p>" not in edited.lower() and "<p " not in edited.lower():
+            log.warning(
+                "Cerebras: HTML has no <p> tags (%d chars); returning original",
+                len(edited),
+            )
+            return html
+
+        if ny_block:
+            if _NY_EDIT_PLACEHOLDER in edited:
+                edited = edited.replace(_NY_EDIT_PLACEHOLDER, ny_block)
+            else:
+                signoff_marker = '<div class="signoff">'
+                if signoff_marker in edited:
+                    edited = edited.replace(signoff_marker, ny_block + "\n" + signoff_marker)
+                else:
+                    edited = edited.rstrip().rstrip("</html>").rstrip() + "\n" + ny_block + "\n</html>"
+
+        passed, reason = _editor_quality_gates(html, edited, cfg.cerebras_model_id)
+        if not passed:
+            log.warning(
+                "Cerebras: failed quality gate (%s); returning original", reason,
+            )
+            return html
+
+        log.info(
+            "Cerebras narrative edit complete (%d chars output)", len(edited),
+        )
+        return edited
+    except Exception as exc:
+        log.warning("Cerebras narrative edit failed (%s); returning original", exc)
+        return html
 
 
 ASIDES_RECENT_WINDOW_DAYS = 4

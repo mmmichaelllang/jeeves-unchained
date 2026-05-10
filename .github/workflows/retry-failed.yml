@@ -164,7 +164,16 @@ jobs:
             core.setOutput('run_url', context.payload.workflow_run.html_url);
 
       - name: Retry transient (or unknown) — re-run failed jobs
+        # 2026-05-09 — user policy: ONE scheduled run per date for the
+        # Daily Pipeline. Manual workflow_dispatch is the only acceptable
+        # way to trigger a re-run. Two pipelines firing on 2026-05-09 (cron
+        # at 00:00 UTC + auto-retry at ~02:18 UTC) produced two emails into
+        # the inbox, one of them sterile. Auto-retry is preserved for
+        # housekeeping workflows (Archive Old Sessions) but EXCLUDED for
+        # Daily Pipeline. Failure of the Daily Pipeline now flows only to
+        # the alert step below; manual re-fire required.
         if: >-
+          github.event.workflow_run.name != 'Jeeves — Daily Pipeline' &&
           (steps.classify.outputs.verdict == 'transient' ||
            steps.classify.outputs.verdict == 'unknown') &&
           github.event.workflow_run.run_attempt < 3
@@ -206,21 +215,29 @@ jobs:
       # scripts/notify_pipeline_failure.py via uv. On the retry path we skip
       # the checkout to keep latency low.
       - name: Checkout (alert path only)
-        if: steps.classify.outputs.verdict == 'permanent'
+        if: >-
+          steps.classify.outputs.verdict == 'permanent' ||
+          github.event.workflow_run.name == 'Jeeves — Daily Pipeline'
         uses: actions/checkout@v4
 
       - name: Set up uv (alert path only)
-        if: steps.classify.outputs.verdict == 'permanent'
+        if: >-
+          steps.classify.outputs.verdict == 'permanent' ||
+          github.event.workflow_run.name == 'Jeeves — Daily Pipeline'
         uses: astral-sh/setup-uv@v3
         with:
           version: "0.8.17"
 
       - name: Sync dependencies (alert path only)
-        if: steps.classify.outputs.verdict == 'permanent'
+        if: >-
+          steps.classify.outputs.verdict == 'permanent' ||
+          github.event.workflow_run.name == 'Jeeves — Daily Pipeline'
         run: uv sync --no-dev
 
       - name: Send permanent-failure alert
-        if: steps.classify.outputs.verdict == 'permanent'
+        if: >-
+          steps.classify.outputs.verdict == 'permanent' ||
+          github.event.workflow_run.name == 'Jeeves — Daily Pipeline'
         env:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           JEEVES_RECIPIENT_EMAIL: ${{ vars.JEEVES_RECIPIENT_EMAIL || 'lang.mc@gmail.com' }}
@@ -232,7 +249,9 @@ jobs:
         run: uv run python scripts/notify_pipeline_failure.py
 
       - name: Log permanent failure (no retry)
-        if: steps.classify.outputs.verdict == 'permanent'
+        if: >-
+          steps.classify.outputs.verdict == 'permanent' ||
+          github.event.workflow_run.name == 'Jeeves — Daily Pipeline'
         env:
           # Funnel classifier strings through env so a stray quote or backtick
           # in `sample` cannot corrupt the shell parse of the run block.

@@ -47,18 +47,32 @@ def main() -> int:
 
     log.info("re-sending revised briefing (%d fixes applied)", applied)
     try:
-        from jeeves.email import send_email
+        from jeeves.email import send_html
         from jeeves.config import Config
     except Exception as exc:
         log.error("import failed: %s", exc)
         return 1
 
+    # 2026-05-09: was a dead-code import (`send_email` didn't exist). The
+    # auditor was committing post-fix briefings but the [REVISED] email
+    # was never actually leaving the runner. Today's user-visible double
+    # email came from retry-failed.yml re-firing the whole Daily Pipeline,
+    # not from this resend.
     try:
-        cfg = Config.from_env()
+        from datetime import datetime
+        cfg = Config.from_env(phase="write", dry_run=False, run_date=args.date)
         html = briefing.read_text(encoding="utf-8")
-        # send_email signature varies — use kwargs we expect.
-        send_email(cfg=cfg, html_body=html,
-                   subject_prefix="[REVISED] ")
+        full_date = datetime.strptime(args.date, "%Y-%m-%d").strftime(
+            "%A, %B %-d, %Y"
+        )
+        subject = f"[REVISED] 📜 Daily Intelligence from Jeeves — {full_date}"
+        send_html(
+            to=cfg.recipient_email,
+            sender=cfg.recipient_email,
+            subject=subject,
+            html=html,
+            app_password=cfg.gmail_app_password,
+        )
         log.info("re-send complete")
         return 0
     except Exception as exc:

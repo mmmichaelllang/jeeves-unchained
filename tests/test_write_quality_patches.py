@@ -51,6 +51,46 @@ def test_banned_phrases_no_duplicates_across_buckets():
             seen.add(p)
 
 
+def test_staleness_narration_2026_05_09_phrases_present():
+    """2026-05-09 sweep — Domestic Sphere staleness phrases observed in
+    production briefing must be in the staleness_narration bucket so the
+    weekly telemetry surfaces the cadence.
+    """
+    bucket = BANNED_PHRASES_BY_BUCKET["staleness_narration"]
+    must_have = [
+        "unchanged since our last",
+        "since our prior briefing",
+        "no new information since",
+        "unchanged from previous reports",
+        "as noted earlier",
+        "without alteration",
+        "since our last review",
+        "since our last glance",
+        "remains unchanged since",
+    ]
+    missing = [p for p in must_have if p not in bucket]
+    assert not missing, f"staleness_narration missing 2026-05-09 phrases: {missing}"
+
+
+def test_closing_summary_2026_05_09_phrases_present():
+    """2026-05-09 sweep — Reading Room interpretive coda
+    ("underscores a shared theme: both assert that...") must be caught
+    by closing_summary bucket.
+    """
+    bucket = BANNED_PHRASES_BY_BUCKET["closing_summary"]
+    must_have = [
+        "underscores a shared theme",
+        "underscores a shared",
+        "underscores the shared",
+        "underscores a common",
+        "the juxtaposition of",
+        "both assert that",
+        "shared theme: both",
+    ]
+    missing = [p for p in must_have if p not in bucket]
+    assert not missing, f"closing_summary missing 2026-05-09 phrases: {missing}"
+
+
 def test_banned_phrases_all_lowercase_safe():
     """Detector lowercases the body before matching; phrases must too."""
     for bucket, phrases in BANNED_PHRASES_BY_BUCKET.items():
