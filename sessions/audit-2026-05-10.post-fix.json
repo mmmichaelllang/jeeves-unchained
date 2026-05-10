@@ -1,6 +1,6 @@
 {
   "date": "2026-05-10",
-  "briefing_chars": 23699,
+  "briefing_chars": 23373,
   "session_status": "complete",
   "detectors_run": [
     "D8_dedup",
@@ -21,15 +21,12 @@
       "type": "dedup_cross_day_overlap",
       "severity": "medium",
       "section": null,
-      "detail": "6 URLs already covered in prior briefings",
+      "detail": "2 URLs already covered in prior briefings",
       "evidence": {
-        "overlap_count": 6,
+        "overlap_count": 2,
         "samples": [
-          "https://myedmondsnews.com/2026/05/court-denies-motion-to-reconsider-dismissal-of-edmonds-tree-case",
-          "https://www.aljazeera.com/news/liveblog/2026/5/10/iran-war-live-irgc-warns-us-against-attacks-on-ships-israel-bombs-lebanon",
-          "https://arxiv.org/pdf/2604.09621",
           "https://myedmondsnews.com/2026/05/city-of-edmonds-update-resolution-of-wastewater-treatment-plant-operational-issues-ongoing",
-          "https://arxiv.org/pdf/2603.13327"
+          "https://myedmondsnews.com/2026/05/court-denies-motion-to-reconsider-dismissal-of-edmonds-tree-case"
         ]
       }
     },
@@ -41,7 +38,8 @@
       "evidence": {
         "word_count": 13,
         "data_signals": [
-          "enriched_articles=3items"
+          "intellectual_journals=4items",
+          "enriched_articles=5items"
         ]
       }
     },
@@ -63,7 +61,7 @@
       "section": "(greeting)",
       "detail": "correspondence handoff text present but no preview in greeting",
       "evidence": {
-        "handoff_preview": "- [escalation] mmmichaelllang: CI workflow for jeeves-unchained sprint-23 PR failed all jobs.\n- [escalation] mmmichaelllang: CI workflow for jeeves-unchained sprint-23 PR failed all jobs.\n- [escalatio"
+        "handoff_preview": "- [escalation] mmmichaelllang: GitHub notification that the Jeeves Correspondence Phase workflow failed.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Weekly Audit Health Report w"
       }
     }
   ],

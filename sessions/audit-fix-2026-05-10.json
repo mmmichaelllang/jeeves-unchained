@@ -1,296 +1,71 @@
 {
   "date": "2026-05-10",
-  "pre_fix_chars": 25718,
-  "post_fix_chars": 23699,
+  "pre_fix_chars": 23699,
+  "post_fix_chars": 23373,
   "actions": [
     {
       "type": "strip_hallucinated_url",
       "section": null,
-      "detail": "stripped <a href='https://myedmondsnews.com/2026/05/edmonds-pride-announces-monthlong-lineup-of-pride-month-events-for-june-2026/'>",
+      "detail": "stripped <a href='https://www.aljazeera.com/news/liveblog/2026/5/10/iran-war-live-irgc-warns-us-against-attacks-on-ships-israel-bombs-lebanon'>",
       "status": "applied",
       "evidence": {
-        "url": "https://myedmondsnews.com/2026/05/edmonds-pride-announces-monthlong-lineup-of-pride-month-events-for-june-2026/"
+        "url": "https://www.aljazeera.com/news/liveblog/2026/5/10/iran-war-live-irgc-warns-us-against-attacks-on-ships-israel-bombs-lebanon"
       }
     },
     {
       "type": "strip_hallucinated_url",
       "section": null,
-      "detail": "stripped <a href='https://myedmondsnews.com/2026/05/edmonds-pride-announces-monthlong-lineup-of-pride-month-events-for-june-2026/'>",
+      "detail": "stripped <a href='https://arxiv.org/pdf/2603.13327'>",
       "status": "applied",
       "evidence": {
-        "url": "https://myedmondsnews.com/2026/05/edmonds-pride-announces-monthlong-lineup-of-pride-month-events-for-june-2026/"
+        "url": "https://arxiv.org/pdf/2603.13327"
       }
     },
     {
       "type": "strip_hallucinated_url",
       "section": null,
-      "detail": "stripped <a href='https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States'>",
+      "detail": "stripped <a href='https://arxiv.org/pdf/2603.13327'>",
       "status": "applied",
       "evidence": {
-        "url": "https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States"
+        "url": "https://arxiv.org/pdf/2603.13327"
       }
     },
     {
       "type": "strip_hallucinated_url",
       "section": null,
-      "detail": "stripped <a href='https://subjecttoclimate.org/teacher-guides/free-ela-lesson-plans-for-teachers-9-12'>",
+      "detail": "stripped <a href='https://arxiv.org/pdf/2602.02660'>",
       "status": "applied",
       "evidence": {
-        "url": "https://subjecttoclimate.org/teacher-guides/free-ela-lesson-plans-for-teachers-9-12"
+        "url": "https://arxiv.org/pdf/2602.02660"
       }
     },
     {
       "type": "strip_hallucinated_url",
       "section": null,
-      "detail": "stripped <a href='https://annmichaelsen.com/2026/01/07/lesson-plan-rhetoric-literary-devices-and-interpretation-in-contemporary-political-commentary/'>",
+      "detail": "stripped <a href='https://arxiv.org/pdf/2604.09621'>",
       "status": "applied",
       "evidence": {
-        "url": "https://annmichaelsen.com/2026/01/07/lesson-plan-rhetoric-literary-devices-and-interpretation-in-contemporary-political-commentary/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://www.edutopia.org/article/high-school-students-thrive-when-given-choices-english-class/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://www.edutopia.org/article/high-school-students-thrive-when-given-choices-english-class/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://www.bbc.com/news/articles/c9364r4r902o'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://www.bbc.com/news/articles/c9364r4r902o"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://www.bbc.co.uk/news/articles/cx249y1jew2o'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://www.bbc.co.uk/news/articles/cx249y1jew2o"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://www.theguardian.com/world/2026/may/09/neither-us-nor-iran-can-sustain-strait-of-hormuz-standoff-indefinitely'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://www.theguardian.com/world/2026/may/09/neither-us-nor-iran-can-sustain-strait-of-hormuz-standoff-indefinitely"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://aeon.co/essays/the-wests-forgotten-republican-heritage'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://aeon.co/essays/the-wests-forgotten-republican-heritage"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://www.nybooks.com/articles/2026/05/28/irans-new-winter-christopher-de-bellaigue'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://www.nybooks.com/articles/2026/05/28/irans-new-winter-christopher-de-bellaigue"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://www.nybooks.com/online/2026/03/10/the-new-war-on-speech-trump/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://www.nybooks.com/online/2026/03/10/the-new-war-on-speech-trump/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://reference-global.com/article/10.2478/perc-2025-0013'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://reference-global.com/article/10.2478/perc-2025-0013"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://reference-global.com/article/10.2478/perc-2025-0013'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://reference-global.com/article/10.2478/perc-2025-0013"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://link.springer.com/chapter/10.1007/978-3-032-11100-5_8'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://link.springer.com/chapter/10.1007/978-3-032-11100-5_8"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://fieldy.ai/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://fieldy.ai/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://sandbar.com/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://sandbar.com/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://omi.me/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://omi.me/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://olex.ai/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://olex.ai/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://immersioned.org/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://immersioned.org/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://hellohistory.ai/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://hellohistory.ai/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://teachmateai.com/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://teachmateai.com/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://teachersbuddy.com/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://teachersbuddy.com/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://lumilife.online/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://lumilife.online/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://skugga.com/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://skugga.com/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://everysight.com/'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://everysight.com/"
-      }
-    },
-    {
-      "type": "strip_hallucinated_url",
-      "section": null,
-      "detail": "stripped <a href='https://www.newyorker.com/magazine/2026/05/04/reverend-billy-takes-on-norman-fosters-new-monolith'>",
-      "status": "applied",
-      "evidence": {
-        "url": "https://www.newyorker.com/magazine/2026/05/04/reverend-billy-takes-on-norman-fosters-new-monolith"
-      }
-    },
-    {
-      "type": "rerender_missing_section",
-      "section": "The Library Stacks",
-      "detail": "validator rejected: non-html prefix: 'We need to write a paragraph (or two if data demands) 60-180'",
-      "status": "failed",
-      "evidence": {
-        "model": "nvidia/nemotron-3-super-120b-a12b:free",
-        "preview": "We need to write a paragraph (or two if data demands) 60-180 words, using HTML <p>...</p>. Must include anchor tag for U"
-      }
-    },
-    {
-      "type": "inject_missing_section",
-      "section": "The Library Stacks",
-      "detail": "injected empty-feed for The Library Stacks",
-      "status": "applied",
-      "evidence": {
-        "anchor": "The Commercial Ledger"
+        "url": "https://arxiv.org/pdf/2604.09621"
       }
     },
     {
       "type": "rerender_empty_with_data",
       "section": "The Reading Room",
-      "detail": "validator rejected: non-html prefix: 'We need to produce a single paragraph (or two if data demand'",
+      "detail": "validator rejected: non-html prefix: 'We need to produce one or two paragraphs, each inside <p> ta'",
       "status": "failed",
       "evidence": {
         "model": "nvidia/nemotron-3-super-120b-a12b:free",
-        "preview": "We need to produce a single paragraph (or two if data demands). Use <a href=\"...\">title</a> for the URL anchors only \u2014 n"
+        "preview": "We need to produce one or two paragraphs, each inside <p> tags, total 60-180 words. Must use <a href=\"...\">title</a> for"
+      }
+    },
+    {
+      "type": "rerender_empty_with_data",
+      "section": "The Library Stacks",
+      "detail": "validator rejected: non-html prefix: 'We need to output HTML <p>...</p> paragraph(s) 60-180 words.'",
+      "status": "failed",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to output HTML <p>...</p> paragraph(s) 60-180 words. Use <a href=\"...\">title</a> for URL anchors only \u2014 never ba"
       }
     },
     {
@@ -300,11 +75,11 @@
       "status": "failed",
       "evidence": {
         "model": "nvidia/nemotron-3-super-120b-a12b:free",
-        "preview": "We need to produce a single HTML <p> paragraph, 80-150 words, dry precise butler voice. Must mention the weekday, the we"
+        "preview": "We need to produce a single HTML <p> paragraph, 80-150 words, dry precise butler voice, mention weekday, weather, and a "
       }
     }
   ],
-  "pre_fix_defect_count": 35,
+  "pre_fix_defect_count": 10,
   "post_fix_defect_count": null,
   "audit_model_used": null
 }

@@ -1,6 +1,6 @@
 {
   "date": "2026-05-10",
-  "briefing_chars": 25718,
+  "briefing_chars": 23699,
   "session_status": "complete",
   "detectors_run": [
     "D8_dedup",
@@ -20,15 +20,12 @@
       "type": "dedup_cross_day_overlap",
       "severity": "medium",
       "section": null,
-      "detail": "6 URLs already covered in prior briefings",
+      "detail": "2 URLs already covered in prior briefings",
       "evidence": {
-        "overlap_count": 6,
+        "overlap_count": 2,
         "samples": [
-          "https://myedmondsnews.com/2026/05/city-of-edmonds-update-resolution-of-wastewater-treatment-plant-operational-issues-ongoing",
-          "https://www.aljazeera.com/news/liveblog/2026/5/10/iran-war-live-irgc-warns-us-against-attacks-on-ships-israel-bombs-lebanon",
           "https://myedmondsnews.com/2026/05/court-denies-motion-to-reconsider-dismissal-of-edmonds-tree-case",
-          "https://arxiv.org/pdf/2604.09621",
-          "https://arxiv.org/pdf/2602.02660"
+          "https://myedmondsnews.com/2026/05/city-of-edmonds-update-resolution-of-wastewater-treatment-plant-operational-issues-ongoing"
         ]
       }
     },
@@ -36,69 +33,41 @@
       "type": "narrative_flow_low",
       "severity": "high",
       "section": null,
-      "detail": "narrative flow score 3/10",
+      "detail": "narrative flow score 4/10",
       "evidence": {
-        "score": 3,
+        "score": 4,
         "issues": [
           {
             "section": "Opening",
-            "issue": "CSS code block precedes any narrative, breaking immersion and flow."
-          },
-          {
-            "section": "Weather to GitHub",
-            "issue": "Abrupt shift from pleasant weather report to GitHub failures without transitional phrasing."
+            "issue": "CSS code block interrupts narrative start"
           },
           {
             "section": "Domestic Sphere",
-            "issue": "Heading appears suddenly after a technical complaint, lacking a logical bridge."
+            "issue": "Paragraph bundles unrelated news items without clear transitions"
           },
           {
-            "section": "Inline citations",
-            "issue": "Parenthetical notes like '(as seen on My Edmonds News)' interrupt the butler\u2019s voice."
+            "section": "The Reading Room",
+            "issue": "Abrupt shift from summary to heading creates redundancy"
           },
           {
-            "section": "Tone shift",
-            "issue": "Profanity ('most fucking degree') clashes with the cultivated Jeeves register."
+            "section": "The Intellectual Journals",
+            "issue": "Dense list of article summaries lacks thematic grouping"
           },
           {
-            "section": "Specific Enquiries",
-            "issue": "Academic dump of paper titles arrives without segue from prior news items."
+            "section": "The Specific Enquiries",
+            "issue": "Succinct academic paper list offers no connective synthesis"
           },
           {
-            "section": "New Yorker excerpt",
-            "issue": "The Talk of the Town passage is inserted abruptly, with no introductory framing."
+            "section": "The Commercial Ledger",
+            "issue": "Rapid product enumeration reads like a catalogue, not narrative"
           },
           {
-            "section": "Conclusion",
-            "issue": "Signoff follows a diamond symbol and external link, leaving the narrative unresolved."
-          }
-        ],
-        "model": "nvidia/nemotron-3-super-120b-a12b:free"
-      }
-    },
-    {
-      "type": "writing_quality_low",
-      "severity": "medium",
-      "section": null,
-      "detail": "writing quality score 6/10",
-      "evidence": {
-        "score": 6,
-        "issues": [
-          {
-            "type": "filler",
-            "evidence": "Regrettably, the digital realm has not mirrored this serenity:"
+            "section": "Talk of the Town",
+            "issue": "Embedded New Yorker excerpt contains lengthy asides that disrupt flow"
           },
           {
-            "type": "repetition",
-            "evidence": "The Washington State Court of Appeals has denied a motion..."
-          },
-          {
-            "type": "vague",
-            "evidence": "A proper omnishambles, in other words, of the highest, most fucking degree."
-          },
-          {
-            "type": "aside_overuse",
-            "evidence": "as My Edmonds News reports."
+            "section": "Signoff",
+            "issue": "Closing signoff follows lengthy excerpt without transitional wrap\u2011up"
           }
         ],
         "model": "nvidia/nemotron-3-super-120b-a12b:free"
@@ -107,140 +76,10 @@
     {
       "type": "hallucinated_url",
       "severity": "medium",
-      "section": "The Domestic Sphere",
-      "detail": "href 'https://myedmondsnews.com/2026/05/edmonds-pride-announces-monthlong-lineup-of-pride-month-events-for-june-2026/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://myedmondsnews.com/2026/05/edmonds-pride-announces-monthlong-lineup-of-pride-month-events-for-june-2026/",
-        "is_homepage": false
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "medium",
-      "section": "The Domestic Sphere",
-      "detail": "href 'https://myedmondsnews.com/2026/05/edmonds-pride-announces-monthlong-lineup-of-pride-month-events-for-june-2026/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://myedmondsnews.com/2026/05/edmonds-pride-announces-monthlong-lineup-of-pride-month-events-for-june-2026/",
-        "is_homepage": false
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "medium",
-      "section": "The Domestic Sphere",
-      "detail": "href 'https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States",
-        "is_homepage": false
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "medium",
-      "section": "The Domestic Sphere",
-      "detail": "href 'https://subjecttoclimate.org/teacher-guides/free-ela-lesson-plans-for-teachers-9-12' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://subjecttoclimate.org/teacher-guides/free-ela-lesson-plans-for-teachers-9-12",
-        "is_homepage": false
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "medium",
-      "section": "The Domestic Sphere",
-      "detail": "href 'https://annmichaelsen.com/2026/01/07/lesson-plan-rhetoric-literary-devices-and-interpretation-in-contemporary-political-commentary/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://annmichaelsen.com/2026/01/07/lesson-plan-rhetoric-literary-devices-and-interpretation-in-contemporary-political-commentary/",
-        "is_homepage": false
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "medium",
-      "section": "The Domestic Sphere",
-      "detail": "href 'https://www.edutopia.org/article/high-school-students-thrive-when-given-choices-english-class/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://www.edutopia.org/article/high-school-students-thrive-when-given-choices-english-class/",
-        "is_homepage": false
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "medium",
       "section": "Beyond the Geofence",
-      "detail": "href 'https://www.bbc.com/news/articles/c9364r4r902o' not present in any session JSON sector",
+      "detail": "href 'https://www.aljazeera.com/news/liveblog/2026/5/10/iran-war-live-irgc-warns-us-against-attacks-on-ships-israel-bombs-lebanon' not present in any session JSON sector",
       "evidence": {
-        "url": "https://www.bbc.com/news/articles/c9364r4r902o",
-        "is_homepage": false
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "medium",
-      "section": "Beyond the Geofence",
-      "detail": "href 'https://www.bbc.co.uk/news/articles/cx249y1jew2o' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://www.bbc.co.uk/news/articles/cx249y1jew2o",
-        "is_homepage": false
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "medium",
-      "section": "Beyond the Geofence",
-      "detail": "href 'https://www.theguardian.com/world/2026/may/09/neither-us-nor-iran-can-sustain-strait-of-hormuz-standoff-indefinitely' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://www.theguardian.com/world/2026/may/09/neither-us-nor-iran-can-sustain-strait-of-hormuz-standoff-indefinitely",
-        "is_homepage": false
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "medium",
-      "section": "The Intellectual Journals",
-      "detail": "href 'https://aeon.co/essays/the-wests-forgotten-republican-heritage' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://aeon.co/essays/the-wests-forgotten-republican-heritage",
-        "is_homepage": false
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "medium",
-      "section": "The Intellectual Journals",
-      "detail": "href 'https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom",
-        "is_homepage": false
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "medium",
-      "section": "The Intellectual Journals",
-      "detail": "href 'https://www.nybooks.com/articles/2026/05/28/irans-new-winter-christopher-de-bellaigue' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://www.nybooks.com/articles/2026/05/28/irans-new-winter-christopher-de-bellaigue",
-        "is_homepage": false
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "medium",
-      "section": "The Intellectual Journals",
-      "detail": "href 'https://www.nybooks.com/online/2026/03/10/the-new-war-on-speech-trump/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://www.nybooks.com/online/2026/03/10/the-new-war-on-speech-trump/",
-        "is_homepage": false
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "medium",
-      "section": "The Intellectual Journals",
-      "detail": "href 'https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://www.themarginalian.org/2026/04/30/oliver-sacks-perception/",
+        "url": "https://www.aljazeera.com/news/liveblog/2026/5/10/iran-war-live-irgc-warns-us-against-attacks-on-ships-israel-bombs-lebanon",
         "is_homepage": false
       }
     },
@@ -248,9 +87,9 @@
       "type": "hallucinated_url",
       "severity": "medium",
       "section": "The Specific Enquiries",
-      "detail": "href 'https://reference-global.com/article/10.2478/perc-2025-0013' not present in any session JSON sector",
+      "detail": "href 'https://arxiv.org/pdf/2603.13327' not present in any session JSON sector",
       "evidence": {
-        "url": "https://reference-global.com/article/10.2478/perc-2025-0013",
+        "url": "https://arxiv.org/pdf/2603.13327",
         "is_homepage": false
       }
     },
@@ -258,9 +97,9 @@
       "type": "hallucinated_url",
       "severity": "medium",
       "section": "The Specific Enquiries",
-      "detail": "href 'https://reference-global.com/article/10.2478/perc-2025-0013' not present in any session JSON sector",
+      "detail": "href 'https://arxiv.org/pdf/2603.13327' not present in any session JSON sector",
       "evidence": {
-        "url": "https://reference-global.com/article/10.2478/perc-2025-0013",
+        "url": "https://arxiv.org/pdf/2603.13327",
         "is_homepage": false
       }
     },
@@ -268,129 +107,19 @@
       "type": "hallucinated_url",
       "severity": "medium",
       "section": "The Specific Enquiries",
-      "detail": "href 'https://link.springer.com/chapter/10.1007/978-3-032-11100-5_8' not present in any session JSON sector",
+      "detail": "href 'https://arxiv.org/pdf/2602.02660' not present in any session JSON sector",
       "evidence": {
-        "url": "https://link.springer.com/chapter/10.1007/978-3-032-11100-5_8",
+        "url": "https://arxiv.org/pdf/2602.02660",
         "is_homepage": false
       }
     },
     {
       "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Commercial Ledger",
-      "detail": "href 'https://fieldy.ai/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://fieldy.ai/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Commercial Ledger",
-      "detail": "href 'https://sandbar.com/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://sandbar.com/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Commercial Ledger",
-      "detail": "href 'https://omi.me/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://omi.me/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Commercial Ledger",
-      "detail": "href 'https://olex.ai/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://olex.ai/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Commercial Ledger",
-      "detail": "href 'https://immersioned.org/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://immersioned.org/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Commercial Ledger",
-      "detail": "href 'https://hellohistory.ai/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://hellohistory.ai/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Commercial Ledger",
-      "detail": "href 'https://teachmateai.com/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://teachmateai.com/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Commercial Ledger",
-      "detail": "href 'https://teachersbuddy.com/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://teachersbuddy.com/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Commercial Ledger",
-      "detail": "href 'https://lumilife.online/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://lumilife.online/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Commercial Ledger",
-      "detail": "href 'https://skugga.com/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://skugga.com/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Commercial Ledger",
-      "detail": "href 'https://everysight.com/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://everysight.com/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
       "severity": "medium",
-      "section": "Talk of the Town",
-      "detail": "href 'https://www.newyorker.com/magazine/2026/05/04/reverend-billy-takes-on-norman-fosters-new-monolith' not present in any session JSON sector",
+      "section": "The Specific Enquiries",
+      "detail": "href 'https://arxiv.org/pdf/2604.09621' not present in any session JSON sector",
       "evidence": {
-        "url": "https://www.newyorker.com/magazine/2026/05/04/reverend-billy-takes-on-norman-fosters-new-monolith",
+        "url": "https://arxiv.org/pdf/2604.09621",
         "is_homepage": false
       }
     },
@@ -402,18 +131,20 @@
       "evidence": {
         "word_count": 13,
         "data_signals": [
-          "enriched_articles=3items"
+          "intellectual_journals=4items",
+          "enriched_articles=5items"
         ]
       }
     },
     {
-      "type": "missing_section",
+      "type": "empty_with_data",
       "severity": "high",
       "section": "The Library Stacks",
-      "detail": "h3 'The Library Stacks' absent but sectors ['literary_pick'] have data",
+      "detail": "section under 30 words (10) but sectors ['literary_pick'] have available data",
       "evidence": {
-        "sectors": [
-          "literary_pick"
+        "word_count": 10,
+        "data_signals": [
+          "literary_pick=populated"
         ]
       }
     },
@@ -423,16 +154,16 @@
       "section": "(greeting)",
       "detail": "correspondence handoff text present but no preview in greeting",
       "evidence": {
-        "handoff_preview": "- [escalation] mmmichaelllang: CI workflow for jeeves-unchained sprint-23 PR failed all jobs.\n- [escalation] mmmichaelllang: CI workflow for jeeves-unchained sprint-23 PR failed all jobs.\n- [escalatio"
+        "handoff_preview": "- [escalation] mmmichaelllang: GitHub notification that the Jeeves Correspondence Phase workflow failed.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Weekly Audit Health Report w"
       }
     }
   ],
-  "section_count": 7,
-  "hallucinated_url_count": 29,
-  "empty_section_count": 1,
+  "section_count": 8,
+  "hallucinated_url_count": 5,
+  "empty_section_count": 2,
   "aside_template_count": 0,
-  "narrative_flow_score": 3,
-  "writing_quality_score": 6,
+  "narrative_flow_score": 4,
+  "writing_quality_score": null,
   "dedup_score": null,
   "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free"
 }
