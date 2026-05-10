@@ -1,0 +1,63 @@
+name: Jeeves — Eval-gate (postprocess)
+
+# Eval-gate (E) — merge-blocker for postprocess + bucket-detection changes.
+# Runs scripts/eval_postprocess.py compare against tests/eval_baseline.json.
+# Fires on PRs touching files that can change postprocess output.
+#
+# A run fails (exit 1) when:
+#   - any briefing in the corpus produces a NEW bucket-phrase hit that
+#     wasn't in the baseline (false positive — over-eager detection)
+#   - any baseline phrase no longer fires (lost hit / false negative)
+#
+# To intentionally update the baseline (when adding new bucket phrases
+# AND verifying the new hits are real issues), regenerate locally:
+#
+#     uv run python scripts/eval_postprocess.py snapshot
+#     git add tests/eval_baseline.json
+#     git commit -m "eval: regenerate baseline after bucket additions"
+#
+# Then re-push the PR. The gate will then PASS because the baseline now
+# reflects the intended new hits.
+
+on:
+  pull_request:
+    paths:
+      - 'jeeves/write.py'
+      - 'jeeves/schema.py'
+      - 'scripts/eval_postprocess.py'
+      - 'tests/eval_baseline.json'
+      - 'sessions/briefing-*.html'
+      - 'sessions/session-*.json'
+      - '.github/workflows/eval_postprocess.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.8.17"
+
+      - name: Sync dependencies
+        run: uv sync --no-dev
+
+      - name: Run eval-gate compare
+        run: |
+          uv run python scripts/eval_postprocess.py compare
+
+      - name: Upload diff report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-postprocess-diff
+          path: |
+            tests/eval_baseline.json
+            sessions/briefing-*.html
+          retention-days: 7
