@@ -1127,20 +1127,145 @@ _INTELLECTUAL_JOURNAL_HOST_SCORES: dict[str, float] = {
 _INTELLECTUAL_JOURNAL_DEFAULT_SCORE: float = 0.4
 
 
-def _score_intellectual_journals_url(url: str) -> float:
-    """Deterministic quality score for an intellectual_journals retry URL.
+# 2026-05-10 PR #113 follow-up — LLM-judge replaces deterministic table.
+# Per-URL cache so the judge never gets called twice for the same URL in
+# the same process. Keyed by URL string. Reset on import (one cache per
+# Python process; the daily pipeline is a fresh process).
+_IJ_LLM_SCORE_CACHE: dict[str, float] = {}
 
-    Score in [0, 1]. Combines:
-      - host authority (looked up vs known long-form publications)
-      - path-quality penalties (homepages, tag/category pages, search
-        results — these are NOT actual essays)
+# OpenRouter free-tier judge prompt. We deliberately don't require JSON —
+# free-tier models are flaky on JSON; we extract a number from the response.
+_IJ_JUDGE_SYSTEM = (
+    "You score how well a candidate URL fits the editorial brief for the "
+    "INTELLECTUAL JOURNALS section of a daily morning briefing. The brief "
+    "wants substantive long-form essay content from serious publications "
+    "(NYRB, LRB, Aeon, The New Yorker long-form, Harpers, Marginalian, "
+    "ProPublica, Intercept, Jacobin, Jewish Currents, Boston Review, "
+    "n+1, The Baffler, Dissent, Lapham's Quarterly, Granta, similar). "
+    "Output ONLY a single decimal number between 0.0 and 1.0 — nothing "
+    "else. No explanation, no JSON, no prose. Examples:\n"
+    "  - NYRB long-form essay → 0.92\n"
+    "  - Aeon essay on philosophy → 0.88\n"
+    "  - Harpers feature → 0.88\n"
+    "  - serious blog post on Substack → 0.55\n"
+    "  - SEO content-farm article → 0.20\n"
+    "  - homepage of any publication → 0.10\n"
+    "  - tag/category index page → 0.15\n"
+    "  - off-topic news article (sports/celebrity/local) → 0.30\n"
+    "Return only the number."
+)
 
-    Used to gate the IJ overlap-retry adoption: a retry that returns
-    only homepages or low-authority hosts is rejected even if it has
-    "more new URLs" than the original.
+
+def _llm_score_intellectual_journal_url(
+    url: str, finding: str, openrouter_api_key: str,
+) -> float | None:
+    """Ask an OpenRouter free-tier model to rate this URL's topical fit.
+
+    Returns score in [0, 1] on success; None on any failure (LLM key
+    absent, HTTP error, model returned non-numeric, etc.). Caller must
+    fall back to the deterministic host-authority table on None.
+
+    Per-URL cache so we don't double-spend on the same URL in one run.
+    """
+    if not url or not openrouter_api_key:
+        return None
+    if url in _IJ_LLM_SCORE_CACHE:
+        return _IJ_LLM_SCORE_CACHE[url]
+    try:
+        from openai import OpenAI
+    except ImportError:
+        return None
+    try:
+        from jeeves.audit_models import resolve_audit_models
+    except Exception:
+        # audit_models may not be importable in some smoke contexts;
+        # fall back to a small built-in chain.
+        def resolve_audit_models() -> tuple[str, ...]:
+            return (
+                "qwen/qwen3-next-80b-a3b-instruct:free",
+                "meta-llama/llama-3.3-70b-instruct:free",
+            )
+
+    client = None
+    try:
+        client = OpenAI(
+            api_key=openrouter_api_key,
+            base_url="https://openrouter.ai/api/v1",
+            timeout=30.0,
+        )
+    except Exception as exc:
+        log.debug("IJ judge: client init failed (%s)", exc)
+        return None
+
+    finding_excerpt = (finding or "").strip()
+    if len(finding_excerpt) > 800:
+        finding_excerpt = finding_excerpt[:800].rstrip() + " […]"
+    user_msg = (
+        f"URL: {url}\n"
+        f"Finding excerpt: {finding_excerpt or '(none provided)'}\n"
+        f"Score (0.0-1.0, just the number):"
+    )
+    import re as _re
+    for model_id in resolve_audit_models():
+        try:
+            resp = client.chat.completions.create(
+                model=model_id,
+                messages=[
+                    {"role": "system", "content": _IJ_JUDGE_SYSTEM},
+                    {"role": "user", "content": user_msg},
+                ],
+                max_tokens=16,
+                temperature=0.0,
+            )
+            text = (resp.choices[0].message.content or "").strip()
+        except Exception as exc:
+            log.debug("IJ judge [%s] failed: %s", model_id, exc)
+            continue
+        # Extract the first decimal in [0, 1].
+        m = _re.search(r"\b([01](?:\.\d+)?|0?\.\d+)\b", text)
+        if not m:
+            log.debug("IJ judge [%s] returned non-numeric: %r", model_id, text[:60])
+            continue
+        try:
+            score = float(m.group(1))
+        except ValueError:
+            continue
+        score = max(0.0, min(1.0, score))
+        _IJ_LLM_SCORE_CACHE[url] = score
+        log.info("IJ judge [%s] %s -> %.2f", model_id, url, score)
+        return score
+    log.warning("IJ judge: all models exhausted for %s", url)
+    return None
+
+
+def _score_intellectual_journals_url(
+    url: str, finding: str = "", cfg: Config | None = None,
+) -> float:
+    """Quality score for an intellectual_journals retry URL.
+
+    PRIMARY: LLM-judge — reads URL + associated finding excerpt, rates 0-1.
+    FALLBACK: deterministic host-authority + path-quality table.
+
+    The LLM judge generalises beyond the hand-curated host table —
+    catches new high-authority outlets (Granta, Lapham's Quarterly,
+    Boston Review specials) without manual upkeep, and catches
+    blogspam on otherwise-trusted hosts (NYRB tag pages etc.).
+
+    Falls back deterministically on any LLM failure so hermetic tests
+    + LLM outages never break the adoption gate.
     """
     if not isinstance(url, str) or not url.startswith(("http://", "https://")):
         return 0.0
+    # LLM judge first — only when cfg + key are available. The free-tier
+    # call is small (16 tokens out, single number) so per-PR cost is
+    # bounded by the IJ retry frequency × URLs-per-retry × cache.
+    if cfg is not None:
+        api_key = getattr(cfg, "openrouter_api_key", "") or ""
+        if api_key:
+            llm = _llm_score_intellectual_journal_url(url, finding, api_key)
+            if llm is not None:
+                return llm
+    # Deterministic fallback — host table + path penalties.
     from urllib.parse import urlparse
     parsed = urlparse(url)
     host = parsed.netloc.lower()
@@ -1148,33 +1273,90 @@ def _score_intellectual_journals_url(url: str) -> float:
         host, _INTELLECTUAL_JOURNAL_DEFAULT_SCORE
     )
     path = parsed.path.lower()
-    # Homepage / no path → likely top-of-site, not an essay.
     if path in ("", "/"):
         base -= 0.4
-    # Tag/category/search/topic listing pages — index, not content.
     for marker in ("/tag/", "/tags/", "/category/", "/categories/",
                    "/topic/", "/topics/", "/search", "/page/", "/issue/"):
         if marker in path:
             base -= 0.25
             break
-    # Bonus when path contains a date pattern (e.g. /2026/05/) — signal of
-    # a real article, not an evergreen page.
     import re as _re
     if _re.search(r"/20\d{2}/(0?[1-9]|1[0-2])/", path):
         base += 0.05
     return max(0.0, min(1.0, base))
 
 
-def _avg_score_intellectual_journals(urls: Iterable[str]) -> float:
-    """Mean URL-quality score for a set of intellectual_journals URLs.
+def _avg_score_intellectual_journals(
+    items: Iterable[Any], cfg: Config | None = None,
+) -> float:
+    """Mean URL-quality score for a set of intellectual_journals candidates.
 
-    Empty sequence returns 0.0 (which always loses the adoption gate
-    against any non-empty competitor — by design).
+    Accepts either:
+      - iterable of URL strings (legacy / fallback)
+      - iterable of (url, finding) tuples (preferred — gives the LLM
+        judge content excerpts to score against)
+
+    Empty sequence → 0.0 (always loses the adoption gate).
     """
-    urls = list(urls)
-    if not urls:
+    items = list(items)
+    if not items:
         return 0.0
-    return sum(_score_intellectual_journals_url(u) for u in urls) / len(urls)
+    total = 0.0
+    n = 0
+    for it in items:
+        if isinstance(it, tuple) and len(it) == 2:
+            url, finding = it
+        else:
+            url, finding = it, ""
+        total += _score_intellectual_journals_url(url, finding=finding, cfg=cfg)
+        n += 1
+    return total / n if n else 0.0
+
+
+def _extract_url_finding_pairs(parsed: Any) -> list[tuple[str, str]]:
+    """Walk a parsed sector result and return (url, finding) pairs.
+
+    For list-of-dicts shape (intellectual_journals), each item carries
+    its own findings prose; we pair each URL in the item with that text.
+    For other shapes (deep, dict-with-subkeys), findings may be None;
+    pairs default the finding to "".
+    """
+    pairs: list[tuple[str, str]] = []
+    seen: set[str] = set()
+
+    def _add(url: Any, finding: Any) -> None:
+        if not isinstance(url, str):
+            return
+        u = url.strip()
+        if not u.startswith(("http://", "https://")) or u in seen:
+            return
+        seen.add(u)
+        f = finding if isinstance(finding, str) else ""
+        pairs.append((u, f))
+
+    if isinstance(parsed, list):
+        for item in parsed:
+            if not isinstance(item, dict):
+                continue
+            finding = item.get("findings") or item.get("summary") or ""
+            for u in item.get("urls") or []:
+                _add(u, finding)
+            single = item.get("url")
+            if single:
+                _add(single, finding)
+    elif isinstance(parsed, dict):
+        # Deep-sector shape OR dict-with-subkeys.
+        finding = parsed.get("findings") or ""
+        for u in parsed.get("urls") or []:
+            _add(u, finding)
+        for v in parsed.values():
+            if isinstance(v, list):
+                for item in v:
+                    if isinstance(item, dict):
+                        sub_f = item.get("summary") or item.get("findings") or ""
+                        sub_u = item.get("url") or ""
+                        _add(sub_u, sub_f)
+    return pairs
 
 
 def _extract_urls_from_parsed(parsed: Any) -> list[str]:
@@ -1690,8 +1872,22 @@ async def run_sector(
                 retry_new_urls = [u for u in retry_urls if u not in prior_set]
                 sticky_urls = [u for u in parsed_urls if u in prior_set]
                 if spec.name == "intellectual_journals":
-                    new_avg = _avg_score_intellectual_journals(retry_new_urls)
-                    sticky_avg = _avg_score_intellectual_journals(sticky_urls)
+                    # 2026-05-10 PR #113 follow-up: score with LLM judge
+                    # using the FINDING text associated with each URL,
+                    # not just the URL string. Falls back to deterministic
+                    # host table when LLM unavailable.
+                    retry_pairs = _extract_url_finding_pairs(retry_parsed)
+                    sticky_pairs = _extract_url_finding_pairs(parsed)
+                    retry_new_pairs = [(u, f) for u, f in retry_pairs
+                                       if u not in prior_set]
+                    sticky_only_pairs = [(u, f) for u, f in sticky_pairs
+                                         if u in prior_set]
+                    new_avg = _avg_score_intellectual_journals(
+                        retry_new_pairs, cfg=cfg,
+                    )
+                    sticky_avg = _avg_score_intellectual_journals(
+                        sticky_only_pairs, cfg=cfg,
+                    )
                 else:
                     # Non-IJ sectors fall back to count-based gate.
                     new_avg = float(len(retry_new_urls))

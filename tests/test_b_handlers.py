@@ -378,33 +378,166 @@ def test_extract_urls_from_parsed_handles_shapes():
     assert _extract_urls_from_parsed({"url": "not-a-url"}) == []
 
 
-def test_url_quality_score_authority_table():
-    """High-authority publications score above the default; unknown hosts
-    fall to the default. Homepages and tag pages are penalised."""
+def test_url_quality_score_deterministic_fallback():
+    """Without cfg+OpenRouter key, scoring falls back to the host-authority
+    table. High-authority publications score above the default; unknown
+    hosts fall to the default. Homepages and tag pages are penalised."""
     from jeeves.research_sectors import (
         _score_intellectual_journals_url,
         _INTELLECTUAL_JOURNAL_DEFAULT_SCORE,
     )
-    # NYRB long-form essay → near top of table.
     s_nybooks = _score_intellectual_journals_url(
         "https://www.nybooks.com/articles/2026/05/28/irans-new-winter"
     )
     assert s_nybooks >= 0.9
-    # Aeon essay → high.
     s_aeon = _score_intellectual_journals_url("https://aeon.co/essays/some-piece")
     assert s_aeon >= 0.85
-    # Unknown blog at default.
     s_unknown = _score_intellectual_journals_url("https://random-blog.example.com/post")
     assert s_unknown == _INTELLECTUAL_JOURNAL_DEFAULT_SCORE
-    # Homepage penalty.
     s_homepage = _score_intellectual_journals_url("https://www.nybooks.com/")
     assert s_homepage < s_nybooks
-    # Tag/category page penalty.
     s_tag = _score_intellectual_journals_url("https://aeon.co/tag/philosophy/")
     assert s_tag < s_aeon
-    # Empty / non-URL → 0.
     assert _score_intellectual_journals_url("") == 0.0
     assert _score_intellectual_journals_url("not a url") == 0.0
+
+
+def test_url_quality_llm_judge_used_when_cfg_has_key():
+    """When cfg has openrouter_api_key, the LLM judge is consulted FIRST.
+    Result is cached per URL within a single process."""
+    import jeeves.research_sectors as rs
+    from unittest.mock import MagicMock, patch
+
+    cfg = MagicMock()
+    cfg.openrouter_api_key = "sk-or-test"
+    # Reset cache so this test is hermetic.
+    rs._IJ_LLM_SCORE_CACHE.clear()
+
+    call_count = {"n": 0}
+
+    def fake_judge(url, finding, key):
+        call_count["n"] += 1
+        return 0.77
+
+    with patch.object(rs, "_llm_score_intellectual_journal_url",
+                      side_effect=fake_judge):
+        s1 = rs._score_intellectual_journals_url(
+            "https://aeon.co/essays/test", finding="Long-form essay text",
+            cfg=cfg,
+        )
+        s2 = rs._score_intellectual_journals_url(
+            "https://aeon.co/essays/test", finding="Long-form essay text",
+            cfg=cfg,
+        )
+    assert s1 == 0.77
+    assert s2 == 0.77
+    # Score function called twice, but the LLM judge implementation handles
+    # caching internally (caller doesn't re-mock between calls).
+    assert call_count["n"] == 2  # outer mock — real cache test below
+
+
+def test_llm_judge_caches_per_url():
+    """LLM judge implementation caches per URL; second call hits cache."""
+    import jeeves.research_sectors as rs
+    from unittest.mock import MagicMock, patch
+
+    rs._IJ_LLM_SCORE_CACHE.clear()
+    fake_resp = MagicMock()
+    fake_resp.choices = [MagicMock()]
+    fake_resp.choices[0].message.content = "0.83"
+    fake_client = MagicMock()
+    fake_client.chat.completions.create.return_value = fake_resp
+
+    with patch("openai.OpenAI", return_value=fake_client):
+        s1 = rs._llm_score_intellectual_journal_url(
+            "https://aeon.co/essays/x", "essay text", "sk-test",
+        )
+        s2 = rs._llm_score_intellectual_journal_url(
+            "https://aeon.co/essays/x", "different text", "sk-test",
+        )
+    assert s1 == 0.83
+    assert s2 == 0.83
+    # Only ONE underlying API call — second hit was cached.
+    assert fake_client.chat.completions.create.call_count == 1
+
+
+def test_llm_judge_returns_none_on_failure():
+    """LLM judge returns None on every failure mode (no key, http error,
+    non-numeric response). Caller falls back to the deterministic table."""
+    import jeeves.research_sectors as rs
+    from unittest.mock import MagicMock, patch
+
+    rs._IJ_LLM_SCORE_CACHE.clear()
+    # No key.
+    assert rs._llm_score_intellectual_journal_url(
+        "https://aeon.co/essays/x", "text", "",
+    ) is None
+    # OpenAI client raises.
+    rs._IJ_LLM_SCORE_CACHE.clear()
+    with patch("openai.OpenAI", side_effect=RuntimeError("boom")):
+        assert rs._llm_score_intellectual_journal_url(
+            "https://aeon.co/essays/y", "text", "sk-test",
+        ) is None
+    # Model returns non-numeric response — all models exhausted.
+    rs._IJ_LLM_SCORE_CACHE.clear()
+    fake_resp = MagicMock()
+    fake_resp.choices = [MagicMock()]
+    fake_resp.choices[0].message.content = "I'm not sure how to score this."
+    fake_client = MagicMock()
+    fake_client.chat.completions.create.return_value = fake_resp
+    with patch("openai.OpenAI", return_value=fake_client):
+        assert rs._llm_score_intellectual_journal_url(
+            "https://aeon.co/essays/z", "text", "sk-test",
+        ) is None
+
+
+def test_score_falls_back_to_table_when_llm_returns_none():
+    """When the LLM judge returns None, the deterministic host table fires
+    (so unknown blogs still score 0.4, NYRB still scores 0.92, etc.)."""
+    import jeeves.research_sectors as rs
+    from unittest.mock import MagicMock, patch
+
+    cfg = MagicMock()
+    cfg.openrouter_api_key = "sk-or-test"
+    rs._IJ_LLM_SCORE_CACHE.clear()
+
+    with patch.object(rs, "_llm_score_intellectual_journal_url",
+                      return_value=None):
+        s_nybooks = rs._score_intellectual_journals_url(
+            "https://www.nybooks.com/articles/2026/05/01/foo",
+            finding="essay", cfg=cfg,
+        )
+        s_unknown = rs._score_intellectual_journals_url(
+            "https://random.example.com/post",
+            finding="text", cfg=cfg,
+        )
+    assert s_nybooks >= 0.9
+    assert s_unknown == rs._INTELLECTUAL_JOURNAL_DEFAULT_SCORE
+
+
+def test_extract_url_finding_pairs_lists_findings():
+    """_extract_url_finding_pairs walks list-of-dicts shape (IJ) and pairs
+    each URL with the item's findings prose."""
+    from jeeves.research_sectors import _extract_url_finding_pairs
+    parsed = [
+        {
+            "source": "Aeon",
+            "findings": "An essay on republican heritage by Sean Irving.",
+            "urls": ["https://aeon.co/essays/x", "https://aeon.co/essays/y"],
+        },
+        {
+            "source": "NYRB",
+            "findings": "Iran in winter, surveyed across forty years.",
+            "urls": ["https://nybooks.com/z"],
+        },
+    ]
+    pairs = _extract_url_finding_pairs(parsed)
+    assert ("https://aeon.co/essays/x",
+            "An essay on republican heritage by Sean Irving.") in pairs
+    assert ("https://aeon.co/essays/y",
+            "An essay on republican heritage by Sean Irving.") in pairs
+    assert ("https://nybooks.com/z",
+            "Iran in winter, surveyed across forty years.") in pairs
 
 
 def test_url_quality_avg_empty_loses_gate():
