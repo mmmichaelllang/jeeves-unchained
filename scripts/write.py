@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import subprocess
 import sys
 from datetime import datetime
@@ -29,6 +30,11 @@ from jeeves.config import Config, MissingSecret  # noqa: E402
 from jeeves.email import SMTPConfigError, send_html  # noqa: E402
 from jeeves.session_io import load_session_by_date  # noqa: E402
 from jeeves.write import (  # noqa: E402
+    ASIDES_FLOOR,
+    PROFANE_FRAGMENTS,
+    _invoke_cerebras_narrative_edit,
+    _invoke_openrouter_narrative_edit,
+    _recently_used_asides,
     _write_run_manifest,
     generate_briefing,
     postprocess_html,
@@ -38,6 +44,124 @@ from jeeves.write import (  # noqa: E402
 log = logging.getLogger("jeeves.write")
 
 SUBJECT_TEMPLATE = "📜 Daily Intelligence from Jeeves — {full_date}"
+
+
+def _check_prior_briefing_clean(briefing_path: Path) -> tuple[bool, str]:
+    """Run-dedup gate. Did an earlier run today already ship a clean briefing?
+
+    "Clean" = signoff correct AND profane-aside count >= ASIDES_FLOOR. We
+    deliberately do NOT trust the auditor JSON for this check; the auditor
+    runs AFTER write commits, so it may not exist yet, and the same-day
+    audit-fix may have introduced placeholder sections we don't want to
+    re-ship under "already clean".
+
+    Returns ``(is_clean, reason)``. When True the caller should skip
+    generate_briefing + email and exit 0. When False the caller proceeds
+    normally and (if successful) overwrites the prior briefing.
+
+    2026-05-09: Run 1 (00:36 UTC) shipped sterile; run 2 (02:18 UTC)
+    shipped clean. Both emailed. With this gate run-2 would either (a)
+    skip-and-not-email if run-1 was actually clean, or (b) proceed
+    normally because run-1's GATE C would have blocked it from being
+    written-as-clean.
+    """
+    if not briefing_path.exists():
+        return False, "no prior briefing on disk"
+    try:
+        html = briefing_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        return False, f"prior briefing unreadable: {exc}"
+    if "Your reluctantly faithful Butler" not in html:
+        return False, "prior briefing has wrong signoff"
+    body_lower = html.lower()
+    profane_count = sum(body_lower.count(frag.lower()) for frag in PROFANE_FRAGMENTS)
+    if profane_count < ASIDES_FLOOR:
+        return False, f"prior briefing has {profane_count} asides (floor={ASIDES_FLOOR})"
+    return True, f"signoff ok, {profane_count} asides"
+
+
+def _apply_asides_gate(cfg, session, result, out_path):
+    """GATE C — asides-floor hard-block with one OR retry.
+
+    When the postprocessed briefing has fewer than ``ASIDES_FLOOR`` profane
+    asides, retry the OpenRouter narrative editor once on the current HTML.
+    If still under floor, return ``gate_blocked=True`` so the caller exits
+    non-zero before SMTP send.
+
+    Returns ``(result, gate_blocked)``. On retry success, ``result`` is the
+    re-postprocessed BriefingResult and ``out_path`` is rewritten on disk.
+    """
+    if result.profane_aside_count >= ASIDES_FLOOR:
+        return result, False
+
+    log.warning(
+        "GATE C: asides-floor breached (%d < %d). Retrying OR narrative editor.",
+        result.profane_aside_count, ASIDES_FLOOR,
+    )
+    recent = _recently_used_asides(cfg)
+    from jeeves.write import postprocess_html as _pp
+
+    # Tier 1 — OR retry (same provider as the original narrative-editor pass).
+    try:
+        retried_html = _invoke_openrouter_narrative_edit(
+            cfg, result.html, recently_used_asides=recent
+        )
+        if retried_html and retried_html != result.html:
+            result = _pp(
+                retried_html, session,
+                quality_warnings=list(result.quality_warnings or []),
+            )
+            out_path.write_text(result.html, encoding="utf-8")
+            log.info(
+                "GATE C [OR]: retry produced %d asides (floor=%d).",
+                result.profane_aside_count, ASIDES_FLOOR,
+            )
+        else:
+            log.warning("GATE C [OR]: retry returned unchanged HTML.")
+    except Exception as exc:
+        log.error("GATE C [OR]: retry raised %s: %s", type(exc).__name__, exc)
+
+    # Tier 2 — Cerebras non-OR fallback. Only fires when OR retry didn't
+    # rescue the briefing AND CEREBRAS_API_KEY is set. Different upstream
+    # provider with separate quota / outage envelope.
+    if result.profane_aside_count < ASIDES_FLOOR and cfg.cerebras_api_key:
+        log.warning("GATE C: still below floor after OR. Trying Cerebras tier-2.")
+        try:
+            cerebras_html = _invoke_cerebras_narrative_edit(
+                cfg, result.html, recently_used_asides=recent
+            )
+            if cerebras_html and cerebras_html != result.html:
+                result = _pp(
+                    cerebras_html, session,
+                    quality_warnings=list(result.quality_warnings or []),
+                )
+                out_path.write_text(result.html, encoding="utf-8")
+                log.info(
+                    "GATE C [Cerebras]: rescued to %d asides (floor=%d).",
+                    result.profane_aside_count, ASIDES_FLOOR,
+                )
+            else:
+                log.warning("GATE C [Cerebras]: returned unchanged HTML.")
+        except Exception as exc:
+            log.error(
+                "GATE C [Cerebras]: tier-2 raised %s: %s",
+                type(exc).__name__, exc,
+            )
+    elif result.profane_aside_count < ASIDES_FLOOR:
+        log.warning(
+            "GATE C: Cerebras tier-2 unavailable (CEREBRAS_API_KEY unset); "
+            "proceeding to block."
+        )
+
+    if result.profane_aside_count < ASIDES_FLOOR:
+        log.error(
+            "GATE C BLOCK: asides=%d still below floor=%d after retry. "
+            "Briefing NOT sent. HTML kept on disk for forensic. "
+            "Manual review or re-trigger required.",
+            result.profane_aside_count, ASIDES_FLOOR,
+        )
+        return result, True
+    return result, False
 
 
 def _log_missing_session(cfg: "Config") -> None:
@@ -210,6 +334,34 @@ def main(argv: list[str] | None = None) -> int:
         _plan_only(session)
         return 0
 
+    # ----------------------------------------------------------------- #
+    # 2026-05-09 run-dedup gate. If an earlier run today already shipped #
+    # a quality-clean briefing (correct signoff AND profane asides above #
+    # floor), skip-send rather than burn Groq quota on a duplicate run.  #
+    # User explicit policy: only ONE scheduled run per date; manual      #
+    # workflow_dispatch should override (set JEEVES_FORCE_REWRITE=1).    #
+    # The dryrun / skip-send / use-fixture / plan-only modes bypass this #
+    # gate so smoke tests aren't blocked.                                #
+    # ----------------------------------------------------------------- #
+    if not (args.dry_run or args.skip_send or args.use_fixture):
+        force = os.environ.get("JEEVES_FORCE_REWRITE", "").lower() in ("1", "true", "yes")
+        if not force:
+            briefing_path = cfg.briefing_html_path()
+            already_clean, reason = _check_prior_briefing_clean(briefing_path)
+            if already_clean:
+                log.info(
+                    "Run-dedup: prior briefing for %s is clean (%s). "
+                    "Skipping write+send. Set JEEVES_FORCE_REWRITE=1 to override.",
+                    cfg.run_date.isoformat(), reason,
+                )
+                return 0
+            elif briefing_path.exists():
+                log.info(
+                    "Run-dedup: prior briefing exists but quality gate failed (%s). "
+                    "Proceeding with re-write.",
+                    reason,
+                )
+
     if args.dry_run:
         raw_html = render_mock_briefing(session)
         _quality_warnings: list[str] = []
@@ -248,6 +400,19 @@ def main(argv: list[str] | None = None) -> int:
     if args.dry_run or args.skip_send:
         log.info("[skip-send] briefing not delivered.")
         return 0
+
+    # ----------------------------------------------------------------- #
+    # 2026-05-09 GATE C — asides-floor hard-block.                       #
+    # When OR narrative editor skipped or stripped asides, the briefing  #
+    # ships sterile (no profane asides → Wodehouse texture lost). One    #
+    # retry of the narrative editor; if still under the floor, BLOCK     #
+    # send and exit non-zero so daily.yml fails the write step rather    #
+    # than emailing the broken briefing. Run-1 of 2026-05-09 shipped     #
+    # with 0 asides; this gate would have stopped it.                    #
+    # ----------------------------------------------------------------- #
+    result, gate_blocked = _apply_asides_gate(cfg, session, result, out_path)
+    if gate_blocked:
+        return 5
 
     full_date = datetime.strptime(cfg.run_date.isoformat(), "%Y-%m-%d").strftime(
         "%A, %B %-d, %Y"

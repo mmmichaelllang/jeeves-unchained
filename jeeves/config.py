@@ -105,6 +105,16 @@ class Config:
     # OpenRouter (optional — narrative editor pass in write phase)
     openrouter_api_key: str = ""
     openrouter_model_id: str = "nvidia/nemotron-3-super-120b-a12b:free"
+    # Cerebras (optional — narrative-editor non-OR fallback for GATE C).
+    # 2026-05-09 — when OR endpoints flake or are throttled, the asides-floor
+    # gate has no second-tier path; without Cerebras the gate either retries
+    # OR (same upstream) or blocks the email entirely. Cerebras serves
+    # llama-3.3-70b at high TPS via OpenAI-compatible API, separate provider.
+    # Set CEREBRAS_API_KEY in env to enable; absent key → tier silently
+    # skipped (gate falls through to block as before).
+    cerebras_api_key: str = ""
+    cerebras_model_id: str = "llama-3.3-70b"
+    cerebras_base_url: str = "https://api.cerebras.ai/v1"
     # Vertex AI (optional — grounded search with Dynamic Retrieval)
     # Set GOOGLE_CLOUD_PROJECT + GOOGLE_APPLICATION_CREDENTIALS_JSON to enable.
     # The tool is silently disabled if google_cloud_project is empty.
@@ -201,6 +211,11 @@ class Config:
             openrouter_api_key=os.environ.get("OPENROUTER_API_KEY", ""),
             openrouter_model_id=os.environ.get(
                 "OPENROUTER_MODEL_ID", "nvidia/nemotron-3-super-120b-a12b:free"
+            ),
+            cerebras_api_key=os.environ.get("CEREBRAS_API_KEY", ""),
+            cerebras_model_id=os.environ.get("CEREBRAS_MODEL_ID", "llama-3.3-70b"),
+            cerebras_base_url=os.environ.get(
+                "CEREBRAS_BASE_URL", "https://api.cerebras.ai/v1"
             ),
             google_cloud_project=os.environ.get("GOOGLE_CLOUD_PROJECT", ""),
             google_cloud_region=os.environ.get("GOOGLE_CLOUD_REGION", "us-central1"),

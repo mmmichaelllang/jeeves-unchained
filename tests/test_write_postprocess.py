@@ -691,6 +691,33 @@ def test_build_source_url_map_extracts_sector_sources():
     assert m["Council passes parking ordinance"] == "https://myedmondsnews.com/council-parking"
 
 
+def test_build_source_url_map_url_domain_inference():
+    """2026-05-09 fix — when Kimi sets source="BBC" (no domain in name)
+    but URL has bbc.com/bbc.co.uk, the domain-fragment match must fire
+    via the URL fallback so prose names ("the BBC", "BBC News") get
+    injected. Previously the check only looked at the source name and
+    these bare prose mentions shipped without anchors.
+    """
+    from jeeves.write import _build_source_url_map
+
+    session = _session()
+    # Simulate Kimi setting only the canonical short name. The URL is the
+    # only thing carrying the domain.
+    object.__setattr__(session, "global_news", [
+        {"source": "BBC", "headline": "x", "urls": ["https://www.bbc.com/news/mock"]},
+        {"source": "Aeon", "headline": "y", "urls": ["https://aeon.co/essays/mock"]},
+        {"source": "ProPublica", "headline": "z", "urls": ["https://www.propublica.org/article/mock"]},
+        {"source": "CBC", "headline": "q", "urls": ["https://www.cbc.ca/news/mock"]},
+    ])
+    m = _build_source_url_map(session)
+    # Prose names that the model writes — must all resolve to URLs.
+    assert m.get("BBC") == "https://www.bbc.com/news/mock"
+    assert m.get("BBC News") == "https://www.bbc.com/news/mock"
+    assert m.get("Aeon") == "https://aeon.co/essays/mock"
+    assert m.get("ProPublica") == "https://www.propublica.org/article/mock"
+    assert m.get("CBC") == "https://www.cbc.ca/news/mock"
+
+
 def test_inject_source_links_wraps_up_to_three_occurrences():
     """_inject_source_links anchors up to _INJECT_PER_SOURCE (3) occurrences of a source name."""
     from jeeves.write import _inject_source_links
@@ -1794,6 +1821,45 @@ def test_signoff_typo_your_faithfully_corrected():
     result = postprocess_html(raw, _session())
     assert "Your reluctantly faithful Butler" in result.html
     assert "Your faithfully Butler" not in result.html
+
+
+def test_signoff_adjective_your_faithful_butler_corrected():
+    """Adjective regression 'Your faithful Butler' (observed 2026-05-09)
+    is corrected. The model dropped the '-ly' and shipped 'Your faithful
+    Butler, Jeeves' — old regex caught only the adverb form 'faithfully'."""
+    from jeeves.write import postprocess_html
+
+    raw = (
+        '<!DOCTYPE html><html><body>'
+        '<div class="container">'
+        '<p>Body content with at least some words for word count.</p>'
+        '<div class="signoff"><p>Your faithful Butler,<br/>Jeeves</p></div>'
+        '<!-- COVERAGE_LOG_PLACEHOLDER -->'
+        '</div></body></html>'
+    )
+    result = postprocess_html(raw, _session())
+    assert "Your reluctantly faithful Butler" in result.html
+    # The wrong form must not survive.
+    assert ">Your faithful Butler," not in result.html
+
+
+def test_signoff_correct_with_reluctantly_left_alone():
+    """The correct 'Your reluctantly faithful Butler' must not be mangled
+    by the broadened regex — 'reluctantly' sits between 'Your' and
+    'faithful', so the single-token \\s+ in the pattern cannot match."""
+    from jeeves.write import postprocess_html
+
+    raw = (
+        '<!DOCTYPE html><html><body>'
+        '<div class="container">'
+        '<p>Body content with at least some words for word count.</p>'
+        '<div class="signoff"><p>Your reluctantly faithful Butler,<br/>Jeeves</p></div>'
+        '<!-- COVERAGE_LOG_PLACEHOLDER -->'
+        '</div></body></html>'
+    )
+    result = postprocess_html(raw, _session())
+    # Exactly one occurrence — no double-replacement.
+    assert result.html.count("Your reluctantly faithful Butler") == 1
 
 
 def test_signoff_sincerely_corrected():
