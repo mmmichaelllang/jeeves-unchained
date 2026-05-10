@@ -1,0 +1,66 @@
+{
+  "date": "2026-05-10",
+  "briefing_chars": 25718,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete"
+  ],
+  "detectors_skipped": [
+    "D7_narrative_flow",
+    "D9_writing_quality"
+  ],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "33 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 33,
+        "samples": [
+          "https://arxiv.org/pdf/2603.13327",
+          "https://myedmondsnews.com/2026/05/city-of-edmonds-update-resolution-of-wastewater-treatment-plant-operational-issues-ongoing",
+          "https://annmichaelsen.com/2026/01/07/lesson-plan-rhetoric-literary-devices-and-interpretation-in-contemporary-political-commentary",
+          "https://www.nybooks.com/articles/2026/05/28/irans-new-winter-christopher-de-bellaigue",
+          "https://skugga.com"
+        ]
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Reading Room",
+      "detail": "section under 30 words (13) but sectors ['intellectual_journals', 'enriched_articles'] have available data",
+      "evidence": {
+        "word_count": 13,
+        "data_signals": [
+          "intellectual_journals=5items",
+          "enriched_articles=5items"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_correspondence",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "correspondence handoff text present but no preview in greeting",
+      "evidence": {
+        "handoff_preview": "- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Research Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Correspondence Phas"
+      }
+    }
+  ],
+  "section_count": 7,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 1,
+  "aside_template_count": 0,
+  "narrative_flow_score": null,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": null
+}

@@ -1,0 +1,144 @@
+{
+  "date": "2026-05-10",
+  "briefing_chars": 25690,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D7_narrative_flow",
+    "D9_writing_quality",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete"
+  ],
+  "detectors_skipped": [],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "34 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 34,
+        "samples": [
+          "https://myedmondsnews.com/2026/05/court-denies-motion-to-reconsider-dismissal-of-edmonds-tree-case",
+          "https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States",
+          "https://arxiv.org/pdf/2602.02660",
+          "https://reference-global.com/article/10.2478/perc-2025-0013",
+          "https://myedmondsnews.com/2026/05/edmonds-pride-announces-monthlong-lineup-of-pride-month-events-for-june-2026"
+        ]
+      }
+    },
+    {
+      "type": "narrative_flow_issue",
+      "severity": "low",
+      "section": "Opening paragraph",
+      "detail": "Abrupt shift from CSS styling to narrative voice without transition",
+      "evidence": {
+        "score": 7,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "narrative_flow_issue",
+      "severity": "low",
+      "section": "GitHub/CI failures section",
+      "detail": "Overly technical jargon disrupts narrative flow and tone",
+      "evidence": {
+        "score": 7,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "narrative_flow_issue",
+      "severity": "low",
+      "section": "Edmonds Wastewater Plant paragraph",
+      "detail": "Colloquial aside ('omnishambles...') clashes with formal reporting style",
+      "evidence": {
+        "score": 7,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "narrative_flow_issue",
+      "severity": "low",
+      "section": "Teaching job boards section",
+      "detail": "Unnecessary parenthetical 'in other words' and informal phrasing undermine authority",
+      "evidence": {
+        "score": 7,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "narrative_flow_issue",
+      "severity": "low",
+      "section": "Intellectual Journals section",
+      "detail": "Excessive density of named essays and authors without thematic grouping or narrative scaffolding",
+      "evidence": {
+        "score": 7,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "writing_quality_issue",
+      "severity": "low",
+      "section": null,
+      "detail": "aside_overuse: in other words, of the highest, most fucking degree.",
+      "evidence": {
+        "score": 9,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "writing_quality_issue",
+      "severity": "low",
+      "section": null,
+      "detail": "vague: The world has not improved overnight, but it has at least produced several new opportunities to observe it failing.",
+      "evidence": {
+        "score": 9,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "Beyond the Geofence",
+      "detail": "href 'https://www.reuters.com/world/europe/russia-ukraine-ceasefire-three-day-agreement-2026-05-09' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.reuters.com/world/europe/russia-ukraine-ceasefire-three-day-agreement-2026-05-09",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "missing_section",
+      "severity": "high",
+      "section": "The Reading Room",
+      "detail": "h3 'The Reading Room' absent but sectors ['intellectual_journals', 'enriched_articles'] have data",
+      "evidence": {
+        "sectors": [
+          "intellectual_journals",
+          "enriched_articles"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
+      "evidence": {
+        "weather_preview": "Sunny and pleasant today in Edmonds. High 65\u00b0F, low near 50\u00b0F. Light NNW breeze 5-8 mph. No rain exp"
+      }
+    }
+  ],
+  "section_count": 6,
+  "hallucinated_url_count": 1,
+  "empty_section_count": 0,
+  "aside_template_count": 0,
+  "narrative_flow_score": 7,
+  "writing_quality_score": 9,
+  "dedup_score": null,
+  "audit_model_used": "qwen/qwen3-next-80b-a3b-instruct:free"
+}
