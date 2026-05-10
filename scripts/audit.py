@@ -65,7 +65,7 @@ CANONICAL_PART_PLAN: list[tuple[str, list[str]]] = [
     ("part1", ["correspondence", "weather"]),                                # greeting (no h3)
     ("part2", ["local_news"]),                                               # The Domestic Sphere
     ("part3", ["career"]),                                                   # (continues Domestic)
-    ("part4", ["family", "global_news"]),                                    # Beyond the Geofence
+    ("part4", ["family", "global_news"]),                                    # The Wider World (global_news); family bundled here historically
     ("part5", ["intellectual_journals", "enriched_articles"]),               # The Reading Room
     ("part6", ["triadic_ontology", "ai_systems"]),                           # The Specific Enquiries
     ("part7", ["uap", "wearable_ai", "literary_pick"]),                      # The Specific Enquiries / Commercial Ledger / Library Stacks
@@ -74,9 +74,16 @@ CANONICAL_PART_PLAN: list[tuple[str, list[str]]] = [
 ]
 
 # Canonical h3 ordering. Used for D4 (section_order).
+# 2026-05-10: "The Wider World" is the canonical header for global_news per
+# write_system.md. "Beyond the Geofence" was the historical (incorrect) header
+# used in PART 4 prompt — kept in the canonical list at its same slot so old
+# briefings + tests that reference it continue to validate. The postprocess
+# h3 rewriter migrates forward going forward; both names are accepted in the
+# auditor's section_order check during the transition.
 EXPECTED_H3_ORDER: list[str] = [
     "The Domestic Sphere",
     "Beyond the Geofence",
+    "The Wider World",
     "The Reading Room",
     "The Specific Enquiries",
     "The Commercial Ledger",
@@ -305,6 +312,10 @@ def detect_empty_with_data(
     flagged = 0
     h3_to_sectors = {
         "The Domestic Sphere": ["local_news"],
+        "The Wider World": ["family", "global_news"],
+        # Transitional alias 2026-05-10 — old briefings used the wrong
+        # header name for global news. Accept either to avoid spurious
+        # missing-section defects on prior briefings.
         "Beyond the Geofence": ["family", "global_news"],
         "The Reading Room": ["intellectual_journals", "enriched_articles"],
         "The Specific Enquiries": ["triadic_ontology", "ai_systems", "uap"],
@@ -523,6 +534,181 @@ def detect_greeting_incomplete(
             ))
             flagged += 1
 
+    return flagged
+
+
+# 2026-05-10 PR #113 follow-up — recurrence detection thresholds.
+# Two signals; either firing produces a defect:
+#   1. Jaccard similarity on stopword-stripped token sets >= JACCARD threshold.
+#   2. A distinctive content N-gram (>=4 consecutive non-stopword tokens)
+#      shared between today's opener and a prior briefing's opener.
+# The N-gram signal catches paraphrases that swap a few content words
+# (where Jaccard alone underweights the overlap). Calibrated empirically
+# to flag "world has not improved overnight ... opportunities to ...
+# failing" against "world has not improved overnight ... fresh
+# opportunities to watch it fail" while leaving genuinely-different
+# openers (different anchors, different verbs) below threshold.
+_RECURRING_OPENER_JACCARD_THRESHOLD: float = 0.30
+_RECURRING_OPENER_NGRAM_LEN: int = 4
+
+# Stopwords to strip before computing Jaccard. Keep the list short and
+# common — overstripping gives false positives (every opener uses the
+# same residual content words and the threshold gets gamed).
+_OPENER_STOPWORDS: frozenset[str] = frozenset({
+    "a", "an", "the", "and", "or", "but", "of", "to", "in", "is", "it",
+    "this", "that", "these", "those", "with", "at", "on", "for", "as",
+    "be", "by", "has", "have", "had", "i", "you", "we", "they", "them",
+    "us", "our", "your", "their", "my", "me", "he", "she", "his", "her",
+    "not", "no", "yes", "so", "if", "than", "then", "do", "does", "did",
+    "are", "was", "were", "been", "being", "am", "will", "would", "could",
+    "should", "shall", "may", "might", "can", "from", "into", "out", "up",
+    "down", "over", "under", "about",
+})
+
+
+def _opener_token_set(text: str) -> set[str]:
+    """Tokenize → lowercase → strip stopwords. Used for Jaccard compare."""
+    if not text:
+        return set()
+    tokens = re.findall(r"[a-z]+", text.lower())
+    return {t for t in tokens if t not in _OPENER_STOPWORDS and len(t) > 1}
+
+
+def _opener_jaccard(a: str, b: str) -> float:
+    """Jaccard similarity of two opener strings on token sets.
+
+    Returns 0.0 when either side has no content tokens. Symmetric.
+    """
+    ta = _opener_token_set(a)
+    tb = _opener_token_set(b)
+    if not ta or not tb:
+        return 0.0
+    return len(ta & tb) / len(ta | tb)
+
+
+def _opener_token_sequence(text: str) -> list[str]:
+    """Stopword-stripped ordered token list for N-gram comparison."""
+    if not text:
+        return []
+    tokens = re.findall(r"[a-z]+", text.lower())
+    return [t for t in tokens if t not in _OPENER_STOPWORDS and len(t) > 1]
+
+
+def _shared_ngram(a: str, b: str, n: int) -> str | None:
+    """Return the first content N-gram shared between two openers, or None.
+
+    Used to catch paraphrases where Jaccard underweights the overlap.
+    """
+    seq_a = _opener_token_sequence(a)
+    seq_b = _opener_token_sequence(b)
+    if len(seq_a) < n or len(seq_b) < n:
+        return None
+    grams_b = {tuple(seq_b[i:i + n]) for i in range(len(seq_b) - n + 1)}
+    for i in range(len(seq_a) - n + 1):
+        gram = tuple(seq_a[i:i + n])
+        if gram in grams_b:
+            return " ".join(gram)
+    return None
+
+
+def detect_recurring_opener(
+    html: str, session: dict, sessions_dir: Path,
+    defects: list[Defect],
+) -> int:
+    """D10 (2026-05-10): today's first body paragraph matches a prior briefing.
+
+    Run after D6_greeting_incomplete. The opener "The world has not improved
+    overnight, but it has at least produced several new opportunities to
+    observe it failing." shipped 2026-04-28, 2026-05-09, AND 2026-05-10 —
+    day-over-day recurrence the auditor must flag for F7 to rewrite.
+
+    2026-05-10 PR #113 follow-up: switched from exact 250-char match to
+    Jaccard similarity (token-set, stopword-stripped). Exact-match missed
+    paraphrased recurrence ("produced" → "furnished"). Threshold is
+    _RECURRING_OPENER_JACCARD_THRESHOLD (0.50). Compared across last 4
+    days of briefings on disk; first match above threshold flagged.
+    """
+    from datetime import date as _date_t, timedelta
+
+    # Pull today's first body <p>.
+    body = re.sub(r"<head>[\s\S]*?</head>", "", html, flags=re.IGNORECASE)
+    body = re.sub(r"<style>[\s\S]*?</style>", "", body, flags=re.IGNORECASE)
+    today_p_match = None
+    for m in re.finditer(r"<p[^>]*>([\s\S]*?)</p>", body, re.IGNORECASE):
+        block = m.group(0).lower()
+        if 'class="signoff"' in block or "coverage_log" in block:
+            continue
+        today_p_match = m
+        break
+    if not today_p_match:
+        return 0
+    today_text = re.sub(r"<[^>]+>", " ", today_p_match.group(1))
+    today_text = re.sub(r"\s+", " ", today_text).strip().lower()[:250]
+    if not today_text:
+        return 0
+
+    # Resolve today's date.
+    date_str = session.get("date") or ""
+    if not date_str:
+        return 0
+    try:
+        today = _date_t.fromisoformat(date_str)
+    except ValueError:
+        return 0
+
+    flagged = 0
+    for days_back in range(1, 5):
+        prior = today - timedelta(days=days_back)
+        prior_path = sessions_dir / f"briefing-{prior.isoformat()}.html"
+        if not prior_path.exists():
+            continue
+        try:
+            prior_html = prior_path.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        prior_body = re.sub(r"<head>[\s\S]*?</head>", "", prior_html, flags=re.IGNORECASE)
+        prior_body = re.sub(r"<style>[\s\S]*?</style>", "", prior_body, flags=re.IGNORECASE)
+        prior_first = None
+        for m in re.finditer(r"<p[^>]*>([\s\S]*?)</p>", prior_body, re.IGNORECASE):
+            block = m.group(0).lower()
+            if 'class="signoff"' in block or "coverage_log" in block:
+                continue
+            prior_first = m
+            break
+        if not prior_first:
+            continue
+        prior_text = re.sub(r"<[^>]+>", " ", prior_first.group(1))
+        prior_text = re.sub(r"\s+", " ", prior_text).strip().lower()[:250]
+        if not prior_text:
+            continue
+        sim = _opener_jaccard(today_text, prior_text)
+        ngram = _shared_ngram(today_text, prior_text, _RECURRING_OPENER_NGRAM_LEN)
+        jaccard_hit = sim >= _RECURRING_OPENER_JACCARD_THRESHOLD
+        ngram_hit = ngram is not None
+        if jaccard_hit or ngram_hit:
+            triggers: list[str] = []
+            if jaccard_hit:
+                triggers.append(f"Jaccard={sim:.0%}")
+            if ngram_hit:
+                triggers.append(f"shared {_RECURRING_OPENER_NGRAM_LEN}-gram {ngram!r}")
+            defects.append(Defect(
+                type="recurring_opener",
+                severity="medium",
+                section="(greeting)",
+                detail=(
+                    f"today's first paragraph recurs vs {prior.isoformat()} "
+                    f"({'; '.join(triggers)})."
+                ),
+                evidence={
+                    "matches_date": prior.isoformat(),
+                    "opener_preview": today_text[:120],
+                    "prior_opener_preview": prior_text[:120],
+                    "jaccard_similarity": round(sim, 3),
+                    "shared_ngram": ngram,
+                },
+            ))
+            flagged += 1
+            break  # one match is enough — F7 will rewrite either way
     return flagged
 
 
@@ -834,6 +1020,9 @@ def run_audit(date: str, sessions_dir: Path, *, use_llm: bool = True) -> AuditRe
 
     detect_greeting_incomplete(briefing, session, defects)
     detectors_run.append("D6_greeting_incomplete")
+
+    detect_recurring_opener(briefing, session, sessions_dir, defects)
+    detectors_run.append("D10_recurring_opener")
 
     return AuditReport(
         date=date,

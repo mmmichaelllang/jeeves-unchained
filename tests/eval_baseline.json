@@ -1,0 +1,211 @@
+{
+  "version": 1,
+  "generated_for_commit": "09df453",
+  "fingerprints": [
+    {
+      "date": "2026-04-24",
+      "buckets": {},
+      "asides_floor_count": 40,
+      "signoff_correct": true,
+      "word_count": 3328
+    },
+    {
+      "date": "2026-04-25",
+      "buckets": {},
+      "asides_floor_count": 5,
+      "signoff_correct": true,
+      "word_count": 1172
+    },
+    {
+      "date": "2026-04-26",
+      "buckets": {},
+      "asides_floor_count": 2,
+      "signoff_correct": true,
+      "word_count": 4057
+    },
+    {
+      "date": "2026-04-27",
+      "buckets": {
+        "asides_floor": [
+          "count=0"
+        ]
+      },
+      "asides_floor_count": 0,
+      "signoff_correct": true,
+      "word_count": 1243
+    },
+    {
+      "date": "2026-04-28",
+      "buckets": {
+        "banned_opener": [
+          "produced several new opportunities to observe it failing"
+        ],
+        "day_name_wrong": [
+          "Monday->Tuesday"
+        ]
+      },
+      "asides_floor_count": 3,
+      "signoff_correct": true,
+      "word_count": 3007
+    },
+    {
+      "date": "2026-05-01",
+      "buckets": {
+        "closing_summary": [
+          "These developments highlight"
+        ],
+        "h3_wrong_for_global_news": [
+          "Beyond_the_Geofence->The_Wider_World"
+        ],
+        "asides_floor": [
+          "count=1"
+        ]
+      },
+      "asides_floor_count": 1,
+      "signoff_correct": true,
+      "word_count": 6706
+    },
+    {
+      "date": "2026-05-02",
+      "buckets": {
+        "h3_wrong_for_global_news": [
+          "Beyond_the_Geofence->The_Wider_World"
+        ],
+        "asides_floor": [
+          "count=0"
+        ]
+      },
+      "asides_floor_count": 0,
+      "signoff_correct": true,
+      "word_count": 7082
+    },
+    {
+      "date": "2026-05-03",
+      "buckets": {
+        "closing_summary": [
+          "marking a significant"
+        ],
+        "h3_wrong_for_global_news": [
+          "Beyond_the_Geofence->The_Wider_World"
+        ],
+        "asides_floor": [
+          "count=0"
+        ]
+      },
+      "asides_floor_count": 0,
+      "signoff_correct": true,
+      "word_count": 5012
+    },
+    {
+      "date": "2026-05-04",
+      "buckets": {
+        "h3_wrong_for_global_news": [
+          "Beyond_the_Geofence->The_Wider_World"
+        ],
+        "asides_floor": [
+          "count=0"
+        ]
+      },
+      "asides_floor_count": 0,
+      "signoff_correct": true,
+      "word_count": 2707
+    },
+    {
+      "date": "2026-05-05",
+      "buckets": {
+        "asides_floor": [
+          "count=0"
+        ]
+      },
+      "asides_floor_count": 0,
+      "signoff_correct": true,
+      "word_count": 1838
+    },
+    {
+      "date": "2026-05-06",
+      "buckets": {
+        "staleness_narration": [
+          "since our last review"
+        ],
+        "asides_floor": [
+          "count=0"
+        ]
+      },
+      "asides_floor_count": 0,
+      "signoff_correct": true,
+      "word_count": 1661
+    },
+    {
+      "date": "2026-05-07",
+      "buckets": {
+        "h3_wrong_for_global_news": [
+          "Beyond_the_Geofence->The_Wider_World"
+        ]
+      },
+      "asides_floor_count": 4,
+      "signoff_correct": true,
+      "word_count": 1991
+    },
+    {
+      "date": "2026-05-08",
+      "buckets": {
+        "h3_wrong_for_global_news": [
+          "Beyond_the_Geofence->The_Wider_World"
+        ],
+        "asides_floor": [
+          "count=0"
+        ]
+      },
+      "asides_floor_count": 0,
+      "signoff_correct": true,
+      "word_count": 2223
+    },
+    {
+      "date": "2026-05-09",
+      "buckets": {
+        "staleness_narration": [
+          "as noted earlier",
+          "no new information since",
+          "remains unchanged since",
+          "since our last glance",
+          "since our last review",
+          "since our prior briefing",
+          "unchanged from previous reports",
+          "unchanged since our last",
+          "without alteration"
+        ],
+        "closing_summary": [
+          "both assert that",
+          "shared theme: both",
+          "the juxtaposition of",
+          "underscores a shared",
+          "underscores a shared theme"
+        ],
+        "banned_opener": [
+          "The world has not improved overnight",
+          "produced several new opportunities to observe it failing"
+        ],
+        "asides_floor": [
+          "count=0"
+        ]
+      },
+      "asides_floor_count": 0,
+      "signoff_correct": true,
+      "word_count": 2382
+    },
+    {
+      "date": "2026-05-10",
+      "buckets": {
+        "staleness_narration": [
+          "since our last review"
+        ],
+        "h3_wrong_for_global_news": [
+          "Beyond_the_Geofence->The_Wider_World"
+        ]
+      },
+      "asides_floor_count": 2,
+      "signoff_correct": true,
+      "word_count": 2408
+    }
+  ]
+}

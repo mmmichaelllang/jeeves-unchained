@@ -21,6 +21,7 @@ import json
 import logging
 import re
 from dataclasses import dataclass
+from collections.abc import Iterable
 from typing import Any
 
 from .config import Config
@@ -141,33 +142,70 @@ SECTOR_SPECS: list[SectorSpec] = [
         name="english_lesson_plans",
         shape="dict",
         instruction=(
-            "High-school English/Language-Arts lesson plans and resources Mister Lang "
-            "(teacher candidate) can adapt or steal from. Cover both:\n"
-            "  - 'classroom_ready': complete, freely-available lesson plans (rubrics, "
-            "    discussion-question sets, full unit plans) keyed to common HS texts "
-            "    (The Great Gatsby, Macbeth, Their Eyes Were Watching God, 1984, "
-            "    Beloved, Frankenstein, A Raisin in the Sun, etc.) or to common HS "
-            "    skills (close reading, argumentative essay, rhetorical analysis, "
-            "    Socratic seminar). Source from: Folger Shakespeare Library, "
-            "    ReadWriteThink, the Stanford History Education Group's literacy "
-            "    spinoffs, Edutopia, NCTE journals, the Bill of Rights Institute "
-            "    English plans, Facing History and Ourselves.\n"
-            "  - 'pedagogy_pieces': short essays or articles on HS English pedagogy "
-            "    that have shipped recently (Edutopia, English Journal, ASCD, "
-            "    Common Sense Education, Cult of Pedagogy).\n\n"
-            "MANDATORY FIRST STEP — dispatch THREE searches in parallel right now:\n"
-            "1. serper_search(query='high school English lesson plan free 2026', "
-            "tbs='qdr:m')\n"
-            "2. exa_search(query='high school English language arts lesson plan free "
-            "2026', search_type='auto', num_results=4, text_max_chars=4000)\n"
-            "3. serper_search(query='Folger ReadWriteThink Edutopia English Journal "
-            "lesson plan')\n"
-            "Read the actual page via tavily_extract before including any item — "
-            "do not summarise from the search snippet alone.\n"
-            "MANDATORY DEDUP RULE: any URL in `prior_urls` MUST be filtered out. If "
-            "all top hits are already covered, run another search with a NARROWER "
-            "query (e.g. a specific text or skill not yet covered) until at least "
-            "one URL is new. Returning a previously-covered URL is a hard failure.\n"
+            "High-school English/Language-Arts lesson plans, classroom-management "
+            "strategies, and digital token-economy systems Mister Lang (teacher "
+            "candidate) can adapt or steal from. Two subkeys:\n"
+            "  - 'classroom_ready': complete, freely-available lesson plans, unit "
+            "    rubrics, discussion-question sets, OR concrete classroom-management "
+            "    /token-economy mechanics. Acceptable anchors include common HS "
+            "    texts (The Great Gatsby, Macbeth, Their Eyes Were Watching God, "
+            "    1984, Beloved, Frankenstein, A Raisin in the Sun) or HS skills "
+            "    (close reading, argumentative essay, rhetorical analysis, Socratic "
+            "    seminar) AS WELL AS classroom-management plays (silent-discussion "
+            "    protocols, late-work policies, restorative-circle scripts, "
+            "    points/badges/leaderboards, group-work norms).\n"
+            "  - 'pedagogy_pieces': short essays or community threads on HS English "
+            "    pedagogy or classroom management that shipped recently.\n\n"
+            "PRIORITY SOURCE LIST (2026-05-10 — these are the highest-yield sites "
+            "for the niche the user actually wants; not exclusive — pick whichever "
+            "publishes the genuinely-best item this week):\n"
+            "  - reddit.com/r/ELATeachers, reddit.com/r/Teachers, "
+            "    reddit.com/r/ClassroomManagement (use site:reddit.com/r/<sub> "
+            "    queries; live community trade-craft is the gold-standard signal)\n"
+            "  - GitHub Education, github.com search 'high-school English curriculum' "
+            "    repos, learn-static.github.io / github.com/learn-static, individual "
+            "    teacher-author repos that publish unit plans as Markdown\n"
+            "  - edutopia.org/community, edutopia.org articles on classroom management\n"
+            "  - shakeuplearning.com (Kasey Bell's Shake Up Learning blog — Google-"
+            "    classroom + EdTech how-tos)\n"
+            "  - cultofpedagogy.com (Jennifer Gonzalez)\n"
+            "  - liveschool.io (LiveSchool digital token economy — points, behaviour "
+            "    tracking, parent communication)\n"
+            "  - classroomzen.com (Classroom Zen — mindfulness + management)\n"
+            "  - edugems.io (EduGems — gamified classroom rewards)\n"
+            "  - publish.obsidian.md ecosystem (search 'Obsidian Publish English "
+            "    teacher' or specific pubs known to publish ELA notes)\n"
+            "  - Then conventional anchors: Folger Shakespeare Library, "
+            "    ReadWriteThink, Stanford History Education Group, NCTE / English "
+            "    Journal, Facing History and Ourselves, ASCD, Common Sense "
+            "    Education.\n\n"
+            "MANDATORY FIRST STEP — dispatch FIVE searches in parallel right now:\n"
+            "1. serper_search(query='site:reddit.com/r/ELATeachers OR site:reddit.com/r/"
+            "Teachers OR site:reddit.com/r/ClassroomManagement lesson plan OR token "
+            "economy OR classroom management 2026', tbs='qdr:m', num=10)\n"
+            "2. serper_search(query='LiveSchool OR Cult of Pedagogy OR Shake Up "
+            "Learning OR Classroom Zen OR EduGems classroom management token economy "
+            "2026', tbs='qdr:m', num=10)\n"
+            "3. serper_search(query='site:github.com OR site:github.io high school "
+            "English curriculum OR ELA unit plan OR classroom management', "
+            "tbs='qdr:y', num=10)\n"
+            "4. serper_search(query='site:publish.obsidian.md English teacher OR "
+            "ELA OR classroom', num=10) — explore the Obsidian Publish ecosystem.\n"
+            "5. exa_search(query='high school English language arts lesson plan OR "
+            "classroom token economy OR digital points 2026', search_type='auto', "
+            "num_results=5, text_max_chars=4000)\n"
+            "If you find Reddit threads, USE tavily_extract to read the actual "
+            "thread content (top comments often contain the actual lesson plan or "
+            "management play). Do not summarise from titles. For GitHub repos, "
+            "tavily_extract the README.\n"
+            "MANDATORY DEDUP RULE: any URL in `prior_urls` MUST be filtered out. "
+            "If all top hits are already covered, run another search with a NARROWER "
+            "query (e.g. a specific text, skill, or management technique not yet "
+            "covered) until at least one URL per subkey is new. Returning a "
+            "previously-covered URL is a hard failure.\n"
+            "DIVERSITY RULE: at least 3 distinct hosts must appear across "
+            "classroom_ready + pedagogy_pieces. Do not return 4 items all from one "
+            "blog. Mix Reddit/GitHub/Obsidian-Publish with the conventional anchors.\n"
             "Return a JSON object: "
             "{classroom_ready: [{title, source, url, grade_band, topic, summary}, ...], "
             "pedagogy_pieces: [{title, source, url, summary}, ...], "
@@ -272,9 +310,29 @@ SECTOR_SPECS: list[SectorSpec] = [
             "essay 2026', search_type='auto', num_results=2, text_max_chars=4000)\n\n"
             "From the results, select 4-5 articles. DIVERSITY RULE: at least 3 different "
             "source publications must appear in your final output — do not return all items "
-            "from the same journal. Prioritise articles not in prior_urls.\n"
+            "from the same journal.\n\n"
+            "MANDATORY DEDUP RULE — read carefully:\n"
+            "  After every search, FILTER OUT any URL that already appears in "
+            "  `prior_urls`. Do NOT include a URL that is in `prior_urls`. The "
+            "  following essays have shipped REPEATEDLY across the last week and "
+            "  are HARD FAILURES if returned again:\n"
+            "  - aeon.co/essays/the-wests-forgotten-republican-heritage "
+            "    (Sean Irving on republican heritage)\n"
+            "  - aeon.co/essays/the-role-of-literature-as-the-key-to-personal-freedom "
+            "    (Flora Champy on Proust + Ruskin)\n"
+            "  - themarginalian.org/2026/04/30/oliver-sacks-perception "
+            "    (Maria Popova on Oliver Sacks)\n"
+            "  If those (or any other prior_urls match) are still your top hits, "
+            "  run ANOTHER search with a NARROWER query — try: "
+            "  'long-form essay this week 2026', 'NYRB May 2026 issue', "
+            "  'Aeon new essay [current month] 2026', 'Marginalian post May 2026', "
+            "  'LRB New York Review of Books recent essay' — and keep searching "
+            "  until at least 4 of your 4-5 final URLs are NOT in `prior_urls`. "
+            "  Returning a previously-covered URL with paraphrased findings prose "
+            "  is a hard failure for this sector.\n"
             "Read the full text returned by exa for each chosen article — do not summarise "
-            "from the title or dek alone. Write findings from the body.\n"
+            "from the title or dek alone. Write findings from the body. "
+            "Begin findings with the specific TITLE and AUTHOR so covered-headline matching works.\n"
             "DOMAIN-ANCHOR FALLBACK (use if the three parallel searches above return fewer "
             "than 3 distinct publications — these are known-good anchor domains):\n"
             "  4. exa_search(query='long-form essay 2025 2026', search_type='fast', "
@@ -1012,7 +1070,333 @@ _DEEP_FALLBACK_QUERIES: dict[str, str] = {
     "triadic_ontology": "triadic ontology relational metaphysics 2025 2026",
     "ai_systems": "multi-agent AI research autonomous pipeline reasoning model 2026",
     "uap": "UAP disclosure congressional hearing non-human intelligence 2026",
+    # 2026-05-10: intellectual_journals leaked the same 3 sticky URLs (Champy/
+    # Proust, Irving/republican-heritage, Popova/Sacks) for a week. Forced-
+    # retry path now applies to this sector too (see retry_when_all_overlap
+    # logic below). Query selection biases away from the long-tail aeon /
+    # marginalian essays that Kimi memorises.
+    "intellectual_journals": (
+        "NYRB LRB long-form essay this week 2026 -republican -proust "
+        "-sacks-perception"
+    ),
 }
+
+# Sectors that should ALSO force-retry when the quota guard passes BUT the
+# parsed URLs overlap heavily with prior_urls. Different failure mode from
+# the quota-bypass: tools WERE called, but the model picked URLs it has
+# memorised that happen to be in prior_urls.
+_FORCE_RETRY_ON_OVERLAP: frozenset[str] = frozenset({"intellectual_journals"})
+# Threshold — when this fraction or more of the parsed URLs are in prior_urls,
+# treat as a sticky-URL failure and force-retry.
+_OVERLAP_RETRY_THRESHOLD = 0.5
+
+
+# 2026-05-10 (PR #113 follow-up). Host-authority table for the
+# intellectual_journals sticky-URL retry adoption gate. Higher = more
+# trusted long-form publication; default 0.4 for unknown hosts. Used to
+# prevent adopting a retry that swaps three sticky high-quality URLs
+# (NYRB, Aeon, Marginalian) for four blogspam URLs.
+_INTELLECTUAL_JOURNAL_HOST_SCORES: dict[str, float] = {
+    "nybooks.com": 0.92, "www.nybooks.com": 0.92,
+    "lrb.co.uk": 0.92, "www.lrb.co.uk": 0.92,
+    "aeon.co": 0.88, "www.aeon.co": 0.88,
+    "themarginalian.org": 0.85, "www.themarginalian.org": 0.85,
+    "harpers.org": 0.88, "www.harpers.org": 0.88,
+    "newyorker.com": 0.85, "www.newyorker.com": 0.85,
+    "propublica.org": 0.85, "www.propublica.org": 0.85,
+    "theintercept.com": 0.82, "www.theintercept.com": 0.82,
+    "jacobin.org": 0.78, "www.jacobin.org": 0.78,
+    "jacobinmag.com": 0.78, "www.jacobinmag.com": 0.78,
+    "jewishcurrents.org": 0.78, "www.jewishcurrents.org": 0.78,
+    "nplusonemag.com": 0.85, "www.nplusonemag.com": 0.85,
+    "dissentmagazine.org": 0.78, "www.dissentmagazine.org": 0.78,
+    "thebaffler.com": 0.78, "www.thebaffler.com": 0.78,
+    "bostonreview.net": 0.78, "www.bostonreview.net": 0.78,
+    "nybooks.org": 0.92,  # alias seen in some redirect URLs
+    "scientificamerican.com": 0.72,
+    "www.scientificamerican.com": 0.72,
+    "bigthink.com": 0.65, "www.bigthink.com": 0.65,
+    "kottke.org": 0.7,
+    "tabletmag.com": 0.7, "www.tabletmag.com": 0.7,
+    # Mass-market quality (lower than literary journals but still substantive)
+    "theatlantic.com": 0.7, "www.theatlantic.com": 0.7,
+    "newrepublic.com": 0.7, "www.newrepublic.com": 0.7,
+    "newstatesman.com": 0.7, "www.newstatesman.com": 0.7,
+}
+# Default for hosts not in the table — generic blog/unknown.
+_INTELLECTUAL_JOURNAL_DEFAULT_SCORE: float = 0.4
+
+
+# 2026-05-10 PR #113 follow-up — LLM-judge replaces deterministic table.
+# Per-URL cache so the judge never gets called twice for the same URL in
+# the same process. Keyed by URL string. Reset on import (one cache per
+# Python process; the daily pipeline is a fresh process).
+_IJ_LLM_SCORE_CACHE: dict[str, float] = {}
+
+# OpenRouter free-tier judge prompt. We deliberately don't require JSON —
+# free-tier models are flaky on JSON; we extract a number from the response.
+_IJ_JUDGE_SYSTEM = (
+    "You score how well a candidate URL fits the editorial brief for the "
+    "INTELLECTUAL JOURNALS section of a daily morning briefing. The brief "
+    "wants substantive long-form essay content from serious publications "
+    "(NYRB, LRB, Aeon, The New Yorker long-form, Harpers, Marginalian, "
+    "ProPublica, Intercept, Jacobin, Jewish Currents, Boston Review, "
+    "n+1, The Baffler, Dissent, Lapham's Quarterly, Granta, similar). "
+    "Output ONLY a single decimal number between 0.0 and 1.0 — nothing "
+    "else. No explanation, no JSON, no prose. Examples:\n"
+    "  - NYRB long-form essay → 0.92\n"
+    "  - Aeon essay on philosophy → 0.88\n"
+    "  - Harpers feature → 0.88\n"
+    "  - serious blog post on Substack → 0.55\n"
+    "  - SEO content-farm article → 0.20\n"
+    "  - homepage of any publication → 0.10\n"
+    "  - tag/category index page → 0.15\n"
+    "  - off-topic news article (sports/celebrity/local) → 0.30\n"
+    "Return only the number."
+)
+
+
+def _llm_score_intellectual_journal_url(
+    url: str, finding: str, openrouter_api_key: str,
+) -> float | None:
+    """Ask an OpenRouter free-tier model to rate this URL's topical fit.
+
+    Returns score in [0, 1] on success; None on any failure (LLM key
+    absent, HTTP error, model returned non-numeric, etc.). Caller must
+    fall back to the deterministic host-authority table on None.
+
+    Per-URL cache so we don't double-spend on the same URL in one run.
+    """
+    if not url or not openrouter_api_key:
+        return None
+    if url in _IJ_LLM_SCORE_CACHE:
+        return _IJ_LLM_SCORE_CACHE[url]
+    try:
+        from openai import OpenAI
+    except ImportError:
+        return None
+    try:
+        from jeeves.audit_models import resolve_audit_models
+    except Exception:
+        # audit_models may not be importable in some smoke contexts;
+        # fall back to a small built-in chain.
+        def resolve_audit_models() -> tuple[str, ...]:
+            return (
+                "qwen/qwen3-next-80b-a3b-instruct:free",
+                "meta-llama/llama-3.3-70b-instruct:free",
+            )
+
+    client = None
+    try:
+        client = OpenAI(
+            api_key=openrouter_api_key,
+            base_url="https://openrouter.ai/api/v1",
+            timeout=30.0,
+        )
+    except Exception as exc:
+        log.debug("IJ judge: client init failed (%s)", exc)
+        return None
+
+    finding_excerpt = (finding or "").strip()
+    if len(finding_excerpt) > 800:
+        finding_excerpt = finding_excerpt[:800].rstrip() + " […]"
+    user_msg = (
+        f"URL: {url}\n"
+        f"Finding excerpt: {finding_excerpt or '(none provided)'}\n"
+        f"Score (0.0-1.0, just the number):"
+    )
+    import re as _re
+    for model_id in resolve_audit_models():
+        try:
+            resp = client.chat.completions.create(
+                model=model_id,
+                messages=[
+                    {"role": "system", "content": _IJ_JUDGE_SYSTEM},
+                    {"role": "user", "content": user_msg},
+                ],
+                max_tokens=16,
+                temperature=0.0,
+            )
+            text = (resp.choices[0].message.content or "").strip()
+        except Exception as exc:
+            log.debug("IJ judge [%s] failed: %s", model_id, exc)
+            continue
+        # Extract the first decimal in [0, 1].
+        m = _re.search(r"\b([01](?:\.\d+)?|0?\.\d+)\b", text)
+        if not m:
+            log.debug("IJ judge [%s] returned non-numeric: %r", model_id, text[:60])
+            continue
+        try:
+            score = float(m.group(1))
+        except ValueError:
+            continue
+        score = max(0.0, min(1.0, score))
+        _IJ_LLM_SCORE_CACHE[url] = score
+        log.info("IJ judge [%s] %s -> %.2f", model_id, url, score)
+        return score
+    log.warning("IJ judge: all models exhausted for %s", url)
+    return None
+
+
+def _score_intellectual_journals_url(
+    url: str, finding: str = "", cfg: Config | None = None,
+) -> float:
+    """Quality score for an intellectual_journals retry URL.
+
+    PRIMARY: LLM-judge — reads URL + associated finding excerpt, rates 0-1.
+    FALLBACK: deterministic host-authority + path-quality table.
+
+    The LLM judge generalises beyond the hand-curated host table —
+    catches new high-authority outlets (Granta, Lapham's Quarterly,
+    Boston Review specials) without manual upkeep, and catches
+    blogspam on otherwise-trusted hosts (NYRB tag pages etc.).
+
+    Falls back deterministically on any LLM failure so hermetic tests
+    + LLM outages never break the adoption gate.
+    """
+    if not isinstance(url, str) or not url.startswith(("http://", "https://")):
+        return 0.0
+    # LLM judge first — only when cfg + key are available. The free-tier
+    # call is small (16 tokens out, single number) so per-PR cost is
+    # bounded by the IJ retry frequency × URLs-per-retry × cache.
+    if cfg is not None:
+        api_key = getattr(cfg, "openrouter_api_key", "") or ""
+        if api_key:
+            llm = _llm_score_intellectual_journal_url(url, finding, api_key)
+            if llm is not None:
+                return llm
+    # Deterministic fallback — host table + path penalties.
+    from urllib.parse import urlparse
+    parsed = urlparse(url)
+    host = parsed.netloc.lower()
+    base = _INTELLECTUAL_JOURNAL_HOST_SCORES.get(
+        host, _INTELLECTUAL_JOURNAL_DEFAULT_SCORE
+    )
+    path = parsed.path.lower()
+    if path in ("", "/"):
+        base -= 0.4
+    for marker in ("/tag/", "/tags/", "/category/", "/categories/",
+                   "/topic/", "/topics/", "/search", "/page/", "/issue/"):
+        if marker in path:
+            base -= 0.25
+            break
+    import re as _re
+    if _re.search(r"/20\d{2}/(0?[1-9]|1[0-2])/", path):
+        base += 0.05
+    return max(0.0, min(1.0, base))
+
+
+def _avg_score_intellectual_journals(
+    items: Iterable[Any], cfg: Config | None = None,
+) -> float:
+    """Mean URL-quality score for a set of intellectual_journals candidates.
+
+    Accepts either:
+      - iterable of URL strings (legacy / fallback)
+      - iterable of (url, finding) tuples (preferred — gives the LLM
+        judge content excerpts to score against)
+
+    Empty sequence → 0.0 (always loses the adoption gate).
+    """
+    items = list(items)
+    if not items:
+        return 0.0
+    total = 0.0
+    n = 0
+    for it in items:
+        if isinstance(it, tuple) and len(it) == 2:
+            url, finding = it
+        else:
+            url, finding = it, ""
+        total += _score_intellectual_journals_url(url, finding=finding, cfg=cfg)
+        n += 1
+    return total / n if n else 0.0
+
+
+def _extract_url_finding_pairs(parsed: Any) -> list[tuple[str, str]]:
+    """Walk a parsed sector result and return (url, finding) pairs.
+
+    For list-of-dicts shape (intellectual_journals), each item carries
+    its own findings prose; we pair each URL in the item with that text.
+    For other shapes (deep, dict-with-subkeys), findings may be None;
+    pairs default the finding to "".
+    """
+    pairs: list[tuple[str, str]] = []
+    seen: set[str] = set()
+
+    def _add(url: Any, finding: Any) -> None:
+        if not isinstance(url, str):
+            return
+        u = url.strip()
+        if not u.startswith(("http://", "https://")) or u in seen:
+            return
+        seen.add(u)
+        f = finding if isinstance(finding, str) else ""
+        pairs.append((u, f))
+
+    if isinstance(parsed, list):
+        for item in parsed:
+            if not isinstance(item, dict):
+                continue
+            finding = item.get("findings") or item.get("summary") or ""
+            for u in item.get("urls") or []:
+                _add(u, finding)
+            single = item.get("url")
+            if single:
+                _add(single, finding)
+    elif isinstance(parsed, dict):
+        # Deep-sector shape OR dict-with-subkeys.
+        finding = parsed.get("findings") or ""
+        for u in parsed.get("urls") or []:
+            _add(u, finding)
+        for v in parsed.values():
+            if isinstance(v, list):
+                for item in v:
+                    if isinstance(item, dict):
+                        sub_f = item.get("summary") or item.get("findings") or ""
+                        sub_u = item.get("url") or ""
+                        _add(sub_u, sub_f)
+    return pairs
+
+
+def _extract_urls_from_parsed(parsed: Any) -> list[str]:
+    """Pull every URL string out of a parsed sector result (any shape).
+
+    Used by the sticky-URL forced-retry detector. Handles list-of-dicts
+    (most sectors), dict-with-urls (deep sectors), and dict-with-subkeys
+    (english_lesson_plans, family). Returns deduplicated list preserving
+    insertion order.
+    """
+    seen: list[str] = []
+    seen_set: set[str] = set()
+
+    def _add(u: Any) -> None:
+        if not isinstance(u, str):
+            return
+        u = u.strip()
+        if u.startswith(("http://", "https://")) and u not in seen_set:
+            seen.append(u)
+            seen_set.add(u)
+
+    def _walk(node: Any) -> None:
+        if isinstance(node, dict):
+            for k, v in node.items():
+                if k in ("url", "link", "href"):
+                    _add(v)
+                elif k in ("urls", "links"):
+                    if isinstance(v, list):
+                        for u in v:
+                            _add(u)
+                    else:
+                        _walk(v)
+                else:
+                    _walk(v)
+        elif isinstance(node, list):
+            for item in node:
+                _walk(item)
+
+    _walk(parsed)
+    return seen
 
 
 async def _deep_sector_forced_retry(
@@ -1409,11 +1793,12 @@ async def run_sector(
         return spec.default
 
     # Guard: if no search-provider quota moved, Kimi answered entirely from
-    # training data without calling any external tools.  For deep sectors, try
-    # one forced-search retry before giving up.  For all others, return default
-    # so the write phase never sees hallucinated findings.
+    # training data without calling any external tools.  For deep sectors AND
+    # sectors flagged for IJ-style forced retry, try one forced-search retry
+    # before giving up. For all others, return default so the write phase
+    # never sees hallucinated findings.
     if spec.name not in _NO_QUOTA_CHECK and not _quota_increased(pre_quota, ledger):
-        if spec.shape == "deep":
+        if spec.shape == "deep" or spec.name in _FORCE_RETRY_ON_OVERLAP:
             log.warning(
                 "sector %s: no search provider called — attempting forced-search retry.",
                 spec.name,
@@ -1449,6 +1834,86 @@ async def run_sector(
             spec.name, len(parsed.raw),
         )
         parsed = await _json_repair_retry(cfg, spec, parsed, ledger, sector_max_tokens)
+
+    # 2026-05-10 — sticky-URL forced retry. Some sectors (intellectual_journals
+    # observed) call search tools but return URLs the model has memorised that
+    # are already in prior_urls. The quota guard above passes (tools were
+    # called) so the leak goes through. Detect by computing overlap between
+    # parsed URLs and prior_urls; if at or above _OVERLAP_RETRY_THRESHOLD,
+    # force-retry with the deep-sector pattern.
+    if (
+        spec.name in _FORCE_RETRY_ON_OVERLAP
+        and not isinstance(parsed, _ParseFailed)
+    ):
+        parsed_urls = _extract_urls_from_parsed(parsed)
+        if parsed_urls:
+            prior_set = {u.strip() for u in prior_urls_sample if u}
+            overlap = sum(1 for u in parsed_urls if u in prior_set)
+            ratio = overlap / len(parsed_urls)
+            if ratio >= _OVERLAP_RETRY_THRESHOLD:
+                log.warning(
+                    "sector %s: %d/%d parsed URLs (%.0f%%) already in prior_urls "
+                    "— sticky-URL leak detected; attempting forced-retry.",
+                    spec.name, overlap, len(parsed_urls), ratio * 100,
+                )
+                retry_parsed = await _deep_sector_forced_retry(
+                    cfg, spec, prior_urls_sample, ledger, sector_max_tokens
+                )
+                # 2026-05-10 (PR #113 follow-up). Adoption gate now scores
+                # the URLs by host-authority + path-quality. Adopt the
+                # retry only when both:
+                #   (a) it has at least as many NEW (not-in-prior) URLs as
+                #       the original had sticky URLs, AND
+                #   (b) the average quality score of the retry's NEW URLs
+                #       is at least 0.05 above the original's sticky URLs.
+                # Prevents trading three high-authority sticky URLs (NYRB
+                # / Aeon / Marginalian) for four blogspam URLs.
+                retry_urls = _extract_urls_from_parsed(retry_parsed)
+                retry_new_urls = [u for u in retry_urls if u not in prior_set]
+                sticky_urls = [u for u in parsed_urls if u in prior_set]
+                if spec.name == "intellectual_journals":
+                    # 2026-05-10 PR #113 follow-up: score with LLM judge
+                    # using the FINDING text associated with each URL,
+                    # not just the URL string. Falls back to deterministic
+                    # host table when LLM unavailable.
+                    retry_pairs = _extract_url_finding_pairs(retry_parsed)
+                    sticky_pairs = _extract_url_finding_pairs(parsed)
+                    retry_new_pairs = [(u, f) for u, f in retry_pairs
+                                       if u not in prior_set]
+                    sticky_only_pairs = [(u, f) for u, f in sticky_pairs
+                                         if u in prior_set]
+                    new_avg = _avg_score_intellectual_journals(
+                        retry_new_pairs, cfg=cfg,
+                    )
+                    sticky_avg = _avg_score_intellectual_journals(
+                        sticky_only_pairs, cfg=cfg,
+                    )
+                else:
+                    # Non-IJ sectors fall back to count-based gate.
+                    new_avg = float(len(retry_new_urls))
+                    sticky_avg = float(len(sticky_urls))
+                quality_uplift = new_avg - sticky_avg
+                count_threshold = len(retry_new_urls) >= len(sticky_urls)
+                quality_threshold = (
+                    spec.name != "intellectual_journals"
+                    or quality_uplift >= 0.05
+                )
+                if retry_urls and count_threshold and quality_threshold:
+                    log.info(
+                        "sector %s: forced-retry adopted "
+                        "(new=%d, sticky=%d, new_avg=%.3f, sticky_avg=%.3f, uplift=%+.3f).",
+                        spec.name, len(retry_new_urls), len(sticky_urls),
+                        new_avg, sticky_avg, quality_uplift,
+                    )
+                    parsed = retry_parsed
+                else:
+                    log.warning(
+                        "sector %s: forced-retry rejected "
+                        "(new=%d, sticky=%d, new_avg=%.3f, sticky_avg=%.3f, "
+                        "uplift=%+.3f) — keeping original.",
+                        spec.name, len(retry_new_urls), len(sticky_urls),
+                        new_avg, sticky_avg, quality_uplift,
+                    )
 
     log.info(
         "sector %s: parsed %s (len=%s)",

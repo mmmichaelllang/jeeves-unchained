@@ -307,6 +307,110 @@ _SECTION_EMPTY_FEED = {
 }
 
 
+_H3_TO_SECTORS_FOR_RESCUE: dict[str, list[str]] = {
+    "The Library Stacks": ["literary_pick"],
+    "The Reading Room": ["intellectual_journals", "enriched_articles"],
+    "The Domestic Sphere": ["local_news"],
+    "The Wider World": ["family", "global_news"],
+    # Transitional alias 2026-05-10 — see scripts/audit.py for context.
+    "Beyond the Geofence": ["family", "global_news"],
+    "The Specific Enquiries": ["triadic_ontology", "ai_systems", "uap"],
+    "The Commercial Ledger": ["wearable_ai", "ai_systems"],
+    "Talk of the Town": ["newyorker"],
+}
+
+
+def _try_render_section_with_data(
+    section_name: str, session: dict, actions: list["FixAction"],
+) -> str | None:
+    """LLM-rescue helper used by F3 (fix_missing_sections) ENHANCEMENT.
+
+    Mirrors the data-extraction + LLM-render contract from F6
+    (fix_empty_with_data). Returns the rendered <p>...</p> body on success,
+    None on any failure (caller falls back to empty-feed placeholder).
+
+    Output is gated by ``_validate_audit_model_output`` per F-001 so chain-
+    of-thought leaks from reasoning models are rejected before splice.
+
+    Records a FixAction either way so the audit-fix log surfaces the
+    decision (success / no-data / LLM-failed / validator-rejected).
+    """
+    sectors = _H3_TO_SECTORS_FOR_RESCUE.get(section_name, [])
+    if not sectors:
+        return None
+    data_summary: list[str] = []
+    for sec in sectors:
+        v = session.get(sec)
+        if isinstance(v, list) and v:
+            for item in v[:3]:
+                if isinstance(item, dict):
+                    title = item.get("headline") or item.get("title") or ""
+                    url = item.get("url") or ""
+                    if url:
+                        data_summary.append(f"- {title}: {url}")
+        elif isinstance(v, dict) and v.get("available"):
+            title = v.get("title") or v.get("headline") or ""
+            url = v.get("url") or ""
+            summary = v.get("summary") or v.get("dek") or ""
+            if title:
+                data_summary.append(f"- {title}: {url}\n  {summary[:300]}")
+    if not data_summary:
+        actions.append(FixAction(
+            type="rerender_missing_section",
+            section=section_name,
+            detail="skipped — no usable data extracted from session",
+            status="skipped",
+        ))
+        return None
+
+    system = (
+        "You are Jeeves, a cultivated British butler writing a single "
+        "paragraph of a daily morning briefing for Mister Lang. Voice: "
+        "dry, precise, occasionally barbed; only swear if it lands. "
+        "Output: ONE HTML <p>...</p> paragraph (or two if the data "
+        "demands it), 60-180 words. NO h3, NO links to homepages, NO "
+        "facts that aren't supported by the data given."
+    )
+    prompt = (
+        f"Section: {section_name}\n\n"
+        f"Available data:\n" + "\n".join(data_summary) + "\n\n"
+        "Write the section paragraph(s). Use <a href=\"...\">title</a> "
+        "for the URL anchors only — never bare hostnames. Return only HTML."
+    )
+    text, model = _call_audit_model(prompt, system=system, max_tokens=600)
+    if not text or not model:
+        actions.append(FixAction(
+            type="rerender_missing_section",
+            section=section_name,
+            detail="skipped — LLM call failed",
+            status="failed",
+        ))
+        return None
+    ok, reason = _validate_audit_model_output(text)
+    if not ok:
+        log.warning(
+            "audit_fix: F3-ENHANCE validator rejected output for %s "
+            "(model=%s, reason=%s)",
+            section_name, model, reason,
+        )
+        actions.append(FixAction(
+            type="rerender_missing_section",
+            section=section_name,
+            detail=f"validator rejected: {reason}",
+            status="failed",
+            evidence={"model": model, "preview": text[:120]},
+        ))
+        return None
+    actions.append(FixAction(
+        type="rerender_missing_section",
+        section=section_name,
+        detail=f"rescued via {model}",
+        status="applied",
+        evidence={"model": model, "chars": len(text)},
+    ))
+    return text.strip()
+
+
 def fix_missing_sections(html: str, defects: list[dict], session: dict,
                          actions: list[FixAction]) -> str:
     missing = [d for d in defects if d["type"] == "missing_section"
@@ -314,7 +418,19 @@ def fix_missing_sections(html: str, defects: list[dict], session: dict,
     if not missing:
         return html
     # Inject in canonical position. We re-walk: for each canonical h3 not in
-    # the doc, splice in the h3 + empty-feed paragraph at the right slot.
+    # the doc, splice in the h3 + (real-data-rendered paragraph OR empty-feed
+    # placeholder fallback) at the right slot.
+    #
+    # 2026-05-09 ENHANCEMENT — when session has data for the missing section's
+    # mapped sectors, render the section with the real data via the same LLM
+    # path used by fix_empty_with_data. Run 1 of 2026-05-09 dropped Reading
+    # Room and Library Stacks despite session.intellectual_journals=4items,
+    # session.enriched_articles=2items, session.literary_pick=populated. F6
+    # would have caught these had the model written EMPTY h3 sections; F3
+    # caught them because the h3 was MISSING entirely. Pre-enhancement, F3
+    # injected empty-feed placeholders, throwing away the real data. Post-
+    # enhancement, F3 first attempts LLM render with the data; falls back to
+    # empty-feed only if data extraction or LLM call fails.
     h3_seq = extract_h3_sequence(html)
     for d in missing:
         target = d["section"]
@@ -330,7 +446,12 @@ def fix_missing_sections(html: str, defects: list[dict], session: dict,
             if prev in h3_seq:
                 anchor = prev
                 break
-        block = f"\n<h3>{target}</h3>\n{_SECTION_EMPTY_FEED.get(target, _EMPTY_FEED_DEFAULT)}\n"
+        # Try LLM-rendered body first; fall back to empty-feed placeholder.
+        body_html = _try_render_section_with_data(target, session, actions)
+        if body_html:
+            block = f"\n<h3>{target}</h3>\n{body_html}\n"
+        else:
+            block = f"\n<h3>{target}</h3>\n{_SECTION_EMPTY_FEED.get(target, _EMPTY_FEED_DEFAULT)}\n"
         if anchor:
             # Splice after the end of the anchor block (just before next h3 or EOF).
             anchor_match = re.search(
@@ -623,13 +744,79 @@ def fix_empty_with_data(html: str, defects: list[dict], session: dict,
     return html, model_used
 
 
+_GREETING_FIRST_P_RE = re.compile(r"<p[^>]*>([\s\S]*?)</p>", re.IGNORECASE)
+
+
+def _extract_body_excerpts(
+    html: str, *, max_paragraphs: int = 3, max_chars: int = 1200,
+) -> str:
+    """Return prose excerpts from the briefing's BODY (after the greeting).
+
+    Used by F7 (recurring_opener) to give the rewrite model concrete
+    content to anchor on. Skips the greeting <p> (first body paragraph)
+    and any signoff/coverage wrappers; pulls up to ``max_paragraphs``
+    subsequent <p> tags, joined with ` · ` separators, capped at
+    ``max_chars``.
+    """
+    if not html:
+        return ""
+    body = re.sub(r"<head>[\s\S]*?</head>", "", html, flags=re.IGNORECASE)
+    body = re.sub(r"<style>[\s\S]*?</style>", "", body, flags=re.IGNORECASE)
+    paragraphs: list[str] = []
+    seen_first = False
+    for m in _GREETING_FIRST_P_RE.finditer(body):
+        block = m.group(0).lower()
+        if 'class="signoff"' in block or "coverage_log" in block:
+            continue
+        text = re.sub(r"<[^>]+>", " ", m.group(1))
+        text = re.sub(r"\s+", " ", text).strip()
+        if not text:
+            continue
+        if not seen_first:
+            seen_first = True
+            continue  # skip greeting itself
+        paragraphs.append(text)
+        if len(paragraphs) >= max_paragraphs:
+            break
+    if not paragraphs:
+        return ""
+    out = "  - " + "\n  - ".join(paragraphs)
+    if len(out) > max_chars:
+        out = out[:max_chars].rstrip() + " […]"
+    return out
+
+
 def fix_greeting_incomplete(html: str, defects: list[dict], session: dict,
                             actions: list[FixAction]) -> tuple[str, str | None]:
-    """F7: re-render Part 1 with weather + correspondence + date."""
+    """F7: re-render Part 1 with weather + correspondence + date.
+
+    2026-05-10 — also fires on recurring_opener defect (D10). When today's
+    opener matches a prior briefing's, the rewrite prompt is augmented with
+    the prior opener so the model is told NOT to emit anything resembling
+    it. The structural greeting fields (weather, correspondence, date) are
+    still required, so the rewrite covers both classes of failure.
+    """
     greeting_defects = [d for d in defects
-                        if d["type"].startswith("greeting_")]
+                        if d["type"].startswith("greeting_")
+                        or d["type"] == "recurring_opener"]
     if not greeting_defects:
         return html, None
+
+    # Extract the recurring-opener evidence if present so we can tell the
+    # model exactly which phrasing to avoid AND give it the briefing
+    # excerpts it should anchor on.
+    recurring_defects = [d for d in greeting_defects
+                         if d["type"] == "recurring_opener"]
+    recurring_avoid_phrase: str | None = None
+    recurring_match_date: str | None = None
+    recurring_prior_phrase: str | None = None
+    recurring_jaccard: float | None = None
+    if recurring_defects:
+        ev = recurring_defects[0].get("evidence", {})
+        recurring_avoid_phrase = ev.get("opener_preview")
+        recurring_match_date = ev.get("matches_date")
+        recurring_prior_phrase = ev.get("prior_opener_preview")
+        recurring_jaccard = ev.get("jaccard_similarity")
 
     weather = session.get("weather") or ""
     corr = (session.get("correspondence") or {}).get("text", "")
@@ -652,12 +839,52 @@ def fix_greeting_incomplete(html: str, defects: list[dict], session: dict,
         "NOT emit an h3 — this is the greeting, before any section. Return "
         "only the <p> tag."
     )
-    prompt = (
-        f"Today's date: {date_str}\n"
-        f"Weather: {weather}\n"
-        f"Correspondence handoff:\n{corr}\n\n"
-        "Write the greeting paragraph in Jeeves voice."
-    )
+    prompt_lines = [
+        f"Today's date: {date_str}",
+        f"Weather: {weather}",
+        f"Correspondence handoff:",
+        corr,
+        "",
+        "Write the greeting paragraph in Jeeves voice.",
+    ]
+    if recurring_avoid_phrase:
+        # 2026-05-10 PR #113 follow-up. Beyond banning the prior phrase,
+        # give the model excerpts of what TODAY'S briefing actually
+        # contains so it can anchor the new opener on a specific named
+        # item — that's the only durable defence against recurrence.
+        # Pull the next 3 <p> after the greeting (the body section
+        # starts) so the model sees the actual content of the day.
+        body_excerpts = _extract_body_excerpts(html, max_paragraphs=3, max_chars=1200)
+        sim_str = (
+            f"~{round(recurring_jaccard * 100)}% Jaccard similar"
+            if recurring_jaccard is not None
+            else "near-identical"
+        )
+        prompt_lines.extend([
+            "",
+            "FRESHNESS REQUIREMENT — this opener has recurred:",
+            f"  TODAY (current draft): {recurring_avoid_phrase!r}",
+            (f"  PRIOR ({recurring_match_date}): {recurring_prior_phrase!r}"
+             if recurring_prior_phrase
+             else f"  PRIOR ({recurring_match_date or 'last 4 days'}): "
+             f"{recurring_avoid_phrase!r}"),
+            f"  ({sim_str}.)",
+            "",
+            "Your rewrite MUST be COMPLETELY UNIQUE — not a paraphrase, "
+            "not a rearrangement, not a tonal cousin of the prior. Banned "
+            "verbatim phrases include 'world has not improved overnight', "
+            "'opportunities to observe it failing', and any close synonym.",
+            "",
+            "ANCHOR ON SPECIFIC CONTENT FROM TODAY — the briefing body "
+            "begins with the following named items. Pick ONE and open the "
+            "greeting around it (a wry observation that names it directly, "
+            "not a generic 'the world is bleak' frame):",
+            body_excerpts or "  (no body excerpts extracted — fall back to weather + correspondence anchors)",
+            "",
+            "The opener must read like a butler discovering today's "
+            "specific paper, not delivering a recurring epigraph.",
+        ])
+    prompt = "\n".join(prompt_lines)
     text, model = _call_audit_model(prompt, system=system, max_tokens=400)
     if not text or not model:
         actions.append(FixAction(
@@ -696,12 +923,19 @@ def fix_greeting_incomplete(html: str, defects: list[dict], session: dict,
         ))
         return html, None
     html = html[:m.start()] + text.strip() + html[m.end():]
+    detail = f"re-rendered via {model}"
+    if recurring_avoid_phrase:
+        detail += f" (recurring_opener fix; matched {recurring_match_date})"
     actions.append(FixAction(
         type="rerender_greeting",
         section="(greeting)",
-        detail=f"re-rendered via {model}",
+        detail=detail,
         status="applied",
-        evidence={"model": model, "chars": len(text)},
+        evidence={
+            "model": model,
+            "chars": len(text),
+            "recurring_match_date": recurring_match_date,
+        },
     ))
     return html, model
 

@@ -548,12 +548,39 @@ def test_enriched_articles_instruction_warns_about_reuters():
 
 
 def test_deep_fallback_queries_cover_all_deep_sectors():
-    """Every deep-shaped sector must have a fallback query for forced-search retry."""
-    from jeeves.research_sectors import _DEEP_FALLBACK_QUERIES
+    """Every deep-shaped sector must have a fallback query for forced-search retry.
+
+    2026-05-10: _DEEP_FALLBACK_QUERIES was extended to also serve
+    sectors in _FORCE_RETRY_ON_OVERLAP (intellectual_journals — shape
+    'list' but routed through the same forced-retry path because it
+    leaks sticky URLs). Contract is now:
+
+      - every deep sector → present in _DEEP_FALLBACK_QUERIES
+      - every key in _DEEP_FALLBACK_QUERIES that is NOT a deep sector
+        must live in _FORCE_RETRY_ON_OVERLAP
+
+    Old invariant was strict equality (set(keys) == deep_sectors). New
+    invariant relaxes it to: keys ⊇ deep_sectors AND extras ⊆
+    _FORCE_RETRY_ON_OVERLAP.
+    """
+    from jeeves.research_sectors import (
+        _DEEP_FALLBACK_QUERIES,
+        _FORCE_RETRY_ON_OVERLAP,
+    )
 
     deep_sectors = {s.name for s in SECTOR_SPECS if s.shape == "deep"}
-    assert deep_sectors == set(_DEEP_FALLBACK_QUERIES.keys()), (
-        f"missing fallback queries for: {deep_sectors - set(_DEEP_FALLBACK_QUERIES.keys())}"
+    fallback_keys = set(_DEEP_FALLBACK_QUERIES.keys())
+
+    # Every deep sector covered.
+    missing = deep_sectors - fallback_keys
+    assert not missing, f"missing fallback queries for deep sectors: {missing}"
+
+    # Any extras must be in the overlap-retry allowlist (no orphaned keys).
+    extras = fallback_keys - deep_sectors
+    illegal_extras = extras - _FORCE_RETRY_ON_OVERLAP
+    assert not illegal_extras, (
+        f"_DEEP_FALLBACK_QUERIES has keys that are neither deep sectors "
+        f"nor in _FORCE_RETRY_ON_OVERLAP: {illegal_extras}"
     )
 
 
