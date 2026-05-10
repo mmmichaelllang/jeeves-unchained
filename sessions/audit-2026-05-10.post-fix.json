@@ -1,6 +1,6 @@
 {
   "date": "2026-05-10",
-  "briefing_chars": 25718,
+  "briefing_chars": 23699,
   "session_status": "complete",
   "detectors_run": [
     "D8_dedup",
@@ -9,7 +9,8 @@
     "D3_missing_section",
     "D4_section_order",
     "D5_aside_repetition",
-    "D6_greeting_incomplete"
+    "D6_greeting_incomplete",
+    "D10_recurring_opener"
   ],
   "detectors_skipped": [
     "D7_narrative_flow",
@@ -20,15 +21,15 @@
       "type": "dedup_cross_day_overlap",
       "severity": "medium",
       "section": null,
-      "detail": "33 URLs already covered in prior briefings",
+      "detail": "6 URLs already covered in prior briefings",
       "evidence": {
-        "overlap_count": 33,
+        "overlap_count": 6,
         "samples": [
-          "https://arxiv.org/pdf/2603.13327",
+          "https://myedmondsnews.com/2026/05/court-denies-motion-to-reconsider-dismissal-of-edmonds-tree-case",
+          "https://www.aljazeera.com/news/liveblog/2026/5/10/iran-war-live-irgc-warns-us-against-attacks-on-ships-israel-bombs-lebanon",
+          "https://arxiv.org/pdf/2604.09621",
           "https://myedmondsnews.com/2026/05/city-of-edmonds-update-resolution-of-wastewater-treatment-plant-operational-issues-ongoing",
-          "https://annmichaelsen.com/2026/01/07/lesson-plan-rhetoric-literary-devices-and-interpretation-in-contemporary-political-commentary",
-          "https://www.nybooks.com/articles/2026/05/28/irans-new-winter-christopher-de-bellaigue",
-          "https://skugga.com"
+          "https://arxiv.org/pdf/2603.13327"
         ]
       }
     },
@@ -40,8 +41,19 @@
       "evidence": {
         "word_count": 13,
         "data_signals": [
-          "intellectual_journals=5items",
-          "enriched_articles=5items"
+          "enriched_articles=3items"
+        ]
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "section under 30 words (10) but sectors ['literary_pick'] have available data",
+      "evidence": {
+        "word_count": 10,
+        "data_signals": [
+          "literary_pick=populated"
         ]
       }
     },
@@ -51,13 +63,13 @@
       "section": "(greeting)",
       "detail": "correspondence handoff text present but no preview in greeting",
       "evidence": {
-        "handoff_preview": "- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Research Phase workflow.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for Jeeves Correspondence Phas"
+        "handoff_preview": "- [escalation] mmmichaelllang: CI workflow for jeeves-unchained sprint-23 PR failed all jobs.\n- [escalation] mmmichaelllang: CI workflow for jeeves-unchained sprint-23 PR failed all jobs.\n- [escalatio"
       }
     }
   ],
-  "section_count": 7,
+  "section_count": 8,
   "hallucinated_url_count": 0,
-  "empty_section_count": 1,
+  "empty_section_count": 2,
   "aside_template_count": 0,
   "narrative_flow_score": null,
   "writing_quality_score": null,
