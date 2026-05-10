@@ -307,6 +307,108 @@ _SECTION_EMPTY_FEED = {
 }
 
 
+_H3_TO_SECTORS_FOR_RESCUE: dict[str, list[str]] = {
+    "The Library Stacks": ["literary_pick"],
+    "The Reading Room": ["intellectual_journals", "enriched_articles"],
+    "The Domestic Sphere": ["local_news"],
+    "Beyond the Geofence": ["family", "global_news"],
+    "The Specific Enquiries": ["triadic_ontology", "ai_systems", "uap"],
+    "The Commercial Ledger": ["wearable_ai", "ai_systems"],
+    "Talk of the Town": ["newyorker"],
+}
+
+
+def _try_render_section_with_data(
+    section_name: str, session: dict, actions: list["FixAction"],
+) -> str | None:
+    """LLM-rescue helper used by F3 (fix_missing_sections) ENHANCEMENT.
+
+    Mirrors the data-extraction + LLM-render contract from F6
+    (fix_empty_with_data). Returns the rendered <p>...</p> body on success,
+    None on any failure (caller falls back to empty-feed placeholder).
+
+    Output is gated by ``_validate_audit_model_output`` per F-001 so chain-
+    of-thought leaks from reasoning models are rejected before splice.
+
+    Records a FixAction either way so the audit-fix log surfaces the
+    decision (success / no-data / LLM-failed / validator-rejected).
+    """
+    sectors = _H3_TO_SECTORS_FOR_RESCUE.get(section_name, [])
+    if not sectors:
+        return None
+    data_summary: list[str] = []
+    for sec in sectors:
+        v = session.get(sec)
+        if isinstance(v, list) and v:
+            for item in v[:3]:
+                if isinstance(item, dict):
+                    title = item.get("headline") or item.get("title") or ""
+                    url = item.get("url") or ""
+                    if url:
+                        data_summary.append(f"- {title}: {url}")
+        elif isinstance(v, dict) and v.get("available"):
+            title = v.get("title") or v.get("headline") or ""
+            url = v.get("url") or ""
+            summary = v.get("summary") or v.get("dek") or ""
+            if title:
+                data_summary.append(f"- {title}: {url}\n  {summary[:300]}")
+    if not data_summary:
+        actions.append(FixAction(
+            type="rerender_missing_section",
+            section=section_name,
+            detail="skipped — no usable data extracted from session",
+            status="skipped",
+        ))
+        return None
+
+    system = (
+        "You are Jeeves, a cultivated British butler writing a single "
+        "paragraph of a daily morning briefing for Mister Lang. Voice: "
+        "dry, precise, occasionally barbed; only swear if it lands. "
+        "Output: ONE HTML <p>...</p> paragraph (or two if the data "
+        "demands it), 60-180 words. NO h3, NO links to homepages, NO "
+        "facts that aren't supported by the data given."
+    )
+    prompt = (
+        f"Section: {section_name}\n\n"
+        f"Available data:\n" + "\n".join(data_summary) + "\n\n"
+        "Write the section paragraph(s). Use <a href=\"...\">title</a> "
+        "for the URL anchors only — never bare hostnames. Return only HTML."
+    )
+    text, model = _call_audit_model(prompt, system=system, max_tokens=600)
+    if not text or not model:
+        actions.append(FixAction(
+            type="rerender_missing_section",
+            section=section_name,
+            detail="skipped — LLM call failed",
+            status="failed",
+        ))
+        return None
+    ok, reason = _validate_audit_model_output(text)
+    if not ok:
+        log.warning(
+            "audit_fix: F3-ENHANCE validator rejected output for %s "
+            "(model=%s, reason=%s)",
+            section_name, model, reason,
+        )
+        actions.append(FixAction(
+            type="rerender_missing_section",
+            section=section_name,
+            detail=f"validator rejected: {reason}",
+            status="failed",
+            evidence={"model": model, "preview": text[:120]},
+        ))
+        return None
+    actions.append(FixAction(
+        type="rerender_missing_section",
+        section=section_name,
+        detail=f"rescued via {model}",
+        status="applied",
+        evidence={"model": model, "chars": len(text)},
+    ))
+    return text.strip()
+
+
 def fix_missing_sections(html: str, defects: list[dict], session: dict,
                          actions: list[FixAction]) -> str:
     missing = [d for d in defects if d["type"] == "missing_section"
@@ -314,7 +416,19 @@ def fix_missing_sections(html: str, defects: list[dict], session: dict,
     if not missing:
         return html
     # Inject in canonical position. We re-walk: for each canonical h3 not in
-    # the doc, splice in the h3 + empty-feed paragraph at the right slot.
+    # the doc, splice in the h3 + (real-data-rendered paragraph OR empty-feed
+    # placeholder fallback) at the right slot.
+    #
+    # 2026-05-09 ENHANCEMENT — when session has data for the missing section's
+    # mapped sectors, render the section with the real data via the same LLM
+    # path used by fix_empty_with_data. Run 1 of 2026-05-09 dropped Reading
+    # Room and Library Stacks despite session.intellectual_journals=4items,
+    # session.enriched_articles=2items, session.literary_pick=populated. F6
+    # would have caught these had the model written EMPTY h3 sections; F3
+    # caught them because the h3 was MISSING entirely. Pre-enhancement, F3
+    # injected empty-feed placeholders, throwing away the real data. Post-
+    # enhancement, F3 first attempts LLM render with the data; falls back to
+    # empty-feed only if data extraction or LLM call fails.
     h3_seq = extract_h3_sequence(html)
     for d in missing:
         target = d["section"]
@@ -330,7 +444,12 @@ def fix_missing_sections(html: str, defects: list[dict], session: dict,
             if prev in h3_seq:
                 anchor = prev
                 break
-        block = f"\n<h3>{target}</h3>\n{_SECTION_EMPTY_FEED.get(target, _EMPTY_FEED_DEFAULT)}\n"
+        # Try LLM-rendered body first; fall back to empty-feed placeholder.
+        body_html = _try_render_section_with_data(target, session, actions)
+        if body_html:
+            block = f"\n<h3>{target}</h3>\n{body_html}\n"
+        else:
+            block = f"\n<h3>{target}</h3>\n{_SECTION_EMPTY_FEED.get(target, _EMPTY_FEED_DEFAULT)}\n"
         if anchor:
             # Splice after the end of the anchor block (just before next h3 or EOF).
             anchor_match = re.search(

@@ -1,0 +1,163 @@
+{
+  "version": 1,
+  "generated_for_commit": "6141410",
+  "fingerprints": [
+    {
+      "date": "2026-04-24",
+      "buckets": {},
+      "asides_floor_count": 40,
+      "signoff_correct": true,
+      "word_count": 3328
+    },
+    {
+      "date": "2026-04-25",
+      "buckets": {},
+      "asides_floor_count": 5,
+      "signoff_correct": true,
+      "word_count": 1172
+    },
+    {
+      "date": "2026-04-26",
+      "buckets": {},
+      "asides_floor_count": 2,
+      "signoff_correct": true,
+      "word_count": 4057
+    },
+    {
+      "date": "2026-04-27",
+      "buckets": {
+        "asides_floor": [
+          "count=0"
+        ]
+      },
+      "asides_floor_count": 0,
+      "signoff_correct": true,
+      "word_count": 1243
+    },
+    {
+      "date": "2026-04-28",
+      "buckets": {
+        "day_name_wrong": [
+          "Monday->Tuesday"
+        ]
+      },
+      "asides_floor_count": 3,
+      "signoff_correct": true,
+      "word_count": 3007
+    },
+    {
+      "date": "2026-05-01",
+      "buckets": {
+        "closing_summary": [
+          "These developments highlight"
+        ],
+        "asides_floor": [
+          "count=1"
+        ]
+      },
+      "asides_floor_count": 1,
+      "signoff_correct": true,
+      "word_count": 6706
+    },
+    {
+      "date": "2026-05-02",
+      "buckets": {
+        "asides_floor": [
+          "count=0"
+        ]
+      },
+      "asides_floor_count": 0,
+      "signoff_correct": true,
+      "word_count": 7082
+    },
+    {
+      "date": "2026-05-03",
+      "buckets": {
+        "closing_summary": [
+          "marking a significant"
+        ],
+        "asides_floor": [
+          "count=0"
+        ]
+      },
+      "asides_floor_count": 0,
+      "signoff_correct": true,
+      "word_count": 5012
+    },
+    {
+      "date": "2026-05-04",
+      "buckets": {
+        "asides_floor": [
+          "count=0"
+        ]
+      },
+      "asides_floor_count": 0,
+      "signoff_correct": true,
+      "word_count": 2707
+    },
+    {
+      "date": "2026-05-05",
+      "buckets": {
+        "asides_floor": [
+          "count=0"
+        ]
+      },
+      "asides_floor_count": 0,
+      "signoff_correct": true,
+      "word_count": 1838
+    },
+    {
+      "date": "2026-05-06",
+      "buckets": {
+        "staleness_narration": [
+          "since our last review"
+        ],
+        "asides_floor": [
+          "count=0"
+        ]
+      },
+      "asides_floor_count": 0,
+      "signoff_correct": true,
+      "word_count": 1661
+    },
+    {
+      "date": "2026-05-07",
+      "buckets": {},
+      "asides_floor_count": 4,
+      "signoff_correct": true,
+      "word_count": 1991
+    },
+    {
+      "date": "2026-05-08",
+      "buckets": {
+        "asides_floor": [
+          "count=0"
+        ]
+      },
+      "asides_floor_count": 0,
+      "signoff_correct": true,
+      "word_count": 2223
+    },
+    {
+      "date": "2026-05-09",
+      "buckets": {
+        "staleness_narration": [
+          "since our last review"
+        ],
+        "closing_summary": [
+          "These advancements, as reported",
+          "highlights the rapid evolution",
+          "implications for the research agenda",
+          "is poised to transform",
+          "marking a new era",
+          "signal progress in the development",
+          "synthesis of these findings highlights",
+          "underscores the potential for"
+        ]
+      },
+      "asides_floor_count": 4,
+      "signoff_correct": true,
+      "word_count": 2465
+    }
+  ]
+}

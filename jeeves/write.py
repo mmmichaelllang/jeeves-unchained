@@ -5908,6 +5908,62 @@ def postprocess_html(
                         bucket_name, phrase,
                     )
 
+    # ----------------------------------------------------------------- #
+    # 2026-05-09 fix_day_name_wrong — deterministic greeting-date fix.   #
+    # Run 1 of 2026-05-09 emitted "Tuesday, 09 May 2026" when the actual #
+    # day was Saturday. Greeting model day-name hallucination ships if   #
+    # not caught here. Compute correct day name from session.date and    #
+    # surgically replace any wrong day-name token that sits within ~120  #
+    # chars of the date numerals in the greeting region. Idempotent —   #
+    # if the correct day name is already present, no-op.                 #
+    # ----------------------------------------------------------------- #
+    try:
+        from datetime import date as _date_t
+        if isinstance(session.date, _date_t):
+            d = session.date
+        else:
+            d = _date_t.fromisoformat(str(session.date))
+        correct_day = d.strftime("%A")
+        wrong_days = [
+            n for n in (
+                "Monday", "Tuesday", "Wednesday", "Thursday",
+                "Friday", "Saturday", "Sunday",
+            ) if n != correct_day
+        ]
+        # Limit search to first ~2000 chars (greeting region) to avoid
+        # rewriting day-name mentions in body prose ("on Tuesday last week").
+        head_region = html[:2000]
+        head_lower = head_region.lower()
+        # Anchor: the date numerals "9, 2026" / "May 9" / similar must be
+        # within a small window of the wrong day name.
+        date_signals = [str(d.year), d.strftime("%B"),
+                        d.strftime("%-d") if hasattr(d, "strftime") else str(d.day)]
+        for wrong in wrong_days:
+            wrong_idx = head_lower.find(wrong.lower())
+            if wrong_idx == -1:
+                continue
+            # Must have at least one date-signal nearby (within 80 chars).
+            window = head_lower[max(0, wrong_idx - 20): wrong_idx + 80]
+            if not any(sig.lower() in window for sig in date_signals):
+                continue
+            # Wrong day-name found near a date — replace it (in original
+            # case-preserving form via re.sub with case-insensitive flag).
+            log.warning(
+                "fix_day_name_wrong: %r near greeting date but actual day "
+                "is %s; replacing.", wrong, correct_day,
+            )
+            wrong_re = re.compile(r"\b" + re.escape(wrong) + r"\b", re.IGNORECASE)
+            # Replace ONCE in the head region — keep body-prose mentions intact.
+            new_head, n_sub = wrong_re.subn(correct_day, head_region, count=1)
+            if n_sub:
+                html = new_head + html[2000:]
+                marker = f"day_name_wrong:{wrong}->{correct_day}"
+                if marker not in quality_warnings_list:
+                    quality_warnings_list.append(marker)
+            break  # only correct one wrong day-name token per pass
+    except (ValueError, TypeError, AttributeError) as exc:
+        log.debug("fix_day_name_wrong: skipped (%s: %s)", type(exc).__name__, exc)
+
     # Asides-floor guard. The OR narrative editor is supposed to land exactly
     # five profane asides. When the editor fails or is skipped, the count
     # drops to zero and the briefing reads sterile. Surface this in the
@@ -5935,8 +5991,32 @@ def postprocess_html(
             "SIGNOFF MISSING after postprocess; injecting safety signoff. "
             "Investigate Part 9 output."
         )
-        # Inject a minimal signoff before </body> so the briefing ships cleanly.
-        if "<div class=\"signoff\">" not in html and "</body>" in html:
+        # 2026-05-09 fix_signoff_wrong upgrade — three cases handled:
+        #   (a) signoff div absent entirely → inject the canonical block
+        #   (b) signoff div present but wrong inner text → surgically replace
+        #       the inner <p> contents with the canonical sign-off line
+        #   (c) signoff div present and inner text valid but failing the
+        #       string check (case-mangled, extra whitespace) → (a) handles
+        #       this via fall-through after surgical (b) attempt
+        # The OLD code only handled case (a). Run-1 of 2026-05-09 hit case
+        # (b): div present, inner read "Your faithful Butler, Jeeves" — the
+        # safety inject was skipped because div existed, and the wrong text
+        # shipped. Surgical replace closes that gap.
+        canonical = "Your reluctantly faithful Butler,"
+        signoff_div_re = re.compile(
+            r'(<div[^>]*\bclass="signoff"[^>]*>\s*<p[^>]*>)([\s\S]*?)(</p>\s*</div>)',
+            re.IGNORECASE,
+        )
+        m = signoff_div_re.search(html)
+        if m:
+            log.warning(
+                "fix_signoff_wrong: signoff div has wrong inner text %r; "
+                "surgically replacing with canonical line.",
+                m.group(2)[:80],
+            )
+            replacement = m.group(1) + canonical + "<br/>Jeeves" + m.group(3)
+            html = html[:m.start()] + replacement + html[m.end():]
+        elif "<div class=\"signoff\">" not in html and "</body>" in html:
             safety = (
                 '<div class="signoff">\n'
                 '<p>Your reluctantly faithful Butler,<br/>Jeeves</p>\n'
