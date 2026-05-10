@@ -3,63 +3,70 @@
   "status": "complete",
   "dedup": {
     "covered_urls": [
-      "http://www.seattlepromusica.org/auditions",
-      "https://alicekeeler.com/2024/07/10/diffit-ai-is-amazingly-easy-to-use/",
-      "https://apnews.com/article/iran-us-war-0c25b2ca53ee90bc19bfbf6c44a66e6e",
-      "https://arxiv.org/pdf/2602.02660",
-      "https://arxiv.org/pdf/2603.13327",
-      "https://arxiv.org/pdf/2604.09621",
-      "https://flipeducation.ai/blog/15-best-ai-tools-for-teachers-in-2026-from-lesson-planning-to-grading",
+      "https://aclanthology.org/2026.findings-eacl.185/",
+      "https://arxiv.org/abs/2603.27008v1",
+      "https://arxiv.org/html/2603.26718v2",
+      "https://canyonsdistrict.cld.bz/BHS-10th-Grade-ELA-Map/38/",
+      "https://coltswire.usatoday.com/story/news/nation/2026/02/16/congress-uap-obama-aliens-real-podcast/88699039007/",
+      "https://getreflecti.com/",
+      "https://hal.cs.princeton.edu/scienceagentbench",
+      "https://humy.ai/blog/humy-2-0-the-ai-platform-for-social-studies-shaped-by-teachers",
+      "https://jacobin.com/2026/05/may-day-europe-unions-workers",
+      "https://legendmemoryai.com/",
       "https://lynnwoodtimes.com/2026/05/07/edmonds-bookshop-story-time-may/",
-      "https://meritalk.com/articles/pentagon-begins-release-of-uap-files/",
+      "https://memories.ai/luci/",
       "https://myedmondsnews.com/2026/05/city-of-edmonds-update-resolution-of-wastewater-treatment-plant-operational-issues-ongoing/",
+      "https://myedmondsnews.com/2026/05/commissioners-hear-details-concerns-at-south-county-fire-bond-hearing-for-420-million-capital-plan/",
       "https://myedmondsnews.com/2026/05/court-denies-motion-to-reconsider-dismissal-of-edmonds-tree-case/",
-      "https://myedmondsnews.com/2026/05/new-statewide-housing-law-goes-into-effect-june-11-how-do-local-city-leaders-organizations-feel-about-it/",
-      "https://nypost.com/2026/05/08/us-news/pentagon-releases-dozens-of-ufo-files-trump-teased-as-very-interesting/",
-      "https://oversight.house.gov/release/hearing-wrap-up-government-must-be-more-transparent-about-uaps/",
-      "https://philarchive.org/archive/ISATRO-4",
+      "https://osu-nlp-group.github.io/ScienceAgentBench/",
+      "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
       "https://seattlesings.org/member/northwest-chorale/",
+      "https://shakeuplearning.com/blog/10-ways-to-learn-with-shake-up-learning-this-summer/",
       "https://sno-isle.bibliocommons.com/v2/events?audiences=5ecfd4bde19e6b240078b87c%2C5f0ce9be8497d4760a06c16a%2C5f0ce9c2036b39880a776ab0",
-      "https://the-gadgeteer.com/2026/05/05/best-ai-wearables-2026/",
-      "https://www.advfn.com/stock-market/stock-news/98376307/memomind-opens-global-pre-orders-for-memomind-one",
-      "https://www.aljazeera.com/news/liveblog/2026/5/10/iran-war-live-irgc-warns-us-against-attacks-on-ships-israel-bombs-lebanon",
-      "https://www.applitrack.com/edmonds/onlineapp/jobpostings/view.asp?AppliTrackJobId=4776",
-      "https://www.applitrack.com/snohomish/onlineapp/default.aspx?all=1",
-      "https://www.briskteaching.com/",
-      "https://www.courthousenews.com/whistleblower-feds-recovered-non-human-biological-material-from-ufo-crash-site/",
-      "https://www.firstpost.com/tech/neo-sapien-ai-wearable-neo-1-bengaluru-startup-cyber-hub-gurugram-second-brain-india-2026-ai-wearable-boom14007769-14007769.html",
-      "https://www.fonearena.com/blog/480594/huawei-ai-glasses-price-features.html",
-      "https://www.independent.co.uk/news/world/middle-east/iran-us-war-live-trump-strait-of-hormuz-ceasefire-b2973713.html",
-      "https://www.investors.com/news/technology/ces-2026-wearable-ai-gadgets-could-be-next-big-thing/",
-      "https://www.lwsd.org/employment/teachers-certificated-employees",
-      "https://www.newyorker.com/magazine/2026/05/04/medallions-movement-and-mamdani-at-moma-ps-1",
-      "https://www.pprize.com/BookGuide.php/Year/2004",
-      "https://www.thetimes.com/uk/technology-uk/article/could-2026-be-the-year-life-logging-wearable-ai-devices-take-off-p020t560m",
-      "https://www.universetoday.com/articles/witnesses-alien-congress-uap-ufo",
-      "https://www.wired.com/story/pentagon-drops-new-ufo-files/",
-      "https://www.ziprecruiter.com/c/Highline-Public-Schools/Job/TEACHERS:-2026-2027-CADRE-COHORT/-in-Seattle,WA?jid=95f48ee1eb462",
-      "https://www.ziprecruiter.com/c/Northshore-School-District/Job/Social-Studies-Teacher-Secondary/-in-Bothell,WA?jid=c8711e9f4b43d5fa",
-      "https://zenodo.org/records/19583419"
+      "https://talkintownenglish.com/blog/how-to-create-a-classroom-economy/",
+      "https://teachbritannica.com/britannica-studio",
+      "https://topaiproduct.com/2026/04/29/taya-necklace-an-89-ai-pendant-that-refuses-to-listen-to-anyone-but-you",
+      "https://www.ibtimes.co.uk/scientist-says-congress-was-briefed-ufo-crash-retrieval-nhi-programs-secret-rooms-1773770",
+      "https://www.lenny.com/lesson/hero-economy-launch-299657",
+      "https://www.newyorker.com/magazine/2026/05/04/reverend-billy-takes-on-norman-fosters-new-monolith",
+      "https://www.notieai.com/ai-for-history-teachers",
+      "https://www.penguinrandomhouse.com/books/289021/the-brief-wondrous-life-of-oscar-wao-by-junot-diaz/9781594483295",
+      "https://www.prnewswire.com/news-releases/speakon-launches-the-first-magsafe-ai-button-built-to-replace-phone-typing-302748830.html",
+      "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
+      "https://www.scientificamerican.com/article/an-asteroid-extinguished-all-the-dinosaurs-except-for-birds-heres-why/",
+      "https://www.scientificamerican.com/article/why-nasas-artemis-moon-program-could-fall-victim-to-spacexs-ai-ambitions/",
+      "https://www.seattlepromusica.org/auditions",
+      "https://www.webwire.com/ViewPressRel.asp?aId=354393",
+      "https://www.whyliveschool.com/blog/token-economy-lesson-plan"
     ],
     "covered_headlines": [
-      "Two new works deepen the triadic-ontology program.",
-      "Two new autonomous research systems push beyond static benchmarks. MARS (Modular Agent with Reflective Search) from Google Cloud AI Research introduces budget-aware Monte-Carlo planning and comparative reflective memory, achieving SOTA on MLE-Bench while exhibiting “Aha!",
-      "The Pentagon released its first major tranche of declassified UAP files on May 8, 2026, following President Trump's directive to declassify government UFO records.",
-      "City of Edmonds update resolution of wastewater treatment plant operational issues ongoing",
-      "Court denies motion to reconsider dismissal of Edmonds tree case",
-      "New statewide housing law goes into effect June 11;",
-      "Now let me extract specific job posting details from",
-      "Seattle Pro Musica has concluded auditions for the 2025-26 season, but singers interested in joining the 2026-27 season can email auditions@seattlepromusica.org to join the mailing list.",
-      "Sno-Isle Libraries offers multiple toddler storytime sessions this week: Baby Storytime with Heather at Lynnwood Library Friday 9:30am, Toddler Storytime with Nathalie at Lynnwood Library, and Toddler Storytime with Heather Tuesday 9:00am.",
-      "Let me extract content from key articles and search for more specific developments:",
-      "Three new voice-first AI pendants launched in 2026. NeoSapien's Neo 1 (₹12,000/$127) targets Indian professionals with real-time meeting transcription and memory recall using a proprietary knowledge graph.",
-      "Teacher-focused AI tools continue expanding with new features. Brisk Teaching now offers 20+ free Chrome extension tools for Google Docs integration, while MagicSchool maintains its template library with $8.",
-      "Life-logging wearables gain traction with enterprise adoption. Plaud's NotePin S ($179) offers four wearing modes for meeting transcription, while Looki provides camera-based daily memory capture at $199.",
-      "Medallions, Movement, and Mamdani at MOMA PS1",
-      "The Known World",
-      "Iran war live: IRGC warns US against attacks on ships",
-      "The Pentagon Releases New Trove of Declassified UFO Files | WIRED",
-      "Whistleblower: Feds recovered 'non-human' biological material from UFO crash site | Courthouse News Service",
+      "New evaluation frameworks are reshaping how we measure multi-agent research systems. ScienceAgentBench, developed by OSU and Princeton, introduces 102 rigorously validated tasks drawn from 44 peer-reviewed publications across bioinformatics, computational chemistry, GIS, and psychology.",
+      "Three fresh 2026 sources reveal an active congressional UAP transparency push. Rep.",
+      "The Washington State Court of Appeals has denied a motion to reconsider its March 16 dismissal of the Rimmer v. City of Edmonds case, allowing the earlier dismissal to stand.",
+      "South County Fire Commissioners held a public hearing on a proposed $420 million fire and EMS construction bond that could go to voters in November.",
+      "The City of Edmonds issued an update on ongoing efforts to resolve operational issues at the Edmonds Wastewater Treatment Plant.",
+      "Agent initiated a search for high school history teacher jobs in the Northshore, Lake Washington, Bellevue, and Snohomish areas of Washington state, targeting 2026 openings.",
+      "Token Economy Implementation Guide for 10th Grade ELA",
+      "Hero Economy Launch - Classroom Credit System",
+      "Classroom Cash Economy System",
+      "Token Economy Lesson Plan with Behavior Contracts",
+      "10 Ways to Learn with Shake Up Learning This Summer",
+      "Seattle Pro Musica has completed their 2025-26 season auditions, but singers interested in joining for the 2026-27 season can email auditions@seattlepromusica.org to be added to their auditions mailing list.",
+      "Sno-Isle Libraries offers multiple toddler storytime options this week: Toddler Storytime with Nathalie at Lynnwood Library on Monday, May 11 at 9:00am, and Toddler Storytime with Heather on Tuesday, May 12 at 9:00am.",
+      "In the May 2026 issue, paleontologist Steve Brusatte explores why birds were the only dinosaurs to survive the asteroid impact that ended the Cretaceous period 66 million years ago.",
+      "In a May Day essay, Jacobin argues that International Workers' Day remains essential as an antidote to the \"politics of isolationism\" that dominates contemporary society.",
+      "A separate May 2026 Scientific American feature examines how SpaceX's pivot toward AI investments - including a potential $60 billion acquisition of AI-code-writing startup Cursor - could derail NASA's Artemis moon program.",
+      "In a deeply reported investigation, ProPublica reveals how the Trump administration's mass immigration arrests are systematically failing under legal scrutiny.",
+      "New voice-first AI pendants launching in 2026 include Taya Necklace ($89, privacy-first with directional mics that only record the wearer's voice), Vibe Dot ($199, palm-sized workplace recorder with 30-hour battery and AI agent integration), and SpeakON MagSafe button ($199, iPhone-attached AI that converts speech to polished text instantly).",
+      "Humy 2.0 launched with 90+ teacher AI tools including enhanced DBQ builders, historical figure interviews, and cross-curricular study modes.",
+      "Luci Pin by Memories.ai offers 4K life-logging with local AI processing and privacy-first design.",
+      "Reverend Billy Takes On Norman Foster’s New Monolith",
+      "The Brief Wondrous Life of Oscar Wao",
+      "An asteroid extinguished all the dinosaurs except for birds. Here's why",
+      "SpaceX's AI pivot promises the stars. Could it cost NASA the moon?",
+      "May Day: An Answer to Rampant Individualism",
+      "Caught in the Crackdown: As Arrests at Anti-ICE Protests Piled Up, Prosecutions Crumbled",
+      "Taya Necklace: an $89 AI pendant that refuses to listen to anyone but you",
       "**Friend AI Pendant** (MyTabAI, Inc): $99 wearable voice companion with 15-hour battery life, always-listening mic for conversations, and $7.",
       "**MagicSchool AI**: April 2026 updates include Educational Song Generator (turns lessons into music) and Studio Mode in Raina for document editing.",
       "**Nirva AI Jewelry**: Fashion-forward pendant that combines AI sensing with jewelry design, tracks emotions and auto-journals life experiences.",
@@ -242,6 +249,7 @@
       "Maria Popova’s long essay on Frances “Fanny” Wright recovers the forgotten 19th-century Scottish-American radical who fused scientific empiricism with",
       "Marysville",
       "Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny",
+      "Medallions, Movement, and Mamdani at MOMA PS1",
       "Mexico has stated that two CIA agents killed in a car crash were not authorized to participate in a local raid.",
       "Monday briefing: Will a new alliance of nations be able to guide the world towards a post-fossil fuel future?",
       "More than 100 people stranded on cruise ship after deadly outbreak",
@@ -280,7 +288,6 @@
       "Reflecti AI Memory Pendant offers encrypted, searchable life-logging with daily summaries and end-to-end encryption. The LUCI Pin provides privacy-first life-logging with local AI processing and 4K recording capabilities.",
       "Relational Ontologies and Trinitarian Metaphysics: Subsistences, Events and Gunk",
       "Rep. Anna Paulina Luna’s House Oversight Task Force is actively investigating UAP transparency in 2026.",
-      "Reverend Billy Takes On Norman Foster’s New Monolith",
       "Robert G.",
       "Russia launched a major overnight assault on Ukraine with over 660 drones and missiles, killing at least seven people including five in Dnipro.",
       "Samsung's New 'Project Luna' AI Desktop Companion Has Ballie Spirit",
@@ -323,10 +330,8 @@
       "Summer market season 2026 kicks off under sunny skies in Edmonds",
       "The 2026 wearable landscape reveals a bifurcated market between lifelogging pendants and smart glasses.",
       "The Authority of Thought, by Pankaj Mishra",
-      "The Brief Wondrous Life of Oscar Wao",
       "The City Council approved key contracts including a $415,116 wastewater treatment plant gasification system support contract with Jacobs Engineering,",
       "The City of Edmonds hosted an open house on Thursday, April 25 to unveil the 60 % design plan for Stage 3 of the Highway 99 Revitalization Project.",
-      "The City of Edmonds issued an update on ongoing efforts to resolve operational issues at the Edmonds Wastewater Treatment Plant.",
       "The Downtown School (Lakeside)",
       "The Edmonds City Council adopted the city's first comprehensive Safety Action Plan during their April 28 meeting, receiving annual reports from the ci",
       "The Edmonds City Council postponed until next week its vote on confirming Stephanie Lucash as the new city administrator.",
@@ -341,6 +346,7 @@
       "The House Oversight subcommittee on National Security held a closed-door UAP briefing on April 24, 2026, but issued no public readout, frustrating tra",
       "The IMF has downgraded global growth forecasts to 3.",
       "The Immortal Life of Henrietta Lacks",
+      "The Known World",
       "The Kremlin has criticized Ukraine's response to Vladimir Putin's offer of a three-day ceasefire as \"ambiguous\" and demanded clarity.",
       "The Line of Beauty",
       "The New Normal",
@@ -456,172 +462,226 @@
     "cross_sector_dupes": []
   },
   "triadic_ontology": {
-    "findings": "Two new works deepen the triadic-ontology program. In \"The Triadic Closure of Existence: Co-Emergence of Binding, Transformation, and Relational Readout\" (Zenodo, 15 Apr 2026), an anonymous research collective argues that observable reality requires a simultaneous, phase-locked triadic closure: three load-bearing functional roles—Systematization (E), Constraint (C), and Registration (F)—must co-emerge for any stable, self-maintaining universe. The paper claims dyadic structures collapse into either tautology or infinite regress, making the triad the minimal logical scaffold for determinacy, dimensional emergence, and even the arrow of time. Complementing this, Christopher Isabelle’s \"Triadic Relational Ontology: From Primordial Separation to Relational Field\" (PhilArchive, 2026) starts from the primordial distinction between “here” and “not-here” and shows that dyadic separation alone cannot sustain intelligibility; a third, irreducible relational field must be actively maintained thro [TRUNCATED]",
-    "urls": [
-      "https://zenodo.org/records/19583419",
-      "https://philarchive.org/archive/ISATRO-4"
-    ]
+    "findings": "",
+    "urls": []
   },
   "ai_systems": {
-    "findings": "Two new autonomous research systems push beyond static benchmarks. MARS (Modular Agent with Reflective Search) from Google Cloud AI Research introduces budget-aware Monte-Carlo planning and comparative reflective memory, achieving SOTA on MLE-Bench while exhibiting “Aha!” cross-branch transfer 63% of the time. DOVA (Deep Orchestrated Versatile Agent) adds deliberation-first orchestration that reasons about user context before any tool call, plus adaptive six-tier token budgeting that cuts inference cost 40-60% on simple tasks. A Cambridge-led astrophysics team shows how semi-autonomous Cmbagent agents, orchestrated by the Denario AI scientist, can outperform human experts in the FAIR weak-lensing challenge when human oversight is selectively injected, demonstrating a practical path for hybrid human-agent discovery pipelines.",
+    "findings": "New evaluation frameworks are reshaping how we measure multi-agent research systems. ScienceAgentBench, developed by OSU and Princeton, introduces 102 rigorously validated tasks drawn from 44 peer-reviewed publications across bioinformatics, computational chemistry, GIS, and psychology. Each task requires agents to produce executable Python programs, with expert validation ensuring scientific authenticity. The current leaderboard shows o3 Medium achieving 33.33% accuracy at $11.69 cost per task, while Claude Sonnet 4.5 reaches 30.39% at $7.47, highlighting the accuracy-cost trade-off in autonomous scientific discovery.\n\nMeanwhile, evaluation methodology itself is evolving. A new framework from USC addresses fundamental challenges in benchmarking scientific multi-agent systems: distinguishing reasoning from retrieval, preventing data contamination, establishing ground truth for novel problems, and managing continuously updating knowledge bases. The authors propose contamination-resistan [TRUNCATED]",
     "urls": [
-      "https://arxiv.org/pdf/2602.02660",
-      "https://arxiv.org/pdf/2603.13327",
-      "https://arxiv.org/pdf/2604.09621"
+      "https://osu-nlp-group.github.io/ScienceAgentBench/",
+      "https://hal.cs.princeton.edu/scienceagentbench",
+      "https://arxiv.org/html/2603.26718v2",
+      "https://arxiv.org/abs/2603.27008v1",
+      "https://aclanthology.org/2026.findings-eacl.185/"
     ]
   },
   "uap": {
-    "findings": "The Pentagon released its first major tranche of declassified UAP files on May 8, 2026, following President Trump's directive to declassify government UFO records. The release includes over 160 files spanning nearly 80 years of sightings, with the Department of War (formerly Pentagon) making the documents publicly available for the first time. This disclosure comes amid ongoing congressional hearings where former intelligence officer David Grusch testified under oath that the U.S. government possesses \"non-human biologics\" recovered from alleged UFO crash sites. Grusch, a former member of the Pentagon's UAP Task Force, claimed the government has operated a secret multi-decade program to retrieve and reverse-engineer extraterrestrial craft. The House Oversight Committee's Task Force on the Declassification of Federal Secrets continues to investigate transparency issues within federal UAP programs, with members calling for better whistleblower protections and more congressional oversight [TRUNCATED]",
+    "findings": "Three fresh 2026 sources reveal an active congressional UAP transparency push. Rep. Anna Paulina Luna’s House Oversight Task Force is pressing the Department of War for withheld UAP videos after a September 2025 hearing, citing national-security risks. Dr. Eric Davis told IBTimes he has already briefed multiple congressional committees in SCIFs about UFO crash retrievals and Non-Human Intelligence programs, constrained only by presidential NDAs. Meanwhile, USA Today notes three rounds of open UAP hearings since 2023, with Obama’s recent “aliens are real” remark reigniting public interest even as he walked it back.",
     "urls": [
-      "https://www.wired.com/story/pentagon-drops-new-ufo-files/",
-      "https://meritalk.com/articles/pentagon-begins-release-of-uap-files/",
-      "https://nypost.com/2026/05/08/us-news/pentagon-releases-dozens-of-ufo-files-trump-teased-as-very-interesting/",
-      "https://oversight.house.gov/release/hearing-wrap-up-government-must-be-more-transparent-about-uaps/",
-      "https://www.courthousenews.com/whistleblower-feds-recovered-non-human-biological-material-from-ufo-crash-site/",
-      "https://www.universetoday.com/articles/witnesses-alien-congress-uap-ufo"
+      "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
+      "https://www.ibtimes.co.uk/scientist-says-congress-was-briefed-ufo-crash-retrieval-nhi-programs-secret-rooms-1773770",
+      "https://coltswire.usatoday.com/story/news/nation/2026/02/16/congress-uap-obama-aliens-real-podcast/88699039007/"
     ]
   },
-  "weather": "Mostly cloudy today in Edmonds, with a high near 61°F and light north winds around 5-6 mph. Rain unlikely—only a 10% chance. Tonight stays mostly cloudy, dropping to about 51°F with light northeast breezes. Pleasant and dry for May.",
+  "weather": "Today in Edmonds: Mostly cloudy becoming mostly sunny, high 63°F. Light north wind 5-10 mph. Just a 10% chance of light rain after 5 PM. Tonight turns partly cloudy with low around 51°F and calm northeast breeze. Pleasant spring day—comfortable for walks with Piper, no jacket needed midday but bring a light layer for evening.",
   "local_news": [
     {
-      "category": "wastewater_treatment",
+      "category": "municipal",
       "source": "myedmondsnews.com",
-      "findings": "City of Edmonds update resolution of wastewater treatment plant operational issues ongoing",
-      "urls": [
-        "https://myedmondsnews.com/2026/05/city-of-edmonds-update-resolution-of-wastewater-treatment-plant-operational-issues-ongoing/"
-      ]
-    },
-    {
-      "category": "court_ruling",
-      "source": "myedmondsnews.com",
-      "findings": "Court denies motion to reconsider dismissal of Edmonds tree case",
+      "findings": "The Washington State Court of Appeals has denied a motion to reconsider its March 16 dismissal of the Rimmer v. City of Edmonds case, allowing the earlier dismissal to stand. This ends the latest chapter in the long-running dispute over a dogwood tree that began when the city denied Nathan Rimmer's permit in May 2022. The Pacific Legal Foundation, representing Rimmer, plans to ask the Washington Supreme Court to provide clarity on whether property owners can recover damages when cities withhold permits to force unconstitutional conditions.",
       "urls": [
         "https://myedmondsnews.com/2026/05/court-denies-motion-to-reconsider-dismissal-of-edmonds-tree-case/"
       ]
     },
     {
-      "category": "housing_law",
+      "category": "municipal",
       "source": "myedmondsnews.com",
-      "findings": "New statewide housing law goes into effect June 11; local city leaders and organizations express their views",
+      "findings": "South County Fire Commissioners held a public hearing on a proposed $420 million fire and EMS construction bond that could go to voters in November. The measure would replace or renovate most of the district's aging fire stations and add four new ones to meet growing demand and seismic safety standards. Edmonds residents expressed concerns about the scale and timing, with some suggesting smaller bond amounts over time rather than one large request. Commissioners acknowledged the feedback and plan to continue discussions before making a final decision.",
       "urls": [
-        "https://myedmondsnews.com/2026/05/new-statewide-housing-law-goes-into-effect-june-11-how-do-local-city-leaders-organizations-feel-about-it/"
+        "https://myedmondsnews.com/2026/05/commissioners-hear-details-concerns-at-south-county-fire-bond-hearing-for-420-million-capital-plan/"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "myedmondsnews.com",
+      "findings": "The City of Edmonds issued an update on ongoing efforts to resolve operational issues at the Edmonds Wastewater Treatment Plant. The city approved a $415,000 contract with Jacobs Engineering to assist with operating the troubled carbon recovery system, which has experienced significant delays and technical failures since construction began in 2021. The project cost has escalated from $26 million to $31 million, and the city has spent over $5 million hauling wastewater solids to Oregon landfills while the system remains non-operational.",
+      "urls": [
+        "https://myedmondsnews.com/2026/05/city-of-edmonds-update-resolution-of-wastewater-treatment-plant-operational-issues-ongoing/"
       ]
     }
   ],
   "career": {
-    "findings": "Now let me extract specific job posting details from",
-    "urls": [
-      "https://www.applitrack.com/snohomish/onlineapp/default.aspx?all=1",
-      "https://www.applitrack.com/edmonds/onlineapp/jobpostings/view.asp?AppliTrackJobId=4776",
-      "https://www.ziprecruiter.com/c/Northshore-School-District/Job/Social-Studies-Teacher-Secondary/-in-Bothell,WA?jid=c8711e9f4b43d5fa",
-      "https://www.lwsd.org/employment/teachers-certificated-employees",
-      "https://www.ziprecruiter.com/c/Highline-Public-Schools/Job/TEACHERS:-2026-2027-CADRE-COHORT/-in-Seattle,WA?jid=95f48ee1eb462"
-    ]
+    "findings": "Agent initiated a search for high school history teacher jobs in the Northshore, Lake Washington, Bellevue, and Snohomish areas of Washington state, targeting 2026 openings.",
+    "urls": []
   },
   "english_lesson_plans": {
-    "classroom_ready": [],
-    "pedagogy_pieces": [],
-    "notes": ""
+    "classroom_ready": [
+      {
+        "title": "Token Economy Implementation Guide for 10th Grade ELA",
+        "source": "Canyons School District ELA Map",
+        "url": "https://canyonsdistrict.cld.bz/BHS-10th-Grade-ELA-Map/38/",
+        "grade_band": "9-10",
+        "topic": "Behavior Management & Token Economy",
+        "summary": "Complete step-by-step guide for implementing a token economy system in ELA classrooms. Includes effect size data (0.90), behavior contract templates, reinforcer menus, and gradual fading protocols. Features specific examples like plastic chips, punch cards, and privilege-based rewards."
+      },
+      {
+        "title": "Hero Economy Launch - Classroom Credit System",
+        "source": "Lenny Learning",
+        "url": "https://www.lenny.com/lesson/hero-economy-launch-299657",
+        "grade_band": "6-12",
+        "topic": "Classroom Economy & Positive Reinforcement",
+        "summary": "Ready-to-print lesson kit with Hero Bank Tracker worksheets, Prize Power Menu posters, Reward Pass coupons, and Master Ledger trackers. Focuses on non-tangible rewards and positive reinforcement through a classroom credit system."
+      },
+      {
+        "title": "Classroom Cash Economy System",
+        "source": "Talkin' Town English",
+        "url": "https://talkintownenglish.com/blog/how-to-create-a-classroom-economy/",
+        "grade_band": "K-12",
+        "topic": "Classroom Economy & Behavior Management",
+        "summary": "Complete classroom economy setup with editable templates for classroom cash, reward charts, and behavior tracking. Includes school mascot customization options and practical implementation steps for positive reinforcement."
+      },
+      {
+        "title": "Token Economy Lesson Plan with Behavior Contracts",
+        "source": "LiveSchool",
+        "url": "https://www.whyliveschool.com/blog/token-economy-lesson-plan",
+        "grade_band": "K-12",
+        "topic": "Behavior Management & Token Economy",
+        "summary": "Comprehensive lesson plan for launching a token economy system including behavior contracts, reinforcer selection guides, and implementation protocols. Features free downloadable resources and step-by-step classroom setup instructions."
+      }
+    ],
+    "pedagogy_pieces": [
+      {
+        "title": "10 Ways to Learn with Shake Up Learning This Summer",
+        "source": "Shake Up Learning",
+        "url": "https://shakeuplearning.com/blog/10-ways-to-learn-with-shake-up-learning-this-summer/",
+        "summary": "Kasey Bell's summer learning guide emphasizing AI-powered classroom management tools, communication templates, and behavior tracking systems. Focuses on practical EdTech solutions to reduce teacher workload while improving student engagement."
+      }
+    ],
+    "notes": "All resources are freely available and classroom-ready. The token economy systems emphasize positive reinforcement over punishment, with built-in gradual fading protocols. Each system includes customization options for school mascots and specific classroom needs."
   },
   "family": {
-    "choir": "Seattle Pro Musica has concluded auditions for the 2025-26 season, but singers interested in joining the 2026-27 season can email auditions@seattlepromusica.org to join the mailing list. The professional-level ensemble holds auditions each August for all voice parts at Epiphany Parish Seattle. Requirements include music reading skills, vocalizing, sight-reading two short choral pieces in quartet formation, and preparing a two-minute solo piece. Rehearsals are Tuesday evenings 6:30-9:30pm with annual dues of $75. Northwest Chorale, a 45-member non-auditioned community choir, rehearses Mondays 7:00pm at Lamb of God Lutheran Church and offers free spring concerts May 9 in Edmonds and May 16 in Seattle.",
-    "toddler": "Sno-Isle Libraries offers multiple toddler storytime sessions this week: Baby Storytime with Heather at Lynnwood Library Friday 9:30am, Toddler Storytime with Nathalie at Lynnwood Library, and Toddler Storytime with Heather Tuesday 9:00am. Edmonds Bookshop hosts a special story time Sunday May 31 at 3:00pm with time-travel themed books and activities. The Lynnwood Library also features a Happy Flower craft workshop Friday May 15 2:00-4:00pm where toddlers can create colorful flowers from recycled materials.",
+    "choir": "Seattle Pro Musica has completed their 2025-26 season auditions, but singers interested in joining for the 2026-27 season can email auditions@seattlepromusica.org to be added to their auditions mailing list. Auditions for all voice parts are held each August at Epiphany Parish Seattle (1805 38th Avenue, Seattle). Requirements include music reading skills, vocalizing, sight-reading two short choral pieces, and preparing a short solo piece. Rehearsals are Tuesday evenings 6:30-9:30pm. Northwest Chorale, a 45-member non-auditioned community choir, is performing spring concerts on May 9 at Edmonds United Methodist Church and May 16 at Luther Memorial Church in Seattle. They rehearse Mondays at 7:00pm during the academic year.",
+    "toddler": "Sno-Isle Libraries offers multiple toddler storytime options this week: Toddler Storytime with Nathalie at Lynnwood Library on Monday, May 11 at 9:00am, and Toddler Storytime with Heather on Tuesday, May 12 at 9:00am. Edmonds Bookshop is hosting a special story time event featuring children's author and illustrator Jennifer K. Mann. Lynnwood Library also has a creative \"Happy Flower Flor Feliz\" craft session on Friday, May 15 from 2:00-4:00pm where toddlers can create colorful flowers using recycled materials.",
     "urls": [
-      "http://www.seattlepromusica.org/auditions",
+      "https://www.seattlepromusica.org/auditions",
       "https://seattlesings.org/member/northwest-chorale/",
-      "https://lynnwoodtimes.com/2026/05/07/edmonds-bookshop-story-time-may/",
-      "https://sno-isle.bibliocommons.com/v2/events?audiences=5ecfd4bde19e6b240078b87c%2C5f0ce9be8497d4760a06c16a%2C5f0ce9c2036b39880a776ab0"
+      "https://sno-isle.bibliocommons.com/v2/events?audiences=5ecfd4bde19e6b240078b87c%2C5f0ce9be8497d4760a06c16a%2C5f0ce9c2036b39880a776ab0",
+      "https://lynnwoodtimes.com/2026/05/07/edmonds-bookshop-story-time-may/"
     ]
   },
-  "global_news": [
+  "global_news": [],
+  "intellectual_journals": [
     {
-      "category": "global_news",
-      "source": "research_agent",
-      "findings": "Let me extract content from key articles and search for more specific developments:",
-      "urls": [
-        "https://www.independent.co.uk/news/world/middle-east/iran-us-war-live-trump-strait-of-hormuz-ceasefire-b2973713.html",
-        "https://www.aljazeera.com/news/liveblog/2026/5/10/iran-war-live-irgc-warns-us-against-attacks-on-ships-israel-bombs-lebanon",
-        "https://apnews.com/article/iran-us-war-0c25b2ca53ee90bc19bfbf6c44a66e6e"
-      ]
+      "source": "Scientific American",
+      "findings": "In the May 2026 issue, paleontologist Steve Brusatte explores why birds were the only dinosaurs to survive the asteroid impact that ended the Cretaceous period 66 million years ago. While the popular myth suggests all dinosaurs perished, new fossil evidence reveals that modern-style birds survived due to a combination of circumstances: their smaller size, ability to fly, and crucially, their diet of seeds that remained available during the prolonged darkness and cold that followed the impact. The article traces how these avian dinosaurs, already widespread across the globe, possessed the exact [TRUNCATED]",
+      "url": "https://www.scientificamerican.com/article/an-asteroid-extinguished-all-the-dinosaurs-except-for-birds-heres-why/"
+    },
+    {
+      "source": "Jacobin",
+      "findings": "In a May Day essay, Jacobin argues that International Workers' Day remains essential as an antidote to the \"politics of isolationism\" that dominates contemporary society. The piece critiques how modern culture - from Andrew Tate's \"manosphere\" to \"tradwife\" influencers and positive psychology gurus - places responsibility for societal problems on individuals rather than recognizing collective solutions. The essay positions May Day as a counter-narrative that acknowledges \"we exist as individuals as part of a society\" and that common challenges require common solutions, making the celebration o [TRUNCATED]",
+      "url": "https://jacobin.com/2026/05/may-day-europe-unions-workers"
+    },
+    {
+      "source": "Scientific American",
+      "findings": "A separate May 2026 Scientific American feature examines how SpaceX's pivot toward AI investments - including a potential $60 billion acquisition of AI-code-writing startup Cursor - could derail NASA's Artemis moon program. The article explores tensions between SpaceX's commercial AI ambitions and its contractual obligations to deliver the Starship-based Human Landing System for Artemis IV in 2028. While SpaceX pursues AI-driven data centers in space and other ventures, delays in Starship development raise questions about whether the company's shifting priorities might compromise America's ret [TRUNCATED]",
+      "url": "https://www.scientificamerican.com/article/why-nasas-artemis-moon-program-could-fall-victim-to-spacexs-ai-ambitions/"
+    },
+    {
+      "source": "ProPublica",
+      "findings": "In a deeply reported investigation, ProPublica reveals how the Trump administration's mass immigration arrests are systematically failing under legal scrutiny. The piece documents over 300 cases where protesters and bystanders were arrested during immigration sweeps, only to have charges collapse when video evidence contradicted officer statements. The investigation exposes a pattern where federal agents routinely accuse dissenters of domestic terrorism or extremism, yet more than a third of cases are quickly dismissed, refused prosecution, or lost at trial - suggesting the arrests serve more  [TRUNCATED]",
+      "url": "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions"
     }
   ],
-  "intellectual_journals": [],
   "wearable_ai": [
     {
       "category": "ai_voice_hardware",
-      "findings": "Three new voice-first AI pendants launched in 2026. NeoSapien's Neo 1 (₹12,000/$127) targets Indian professionals with real-time meeting transcription and memory recall using a proprietary knowledge graph. MemoMind's MemoMind One ($599-$849) offers everyday AI glasses with discreet displays and voice interaction for hands-free assistance. Huawei's AI Glasses (¥2,499/$366) combine 12MP camera with  [TRUNCATED]",
+      "findings": "New voice-first AI pendants launching in 2026 include Taya Necklace ($89, privacy-first with directional mics that only record the wearer's voice), Vibe Dot ($199, palm-sized workplace recorder with 30-hour battery and AI agent integration), and SpeakON MagSafe button ($199, iPhone-attached AI that converts speech to polished text instantly). No new Friend/Tab/Pi-style devices since prior coverage [TRUNCATED]",
       "urls": [
-        "https://www.firstpost.com/tech/neo-sapien-ai-wearable-neo-1-bengaluru-startup-cyber-hub-gurugram-second-brain-india-2026-ai-wearable-boom14007769-14007769.html",
-        "https://www.advfn.com/stock-market/stock-news/98376307/memomind-opens-global-pre-orders-for-memomind-one",
-        "https://www.fonearena.com/blog/480594/huawei-ai-glasses-price-features.html"
+        "https://topaiproduct.com/2026/04/29/taya-necklace-an-89-ai-pendant-that-refuses-to-listen-to-anyone-but-you",
+        "https://www.webwire.com/ViewPressRel.asp?aId=354393",
+        "https://www.prnewswire.com/news-releases/speakon-launches-the-first-magsafe-ai-button-built-to-replace-phone-typing-302748830.html"
       ]
     },
     {
       "category": "teacher_ai_tools",
-      "findings": "Teacher-focused AI tools continue expanding with new features. Brisk Teaching now offers 20+ free Chrome extension tools for Google Docs integration, while MagicSchool maintains its template library with $8.33/month Plus tier. Diffit specializes in text leveling for differentiated instruction at $14.99/month, and Flip Education introduces methodology-first lesson generation built on specific pedag [TRUNCATED]",
+      "findings": "Humy 2.0 launched with 90+ teacher AI tools including enhanced DBQ builders, historical figure interviews, and cross-curricular study modes. Notie AI remains the leading DBQ grader for history teachers. Britannica Studio offers teacher-first AI workspace with verified content. No new MagicSchool/Diffit/Brisk features since prior coverage.",
       "urls": [
-        "https://www.briskteaching.com/",
-        "https://flipeducation.ai/blog/15-best-ai-tools-for-teachers-in-2026-from-lesson-planning-to-grading",
-        "https://alicekeeler.com/2024/07/10/diffit-ai-is-amazingly-easy-to-use/"
+        "https://humy.ai/blog/humy-2-0-the-ai-platform-for-social-studies-shaped-by-teachers",
+        "https://www.notieai.com/ai-for-history-teachers",
+        "https://teachbritannica.com/britannica-studio"
       ]
     },
     {
       "category": "wearable_devices",
-      "findings": "Life-logging wearables gain traction with enterprise adoption. Plaud's NotePin S ($179) offers four wearing modes for meeting transcription, while Looki provides camera-based daily memory capture at $199. Amazon's acquisition of Bee signals mainstream lifelogging acceptance, with CES 2026 showcasing multiple ambient recording devices from startups like Omi and established players.",
+      "findings": "Luci Pin by Memories.ai offers 4K life-logging with local AI processing and privacy-first design. Reflecti pendant provides encrypted conversation logging with daily summaries. Legend Memory AI pendant ($499) targets ADHD users with automatic task extraction from conversations. No new Friend/Reflecti/Legend updates since prior coverage.",
       "urls": [
-        "https://the-gadgeteer.com/2026/05/05/best-ai-wearables-2026/",
-        "https://www.investors.com/news/technology/ces-2026-wearable-ai-gadgets-could-be-next-big-thing/",
-        "https://www.thetimes.com/uk/technology-uk/article/could-2026-be-the-year-life-logging-wearable-ai-devices-take-off-p020t560m"
+        "https://memories.ai/luci/",
+        "https://getreflecti.com/",
+        "https://legendmemoryai.com/"
       ]
     }
   ],
   "newyorker": {
     "available": true,
-    "title": "Medallions, Movement, and Mamdani at MOMA PS1",
-    "section": "here to there dept.",
-    "dek": "The cab-driving Elcharfa brothers, Bilal and Salah, star in a new piece by the artist Kenneth Tam that showcases the hardships of their jobs, Emma Allen writes.",
-    "byline": "By Emma Allen",
+    "title": "Reverend Billy Takes On Norman Foster’s New Monolith",
+    "section": "doomsday dept.",
+    "dek": "Fresh from opening shows for Neil Young, the street preacher Billy Talen has moved on from burning Mickey Mouse in effigy to protesting JPMorgan Chase’s ties to fossil fuels, Jake Offenhartz writes.",
+    "byline": "By Jake Offenhartz",
     "date": "2026-04-27T06:00:00.000-04:00",
-    "text": "On Election Night, Mayor Zohran Mamdani proclaimed, from a stage, “My brother, we are in City Hall now!” The remark was directed at Richard Chow, a cabdriver from Myanmar whom Mamdani had joined in 2021 on a fifteen-day hunger strike, to demand relief for the taxi-medallion debt crisis. The crisis, in brief: the N.Y.C. Taxi and Limousine Commission sells permits (“medallions”) to operate yellow cabs; the medallion—till recently a near-million-dollar investment—had its bottom drop out, owing to predatory lending and the deregulation of rideshare services. The body of Chow’s brother, Kenny, who’d accrued enormous medallion-related debt, was found in the East River in 2018. Chow would later chauffeur Mamdani to Gracie Mansion.\nThe other day, the artist Kenneth Tam, forty-four, was in Queens, admiring his contribution to MOMA PS1’s “Greater New York” survey of art with ties to the metropolitan area. Title: “I’m Staying Hopeful and Strong (for Bilal and Salah).” A projected video showed the sixtysomething Lebanese taxi-driver brothers Bilal and Salaheldin Elcharfa performing interpretive movements in an empty gymnasium while intoning words they wrote about the crisis (“no retirement no retirement no retirement / scared scared scared”). Also, on the floor of the gallery: wood-beaded seat covers and other car detritus.\nTam had previously worked with nonprofessional performers in his video-art projects (Craigslist-sourced fraternity brothers and cowboys). But recruiting taxi-drivers proved difficult. He tried pitching the idea from back seats, but no luck. Then a black-car driver took him to the “J.F.K. taxi hole.”\n“It’s essentially a lot where all the yellow cabs go and take their breaks,” Tam said. Rideshare drivers, too, but they have a separate zone. There’s also a space for prayer. “Ostensibly, they’re there to wait for the call to go to J.F.K., but I met guys that aren’t even drivers anymore, who go to hang out.” Tam and his producer knocked on windows and handed out flyers. Finally, he approached Bilal in the bathroom line. “I did make it clear that this was not necessarily an advocacy project: ‘I’m not an activist, but I do want to tell your story, in a different way.’ ” A way that would eventually involve dancing with metal folding chairs—but one thing at a time.\nOutside the museum, Bilal was parked by a fire hydrant in his yellow RAV4. Salah was still en route from Staten Island. Of first meeting Tam, Bilal said, “He asked me, ‘Are you interested in being in a movie?’ ”\n“A loose documentary,” Tam clarified.\nBilal was game. “When someone has anger inside them, you want to explore it with the outsider,” he said.\n“Did you appreciate then that you would have to dance?” Tam asked.\n“It was really interesting, to go for it,” Bilal said. “Falling down, reaching out, maybe looking for some hope. I was sitting in a box where I just felt like, I’m not able to get out of my situation by circling around, making all the moves—this way, that way, left, right, down, up.” He punched a fist into the air.\nWhen things for the brothers turned grim, “we were always leaning on each other,” Bilal said. “Don’t give up. Keep going.” A friend died of a heart attack when the value of his medallion tanked.\n“You’re not sick of each other?” Tam asked.\n“We fight. But we never really broke up. The next day, it’s as if nothing happened. That’s our attitude.”\nSalah called to say that he was stuck on the Verrazzano Bridge.\nTam said that he’d learned to drive in a suburban part of Queens—“and I distinctly remember, for my road test, I didn’t even encounter a traffic light.”\nBilal laughed. “In Lebanon,” he said, “my dad told me, ‘Just drive.’ ”\nSalah was still in traffic, so Bilal decided to drive to him. Eventually, he spotted his brother and honked, yelling, “Follow that cab!”\nEveryone piled into one car. Salah recounted meeting Tam: “He asked, ‘What kind of song do you like?’ ” The finished video is minimally scored, but, while shooting, Tam had the Elcharfas dance to their favorite tunes. Salah’s: Air Supply’s “Making Love Out of Nothing at All.” Bilal’s: the Scorpions’ “When the Smoke Is Going Down.”\n“I’m secretly hoping Mamdani makes an appearance at PS1,” Tam said.\n“He’s going to help, but he’s not going to get us back to what was before,” Salah predicted. Both brothers voted for Mamdani, though Bilal also had a laminated photo of Trump (fist raised) dangling from his rearview mirror.\nThe brothers’ kids recently watched Tam’s film. Bilal: “They were making fun of me—‘You’re getting old! What are you doing?’ ”\nSalah: “My daughter, she’s copying me. She starts making the same movements. I said, ‘Maybe I’m going to be a movie star!’ ”\n“I explained to them, ‘That’s an art project,’ ” Bilal said. “ ‘The words plus the movement, it makes a story about our situation.’ Hopefully, maybe, we educate the public.” ♦",
-    "url": "https://www.newyorker.com/magazine/2026/05/04/medallions-movement-and-mamdani-at-moma-ps-1",
+    "text": "A little after midnight on Earth Day, the street preacher Billy Talen dragged his pulpit to the new Norman Foster-designed global headquarters of JPMorgan Chase, on Madison. His self-ordained mission: deliver a twenty-four-hour sermon, calling attention to the bank’s ties to the fossil-fuel industry. Talen, who is seventy-five, held an umbrella above his white leisure suit and silver bouffant, eying a pair of bank security guards. “Blessings upon your souls, gentlemen,” he bellowed. Members of his activist ensemble, the Stop Shopping Choir, were setting up a live stream in the rain. Savitri Durkee, who directs both the choir and Talen, who is her husband, clipped a mike to his lapel and checked her watch. “It’s go-time, Billy,” she said. “See you on the other side.”\nTalen, who goes by Reverend Billy, is fond of what he calls “extreme preaching.” He began in the mid-nineties, marching around Times Square with “Antichrist” Mickey Mouse nailed to a wooden cross, in protest of the neighborhood’s creeping corporatism. In the years since, his focus has shifted to the climate crisis. Often, this involves staging musical protests in hostile venues—banks, pipeline-construction zones—until he and his flock are arrested for trespassing. But, Talen said, even that has begun to feel “predictable.” He elaborated, speaking into a camera: “The only way we’re going to start an effective movement is if each of us goes to the limit of our capabilities and claims our eccentricities. I’m a preacher, so I’m going to preach until I drop.” A choir member checked the stream, and noted that they’d just jumped from five to fourteen viewers. “Earthalujah!” Talen cried.\nAfter decades of sneaking up on bankers and lobbyists, Reverend Billy and the choir recently booked a straight gig: touring the country as Neil Young’s opening act. (Typical song: “A Tree Is the Opposite of a Cop.”) The rock star’s fans seemed receptive to the message, relatively. “After a lifetime of being too strange, people are starting to get us,” Talen said. He’s also the religion editor for the Times-Contrarian, Young’s anti-corporate “digital newspaper.” “Neil is a hands-on publisher,” Talen said. “Sometimes he lets me write these really long things. Other times, he’ll say to me, ‘Billy, what do you mean here? What do you want to leave us with?,’ and we’ll e-mail back and forth on that.” Talen said that he’s learned a lot from Young as a performer: “He’s taught me to hold the rhythm, hit the rhyme. He gets what appeals to a mass audience.” Talen and Durkee were connected with the singer by Young’s wife, Daryl Hannah, whom they met at a 2009 protest against mountaintop-removal coal mining in West Virginia. Talen was later arrested, after depositing mounds of “sacred dirt”—taken from the mountain, he claimed—at two Chase branches in the East Village. The bank has since decreased financing for companies involved in mountaintop-removal mining.\nBy 8 A.M., dark circles had formed under Talen’s steely blue eyes. “I just need to stay hydrated,” he said. Behind him, a gardener was washing a living-wall installation titled “A Parallel Nature,” designed for Chase by Maya Lin. “I’m finding myself mesmerized by this strange, sculpted nature wall,” Talen said. “It feels like a memory.” After conferring with a guard, the gardener pointed his hose at the protesters in the plaza. Talen pulled a rain slicker over his suit and glowered. Thousands of workers were now streaming into the building, mostly ignoring the doomsday preacher.\nAround lunchtime, roughly two dozen choir members and other activists arrived for a 5K run around the bank. Among them was Ahmed, an asylum seeker from Guinea who had taken refuge in the choir’s former headquarters, a vacant bank on Avenue C, after arriving in the United States. “It’s very scary-looking,” he said of Chase’s sixty-story tower. Many of the runners had procured thrift-store blazers or top hats, an effort to blend in with the bankers. Durkee, who wore a pin-striped suit, led the group in some stretches, followed by twelve laps around the block. A construction worker sanding down a railing offered support—“You got this!”—but appeared confused by a runner’s sign accusing Chase of ecocide. “I thought it was, like, a charity thing,” he said.\nAs night fell, Talen huddled under a blanket with other choir members. His once thunderous voice had dropped to a rasp as he condemned the “gangsters in suits” responsible for rising global temperatures. In the final minutes of his sermon, he found himself at an unusual loss for words. “It feels like, well, extreme exhaustion, I guess,” he said. “Or a long hike that got out of hand, and now I have to come down the mountain.” Had the suffering been worth it? “I’m not sure we cracked the culture,” he said. “But we had a vision, and we did what we could.” ♦",
+    "url": "https://www.newyorker.com/magazine/2026/05/04/reverend-billy-takes-on-norman-fosters-new-monolith",
     "source": "The New Yorker",
     "archived_from": "",
     "error": null
   },
   "literary_pick": {
     "available": true,
-    "title": "The Known World",
-    "author": "Edward P. Jones",
-    "year": 2003,
-    "summary": "A Pulitzer Prize-winning novel that reimagines the antebellum South with a Black slave owner, exploring the moral complexities of slavery and freedom through interconnected stories of plantation life.",
-    "url": "https://www.pprize.com/BookGuide.php/Year/2004"
+    "title": "The Brief Wondrous Life of Oscar Wao",
+    "author": "Junot Díaz",
+    "year": 2007,
+    "summary": "Winner of the 2008 Pulitzer Prize and National Book Critics Circle Award, this novel follows Oscar de León, an overweight Dominican-American nerd from New Jersey obsessed with science fiction and fantasy, as he navigates love, family curses (the fukú), and the legacy of Trujillo's dictatorship. Blending Spanglish, comic book references, and footnotes, Díaz creates a multigenerational saga that spans from the Dominican Republic under Trujillo to contemporary New Jersey, exploring themes of diaspora, masculinity, and the weight of history. Critics hailed it as a landmark of 21st-century American [TRUNCATED]",
+    "url": "https://www.penguinrandomhouse.com/books/289021/the-brief-wondrous-life-of-oscar-wao-by-junot-diaz/9781594483295"
   },
   "enriched_articles": [
     {
-      "url": "https://www.aljazeera.com/news/liveblog/2026/5/10/iran-war-live-irgc-warns-us-against-attacks-on-ships-israel-bombs-lebanon",
-      "source": "www.aljazeera.com",
-      "title": "Iran war live: IRGC warns US against attacks on ships",
+      "url": "https://www.scientificamerican.com/article/an-asteroid-extinguished-all-the-dinosaurs-except-for-birds-heres-why/",
+      "source": "Scientific American",
+      "title": "An asteroid extinguished all the dinosaurs except for birds. Here's why",
       "fetch_failed": false,
-      "text": "# Iran war live: IRGC warns US against attacks on ships; Israel bombs Lebanon\n\n*US-Iran ceasefire holds as Tehran warns Washington against attacks on tankers and Israel kills 24 people in Lebanon.*\n\n![A first responder stands by a body bag as colleagues search the rubble for victims at the site of an Israeli airstrike in the southern village of Saksakieh on May 9, 2026.](/wp-content/uploads/2026/05/AFP__20260509__B2CW8A6__v3__HighRes__TopshotLebanonIsraelIranUsWar-1778369162.jpg?resize=730%2C410"
+      "text": "April 14, 2026\n\n14 min read\n\nHow birds survived the dinosaurs' doomsday\n\nScientist"
     },
     {
-      "url": "https://www.wired.com/story/pentagon-drops-new-ufo-files/",
-      "source": "www.wired.com",
-      "title": "The Pentagon Releases New Trove of Declassified UFO Files | WIRED",
+      "url": "https://www.scientificamerican.com/article/why-nasas-artemis-moon-program-could-fall-victim-to-spacexs-ai-ambitions/",
+      "source": "Scientific American",
+      "title": "SpaceX's AI pivot promises the stars. Could it cost NASA the moon?",
       "fetch_failed": false,
-      "text": "[Becky Ferreira](/author/becky-ferreira/)\n\n[Science](/category/science)\n\n# ‘Orbs,’ ‘Saucers,’ and ‘Flashes’ on the Moon: Pentagon Drops New UFO Files\n\nThe Defense Department has released a new trove of declassified documents about government UFO sightings.\n\nCourtesy U.S. Department of War\n\nThe Pentagon released a batch of much-anticipated files about unidentified anomalous phenomena (UAP) on Friday including newly declassified documents that have never been seen by the public before.\n\nThe releas"
+      "text": "May 4, 2026\n\n5 min read\n\nSpaceX, the world's biggest space company, announced a deal in April with Cursor, an AI-code-writing start-up based in San Francisco, signaling the rocket firm's intention to acquire it for $60 billion. That's more than twice N"
     },
     {
-      "url": "https://www.courthousenews.com/whistleblower-feds-recovered-non-human-biological-material-from-ufo-crash-site/",
-      "source": "www.courthousenews.com",
-      "title": "Whistleblower: Feds recovered 'non-human' biological material from UFO crash site | Courthouse News Service",
+      "url": "https://jacobin.com/2026/05/may-day-europe-unions-workers",
+      "source": "Jacobin",
+      "title": "May Day: An Answer to Rampant Individualism",
       "fetch_failed": false,
-      "text": "Updates to our Terms of Use\n\nWe are updating our Terms of Use. Please carefully review the updated Terms before proceeding to our website.\n\n![](/wp-content/themes/cns/img/search_ext.svg)\n![Courthouse News Service](/wp-content/themes/cns/img/logo-inverse.svg)\n![](/wp-content/themes/cns/img/search_ext.svg)\n\n| |\n| --- |\n| Search |\n\n![](/wp-content/themes/cns/img/ios-app.svg)\n![](/wp-content/themes/cns/img/gp-app.png)\n\nWednesday, April 23, 2025\n\n![Courthouse News Service](/wp-content/themes/cns/img/"
+      "text": "By Esther Lynch\n\nCountless influencers and quack positive-thinking gurus tell us that success is all a matter of individual effort. International Workers' Day reminds us that individuals are happiest when we have others standing alongside us.\n\nTrade unions defend not just workers' conditions but the right to an existence not cramped by the pressures of the job. On May Day, we celebrate workers' right to work less."
+    },
+    {
+      "url": "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
+      "source": "ProPublica",
+      "title": "Caught in the Crackdown: As Arrests at Anti-ICE Protests Piled Up, Prosecutions Crumbled",
+      "fetch_failed": false,
+      "text": "Co-published with FRONTLINE\n\nThe National Guard soldiers in desert camo piled out of unmarked vans in East Los Angeles last June, cordoning off East Sixth Street, a residential street lined with single family houses, and blocking a nearby road leading to an elementary school.\n\nA squad of federal agents moved"
+    },
+    {
+      "url": "https://topaiproduct.com/2026/04/29/taya-necklace-an-89-ai-pendant-that-refuses-to-listen-to-anyone-but-you",
+      "source": "Top AI Product",
+      "title": "Taya Necklace: an $89 AI pendant that refuses to listen to anyone but you",
+      "fetch_failed": false,
+      "text": "An ex-Apple design engineer just opened public preorders for an AI necklace that flips the always-on wearable script. Taya's mic stays off until you tap it. Even when it's recording, directional mics plus speaker verification only transcribe your voice — bystanders get filtered out at the hardware level."
     }
   ],
   "correspondence": {
     "found": true,
     "fallback_used": false,
-    "text": "- [escalation] mmmichaelllang: CI workflow for jeeves-unchained sprint-23 PR failed all jobs.\n- [escalation] mmmichaelllang: CI workflow for jeeves-unchained sprint-23 PR failed all jobs.\n- [escalation] mmmichaelllang: CI workflow for jeeves-unchained sprint-23 PR failed all jobs.\n- [escalation] mmmichaelllang: CI workflow for jeeves-unchained Claude/asides gate PR failed all jobs.\n- [escalation] mmmichaelllang: Jeeves-memory Research Phase workflow failed all jobs.\n- [escalation] mmmichaelllang: Jeeves-memory Correspondence Phase workflow failed all jobs.\n- [escalation] mmmichaelllang: CI workflow for jeeves-unchained telemetry PR failed all jobs.\n- [escalation] mmmichaelllang: CI workflow for jeeves-unchained telemetry PR failed all jobs.\n- [escalation] mmmichaelllang: CI workflow for jeeves-unchained write fixes PR failed all jobs.\n- [escalation] mmmichaelllang: CI workflow for jeeves-unchained telemetry PR failed all jobs.\n- [escalation] mmmichaelllang: CI workflow for jeeves-unchained research package PR failed all jobs.\n- [escalation] mmmichaelllang: GitHub Actions failure notice for the Jeeves Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub Actions failure notice for the Jeeves Daily Pipeline."
+    "text": "- [escalation] mmmichaelllang: GitHub notification that the Jeeves Correspondence Phase workflow failed.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Weekly Audit Health Report workflow failed.\n- [escalation] mmmichaelllang: GitHub notification that the CI workflow for sprint-23 PR failed.\n- [escalation] mmmichaelllang: GitHub notification that the CI workflow for sprint-23 PR failed.\n- [escalation] mmmichaelllang: GitHub notification that the CI workflow for sprint-23 PR failed.\n- [escalation] mmmichaelllang: GitHub notification that the CI workflow for Claude/asides gate PR failed.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Research Phase workflow failed.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Correspondence Phase workflow failed.\n- [escalation] mmmichaelllang: GitHub notification that the CI workflow for telemetry feature PR failed.\n- [escalation] mmmichaelllang: GitHub notification that the CI workflow for telemetry feature PR failed.\n- [escalation] mmmichaelllang: GitHub Actions CI failure for PR on jeeves-unchained repo.\n- [escalation] mmmichaelllang: GitHub Actions CI failure for PR adding telemetry features to jeeves-unchained."
   }
 }
