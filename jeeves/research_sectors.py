@@ -141,33 +141,70 @@ SECTOR_SPECS: list[SectorSpec] = [
         name="english_lesson_plans",
         shape="dict",
         instruction=(
-            "High-school English/Language-Arts lesson plans and resources Mister Lang "
-            "(teacher candidate) can adapt or steal from. Cover both:\n"
-            "  - 'classroom_ready': complete, freely-available lesson plans (rubrics, "
-            "    discussion-question sets, full unit plans) keyed to common HS texts "
-            "    (The Great Gatsby, Macbeth, Their Eyes Were Watching God, 1984, "
-            "    Beloved, Frankenstein, A Raisin in the Sun, etc.) or to common HS "
-            "    skills (close reading, argumentative essay, rhetorical analysis, "
-            "    Socratic seminar). Source from: Folger Shakespeare Library, "
-            "    ReadWriteThink, the Stanford History Education Group's literacy "
-            "    spinoffs, Edutopia, NCTE journals, the Bill of Rights Institute "
-            "    English plans, Facing History and Ourselves.\n"
-            "  - 'pedagogy_pieces': short essays or articles on HS English pedagogy "
-            "    that have shipped recently (Edutopia, English Journal, ASCD, "
-            "    Common Sense Education, Cult of Pedagogy).\n\n"
-            "MANDATORY FIRST STEP — dispatch THREE searches in parallel right now:\n"
-            "1. serper_search(query='high school English lesson plan free 2026', "
-            "tbs='qdr:m')\n"
-            "2. exa_search(query='high school English language arts lesson plan free "
-            "2026', search_type='auto', num_results=4, text_max_chars=4000)\n"
-            "3. serper_search(query='Folger ReadWriteThink Edutopia English Journal "
-            "lesson plan')\n"
-            "Read the actual page via tavily_extract before including any item — "
-            "do not summarise from the search snippet alone.\n"
-            "MANDATORY DEDUP RULE: any URL in `prior_urls` MUST be filtered out. If "
-            "all top hits are already covered, run another search with a NARROWER "
-            "query (e.g. a specific text or skill not yet covered) until at least "
-            "one URL is new. Returning a previously-covered URL is a hard failure.\n"
+            "High-school English/Language-Arts lesson plans, classroom-management "
+            "strategies, and digital token-economy systems Mister Lang (teacher "
+            "candidate) can adapt or steal from. Two subkeys:\n"
+            "  - 'classroom_ready': complete, freely-available lesson plans, unit "
+            "    rubrics, discussion-question sets, OR concrete classroom-management "
+            "    /token-economy mechanics. Acceptable anchors include common HS "
+            "    texts (The Great Gatsby, Macbeth, Their Eyes Were Watching God, "
+            "    1984, Beloved, Frankenstein, A Raisin in the Sun) or HS skills "
+            "    (close reading, argumentative essay, rhetorical analysis, Socratic "
+            "    seminar) AS WELL AS classroom-management plays (silent-discussion "
+            "    protocols, late-work policies, restorative-circle scripts, "
+            "    points/badges/leaderboards, group-work norms).\n"
+            "  - 'pedagogy_pieces': short essays or community threads on HS English "
+            "    pedagogy or classroom management that shipped recently.\n\n"
+            "PRIORITY SOURCE LIST (2026-05-10 — these are the highest-yield sites "
+            "for the niche the user actually wants; not exclusive — pick whichever "
+            "publishes the genuinely-best item this week):\n"
+            "  - reddit.com/r/ELATeachers, reddit.com/r/Teachers, "
+            "    reddit.com/r/ClassroomManagement (use site:reddit.com/r/<sub> "
+            "    queries; live community trade-craft is the gold-standard signal)\n"
+            "  - GitHub Education, github.com search 'high-school English curriculum' "
+            "    repos, learn-static.github.io / github.com/learn-static, individual "
+            "    teacher-author repos that publish unit plans as Markdown\n"
+            "  - edutopia.org/community, edutopia.org articles on classroom management\n"
+            "  - shakeuplearning.com (Kasey Bell's Shake Up Learning blog — Google-"
+            "    classroom + EdTech how-tos)\n"
+            "  - cultofpedagogy.com (Jennifer Gonzalez)\n"
+            "  - liveschool.io (LiveSchool digital token economy — points, behaviour "
+            "    tracking, parent communication)\n"
+            "  - classroomzen.com (Classroom Zen — mindfulness + management)\n"
+            "  - edugems.io (EduGems — gamified classroom rewards)\n"
+            "  - publish.obsidian.md ecosystem (search 'Obsidian Publish English "
+            "    teacher' or specific pubs known to publish ELA notes)\n"
+            "  - Then conventional anchors: Folger Shakespeare Library, "
+            "    ReadWriteThink, Stanford History Education Group, NCTE / English "
+            "    Journal, Facing History and Ourselves, ASCD, Common Sense "
+            "    Education.\n\n"
+            "MANDATORY FIRST STEP — dispatch FIVE searches in parallel right now:\n"
+            "1. serper_search(query='site:reddit.com/r/ELATeachers OR site:reddit.com/r/"
+            "Teachers OR site:reddit.com/r/ClassroomManagement lesson plan OR token "
+            "economy OR classroom management 2026', tbs='qdr:m', num=10)\n"
+            "2. serper_search(query='LiveSchool OR Cult of Pedagogy OR Shake Up "
+            "Learning OR Classroom Zen OR EduGems classroom management token economy "
+            "2026', tbs='qdr:m', num=10)\n"
+            "3. serper_search(query='site:github.com OR site:github.io high school "
+            "English curriculum OR ELA unit plan OR classroom management', "
+            "tbs='qdr:y', num=10)\n"
+            "4. serper_search(query='site:publish.obsidian.md English teacher OR "
+            "ELA OR classroom', num=10) — explore the Obsidian Publish ecosystem.\n"
+            "5. exa_search(query='high school English language arts lesson plan OR "
+            "classroom token economy OR digital points 2026', search_type='auto', "
+            "num_results=5, text_max_chars=4000)\n"
+            "If you find Reddit threads, USE tavily_extract to read the actual "
+            "thread content (top comments often contain the actual lesson plan or "
+            "management play). Do not summarise from titles. For GitHub repos, "
+            "tavily_extract the README.\n"
+            "MANDATORY DEDUP RULE: any URL in `prior_urls` MUST be filtered out. "
+            "If all top hits are already covered, run another search with a NARROWER "
+            "query (e.g. a specific text, skill, or management technique not yet "
+            "covered) until at least one URL per subkey is new. Returning a "
+            "previously-covered URL is a hard failure.\n"
+            "DIVERSITY RULE: at least 3 distinct hosts must appear across "
+            "classroom_ready + pedagogy_pieces. Do not return 4 items all from one "
+            "blog. Mix Reddit/GitHub/Obsidian-Publish with the conventional anchors.\n"
             "Return a JSON object: "
             "{classroom_ready: [{title, source, url, grade_band, topic, summary}, ...], "
             "pedagogy_pieces: [{title, source, url, summary}, ...], "
@@ -1032,7 +1069,65 @@ _DEEP_FALLBACK_QUERIES: dict[str, str] = {
     "triadic_ontology": "triadic ontology relational metaphysics 2025 2026",
     "ai_systems": "multi-agent AI research autonomous pipeline reasoning model 2026",
     "uap": "UAP disclosure congressional hearing non-human intelligence 2026",
+    # 2026-05-10: intellectual_journals leaked the same 3 sticky URLs (Champy/
+    # Proust, Irving/republican-heritage, Popova/Sacks) for a week. Forced-
+    # retry path now applies to this sector too (see retry_when_all_overlap
+    # logic below). Query selection biases away from the long-tail aeon /
+    # marginalian essays that Kimi memorises.
+    "intellectual_journals": (
+        "NYRB LRB long-form essay this week 2026 -republican -proust "
+        "-sacks-perception"
+    ),
 }
+
+# Sectors that should ALSO force-retry when the quota guard passes BUT the
+# parsed URLs overlap heavily with prior_urls. Different failure mode from
+# the quota-bypass: tools WERE called, but the model picked URLs it has
+# memorised that happen to be in prior_urls.
+_FORCE_RETRY_ON_OVERLAP: frozenset[str] = frozenset({"intellectual_journals"})
+# Threshold — when this fraction or more of the parsed URLs are in prior_urls,
+# treat as a sticky-URL failure and force-retry.
+_OVERLAP_RETRY_THRESHOLD = 0.5
+
+
+def _extract_urls_from_parsed(parsed: Any) -> list[str]:
+    """Pull every URL string out of a parsed sector result (any shape).
+
+    Used by the sticky-URL forced-retry detector. Handles list-of-dicts
+    (most sectors), dict-with-urls (deep sectors), and dict-with-subkeys
+    (english_lesson_plans, family). Returns deduplicated list preserving
+    insertion order.
+    """
+    seen: list[str] = []
+    seen_set: set[str] = set()
+
+    def _add(u: Any) -> None:
+        if not isinstance(u, str):
+            return
+        u = u.strip()
+        if u.startswith(("http://", "https://")) and u not in seen_set:
+            seen.append(u)
+            seen_set.add(u)
+
+    def _walk(node: Any) -> None:
+        if isinstance(node, dict):
+            for k, v in node.items():
+                if k in ("url", "link", "href"):
+                    _add(v)
+                elif k in ("urls", "links"):
+                    if isinstance(v, list):
+                        for u in v:
+                            _add(u)
+                    else:
+                        _walk(v)
+                else:
+                    _walk(v)
+        elif isinstance(node, list):
+            for item in node:
+                _walk(item)
+
+    _walk(parsed)
+    return seen
 
 
 async def _deep_sector_forced_retry(
@@ -1429,11 +1524,12 @@ async def run_sector(
         return spec.default
 
     # Guard: if no search-provider quota moved, Kimi answered entirely from
-    # training data without calling any external tools.  For deep sectors, try
-    # one forced-search retry before giving up.  For all others, return default
-    # so the write phase never sees hallucinated findings.
+    # training data without calling any external tools.  For deep sectors AND
+    # sectors flagged for IJ-style forced retry, try one forced-search retry
+    # before giving up. For all others, return default so the write phase
+    # never sees hallucinated findings.
     if spec.name not in _NO_QUOTA_CHECK and not _quota_increased(pre_quota, ledger):
-        if spec.shape == "deep":
+        if spec.shape == "deep" or spec.name in _FORCE_RETRY_ON_OVERLAP:
             log.warning(
                 "sector %s: no search provider called — attempting forced-search retry.",
                 spec.name,
@@ -1469,6 +1565,46 @@ async def run_sector(
             spec.name, len(parsed.raw),
         )
         parsed = await _json_repair_retry(cfg, spec, parsed, ledger, sector_max_tokens)
+
+    # 2026-05-10 — sticky-URL forced retry. Some sectors (intellectual_journals
+    # observed) call search tools but return URLs the model has memorised that
+    # are already in prior_urls. The quota guard above passes (tools were
+    # called) so the leak goes through. Detect by computing overlap between
+    # parsed URLs and prior_urls; if at or above _OVERLAP_RETRY_THRESHOLD,
+    # force-retry with the deep-sector pattern.
+    if (
+        spec.name in _FORCE_RETRY_ON_OVERLAP
+        and not isinstance(parsed, _ParseFailed)
+    ):
+        parsed_urls = _extract_urls_from_parsed(parsed)
+        if parsed_urls:
+            prior_set = {u.strip() for u in prior_urls_sample if u}
+            overlap = sum(1 for u in parsed_urls if u in prior_set)
+            ratio = overlap / len(parsed_urls)
+            if ratio >= _OVERLAP_RETRY_THRESHOLD:
+                log.warning(
+                    "sector %s: %d/%d parsed URLs (%.0f%%) already in prior_urls "
+                    "— sticky-URL leak detected; attempting forced-retry.",
+                    spec.name, overlap, len(parsed_urls), ratio * 100,
+                )
+                retry_parsed = await _deep_sector_forced_retry(
+                    cfg, spec, prior_urls_sample, ledger, sector_max_tokens
+                )
+                # Only adopt the retry if it actually returned NEW URLs.
+                retry_urls = _extract_urls_from_parsed(retry_parsed)
+                retry_new = sum(1 for u in retry_urls if u not in prior_set)
+                if retry_urls and retry_new > overlap:
+                    log.info(
+                        "sector %s: forced-retry brought %d new URLs (was 0) — adopted.",
+                        spec.name, retry_new,
+                    )
+                    parsed = retry_parsed
+                else:
+                    log.warning(
+                        "sector %s: forced-retry produced no improvement "
+                        "(retry_new=%d vs overlap=%d) — keeping original.",
+                        spec.name, retry_new, overlap,
+                    )
 
     log.info(
         "sector %s: parsed %s (len=%s)",

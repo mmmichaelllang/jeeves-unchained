@@ -316,6 +316,176 @@ def test_intellectual_journals_dedup_language_strengthened():
     assert "the-role-of-literature-as-the-key-to-personal-freedom" in instr
 
 
+def test_english_lesson_plans_targets_user_priority_sources():
+    """2026-05-10 — sector instruction must explicitly name the user's
+    priority source list. Not exclusive, but must be in the prompt.
+    """
+    import jeeves.research_sectors as rs
+    spec = next(s for s in rs.SECTOR_SPECS if s.name == "english_lesson_plans")
+    instr = spec.instruction.lower()
+    must_include = [
+        "r/elateachers",
+        "r/teachers",
+        "r/classroommanagement",
+        "github.com",
+        "shakeuplearning.com",
+        "cultofpedagogy.com",
+        "liveschool.io",
+        "classroomzen.com",
+        "edugems.io",
+        "publish.obsidian.md",
+        "edutopia.org",
+    ]
+    missing = [s for s in must_include if s not in instr]
+    assert not missing, f"english_lesson_plans missing priority sources: {missing}"
+    assert "token economy" in instr or "token-economy" in instr
+    assert "classroom-management" in instr or "classroom management" in instr
+
+
+def test_intellectual_journals_forced_retry_wired():
+    """intellectual_journals must be in _FORCE_RETRY_ON_OVERLAP set and
+    have a fallback query in _DEEP_FALLBACK_QUERIES."""
+    import jeeves.research_sectors as rs
+    assert "intellectual_journals" in rs._FORCE_RETRY_ON_OVERLAP
+    assert "intellectual_journals" in rs._DEEP_FALLBACK_QUERIES
+
+
+def test_extract_urls_from_parsed_handles_shapes():
+    """_extract_urls_from_parsed pulls URLs from list-of-dicts, dict-with-urls,
+    and dict-with-subkeys (the three sector shapes). Skips non-http strings."""
+    from jeeves.research_sectors import _extract_urls_from_parsed
+    parsed_list = [
+        {"source": "Aeon", "urls": ["https://aeon.co/x", "https://aeon.co/y"]},
+        {"source": "NYRB", "urls": ["https://www.nybooks.com/z"]},
+    ]
+    out = _extract_urls_from_parsed(parsed_list)
+    assert out == ["https://aeon.co/x", "https://aeon.co/y",
+                   "https://www.nybooks.com/z"]
+    parsed_deep = {"findings": "...", "urls": ["https://example.com/a"]}
+    assert _extract_urls_from_parsed(parsed_deep) == ["https://example.com/a"]
+    parsed_dict = {
+        "classroom_ready": [
+            {"title": "x", "url": "https://reddit.com/r/ELATeachers/p/1"},
+        ],
+        "pedagogy_pieces": [
+            {"title": "y", "url": "https://cultofpedagogy.com/post"},
+        ],
+    }
+    assert _extract_urls_from_parsed(parsed_dict) == [
+        "https://reddit.com/r/ELATeachers/p/1",
+        "https://cultofpedagogy.com/post",
+    ]
+    assert _extract_urls_from_parsed({"url": "not-a-url"}) == []
+
+
+def test_recurring_opener_detector_flags_match(tmp_path):
+    """audit.detect_recurring_opener flags exact-match opener vs prior briefing."""
+    from scripts.audit import detect_recurring_opener, Defect
+
+    sessions = tmp_path
+    (sessions / "briefing-2026-05-09.html").write_text(
+        '<html><body><p>The world has not improved overnight, but it has at '
+        'least produced several new opportunities to observe it failing.</p>'
+        '<p>more</p></body></html>',
+        encoding="utf-8",
+    )
+    today_html = (
+        '<html><body><p>The world has not improved overnight, but it has at '
+        'least produced several new opportunities to observe it failing.</p>'
+        '<p>different body</p></body></html>'
+    )
+    session = {"date": "2026-05-10"}
+    defects: list[Defect] = []
+    flagged = detect_recurring_opener(today_html, session, sessions, defects)
+    assert flagged == 1
+    assert defects[0].type == "recurring_opener"
+    assert defects[0].evidence["matches_date"] == "2026-05-09"
+
+
+def test_recurring_opener_detector_passes_when_different(tmp_path):
+    """Different opener → no defect."""
+    from scripts.audit import detect_recurring_opener, Defect
+
+    sessions = tmp_path
+    (sessions / "briefing-2026-05-09.html").write_text(
+        '<html><body><p>Yesterday I observed the council meeting in detail.</p>'
+        '</body></html>',
+        encoding="utf-8",
+    )
+    today_html = (
+        '<html><body><p>Today brings a different set of dispatches entirely.</p>'
+        '</body></html>'
+    )
+    session = {"date": "2026-05-10"}
+    defects: list[Defect] = []
+    flagged = detect_recurring_opener(today_html, session, sessions, defects)
+    assert flagged == 0
+    assert defects == []
+
+
+def test_f7_handles_recurring_opener_defect():
+    """fix_greeting_incomplete fires on recurring_opener defect AND threads
+    the avoid-phrase into the LLM prompt."""
+    from scripts.audit_fix import fix_greeting_incomplete, FixAction
+    from unittest.mock import patch
+
+    html = (
+        '<html><body>'
+        '<p>The world has not improved overnight, but it has at least '
+        'produced several new opportunities to observe it failing.</p>'
+        '<p>body</p>'
+        '</body></html>'
+    )
+    defects = [{
+        "type": "recurring_opener",
+        "severity": "medium",
+        "section": "(greeting)",
+        "detail": "matches 2026-05-09",
+        "evidence": {
+            "matches_date": "2026-05-09",
+            "opener_preview": "the world has not improved overnight",
+        },
+    }]
+    session = {
+        "date": "2026-05-10",
+        "weather": "65°F partly cloudy",
+        "correspondence": {"text": "- [escalation] Andrew Lang: invitation"},
+    }
+    actions: list[FixAction] = []
+
+    captured_prompts: list[str] = []
+
+    def fake_call(prompt, system="", max_tokens=400):
+        captured_prompts.append(prompt)
+        return (
+            '<p>A clear morning, Sir; sixty-five degrees and a half-overcast '
+            'sky. Andrew Lang has extended an invitation that warrants a '
+            'glance before noon. Several escalations have stacked overnight, '
+            'though none rise to the level of immediate action. The morning\'s '
+            'dispatch will draw on what the night has furnished — and the '
+            'night has furnished, as ever, a great deal of administrative '
+            'static and very little resolution. Tea is on its way.</p>',
+            "fake-model",
+        )
+
+    with patch("scripts.audit_fix._call_audit_model", side_effect=fake_call):
+        out, model = fix_greeting_incomplete(html, defects, session, actions)
+
+    assert "world has not improved overnight" not in out.lower()
+    assert "sixty-five degrees" in out
+    assert any(
+        a.type == "rerender_greeting"
+        and a.status == "applied"
+        and a.evidence.get("recurring_match_date") == "2026-05-09"
+        for a in actions
+    )
+    assert any(
+        "world has not improved overnight" in p.lower()
+        for p in captured_prompts
+    )
+    assert any("FRESHNESS REQUIREMENT" in p for p in captured_prompts)
+
+
 def test_missing_section_validator_rejects_cot_falls_back():
     """When the LLM emits chain-of-thought (rejected by F-001 validator),
     rescue path falls back to empty-feed placeholder rather than splicing

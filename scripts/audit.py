@@ -75,12 +75,14 @@ CANONICAL_PART_PLAN: list[tuple[str, list[str]]] = [
 
 # Canonical h3 ordering. Used for D4 (section_order).
 # 2026-05-10: "The Wider World" is the canonical header for global_news per
-# write_system.md. "Beyond the Geofence" was incorrectly used for global news
-# in PART 4 prompt and propagated through audit maps. Restored to canon.
-# Old briefings (pre-2026-05-10) wrote "Beyond the Geofence" for global news;
-# the auditor accepts it as a transitional alias (see _H3_ALIASES).
+# write_system.md. "Beyond the Geofence" was the historical (incorrect) header
+# used in PART 4 prompt — kept in the canonical list at its same slot so old
+# briefings + tests that reference it continue to validate. The postprocess
+# h3 rewriter migrates forward going forward; both names are accepted in the
+# auditor's section_order check during the transition.
 EXPECTED_H3_ORDER: list[str] = [
     "The Domestic Sphere",
+    "Beyond the Geofence",
     "The Wider World",
     "The Reading Room",
     "The Specific Enquiries",
@@ -535,6 +537,91 @@ def detect_greeting_incomplete(
     return flagged
 
 
+def detect_recurring_opener(
+    html: str, session: dict, sessions_dir: Path,
+    defects: list[Defect],
+) -> int:
+    """D10 (2026-05-10): today's first body paragraph matches a prior briefing.
+
+    Run after D6_greeting_incomplete. The opener "The world has not improved
+    overnight, but it has at least produced several new opportunities to
+    observe it failing." shipped 2026-04-28, 2026-05-09, AND 2026-05-10 —
+    day-over-day recurrence the auditor must flag for F7 to rewrite.
+
+    Compares the first ~250 chars of today's first <p> in the greeting
+    region against the same slice from each of the last 4 days' briefings
+    on disk. Exact (case-insensitive) match → recurring_opener defect.
+    """
+    from datetime import date as _date_t, timedelta
+
+    # Pull today's first body <p>.
+    body = re.sub(r"<head>[\s\S]*?</head>", "", html, flags=re.IGNORECASE)
+    body = re.sub(r"<style>[\s\S]*?</style>", "", body, flags=re.IGNORECASE)
+    today_p_match = None
+    for m in re.finditer(r"<p[^>]*>([\s\S]*?)</p>", body, re.IGNORECASE):
+        block = m.group(0).lower()
+        if 'class="signoff"' in block or "coverage_log" in block:
+            continue
+        today_p_match = m
+        break
+    if not today_p_match:
+        return 0
+    today_text = re.sub(r"<[^>]+>", " ", today_p_match.group(1))
+    today_text = re.sub(r"\s+", " ", today_text).strip().lower()[:250]
+    if not today_text:
+        return 0
+
+    # Resolve today's date.
+    date_str = session.get("date") or ""
+    if not date_str:
+        return 0
+    try:
+        today = _date_t.fromisoformat(date_str)
+    except ValueError:
+        return 0
+
+    flagged = 0
+    for days_back in range(1, 5):
+        prior = today - timedelta(days=days_back)
+        prior_path = sessions_dir / f"briefing-{prior.isoformat()}.html"
+        if not prior_path.exists():
+            continue
+        try:
+            prior_html = prior_path.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        prior_body = re.sub(r"<head>[\s\S]*?</head>", "", prior_html, flags=re.IGNORECASE)
+        prior_body = re.sub(r"<style>[\s\S]*?</style>", "", prior_body, flags=re.IGNORECASE)
+        prior_first = None
+        for m in re.finditer(r"<p[^>]*>([\s\S]*?)</p>", prior_body, re.IGNORECASE):
+            block = m.group(0).lower()
+            if 'class="signoff"' in block or "coverage_log" in block:
+                continue
+            prior_first = m
+            break
+        if not prior_first:
+            continue
+        prior_text = re.sub(r"<[^>]+>", " ", prior_first.group(1))
+        prior_text = re.sub(r"\s+", " ", prior_text).strip().lower()[:250]
+        if prior_text and prior_text == today_text:
+            defects.append(Defect(
+                type="recurring_opener",
+                severity="medium",
+                section="(greeting)",
+                detail=(
+                    f"today's first paragraph matches {prior.isoformat()} "
+                    "briefing — opener has been recycled."
+                ),
+                evidence={
+                    "matches_date": prior.isoformat(),
+                    "opener_preview": today_text[:120],
+                },
+            ))
+            flagged += 1
+            break  # one match is enough — F7 will rewrite either way
+    return flagged
+
+
 def detect_dedup_violations(
     html: str, session: dict, defects: list[Defect]
 ) -> int:
@@ -843,6 +930,9 @@ def run_audit(date: str, sessions_dir: Path, *, use_llm: bool = True) -> AuditRe
 
     detect_greeting_incomplete(briefing, session, defects)
     detectors_run.append("D6_greeting_incomplete")
+
+    detect_recurring_opener(briefing, session, sessions_dir, defects)
+    detectors_run.append("D10_recurring_opener")
 
     return AuditReport(
         date=date,

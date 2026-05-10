@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_for_commit": "234422c",
+  "generated_for_commit": "09df453",
   "fingerprints": [
     {
       "date": "2026-04-24",
@@ -164,25 +164,48 @@
       "date": "2026-05-09",
       "buckets": {
         "staleness_narration": [
-          "since our last review"
+          "as noted earlier",
+          "no new information since",
+          "remains unchanged since",
+          "since our last glance",
+          "since our last review",
+          "since our prior briefing",
+          "unchanged from previous reports",
+          "unchanged since our last",
+          "without alteration"
         ],
         "closing_summary": [
-          "These advancements, as reported",
-          "highlights the rapid evolution",
-          "implications for the research agenda",
-          "is poised to transform",
-          "marking a new era",
-          "signal progress in the development",
-          "synthesis of these findings highlights",
-          "underscores the potential for"
+          "both assert that",
+          "shared theme: both",
+          "the juxtaposition of",
+          "underscores a shared",
+          "underscores a shared theme"
+        ],
+        "banned_opener": [
+          "The world has not improved overnight",
+          "produced several new opportunities to observe it failing"
+        ],
+        "asides_floor": [
+          "count=0"
+        ]
+      },
+      "asides_floor_count": 0,
+      "signoff_correct": true,
+      "word_count": 2382
+    },
+    {
+      "date": "2026-05-10",
+      "buckets": {
+        "staleness_narration": [
+          "since our last review"
         ],
         "h3_wrong_for_global_news": [
           "Beyond_the_Geofence->The_Wider_World"
         ]
       },
-      "asides_floor_count": 4,
+      "asides_floor_count": 2,
       "signoff_correct": true,
-      "word_count": 2465
+      "word_count": 2408
     }
   ]
 }

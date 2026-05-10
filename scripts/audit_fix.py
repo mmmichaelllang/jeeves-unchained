@@ -746,11 +746,30 @@ def fix_empty_with_data(html: str, defects: list[dict], session: dict,
 
 def fix_greeting_incomplete(html: str, defects: list[dict], session: dict,
                             actions: list[FixAction]) -> tuple[str, str | None]:
-    """F7: re-render Part 1 with weather + correspondence + date."""
+    """F7: re-render Part 1 with weather + correspondence + date.
+
+    2026-05-10 — also fires on recurring_opener defect (D10). When today's
+    opener matches a prior briefing's, the rewrite prompt is augmented with
+    the prior opener so the model is told NOT to emit anything resembling
+    it. The structural greeting fields (weather, correspondence, date) are
+    still required, so the rewrite covers both classes of failure.
+    """
     greeting_defects = [d for d in defects
-                        if d["type"].startswith("greeting_")]
+                        if d["type"].startswith("greeting_")
+                        or d["type"] == "recurring_opener"]
     if not greeting_defects:
         return html, None
+
+    # Extract the recurring-opener evidence if present so we can tell the
+    # model exactly which phrasing to avoid.
+    recurring_defects = [d for d in greeting_defects
+                         if d["type"] == "recurring_opener"]
+    recurring_avoid_phrase: str | None = None
+    recurring_match_date: str | None = None
+    if recurring_defects:
+        ev = recurring_defects[0].get("evidence", {})
+        recurring_avoid_phrase = ev.get("opener_preview")
+        recurring_match_date = ev.get("matches_date")
 
     weather = session.get("weather") or ""
     corr = (session.get("correspondence") or {}).get("text", "")
@@ -773,12 +792,28 @@ def fix_greeting_incomplete(html: str, defects: list[dict], session: dict,
         "NOT emit an h3 — this is the greeting, before any section. Return "
         "only the <p> tag."
     )
-    prompt = (
-        f"Today's date: {date_str}\n"
-        f"Weather: {weather}\n"
-        f"Correspondence handoff:\n{corr}\n\n"
-        "Write the greeting paragraph in Jeeves voice."
-    )
+    prompt_lines = [
+        f"Today's date: {date_str}",
+        f"Weather: {weather}",
+        f"Correspondence handoff:",
+        corr,
+        "",
+        "Write the greeting paragraph in Jeeves voice.",
+    ]
+    if recurring_avoid_phrase:
+        prompt_lines.extend([
+            "",
+            "FRESHNESS REQUIREMENT — this opener has been used recently:",
+            f"  PRIOR ({recurring_match_date or 'last 4 days'}): "
+            f"{recurring_avoid_phrase!r}",
+            "Your rewrite MUST avoid that exact framing. No 'world has not "
+            "improved overnight', no 'opportunities to observe it failing', "
+            "no minor variant. Open from a different observational angle "
+            "(weather-as-portent, the morning's specific dispatch, a single "
+            "named correspondent's matter). The rewrite must read as a "
+            "different opener, not a paraphrase.",
+        ])
+    prompt = "\n".join(prompt_lines)
     text, model = _call_audit_model(prompt, system=system, max_tokens=400)
     if not text or not model:
         actions.append(FixAction(
@@ -817,12 +852,19 @@ def fix_greeting_incomplete(html: str, defects: list[dict], session: dict,
         ))
         return html, None
     html = html[:m.start()] + text.strip() + html[m.end():]
+    detail = f"re-rendered via {model}"
+    if recurring_avoid_phrase:
+        detail += f" (recurring_opener fix; matched {recurring_match_date})"
     actions.append(FixAction(
         type="rerender_greeting",
         section="(greeting)",
-        detail=f"re-rendered via {model}",
+        detail=detail,
         status="applied",
-        evidence={"model": model, "chars": len(text)},
+        evidence={
+            "model": model,
+            "chars": len(text),
+            "recurring_match_date": recurring_match_date,
+        },
     ))
     return html, model
 
