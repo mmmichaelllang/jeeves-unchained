@@ -260,6 +260,11 @@ BANNED_PHRASES_BY_BUCKET: dict[str, list[str]] = {
         "I shall begin by reading",
         "as the morning sunlight",
         "casts a warm glow",
+        # 2026-05-10 — phrase shipped 2026-05-09 run-1 AND 2026-05-10 run-1.
+        # Day-over-day recurrence flagged by user. Specific catch; the
+        # broader "recurring opener" detection lives in audit.py D10.
+        "The world has not improved overnight",
+        "produced several new opportunities to observe it failing",
     ],
 }
 
@@ -974,8 +979,12 @@ You pick up from there.
 - Do NOT emit `<h3>The Domestic Sphere</h3>`. Parts 2 and 3 already opened
   that section. Begin the choral/toddler content directly — no header.
 - When you transition from the family content to global_news, emit exactly
-  `<h3>Beyond the Geofence</h3>` at that transition point. This is the ONLY
+  `<h3>The Wider World</h3>` at that transition point. This is the ONLY
   new section header you should emit in this part.
+  NOTE 2026-05-10: this header is "The Wider World" for global news.
+  "Beyond the Geofence" is RESERVED for local public-safety items beyond
+  the 3-mile rule (see write_system.md canonical headers). Do NOT use
+  "Beyond the Geofence" for global news under any circumstances.
 
 Your scope — write ONLY about these:
 - Choral auditions for Mrs. Lang from `family.choir`.
@@ -5846,6 +5855,37 @@ async def generate_briefing(
     return stitched, quality_warnings, groq_part_count, nim_fallback_part_count
 
 
+_FIRST_BODY_P_RE = re.compile(
+    r"<p[^>]*>([\s\S]*?)</p>",
+    re.IGNORECASE,
+)
+
+
+def _extract_first_body_paragraph(html: str) -> str:
+    """Return text of the first <p> inside the briefing's container.
+
+    Used by the recurring-opener detector to compare day-over-day greetings.
+    Strips tags from the matched <p> body. Returns "" if no <p> found or
+    the first <p> is the COVERAGE_LOG / signoff (those are end-of-doc).
+    """
+    if not html:
+        return ""
+    # Strip head/style early — they have no <p>.
+    body_only = re.sub(r"<head>[\s\S]*?</head>", "", html, flags=re.IGNORECASE)
+    body_only = re.sub(r"<style>[\s\S]*?</style>", "", body_only, flags=re.IGNORECASE)
+    for m in _FIRST_BODY_P_RE.finditer(body_only):
+        block = m.group(0).lower()
+        # Skip signoff / coverage paragraphs; we want the greeting.
+        if 'class="signoff"' in block or "coverage_log" in block:
+            continue
+        text = re.sub(r"<[^>]+>", " ", m.group(1))
+        text = re.sub(r"\s+", " ", text)
+        text = text.strip()
+        if text:
+            return text
+    return ""
+
+
 def postprocess_html(
     raw: str,
     session: SessionModel,
@@ -5907,6 +5947,82 @@ def postprocess_html(
                         "postprocess: banned phrase (%s) detected: %r",
                         bucket_name, phrase,
                     )
+
+    # ----------------------------------------------------------------- #
+    # 2026-05-10 fix_h3_wrong_for_global_news — deterministic rewriter.  #
+    # PART 4 prompt was retasked to emit <h3>Beyond the Geofence</h3>    #
+    # for global_news. Canon (write_system.md) reserves that header for  #
+    # local public-safety items beyond the 3-mile rule. Restored prompt  #
+    # to "The Wider World" but old briefings + model momentum still leak #
+    # the wrong header. Postprocess detects + rewrites when the section  #
+    # body cites global news anchors.                                    #
+    # ----------------------------------------------------------------- #
+    _BTG_RE = re.compile(
+        r"<h3[^>]*>\s*Beyond the Geofence\s*</h3>",
+        re.IGNORECASE,
+    )
+    _BTG_GLOBAL_TELLS = (
+        "BBC", "Reuters", "Guardian", "Al Jazeera",
+        "Strait of Hormuz", "Channel migrant", "Russia", "Ukraine",
+        "Iran", "Israel", "Lebanon", "Greek", "Greece",
+        "European Union", "Pentagon",
+    )
+    btg_match = _BTG_RE.search(html)
+    if btg_match:
+        # Inspect the next 3000 chars after the h3 — if it cites global
+        # news anchors, rewrite the header. Otherwise leave alone (it may
+        # legitimately be local public-safety content).
+        body_after = html[btg_match.end(): btg_match.end() + 3000]
+        if any(tell in body_after for tell in _BTG_GLOBAL_TELLS):
+            html = _BTG_RE.sub("<h3>The Wider World</h3>", html, count=1)
+            marker = "h3_wrong_for_global_news:Beyond_the_Geofence->The_Wider_World"
+            if marker not in quality_warnings_list:
+                quality_warnings_list.append(marker)
+            log.warning(
+                "fix_h3_wrong_for_global_news: rewrote 'Beyond the Geofence' "
+                "h3 to 'The Wider World' (global-news anchors detected in body)."
+            )
+
+    # ----------------------------------------------------------------- #
+    # 2026-05-10 fix_recurring_opener — day-over-day opener detection.   #
+    # User reported the same opener line shipped 2026-05-09 + 2026-05-10.#
+    # Compare today's first paragraph (first ~250 chars of body text) to #
+    # prior 4 days' briefings. Flag near-exact duplicate so the auditor  #
+    # F7 path can rewrite the greeting. Detection-only here.             #
+    # ----------------------------------------------------------------- #
+    try:
+        opener = _extract_first_body_paragraph(html)[:250].strip().lower()
+        if opener:
+            from datetime import date as _date_t, timedelta
+            sessions_dir = (
+                Path(__file__).resolve().parent.parent / "sessions"
+            )
+            if isinstance(session.date, _date_t):
+                today = session.date
+            else:
+                today = _date_t.fromisoformat(str(session.date))
+            for days_back in range(1, 5):
+                prior = today - timedelta(days=days_back)
+                prior_path = sessions_dir / f"briefing-{prior.isoformat()}.html"
+                if not prior_path.exists():
+                    continue
+                try:
+                    prior_html = prior_path.read_text(encoding="utf-8")
+                except OSError:
+                    continue
+                prior_opener = _extract_first_body_paragraph(prior_html)[:250].strip().lower()
+                if prior_opener and prior_opener == opener:
+                    marker = f"recurring_opener:matches={prior.isoformat()}"
+                    if marker not in quality_warnings_list:
+                        quality_warnings_list.append(marker)
+                    log.warning(
+                        "fix_recurring_opener: today's opener matches "
+                        "%s briefing — flag for greeting rewrite.",
+                        prior.isoformat(),
+                    )
+                    break
+    except Exception as exc:
+        log.debug("fix_recurring_opener: skipped (%s)", exc)
 
     # ----------------------------------------------------------------- #
     # 2026-05-09 fix_day_name_wrong — deterministic greeting-date fix.   #
