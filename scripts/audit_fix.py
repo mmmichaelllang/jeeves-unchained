@@ -311,6 +311,8 @@ _H3_TO_SECTORS_FOR_RESCUE: dict[str, list[str]] = {
     "The Library Stacks": ["literary_pick"],
     "The Reading Room": ["intellectual_journals", "enriched_articles"],
     "The Domestic Sphere": ["local_news"],
+    "The Wider World": ["family", "global_news"],
+    # Transitional alias 2026-05-10 — see scripts/audit.py for context.
     "Beyond the Geofence": ["family", "global_news"],
     "The Specific Enquiries": ["triadic_ontology", "ai_systems", "uap"],
     "The Commercial Ledger": ["wearable_ai", "ai_systems"],

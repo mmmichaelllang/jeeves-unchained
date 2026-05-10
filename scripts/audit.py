@@ -65,7 +65,7 @@ CANONICAL_PART_PLAN: list[tuple[str, list[str]]] = [
     ("part1", ["correspondence", "weather"]),                                # greeting (no h3)
     ("part2", ["local_news"]),                                               # The Domestic Sphere
     ("part3", ["career"]),                                                   # (continues Domestic)
-    ("part4", ["family", "global_news"]),                                    # Beyond the Geofence
+    ("part4", ["family", "global_news"]),                                    # The Wider World (global_news); family bundled here historically
     ("part5", ["intellectual_journals", "enriched_articles"]),               # The Reading Room
     ("part6", ["triadic_ontology", "ai_systems"]),                           # The Specific Enquiries
     ("part7", ["uap", "wearable_ai", "literary_pick"]),                      # The Specific Enquiries / Commercial Ledger / Library Stacks
@@ -74,9 +74,14 @@ CANONICAL_PART_PLAN: list[tuple[str, list[str]]] = [
 ]
 
 # Canonical h3 ordering. Used for D4 (section_order).
+# 2026-05-10: "The Wider World" is the canonical header for global_news per
+# write_system.md. "Beyond the Geofence" was incorrectly used for global news
+# in PART 4 prompt and propagated through audit maps. Restored to canon.
+# Old briefings (pre-2026-05-10) wrote "Beyond the Geofence" for global news;
+# the auditor accepts it as a transitional alias (see _H3_ALIASES).
 EXPECTED_H3_ORDER: list[str] = [
     "The Domestic Sphere",
-    "Beyond the Geofence",
+    "The Wider World",
     "The Reading Room",
     "The Specific Enquiries",
     "The Commercial Ledger",
@@ -305,6 +310,10 @@ def detect_empty_with_data(
     flagged = 0
     h3_to_sectors = {
         "The Domestic Sphere": ["local_news"],
+        "The Wider World": ["family", "global_news"],
+        # Transitional alias 2026-05-10 — old briefings used the wrong
+        # header name for global news. Accept either to avoid spurious
+        # missing-section defects on prior briefings.
         "Beyond the Geofence": ["family", "global_news"],
         "The Reading Room": ["intellectual_journals", "enriched_articles"],
         "The Specific Enquiries": ["triadic_ontology", "ai_systems", "uap"],
