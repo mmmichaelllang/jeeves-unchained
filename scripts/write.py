@@ -153,6 +153,47 @@ def _apply_asides_gate(cfg, session, result, out_path):
             "proceeding to block."
         )
 
+    # Tier 3 — Deterministic asides injector (Patch 2, 2026-05-10). When
+    # OR + Cerebras both leave the briefing sterile, splice asides from the
+    # pre-approved pool into earned positions. Always rescues unless no
+    # qualifying paragraphs (>50 words, outside .newyorker / .signoff)
+    # exist, which only happens on cap-short briefings.
+    if result.profane_aside_count < ASIDES_FLOOR:
+        log.warning(
+            "GATE C: still below floor after LLM retries. Trying Tier 3 "
+            "deterministic injector."
+        )
+        try:
+            from jeeves.write import _inject_asides_to_floor, postprocess_html as _pp
+            new_html, injected = _inject_asides_to_floor(
+                result.html,
+                recently_used=recent,
+                current_count=result.profane_aside_count,
+                target_count=ASIDES_FLOOR,
+            )
+            if injected:
+                result = _pp(
+                    new_html, session,
+                    quality_warnings=list(result.quality_warnings or [])
+                    + [f"asides_floor_injected:{len(injected)}"],
+                )
+                out_path.write_text(result.html, encoding="utf-8")
+                log.warning(
+                    "GATE C [Tier 3]: deterministic injector added %d aside(s); "
+                    "count now %d (floor=%d).",
+                    len(injected), result.profane_aside_count, ASIDES_FLOOR,
+                )
+            else:
+                log.warning(
+                    "GATE C [Tier 3]: no qualifying paragraphs — injector "
+                    "could not rescue briefing."
+                )
+        except Exception as exc:
+            log.error(
+                "GATE C [Tier 3]: injector raised %s: %s",
+                type(exc).__name__, exc,
+            )
+
     if result.profane_aside_count < ASIDES_FLOOR:
         log.error(
             "GATE C BLOCK: asides=%d still below floor=%d after retry. "
@@ -362,76 +403,101 @@ def main(argv: list[str] | None = None) -> int:
                     reason,
                 )
 
-    if args.dry_run:
-        raw_html = render_mock_briefing(session)
-        _quality_warnings: list[str] = []
-        _groq_parts = 0
-        _nim_fallback_parts = 0
-        log.info("dry-run fixture briefing assembled (%d chars)", len(raw_html))
-    else:
-        import asyncio
-        raw_html, _quality_warnings, _groq_parts, _nim_fallback_parts = asyncio.run(
-            generate_briefing(cfg, session, max_tokens=args.max_tokens)
-        )
+    # Variables populated inside the try block; declared up here so the
+    # finally clause can persist the manifest regardless of where we exit.
+    result: "BriefingResult | None" = None
+    _groq_parts: int = 0
+    _nim_fallback_parts: int = 0
 
-    result = postprocess_html(raw_html, session, quality_warnings=_quality_warnings)
-
-    # Write run manifest with full metrics now that postprocess has run.
-    if not args.dry_run:
-        _write_run_manifest(cfg, result, _groq_parts, _nim_fallback_parts)
-    log.info(
-        "briefing: %d words, %d profane asides, %d coverage entries",
-        result.word_count, result.profane_aside_count, len(result.coverage_log),
-    )
-    if result.banned_word_hits:
-        log.warning("BANNED WORD HITS: %s", result.banned_word_hits)
-    if result.banned_transition_hits:
-        log.warning("BANNED TRANSITION HITS: %s", result.banned_transition_hits)
-    if result.word_count < 5000 and not args.dry_run:
-        log.warning("briefing is under 5000 words (%d) — model undershot.", result.word_count)
-    if result.profane_aside_count < 5 and not args.dry_run:
-        log.warning("fewer than 5 profane asides detected (%d).", result.profane_aside_count)
-
-    out_path = cfg.briefing_html_path()
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(result.html, encoding="utf-8")
-    log.info("briefing written to %s", out_path)
-
-    if args.dry_run or args.skip_send:
-        log.info("[skip-send] briefing not delivered.")
-        return 0
-
-    # ----------------------------------------------------------------- #
-    # 2026-05-09 GATE C — asides-floor hard-block.                       #
-    # When OR narrative editor skipped or stripped asides, the briefing  #
-    # ships sterile (no profane asides → Wodehouse texture lost). One    #
-    # retry of the narrative editor; if still under the floor, BLOCK     #
-    # send and exit non-zero so daily.yml fails the write step rather    #
-    # than emailing the broken briefing. Run-1 of 2026-05-09 shipped     #
-    # with 0 asides; this gate would have stopped it.                    #
-    # ----------------------------------------------------------------- #
-    result, gate_blocked = _apply_asides_gate(cfg, session, result, out_path)
-    if gate_blocked:
-        return 5
-
-    full_date = datetime.strptime(cfg.run_date.isoformat(), "%Y-%m-%d").strftime(
-        "%A, %B %-d, %Y"
-    )
-    subject = SUBJECT_TEMPLATE.format(full_date=full_date)
+    # Patch 1 (2026-05-10) — manifest persistence via try/finally. Before
+    # this wrap, _write_run_manifest only fired on the happy path: any
+    # exception or non-zero return path between draft-gen and SMTP send
+    # left the manifest unwritten and ALL post-run telemetry invisible
+    # (banned-phrase buckets, asides_floor markers, etc). The wrap ensures
+    # the manifest lands whenever ``result`` exists — exception or no.
     try:
-        send_html(
-            to=cfg.recipient_email,
-            sender=cfg.recipient_email,
-            subject=subject,
-            html=result.html,
-            app_password=cfg.gmail_app_password,
-        )
-    except SMTPConfigError as e:
-        log.error(str(e))
-        return 4
+        if args.dry_run:
+            raw_html = render_mock_briefing(session)
+            _quality_warnings: list[str] = []
+            _groq_parts = 0
+            _nim_fallback_parts = 0
+            log.info("dry-run fixture briefing assembled (%d chars)", len(raw_html))
+        else:
+            import asyncio
+            raw_html, _quality_warnings, _groq_parts, _nim_fallback_parts = asyncio.run(
+                generate_briefing(cfg, session, max_tokens=args.max_tokens)
+            )
 
-    _commit_coverage(cfg, out_path)
-    return 0
+        result = postprocess_html(raw_html, session, quality_warnings=_quality_warnings)
+
+        log.info(
+            "briefing: %d words, %d profane asides, %d coverage entries",
+            result.word_count, result.profane_aside_count, len(result.coverage_log),
+        )
+        if result.banned_word_hits:
+            log.warning("BANNED WORD HITS: %s", result.banned_word_hits)
+        if result.banned_transition_hits:
+            log.warning("BANNED TRANSITION HITS: %s", result.banned_transition_hits)
+        if result.word_count < 5000 and not args.dry_run:
+            log.warning("briefing is under 5000 words (%d) — model undershot.", result.word_count)
+        if result.profane_aside_count < 5 and not args.dry_run:
+            log.warning("fewer than 5 profane asides detected (%d).", result.profane_aside_count)
+
+        out_path = cfg.briefing_html_path()
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(result.html, encoding="utf-8")
+        log.info("briefing written to %s", out_path)
+
+        if args.dry_run or args.skip_send:
+            log.info("[skip-send] briefing not delivered.")
+            return 0
+
+        # ----------------------------------------------------------------- #
+        # 2026-05-09 GATE C — asides-floor with deterministic injector.      #
+        # When OR narrative editor skipped or stripped asides, the briefing  #
+        # ships sterile (no profane asides → Wodehouse texture lost). One    #
+        # retry of the narrative editor (Tier 1 OR, Tier 2 Cerebras); if     #
+        # still under floor, Tier 3 invokes the deterministic asides         #
+        # injector which always rescues the briefing to the floor. The       #
+        # legacy hard-block path remains for the cap-rare case where even    #
+        # the injector can't find qualifying paragraphs.                     #
+        # ----------------------------------------------------------------- #
+        result, gate_blocked = _apply_asides_gate(cfg, session, result, out_path)
+        if gate_blocked:
+            return 5
+
+        full_date = datetime.strptime(cfg.run_date.isoformat(), "%Y-%m-%d").strftime(
+            "%A, %B %-d, %Y"
+        )
+        subject = SUBJECT_TEMPLATE.format(full_date=full_date)
+        try:
+            send_html(
+                to=cfg.recipient_email,
+                sender=cfg.recipient_email,
+                subject=subject,
+                html=result.html,
+                app_password=cfg.gmail_app_password,
+            )
+        except SMTPConfigError as e:
+            log.error(str(e))
+            return 4
+
+        _commit_coverage(cfg, out_path)
+        return 0
+    finally:
+        # Patch 1 finally clause — persist the run manifest whenever a
+        # BriefingResult was built, regardless of subsequent exceptions or
+        # early returns. Dry-runs skip persistence (no real metrics to keep).
+        if result is not None and not args.dry_run:
+            try:
+                _write_run_manifest(cfg, result, _groq_parts, _nim_fallback_parts)
+            except Exception as exc:
+                # Manifest persistence is best-effort — never let a failed
+                # manifest write override the briefing's exit code.
+                log.error(
+                    "run-manifest write failed: %s: %s",
+                    type(exc).__name__, exc,
+                )
 
 
 if __name__ == "__main__":
