@@ -3205,15 +3205,55 @@ _ASIDE_EARNED_ANCHORS = (
     "dollar", "million", "billion", "budget",
 )
 
-_NEWYORKER_BLOCK_RE = re.compile(
-    r'<div\b[^>]*\bclass="newyorker"[^>]*>.*?</div>',
-    re.IGNORECASE | re.DOTALL,
+# 2026-05-11 BUGFIX — the prior regex `<div\b[^>]*\bclass="X"[^>]*>.*?</div>`
+# was NON-GREEDY and terminated at the FIRST inner `</div>`. The .newyorker
+# block contains a child `<div class="ny-header">` whose `</div>` terminated
+# the match early, leaving the TOTT verbatim `<p>` OUTSIDE the excluded span.
+# Result: PR #114's deterministic asides injector spliced profanity INTO the
+# New Yorker verbatim text on 2026-05-11 ("Age is individual-specific. It is,
+# A collection of absolute, grade-A thundercunts.") — verbatim mandate
+# violated, Gmail flagged the email as spam.
+#
+# Fix: locate exclusion zones by depth-counting matching <div> tags. The
+# `_div_open_re` matches an opening div for the target class. We then walk
+# forward through tag positions and balance opens/closes to find the matching
+# outer </div>.
+_NEWYORKER_OPEN_RE = re.compile(
+    r'<div\b[^>]*\bclass="newyorker"[^>]*>',
+    re.IGNORECASE,
 )
-_SIGNOFF_BLOCK_RE = re.compile(
-    r'<div\b[^>]*\bclass="signoff"[^>]*>.*?</div>',
-    re.IGNORECASE | re.DOTALL,
+_SIGNOFF_OPEN_RE = re.compile(
+    r'<div\b[^>]*\bclass="signoff"[^>]*>',
+    re.IGNORECASE,
 )
+_ANY_DIV_TAG_RE = re.compile(r'<(/)?div\b[^>]*>', re.IGNORECASE)
 _P_BLOCK_RE = re.compile(r"<p\b([^>]*)>(.*?)</p>", re.IGNORECASE | re.DOTALL)
+
+
+def _balanced_div_span(html: str, open_re: "re.Pattern[str]") -> tuple[int, int] | None:
+    """Locate the span of a `<div class="X">...</div>` with depth counting.
+
+    Handles nested `<div>` children (e.g. `<div class="newyorker">` containing
+    a `<div class="ny-header">`). Returns (start, end_after_closing_div) or
+    None when no opening div for the class is found OR when the divs are
+    unbalanced (defensive — never raises).
+    """
+    m = open_re.search(html)
+    if not m:
+        return None
+    start = m.start()
+    depth = 1
+    pos = m.end()
+    for tag_m in _ANY_DIV_TAG_RE.finditer(html, pos):
+        if tag_m.group(1) == "/":
+            depth -= 1
+            if depth == 0:
+                return (start, tag_m.end())
+        else:
+            depth += 1
+    # Unbalanced — fall back to "rest of document" to be safe (over-exclude
+    # rather than corrupt the verbatim zone).
+    return (start, len(html))
 
 
 def _word_count(text: str) -> int:
@@ -3275,11 +3315,14 @@ def _inject_asides_to_floor(
     available.sort(key=lambda a: a.lower())
 
     # Exclude the TOTT verbatim block and the signoff from injection.
+    # 2026-05-11 — use depth-counted balanced-div spans, not non-greedy
+    # regex (which terminated early at the inner `<div class="ny-header">`
+    # close and let the TOTT paragraph slip through).
     excluded_spans: list[tuple[int, int]] = []
-    for rx in (_NEWYORKER_BLOCK_RE, _SIGNOFF_BLOCK_RE):
-        m = rx.search(html)
-        if m:
-            excluded_spans.append(m.span())
+    for open_re in (_NEWYORKER_OPEN_RE, _SIGNOFF_OPEN_RE):
+        span = _balanced_div_span(html, open_re)
+        if span is not None:
+            excluded_spans.append(span)
 
     def _in_excluded(pos: int) -> bool:
         return any(s <= pos < e for s, e in excluded_spans)

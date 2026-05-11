@@ -190,6 +190,64 @@ def test_skips_paragraphs_inside_newyorker_block():
     assert injected == []
 
 
+def test_skips_newyorker_with_nested_ny_header_div():
+    """Regression for 2026-05-11 production defacement.
+
+    The .newyorker block in production contains a child <div class="ny-header">.
+    A non-greedy `<div ...>.*?</div>` regex terminates at the FIRST inner
+    `</div>` (the ny-header close), leaving the TOTT `<p>` OUTSIDE the
+    excluded span. The depth-counted matcher MUST treat the whole .newyorker
+    container as exclusion.
+
+    This is the exact structure used by `jeeves/prompts/email_scaffold.html`
+    and the OR narrative editor's preserved TOTT block.
+    """
+    tott_text = _long_paragraph(
+        "Ellen Burstyn recalls poetry decades old in her Upper West Side apartment "
+        "with Edna St Vincent Millay and Hafez and Maya Angelou"
+    )
+    html = (
+        '<div class="newyorker">'
+        + '<div class="ny-header">The New Yorker · Talk of the Town</div>'
+        + tott_text
+        + "</div>"
+    )
+    new_html, injected = _inject_asides_to_floor(
+        html, pool=_TEST_POOL, current_count=0, target_count=1,
+    )
+    # TOTT paragraph MUST NOT receive an injection.
+    assert injected == []
+    # And the verbatim text must be byte-identical to the input.
+    assert new_html == html
+
+
+def test_skips_newyorker_with_nested_div_and_eligible_paragraph_before():
+    """Eligible paragraph BEFORE the newyorker block gets the aside; the
+    TOTT paragraph INSIDE the newyorker (after a nested ny-header div) does
+    NOT — even though depth-naive regex would have included it."""
+    eligible = _long_paragraph(
+        "the council vote was delayed by the wastewater contractor decision"
+    )
+    tott = _long_paragraph(
+        "Ellen Burstyn recalls poetry decades old in her Upper West Side apartment "
+        "with Edna St Vincent Millay and Hafez and Maya Angelou"
+    )
+    html = (
+        eligible
+        + '<div class="newyorker">'
+        + '<div class="ny-header">The New Yorker</div>'
+        + tott
+        + "</div>"
+    )
+    new_html, injected = _inject_asides_to_floor(
+        html, pool=_TEST_POOL, current_count=0, target_count=1,
+    )
+    assert len(injected) == 1
+    # The aside must NOT appear in the newyorker block.
+    ny_open = new_html.find('<div class="newyorker">')
+    assert injected[0] not in new_html[ny_open:]
+
+
 def test_skips_paragraphs_inside_signoff_block():
     html = (
         '<div class="signoff">'
