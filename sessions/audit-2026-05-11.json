@@ -1,0 +1,167 @@
+{
+  "date": "2026-05-11",
+  "briefing_chars": 23054,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D7_narrative_flow",
+    "D9_writing_quality",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete",
+    "D10_recurring_opener"
+  ],
+  "detectors_skipped": [],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "25 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 25,
+        "samples": [
+          "https://audria.tech",
+          "https://canyonsdistrict.cld.bz/BHS-10th-Grade-ELA-Map/38",
+          "https://mynorthwest.com/local/suspect-arrested-after-running-from-fiery-crash-in-snohomish-county/4236889",
+          "https://www.king5.com/article/news/local/armed-carjacking-woodinville-leads-to-chase/281-c3b88be7-05b4-41b9-8781-74442984f97a",
+          "https://neosapien.xyz"
+        ]
+      }
+    },
+    {
+      "type": "narrative_flow_issue",
+      "severity": "low",
+      "section": "Opening paragraph",
+      "detail": "Abrupt shift from CSS styling to narrative voice without transition.",
+      "evidence": {
+        "score": 7,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "narrative_flow_issue",
+      "severity": "low",
+      "section": "GitHub Actions section",
+      "detail": "Technical details lack narrative cohesion; reads like a ticket log rather than a briefing.",
+      "evidence": {
+        "score": 7,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "narrative_flow_issue",
+      "severity": "low",
+      "section": "Edmonds waterfront paragraph",
+      "detail": "Disjointed chronology and tone\u2014starts abstract, ends with salary figure without thematic linkage.",
+      "evidence": {
+        "score": 7,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "narrative_flow_issue",
+      "severity": "low",
+      "section": "Crime reports (carjacking, DUI)",
+      "detail": "Sudden, jarring shift to local crime with no narrative bridge or thematic framing.",
+      "evidence": {
+        "score": 7,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "narrative_flow_issue",
+      "severity": "low",
+      "section": "Teaching job boards & token economy tools",
+      "detail": "Fractured focus: mixes job listings, pedagogical resources, and Reddit hacks without logical grouping or commentary.",
+      "evidence": {
+        "score": 7,
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://www.newyorker.com/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.newyorker.com/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://www.edmondswa.gov/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.edmondswa.gov/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://www.seattlepromusica.org/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.seattlepromusica.org/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "missing_section",
+      "severity": "high",
+      "section": "The Reading Room",
+      "detail": "h3 'The Reading Room' absent but sectors ['intellectual_journals', 'enriched_articles'] have data",
+      "evidence": {
+        "sectors": [
+          "intellectual_journals",
+          "enriched_articles"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
+      "evidence": {
+        "weather_preview": "Today in Edmonds: Mostly sunny with some cloudy intervals. High 63-66\u00b0F, low tonight 48-51\u00b0F. Very l"
+      }
+    },
+    {
+      "type": "greeting_missing_correspondence",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "correspondence handoff text present but no preview in greeting",
+      "evidence": {
+        "handoff_preview": "- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves \u2014 Research Phase failed on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves \u2014 Correspondence Phase failed on mai"
+      }
+    },
+    {
+      "type": "recurring_opener",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "today's first paragraph recurs vs 2026-05-09 (shared 4-gram 'ood morning mister lang').",
+      "evidence": {
+        "matches_date": "2026-05-09",
+        "opener_preview": "g ood morning, mister lang. the morning's correspondence has already been laid out in full, but the salient matters are ",
+        "prior_opener_preview": "g ood morning, mister lang. the world has not improved overnight, though it has at least produced several new opportunit",
+        "jaccard_similarity": 0.161,
+        "shared_ngram": "ood morning mister lang"
+      }
+    }
+  ],
+  "section_count": 5,
+  "hallucinated_url_count": 3,
+  "empty_section_count": 0,
+  "aside_template_count": 0,
+  "narrative_flow_score": 7,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": "qwen/qwen3-next-80b-a3b-instruct:free"
+}

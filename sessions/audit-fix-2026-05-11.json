@@ -1,0 +1,67 @@
+{
+  "date": "2026-05-11",
+  "pre_fix_chars": 23054,
+  "post_fix_chars": 24498,
+  "actions": [
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.newyorker.com/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.newyorker.com/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.edmondswa.gov/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.edmondswa.gov/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.seattlepromusica.org/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.seattlepromusica.org/"
+      }
+    },
+    {
+      "type": "rerender_missing_section",
+      "section": "The Reading Room",
+      "detail": "rescued via qwen/qwen3-next-80b-a3b-instruct:free",
+      "status": "applied",
+      "evidence": {
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free",
+        "chars": 1599
+      }
+    },
+    {
+      "type": "inject_missing_section",
+      "section": "The Reading Room",
+      "detail": "injected empty-feed for The Reading Room",
+      "status": "applied",
+      "evidence": {
+        "anchor": "The Domestic Sphere"
+      }
+    },
+    {
+      "type": "rerender_greeting",
+      "section": "(greeting)",
+      "detail": "re-rendered via qwen/qwen3-next-80b-a3b-instruct:free (recurring_opener fix; matched 2026-05-09)",
+      "status": "applied",
+      "evidence": {
+        "model": "qwen/qwen3-next-80b-a3b-instruct:free",
+        "chars": 426,
+        "recurring_match_date": "2026-05-09"
+      }
+    }
+  ],
+  "pre_fix_defect_count": 13,
+  "post_fix_defect_count": null,
+  "audit_model_used": "qwen/qwen3-next-80b-a3b-instruct:free"
+}

@@ -1,0 +1,89 @@
+{
+  "date": "2026-05-11",
+  "briefing_chars": 24498,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete",
+    "D10_recurring_opener"
+  ],
+  "detectors_skipped": [
+    "D7_narrative_flow",
+    "D9_writing_quality"
+  ],
+  "defects": [
+    {
+      "type": "dedup_url_cross_section",
+      "severity": "high",
+      "section": null,
+      "detail": "URL appears in 2 sections",
+      "evidence": {
+        "url": "https://www.lrb.co.uk/the-paper/v48/n08/jan-werner-mueller/short-cuts",
+        "sections": [
+          "The Reading Room",
+          "The Intellectual Journals"
+        ]
+      }
+    },
+    {
+      "type": "dedup_url_cross_section",
+      "severity": "high",
+      "section": null,
+      "detail": "URL appears in 2 sections",
+      "evidence": {
+        "url": "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
+        "sections": [
+          "The Reading Room",
+          "The Specific Enquiries"
+        ]
+      }
+    },
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "28 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 28,
+        "samples": [
+          "https://www.scientificamerican.com/article/do-octopus-brains-work-like-humans-or-is-there-another-way-to-be-smart",
+          "https://myedmondsnews.com/2026/05/council-may-12-to-consider-again-appointment-of-new-city-administrator",
+          "https://history-speaks-n9n8dzk1h-daniel-baqueros-projects.vercel.app",
+          "https://myedmondsnews.com/2026/05/council-postpones-vote-on-city-administrator-advances-measure-on-salary-commission",
+          "https://audria.tech"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
+      "evidence": {
+        "weather_preview": "Today in Edmonds: Mostly sunny with some cloudy intervals. High 63-66\u00b0F, low tonight 48-51\u00b0F. Very l"
+      }
+    },
+    {
+      "type": "greeting_missing_correspondence",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "correspondence handoff text present but no preview in greeting",
+      "evidence": {
+        "handoff_preview": "- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves \u2014 Research Phase failed on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves \u2014 Correspondence Phase failed on mai"
+      }
+    }
+  ],
+  "section_count": 6,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 0,
+  "aside_template_count": 0,
+  "narrative_flow_score": null,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": null
+}
