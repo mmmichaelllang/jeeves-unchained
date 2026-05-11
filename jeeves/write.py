@@ -3169,6 +3169,175 @@ def _maybe_rescue_literary_to_part8(
     return cleaned
 
 
+# --------------------------------------------------------------------------
+# Patch 2 (2026-05-10) — Deterministic asides injector.
+#
+# When the OR narrative editor (and Cerebras tier-2 fallback) leave the
+# briefing with fewer than ASIDES_FLOOR profane asides, this helper picks
+# asides from the pre-approved pool — filtered against the last N days'
+# usage — and splices them into earned positions inside the body. Always
+# reaches the target count when at least N qualifying paragraphs exist;
+# returns the (html, injected_count) tuple so callers can verify and emit
+# a `asides_floor_injected:N` quality_warning.
+#
+# Design points:
+#   - Splices ", [aside]" before the FIRST sentence-terminator (".", "!", "?")
+#     in a qualifying paragraph so the aside reads as part of the prose, not
+#     bolted on. Falls back to "Sir, [aside]." appended after the paragraph
+#     when no terminator lands cleanly.
+#   - "Qualifying" = paragraph contains a `<p>` body of >50 words and is NOT
+#     inside the .newyorker (TOTT verbatim) or .signoff blocks.
+#   - "Earned position" preference: paragraphs that already mention failure,
+#     decisions, schedules, or money (heuristic — same anchors the model
+#     uses). Falls back to longest paragraph when no heuristic match.
+#   - Never duplicates within a run. Never re-uses an aside present in any
+#     of the last `ASIDES_RECENT_WINDOW_DAYS` days' briefings.
+# --------------------------------------------------------------------------
+
+# Paragraphs containing one of these anchor words are preferred injection
+# sites — the aside has earned weight because the surrounding prose already
+# signals frustration / consequence. Lowercase substring match.
+_ASIDE_EARNED_ANCHORS = (
+    "failure", "failed", "delay", "delayed", "decision", "decide",
+    "deadline", "vote", "rejected", "reject", "loss", "lost",
+    "missing", "missed", "broken", "error", "problem", "trouble",
+    "mistake", "cost", "spent", "fee", "fine", "tax", "money",
+    "dollar", "million", "billion", "budget",
+)
+
+_NEWYORKER_BLOCK_RE = re.compile(
+    r'<div\b[^>]*\bclass="newyorker"[^>]*>.*?</div>',
+    re.IGNORECASE | re.DOTALL,
+)
+_SIGNOFF_BLOCK_RE = re.compile(
+    r'<div\b[^>]*\bclass="signoff"[^>]*>.*?</div>',
+    re.IGNORECASE | re.DOTALL,
+)
+_P_BLOCK_RE = re.compile(r"<p\b([^>]*)>(.*?)</p>", re.IGNORECASE | re.DOTALL)
+
+
+def _word_count(text: str) -> int:
+    return len(_strip_tags(text).split())
+
+
+def _inject_asides_to_floor(
+    html: str,
+    *,
+    pool: list[str] | None = None,
+    recently_used: list[str] | None = None,
+    current_count: int,
+    target_count: int = 2,
+    min_paragraph_words: int = 50,
+) -> tuple[str, list[str]]:
+    """Splice asides into earned positions until `target_count` is reached.
+
+    Returns ``(modified_html, injected_asides)``. ``injected_asides`` is the
+    list of phrases actually inserted (in order of insertion).
+
+    No-op when current_count is already at or above target_count. Returns
+    ``(html, [])`` when no qualifying paragraphs exist (cap-rare; only
+    happens on extremely short briefings).
+
+    Pool selection:
+      - Skips any phrase in ``recently_used`` (cross-day dedup).
+      - Skips any phrase already present in ``html`` (within-run dedup).
+      - Picks the LEXICALLY-FIRST qualifying phrase so the choice is
+        deterministic — tests can assert exact output.
+
+    Earned-position selection:
+      1. Paragraphs containing any ``_ASIDE_EARNED_ANCHORS`` substring,
+         ranked by word count desc.
+      2. Fallback: any qualifying paragraph by word count desc.
+
+    The aside is splicedas a parenthetical: ``the foo. is, [aside].`` becomes
+    ``the foo, [aside]. is, …`` is harder to get right under HTML — instead
+    we APPEND a small sentence to the paragraph's end before ``</p>``:
+    ``[existing prose]. — [aside].``
+    """
+    if current_count >= target_count:
+        return html, []
+    # Distinguish "pool not supplied" (None — load from disk) from "pool
+    # explicitly empty" (caller wants the no-op path; usually only happens
+    # in tests). Treating empty as None hides empty-pool bugs.
+    if pool is None:
+        pool = _parse_all_asides()
+    if not pool:
+        return html, []
+    recently = {a.strip().lower() for a in (recently_used or []) if a}
+    html_lc = html.lower()
+    available = [
+        a for a in pool
+        if a.strip().lower() not in recently
+        and a.strip().lower() not in html_lc
+    ]
+    if not available:
+        return html, []
+    available.sort(key=lambda a: a.lower())
+
+    # Exclude the TOTT verbatim block and the signoff from injection.
+    excluded_spans: list[tuple[int, int]] = []
+    for rx in (_NEWYORKER_BLOCK_RE, _SIGNOFF_BLOCK_RE):
+        m = rx.search(html)
+        if m:
+            excluded_spans.append(m.span())
+
+    def _in_excluded(pos: int) -> bool:
+        return any(s <= pos < e for s, e in excluded_spans)
+
+    # Catalogue qualifying paragraphs with (start_offset, end_offset, words,
+    # has_anchor). Iterate forward through the HTML so insertion offsets are
+    # stable when we rebuild.
+    candidates: list[tuple[int, int, int, bool]] = []
+    for m in _P_BLOCK_RE.finditer(html):
+        if _in_excluded(m.start()):
+            continue
+        inner = m.group(2)
+        words = _word_count(inner)
+        if words < min_paragraph_words:
+            continue
+        inner_lc = inner.lower()
+        has_anchor = any(tok in inner_lc for tok in _ASIDE_EARNED_ANCHORS)
+        candidates.append((m.start(), m.end(), words, has_anchor))
+
+    if not candidates:
+        return html, []
+
+    # Prefer anchored paragraphs first; among each group, longer paragraphs
+    # first. Stable enough for tests; the actual order doesn't matter so
+    # long as anchors are preferred.
+    candidates.sort(key=lambda t: (-int(t[3]), -t[2]))
+
+    needed = target_count - current_count
+    picks = list(zip(available[:needed], candidates[:needed]))
+    if not picks:
+        return html, []
+
+    # Apply insertions in REVERSE start-offset order so earlier offsets stay
+    # valid after we mutate the string.
+    picks_by_offset = sorted(picks, key=lambda t: -t[1][0])
+    modified = html
+    injected: list[str] = []
+    for aside, (start, end, _w, _a) in picks_by_offset:
+        # Locate the closing </p> for this paragraph in the current modified
+        # string. Use a fresh regex match anchored at `start` to be robust
+        # against earlier mutations that might have shifted offsets if the
+        # excluded-span match overlapped. Defensive: skip if not found.
+        seg_match = _P_BLOCK_RE.match(modified, start)
+        if seg_match is None:
+            continue
+        inner = seg_match.group(2).rstrip()
+        # Strip trailing punctuation to make the aside read cleanly.
+        sep = "" if inner.endswith((".", "!", "?", "—")) else "."
+        new_inner = f"{inner}{sep} It is, {aside}."
+        new_block = f"<p{seg_match.group(1)}>{new_inner}</p>"
+        modified = modified[: seg_match.start()] + new_block + modified[seg_match.end():]
+        injected.append(aside)
+
+    # `injected` was built in reverse order; reverse so callers see prose-order.
+    injected.reverse()
+    return modified, injected
+
+
 def _ensure_tott_scaffolding(part9_html: str, newyorker_available: bool, ny_url: str = "") -> str:
     """Programmatically guarantee Part 9 contains the intro + placeholder.
 
