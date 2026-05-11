@@ -1,6 +1,6 @@
 {
   "date": "2026-05-11",
-  "briefing_chars": 24498,
+  "briefing_chars": 22629,
   "session_status": "complete",
   "detectors_run": [
     "D8_dedup",
@@ -18,44 +18,30 @@
   ],
   "defects": [
     {
-      "type": "dedup_url_cross_section",
-      "severity": "high",
-      "section": null,
-      "detail": "URL appears in 2 sections",
-      "evidence": {
-        "url": "https://www.lrb.co.uk/the-paper/v48/n08/jan-werner-mueller/short-cuts",
-        "sections": [
-          "The Reading Room",
-          "The Intellectual Journals"
-        ]
-      }
-    },
-    {
-      "type": "dedup_url_cross_section",
-      "severity": "high",
-      "section": null,
-      "detail": "URL appears in 2 sections",
-      "evidence": {
-        "url": "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
-        "sections": [
-          "The Reading Room",
-          "The Specific Enquiries"
-        ]
-      }
-    },
-    {
       "type": "dedup_cross_day_overlap",
       "severity": "medium",
       "section": null,
-      "detail": "28 URLs already covered in prior briefings",
+      "detail": "6 URLs already covered in prior briefings",
       "evidence": {
-        "overlap_count": 28,
+        "overlap_count": 6,
         "samples": [
-          "https://www.scientificamerican.com/article/do-octopus-brains-work-like-humans-or-is-there-another-way-to-be-smart",
-          "https://myedmondsnews.com/2026/05/council-may-12-to-consider-again-appointment-of-new-city-administrator",
-          "https://history-speaks-n9n8dzk1h-daniel-baqueros-projects.vercel.app",
-          "https://myedmondsnews.com/2026/05/council-postpones-vote-on-city-administrator-advances-measure-on-salary-commission",
-          "https://audria.tech"
+          "https://www.newyorker.com/magazine/2026/05/11/is-the-twenty-fifth-amendment-really-an-option",
+          "https://jewishcurrents.org/issue/spring-2026",
+          "https://www.k12jobspot.com/Job/5507161",
+          "https://www.whyliveschool.com/blog/token-economy-lesson-plan",
+          "https://myedmondsnews.com/2026/05/council-postpones-vote-on-city-administrator-advances-measure-on-salary-commission"
+        ]
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "section under 30 words (10) but sectors ['literary_pick'] have available data",
+      "evidence": {
+        "word_count": 10,
+        "data_signals": [
+          "literary_pick=populated"
         ]
       }
     },
@@ -65,7 +51,7 @@
       "section": "(greeting)",
       "detail": "weather string present in session but not in greeting",
       "evidence": {
-        "weather_preview": "Today in Edmonds: Mostly sunny with some cloudy intervals. High 63-66\u00b0F, low tonight 48-51\u00b0F. Very l"
+        "weather_preview": "Partly cloudy to mostly sunny today in Edmonds. High 65\u00b0F, low 51\u00b0F. Northeast breeze 5-15 mph, turn"
       }
     },
     {
@@ -74,13 +60,13 @@
       "section": "(greeting)",
       "detail": "correspondence handoff text present but no preview in greeting",
       "evidence": {
-        "handoff_preview": "- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves \u2014 Research Phase failed on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves \u2014 Correspondence Phase failed on mai"
+        "handoff_preview": "- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves \u2014 Correspondence Phase failed in jeeves-memory repository.\n- [escalation] lang.mc@gmail.com: Jeeves-generated daily correspondence digest "
       }
     }
   ],
-  "section_count": 6,
+  "section_count": 7,
   "hallucinated_url_count": 0,
-  "empty_section_count": 0,
+  "empty_section_count": 1,
   "aside_template_count": 0,
   "narrative_flow_score": null,
   "writing_quality_score": null,

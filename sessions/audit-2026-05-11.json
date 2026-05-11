@@ -1,6 +1,6 @@
 {
   "date": "2026-05-11",
-  "briefing_chars": 23054,
+  "briefing_chars": 24498,
   "session_status": "complete",
   "detectors_run": [
     "D8_dedup",
@@ -17,110 +17,375 @@
   "detectors_skipped": [],
   "defects": [
     {
-      "type": "dedup_cross_day_overlap",
-      "severity": "medium",
+      "type": "dedup_url_cross_section",
+      "severity": "high",
       "section": null,
-      "detail": "25 URLs already covered in prior briefings",
+      "detail": "URL appears in 2 sections",
       "evidence": {
-        "overlap_count": 25,
-        "samples": [
-          "https://audria.tech",
-          "https://canyonsdistrict.cld.bz/BHS-10th-Grade-ELA-Map/38",
-          "https://mynorthwest.com/local/suspect-arrested-after-running-from-fiery-crash-in-snohomish-county/4236889",
-          "https://www.king5.com/article/news/local/armed-carjacking-woodinville-leads-to-chase/281-c3b88be7-05b4-41b9-8781-74442984f97a",
-          "https://neosapien.xyz"
+        "url": "https://www.lrb.co.uk/the-paper/v48/n08/jan-werner-mueller/short-cuts",
+        "sections": [
+          "The Reading Room",
+          "The Intellectual Journals"
         ]
       }
     },
     {
-      "type": "narrative_flow_issue",
-      "severity": "low",
-      "section": "Opening paragraph",
-      "detail": "Abrupt shift from CSS styling to narrative voice without transition.",
+      "type": "dedup_url_cross_section",
+      "severity": "high",
+      "section": null,
+      "detail": "URL appears in 2 sections",
       "evidence": {
-        "score": 7,
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+        "url": "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
+        "sections": [
+          "The Reading Room",
+          "The Specific Enquiries"
+        ]
       }
     },
     {
-      "type": "narrative_flow_issue",
-      "severity": "low",
-      "section": "GitHub Actions section",
-      "detail": "Technical details lack narrative cohesion; reads like a ticket log rather than a briefing.",
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "7 URLs already covered in prior briefings",
       "evidence": {
-        "score": 7,
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+        "overlap_count": 7,
+        "samples": [
+          "https://www.k12jobspot.com/Job/5507161",
+          "https://www.newyorker.com/magazine/2026/05/11/is-the-twenty-fifth-amendment-really-an-option",
+          "https://www.aljazeera.com/news/2026/5/8/make-up-their-own-minds-pentagon-releases-first-tranche-of-ufo-files",
+          "https://jewishcurrents.org/issue/spring-2026",
+          "https://myedmondsnews.com/2026/05/council-postpones-vote-on-city-administrator-advances-measure-on-salary-commission"
+        ]
       }
     },
     {
-      "type": "narrative_flow_issue",
-      "severity": "low",
-      "section": "Edmonds waterfront paragraph",
-      "detail": "Disjointed chronology and tone\u2014starts abstract, ends with salary figure without thematic linkage.",
+      "type": "narrative_flow_low",
+      "severity": "high",
+      "section": null,
+      "detail": "narrative flow score 3/10",
       "evidence": {
-        "score": 7,
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+        "score": 3,
+        "issues": [
+          {
+            "section": "Opening",
+            "issue": "CSS code block precedes any prose, breaking narrative flow."
+          },
+          {
+            "section": "Greeting",
+            "issue": "Abrupt shift from styling to salutation without transitional sentence."
+          },
+          {
+            "section": "Domestic Sphere",
+            "issue": "Repeats same facts (twelve million dollars, permit) in quick succession, causing redundancy."
+          },
+          {
+            "section": "Local News",
+            "issue": "Jumps from waterfront update to carjacking and DUI with no logical connective."
+          },
+          {
+            "section": "Teaching Resources",
+            "issue": "Sudden pivot to classroom management guides, unrelated to preceding civic news."
+          },
+          {
+            "section": "Global Wires",
+            "issue": "Brief mention of quiet wires then immediate New Yorker article, lacking context."
+          },
+          {
+            "section": "Reading Room",
+            "issue": "Dense list of journal articles presented as a run\u2011on paragraph, hindering comprehension."
+          },
+          {
+            "section": "Specific Enquiries",
+            "issue": "UAP disclosure details follow intellectual section without clear thematic link."
+          },
+          {
+            "section": "Commercial Ledger",
+            "issue": "Product listings appear as a disconnected catalog, interrupting narrative."
+          },
+          {
+            "section": "Talk of the Town",
+            "issue": "Long excerpt from The New Yorker inserted without framing or analysis."
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
       }
     },
     {
-      "type": "narrative_flow_issue",
-      "severity": "low",
-      "section": "Crime reports (carjacking, DUI)",
-      "detail": "Sudden, jarring shift to local crime with no narrative bridge or thematic framing.",
+      "type": "writing_quality_low",
+      "severity": "medium",
+      "section": null,
+      "detail": "writing quality score 6/10",
       "evidence": {
-        "score": 7,
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+        "score": 6,
+        "issues": [
+          {
+            "type": "filler",
+            "evidence": "nothing of sufficient substance to detain us"
+          },
+          {
+            "type": "aside_overuse",
+            "evidence": "It is, A collection of absolute, grade-A thundercunts."
+          },
+          {
+            "type": "voice_break",
+            "evidence": "Read at The New Yorker Your reluctantly faithful Butler, Jeeves Output JSON exactly:"
+          },
+          {
+            "type": "vague",
+            "evidence": "the global wires are quiet this morning \u2014 nothing of sufficient substance to detain us."
+          }
+        ],
+        "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
       }
     },
     {
-      "type": "narrative_flow_issue",
-      "severity": "low",
-      "section": "Teaching job boards & token economy tools",
-      "detail": "Fractured focus: mixes job listings, pedagogical resources, and Reddit hacks without logical grouping or commentary.",
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://myedmondsnews.com/2026/05/council-may-12-to-consider-again-appointment-of-new-city-administrator/' not present in any session JSON sector",
       "evidence": {
-        "score": 7,
-        "model": "qwen/qwen3-next-80b-a3b-instruct:free"
+        "url": "https://myedmondsnews.com/2026/05/council-may-12-to-consider-again-appointment-of-new-city-administrator/",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://www.king5.com/article/news/local/armed-carjacking-woodinville-leads-to-chase/281-c3b88be7-05b4-41b9-8781-74442984f97a' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.king5.com/article/news/local/armed-carjacking-woodinville-leads-to-chase/281-c3b88be7-05b4-41b9-8781-74442984f97a",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://mynorthwest.com/local/suspect-arrested-after-running-from-fiery-crash-in-snohomish-county/4236889' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://mynorthwest.com/local/suspect-arrested-after-running-from-fiery-crash-in-snohomish-county/4236889",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://lensa.com/job-v1/auburn-school-district/snohomish-wa/social-studies-teacher/07a44da5eaeaaef0e62b6a901671ce4c' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://lensa.com/job-v1/auburn-school-district/snohomish-wa/social-studies-teacher/07a44da5eaeaaef0e62b6a901671ce4c",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://canyonsdistrict.cld.bz/BHS-10th-Grade-ELA-Map/38/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://canyonsdistrict.cld.bz/BHS-10th-Grade-ELA-Map/38/",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://www.lenny.com/lesson/hero-economy-launch-299657' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.lenny.com/lesson/hero-economy-launch-299657",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://talkintownenglish.com/blog/how-to-create-a-classroom-economy' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://talkintownenglish.com/blog/how-to-create-a-classroom-economy",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://www.reddit.com/r/ELATeachers/comments/1t4nd0g/going_into_my_first_year_of_ela_and_need_all_the/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.reddit.com/r/ELATeachers/comments/1t4nd0g/going_into_my_first_year_of_ela_and_need_all_the/",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Reading Room",
+      "detail": "href 'https://www.lrb.co.uk/the-paper/v48/n08/jan-werner-mueller/short-cuts' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.lrb.co.uk/the-paper/v48/n08/jan-werner-mueller/short-cuts",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Reading Room",
+      "detail": "href 'https://www.lrb.co.uk/the-paper/v48/n09/james-butler/labour-s-failure' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.lrb.co.uk/the-paper/v48/n09/james-butler/labour-s-failure",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Reading Room",
+      "detail": "href 'https://www.ibtimes.com/rubio-senators-heard-credible-scif-testimony-non-human-beings-recovered-alien-bodies-3795866' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.ibtimes.com/rubio-senators-heard-credible-scif-testimony-non-human-beings-recovered-alien-bodies-3795866",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Reading Room",
+      "detail": "href 'https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Intellectual Journals",
+      "detail": "href 'https://www.lrb.co.uk/the-paper/v48/n08/jan-werner-mueller/short-cuts' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.lrb.co.uk/the-paper/v48/n08/jan-werner-mueller/short-cuts",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Intellectual Journals",
+      "detail": "href 'https://www.scientificamerican.com/article/do-octopus-brains-work-like-humans-or-is-there-another-way-to-be-smart/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.scientificamerican.com/article/do-octopus-brains-work-like-humans-or-is-there-another-way-to-be-smart/",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Specific Enquiries",
+      "detail": "href 'https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://oversight.house.gov/release/luna-continues-transparency-investigation-into-uaps/",
+        "is_homepage": false
       }
     },
     {
       "type": "hallucinated_url",
       "severity": "high",
-      "section": "The Domestic Sphere",
-      "detail": "href 'https://www.newyorker.com/' not present in any session JSON sector",
+      "section": "The Commercial Ledger",
+      "detail": "href 'https://nirva.life/' not present in any session JSON sector",
       "evidence": {
-        "url": "https://www.newyorker.com/",
+        "url": "https://nirva.life/",
         "is_homepage": true
       }
     },
     {
       "type": "hallucinated_url",
       "severity": "high",
-      "section": "The Domestic Sphere",
-      "detail": "href 'https://www.edmondswa.gov/' not present in any session JSON sector",
+      "section": "The Commercial Ledger",
+      "detail": "href 'https://audria.tech/' not present in any session JSON sector",
       "evidence": {
-        "url": "https://www.edmondswa.gov/",
+        "url": "https://audria.tech/",
         "is_homepage": true
       }
     },
     {
       "type": "hallucinated_url",
       "severity": "high",
-      "section": "The Domestic Sphere",
-      "detail": "href 'https://www.seattlepromusica.org/' not present in any session JSON sector",
+      "section": "The Commercial Ledger",
+      "detail": "href 'https://wareit.ai/' not present in any session JSON sector",
       "evidence": {
-        "url": "https://www.seattlepromusica.org/",
+        "url": "https://wareit.ai/",
         "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Commercial Ledger",
+      "detail": "href 'https://getverbally.com/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://getverbally.com/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Commercial Ledger",
+      "detail": "href 'https://eduarc.ai/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://eduarc.ai/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Commercial Ledger",
+      "detail": "href 'https://history-speaks-n9n8dzk1h-daniel-baqueros-projects.vercel.app/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://history-speaks-n9n8dzk1h-daniel-baqueros-projects.vercel.app/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Commercial Ledger",
+      "detail": "href 'https://neosapien.xyz/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://neosapien.xyz/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Commercial Ledger",
+      "detail": "href 'https://nunatechnology.com/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://nunatechnology.com/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Commercial Ledger",
+      "detail": "href 'https://linktr.ee/ondapluswearable' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://linktr.ee/ondapluswearable",
+        "is_homepage": false
       }
     },
     {
       "type": "missing_section",
       "severity": "high",
-      "section": "The Reading Room",
-      "detail": "h3 'The Reading Room' absent but sectors ['intellectual_journals', 'enriched_articles'] have data",
+      "section": "The Library Stacks",
+      "detail": "h3 'The Library Stacks' absent but sectors ['literary_pick'] have data",
       "evidence": {
         "sectors": [
-          "intellectual_journals",
-          "enriched_articles"
+          "literary_pick"
         ]
       }
     },
@@ -130,7 +395,7 @@
       "section": "(greeting)",
       "detail": "weather string present in session but not in greeting",
       "evidence": {
-        "weather_preview": "Today in Edmonds: Mostly sunny with some cloudy intervals. High 63-66\u00b0F, low tonight 48-51\u00b0F. Very l"
+        "weather_preview": "Partly cloudy to mostly sunny today in Edmonds. High 65\u00b0F, low 51\u00b0F. Northeast breeze 5-15 mph, turn"
       }
     },
     {
@@ -139,29 +404,16 @@
       "section": "(greeting)",
       "detail": "correspondence handoff text present but no preview in greeting",
       "evidence": {
-        "handoff_preview": "- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves \u2014 Research Phase failed on main branch.\n- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves \u2014 Correspondence Phase failed on mai"
-      }
-    },
-    {
-      "type": "recurring_opener",
-      "severity": "medium",
-      "section": "(greeting)",
-      "detail": "today's first paragraph recurs vs 2026-05-09 (shared 4-gram 'ood morning mister lang').",
-      "evidence": {
-        "matches_date": "2026-05-09",
-        "opener_preview": "g ood morning, mister lang. the morning's correspondence has already been laid out in full, but the salient matters are ",
-        "prior_opener_preview": "g ood morning, mister lang. the world has not improved overnight, though it has at least produced several new opportunit",
-        "jaccard_similarity": 0.161,
-        "shared_ngram": "ood morning mister lang"
+        "handoff_preview": "- [escalation] mmmichaelllang: GitHub Actions workflow Jeeves \u2014 Correspondence Phase failed in jeeves-memory repository.\n- [escalation] lang.mc@gmail.com: Jeeves-generated daily correspondence digest "
       }
     }
   ],
-  "section_count": 5,
-  "hallucinated_url_count": 3,
+  "section_count": 6,
+  "hallucinated_url_count": 24,
   "empty_section_count": 0,
   "aside_template_count": 0,
-  "narrative_flow_score": 7,
-  "writing_quality_score": null,
+  "narrative_flow_score": 3,
+  "writing_quality_score": 6,
   "dedup_score": null,
-  "audit_model_used": "qwen/qwen3-next-80b-a3b-instruct:free"
+  "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free"
 }
