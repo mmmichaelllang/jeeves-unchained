@@ -47,26 +47,34 @@ def _post_with_asides(count: int):
     return _fake
 
 
-def test_above_floor_no_retry(tmp_path: Path):
-    """Result already has asides ≥ floor → gate is a no-op (no OR, no Cerebras)."""
+def test_above_floor_no_or_or_cerebras_but_injector_runs(tmp_path: Path):
+    """Post-2026-05-12 (PR #117): count >= floor → LLM tiers skip, but Tier 3
+    injector ALWAYS runs to top up to ASIDES_TARGET. Patches the injector
+    so we can assert it was called without exercising the real pool."""
     from scripts.write import _apply_asides_gate
 
     out_path = tmp_path / "briefing.html"
     out_path.write_text("untouched", encoding="utf-8")
     cfg = MagicMock()
-    cfg.cerebras_api_key = "k"  # set to prove Cerebras is NOT called
+    cfg.cerebras_api_key = "k"
     session = MagicMock()
     starting = _result_with_asides(ASIDES_FLOOR, "<html>orig</html>")
 
     with patch("scripts.write._invoke_openrouter_narrative_edit") as mock_or, \
-         patch("scripts.write._invoke_cerebras_narrative_edit") as mock_ce:
+         patch("scripts.write._invoke_cerebras_narrative_edit") as mock_ce, \
+         patch("scripts.write._recently_used_asides", return_value=[]), \
+         patch(
+             "jeeves.write._inject_asides_to_floor",
+             return_value=("<html>orig</html>", []),
+         ) as mock_inj:
         result, blocked = _apply_asides_gate(cfg, session, starting, out_path)
 
     assert blocked is False
-    assert result is starting
+    # LLM tiers MUST be skipped (we're at/above floor already).
     mock_or.assert_not_called()
     mock_ce.assert_not_called()
-    assert out_path.read_text(encoding="utf-8") == "untouched"
+    # Tier 3 injector MUST always run.
+    mock_inj.assert_called_once()
 
 
 def test_retry_recovers_above_floor(tmp_path: Path):
@@ -141,10 +149,16 @@ def test_cerebras_tier2_rescues_when_or_fails(tmp_path: Path):
     assert out_path.read_text(encoding="utf-8") == "<html>cerebras_fix</html>"
 
 
-def test_cerebras_skipped_when_no_api_key(tmp_path: Path):
-    """No CEREBRAS_API_KEY → Cerebras tier-2 NOT consulted; gate blocks
-    on OR-only result. Preserves prior behavior for installs without
-    the new key configured."""
+# 2026-05-12 (PR #117) — six tests below renamed from `_blocks` to
+# `_proceeds_with_injector`. The pre-2026-05-12 contract was: GATE C
+# hard-blocks when asides < FLOOR after OR + Cerebras retries. The new
+# contract: GATE C ALWAYS proceeds; Tier 3 injector tops up to TARGET.
+# Tests now assert the injector was called and gate_blocked is False
+# (never True).
+
+def test_cerebras_skipped_when_no_api_key_injector_proceeds(tmp_path: Path):
+    """No CEREBRAS_API_KEY → Cerebras tier-2 NOT consulted, but injector
+    Tier 3 still runs and we never block."""
     from scripts.write import _apply_asides_gate
 
     out_path = tmp_path / "briefing.html"
@@ -155,20 +169,24 @@ def test_cerebras_skipped_when_no_api_key(tmp_path: Path):
 
     with patch(
         "scripts.write._invoke_openrouter_narrative_edit",
-        return_value="<html>sterile</html>",  # unchanged
+        return_value="<html>sterile</html>",
     ), patch(
         "scripts.write._invoke_cerebras_narrative_edit",
     ) as mock_ce, patch(
         "scripts.write._recently_used_asides", return_value=[]
-    ):
+    ), patch(
+        "jeeves.write._inject_asides_to_floor",
+        return_value=("<html>sterile</html>", []),
+    ) as mock_inj:
         result, blocked = _apply_asides_gate(cfg, session, starting, out_path)
 
-    assert blocked is True
+    assert blocked is False  # Never blocks post-PR #117.
     mock_ce.assert_not_called()
+    mock_inj.assert_called_once()  # Tier 3 always runs.
 
 
-def test_cerebras_tier2_also_fails_blocks(tmp_path: Path):
-    """Both tiers fail → gate blocks (asides still 0)."""
+def test_cerebras_tier2_also_fails_injector_proceeds(tmp_path: Path):
+    """Both LLM tiers fail → injector Tier 3 runs and we proceed."""
     from scripts.write import _apply_asides_gate
 
     out_path = tmp_path / "briefing.html"
@@ -185,15 +203,17 @@ def test_cerebras_tier2_also_fails_blocks(tmp_path: Path):
         return_value="<html>still_sterile</html>",
     ), patch(
         "scripts.write._recently_used_asides", return_value=[]
-    ), patch("jeeves.write.postprocess_html", _post_with_asides(0)):
+    ), patch("jeeves.write.postprocess_html", _post_with_asides(0)), patch(
+        "jeeves.write._inject_asides_to_floor",
+        return_value=("<html>still_sterile</html>", []),
+    ):
         result, blocked = _apply_asides_gate(cfg, session, starting, out_path)
 
-    assert blocked is True
-    assert result.profane_aside_count == 0
+    assert blocked is False  # Never blocks.
 
 
-def test_cerebras_raises_blocks(tmp_path: Path):
-    """Cerebras tier-2 raises → caught, gate blocks."""
+def test_cerebras_raises_injector_proceeds(tmp_path: Path):
+    """Cerebras tier-2 raises → caught, injector still runs, gate proceeds."""
     from scripts.write import _apply_asides_gate
 
     out_path = tmp_path / "briefing.html"
@@ -210,20 +230,23 @@ def test_cerebras_raises_blocks(tmp_path: Path):
         side_effect=RuntimeError("Cerebras down"),
     ), patch(
         "scripts.write._recently_used_asides", return_value=[]
+    ), patch(
+        "jeeves.write._inject_asides_to_floor",
+        return_value=("<html>sterile</html>", []),
     ):
         result, blocked = _apply_asides_gate(cfg, session, starting, out_path)
 
-    assert blocked is True
-    assert result.profane_aside_count == 0
+    assert blocked is False
 
 
-def test_retry_still_below_floor_blocks(tmp_path: Path):
-    """OR returned different HTML but still 0 asides AND no Cerebras key → BLOCK."""
+def test_retry_still_below_floor_injector_proceeds(tmp_path: Path):
+    """OR returned different HTML but still 0 asides AND no Cerebras key →
+    injector runs and proceeds (no block)."""
     from scripts.write import _apply_asides_gate
 
     out_path = tmp_path / "briefing.html"
     cfg = MagicMock()
-    cfg.cerebras_api_key = ""  # disable tier-2 for this scenario
+    cfg.cerebras_api_key = ""
     session = MagicMock()
     starting = _result_with_asides(0, "<html>sterile</html>")
 
@@ -232,15 +255,17 @@ def test_retry_still_below_floor_blocks(tmp_path: Path):
         return_value="<html>still_sterile</html>",
     ), patch("scripts.write._recently_used_asides", return_value=[]), patch(
         "jeeves.write.postprocess_html", _post_with_asides(0)
+    ), patch(
+        "jeeves.write._inject_asides_to_floor",
+        return_value=("<html>still_sterile</html>", []),
     ):
         result, blocked = _apply_asides_gate(cfg, session, starting, out_path)
 
-    assert blocked is True
-    assert result.profane_aside_count == 0
+    assert blocked is False
 
 
-def test_retry_returns_unchanged_html_blocks(tmp_path: Path):
-    """OR retry returned same HTML (stub/no-op), no Cerebras key → block."""
+def test_retry_returns_unchanged_html_injector_proceeds(tmp_path: Path):
+    """OR retry returned same HTML, no Cerebras key → injector runs, no block."""
     from scripts.write import _apply_asides_gate
 
     out_path = tmp_path / "briefing.html"
@@ -252,17 +277,18 @@ def test_retry_returns_unchanged_html_blocks(tmp_path: Path):
 
     with patch(
         "scripts.write._invoke_openrouter_narrative_edit",
-        return_value="<html>sterile</html>",  # SAME as starting.html
-    ), patch("scripts.write._recently_used_asides", return_value=[]):
+        return_value="<html>sterile</html>",
+    ), patch("scripts.write._recently_used_asides", return_value=[]), patch(
+        "jeeves.write._inject_asides_to_floor",
+        return_value=("<html>sterile</html>", []),
+    ):
         result, blocked = _apply_asides_gate(cfg, session, starting, out_path)
 
-    assert blocked is True
-    assert result.profane_aside_count == 0
-    assert out_path.read_text(encoding="utf-8") == "untouched"
+    assert blocked is False
 
 
-def test_retry_raises_blocks(tmp_path: Path):
-    """OR retry raises, no Cerebras key → caught, gate blocks."""
+def test_retry_raises_injector_proceeds(tmp_path: Path):
+    """OR retry raises, no Cerebras key → caught, injector runs, no block."""
     from scripts.write import _apply_asides_gate
 
     out_path = tmp_path / "briefing.html"
@@ -274,11 +300,13 @@ def test_retry_raises_blocks(tmp_path: Path):
     with patch(
         "scripts.write._invoke_openrouter_narrative_edit",
         side_effect=RuntimeError("OR API down"),
-    ), patch("scripts.write._recently_used_asides", return_value=[]):
+    ), patch("scripts.write._recently_used_asides", return_value=[]), patch(
+        "jeeves.write._inject_asides_to_floor",
+        return_value=("<html>sterile</html>", []),
+    ):
         result, blocked = _apply_asides_gate(cfg, session, starting, out_path)
 
-    assert blocked is True
-    assert result.profane_aside_count == 0
+    assert blocked is False
 
 
 def test_one_below_floor_retried(tmp_path: Path):
