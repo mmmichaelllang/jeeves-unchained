@@ -272,6 +272,14 @@ BANNED_PHRASES_BY_BUCKET: dict[str, list[str]] = {
 # when it runs cleanly. A briefing with fewer than 2 means either the
 # editor skipped or the model removed them; flag for telemetry visibility.
 ASIDES_FLOOR = 2
+# Target aside count — the unconditional injector tops up to this number
+# after the LLM polish path completes. ASIDES_FLOOR remains the minimum-
+# acceptable threshold (used by run-dedup + the "below floor" emergency
+# branches). ASIDES_TARGET is the ideal count the deterministic injector
+# tries to reach on every briefing. 2026-05-12: introduced as part of the
+# "make injector primary" pattern — the LLM editor path is now ADVISORY
+# rather than load-bearing; the injector is the guarantor.
+ASIDES_TARGET = 5
 # Lower-cased fragments drawn from the pre-approved aside list. Used to count asides.
 PROFANE_FRAGMENTS = [
     "clusterfuck",

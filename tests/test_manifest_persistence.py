@@ -130,8 +130,10 @@ def test_manifest_written_when_smtp_fails(monkeypatch, base_env, manifest_spy):
     assert manifest_spy.called, "manifest write skipped on SMTP failure"
 
 
-def test_manifest_written_when_asides_gate_blocks(monkeypatch, base_env, manifest_spy):
-    """Asides-gate block returns 5; manifest must still write."""
+def test_manifest_written_when_asides_gate_warns(monkeypatch, base_env, manifest_spy):
+    """Post-2026-05-12 GATE C no longer blocks — it logs + proceeds. Manifest
+    must still write. Caller never sees exit=5 anymore; this test asserts
+    the warning-only behavior is preserved through manifest persistence."""
     today = _stub_session(base_env)
 
     async def fake_generate(*a, **kw):
@@ -141,14 +143,20 @@ def test_manifest_written_when_asides_gate_blocks(monkeypatch, base_env, manifes
         write_script, "postprocess_html",
         lambda *a, **kw: _stub_briefing_result(),
     )
+    # GATE C always returns gate_blocked=False post-2026-05-12.
     monkeypatch.setattr(
         write_script, "_apply_asides_gate",
-        lambda *a, **kw: (_stub_briefing_result(), True),
+        lambda *a, **kw: (_stub_briefing_result(), False),
+    )
+    monkeypatch.setattr(
+        write_script, "send_html",
+        lambda *a, **kw: None,
     )
 
     rc = write_script.main(["--date", today])
-    assert rc == 5
-    assert manifest_spy.called, "manifest write skipped when gate C blocked"
+    # Send proceeds — exit 0 (happy path).
+    assert rc == 0
+    assert manifest_spy.called, "manifest write skipped when send proceeds"
 
 
 def test_manifest_written_on_exception(monkeypatch, base_env, manifest_spy):

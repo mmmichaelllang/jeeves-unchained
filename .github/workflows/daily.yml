@@ -257,6 +257,12 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          # 2026-05-12 — Cerebras tier-2 narrative-editor fallback. The
+          # secret had been in GitHub Secrets since 2026-05-06 but was
+          # never plumbed to the write step's env, so cfg.cerebras_api_key
+          # was always "" and GATE C tier-2 was always skipped. Adding the
+          # passthrough so Cerebras actually fires when OR tier-1 fails.
+          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
