@@ -96,7 +96,7 @@ class Config:
     verbose: bool = False
     phase: Phase = "research"
     # Model IDs
-    kimi_model_id: str = "moonshotai/kimi-k2-instruct"
+    kimi_model_id: str = "moonshotai/kimi-k2-instruct-0905"
     kimi_base_url: str = "https://integrate.api.nvidia.com/v1"
     groq_model_id: str = "llama-3.3-70b-versatile"
     nim_write_model_id: str = "meta/llama-3.3-70b-instruct"
@@ -199,7 +199,7 @@ class Config:
             dry_run=dry_run,
             verbose=verbose,
             phase=phase,
-            kimi_model_id=os.environ.get("KIMI_MODEL_ID", "moonshotai/kimi-k2-instruct"),
+            kimi_model_id=os.environ.get("KIMI_MODEL_ID", "moonshotai/kimi-k2-instruct-0905"),
             kimi_base_url=os.environ.get(
                 "KIMI_BASE_URL", "https://integrate.api.nvidia.com/v1"
             ),
