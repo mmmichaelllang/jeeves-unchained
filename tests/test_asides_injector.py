@@ -350,3 +350,171 @@ def test_html_remains_well_formed_after_injection():
     )
     assert new_html.count("<p>") == html.count("<p>")
     assert new_html.count("</p>") == html.count("</p>")
+
+
+# ============================================================================
+# 2026-05-11 PR — grammar smoothing + belt-and-suspenders exclusion
+# ============================================================================
+
+def test_verb_prefix_aside_uses_It_not_It_is_double_stutter():
+    """Asides starting with 'is,', 'is ', 'has ', 'was ' MUST be spliced as
+    "[paragraph]. It [aside]." NOT "[paragraph]. It is, is, [aside]."
+    (which is the double-stutter regression mode)."""
+    pool = ["is, to be blunt, a fucking train-wreck"]
+    html = _long_paragraph("the budget vote was delayed")
+    new_html, injected = _inject_asides_to_floor(
+        html, pool=pool, current_count=0, target_count=1,
+    )
+    assert len(injected) == 1
+    # MUST contain "It is, to be blunt" — single "is".
+    assert "It is, to be blunt, a fucking train-wreck." in new_html
+    # MUST NOT contain the double stutter.
+    assert "It is, is, " not in new_html
+    assert "is, is," not in new_html
+
+
+def test_verb_prefix_has_uses_It_has():
+    pool = ["has become a screaming, sentient shit-sandwich"]
+    html = _long_paragraph("the budget vote was delayed")
+    new_html, injected = _inject_asides_to_floor(
+        html, pool=pool, current_count=0, target_count=1,
+    )
+    assert len(injected) == 1
+    assert "It has become a screaming" in new_html
+    assert "It is, has" not in new_html
+
+
+def test_capitalized_noun_aside_stands_alone():
+    """Aside starting with a capital letter (e.g. 'A collection of...')
+    should be a standalone sentence, not prefixed with 'It is, '."""
+    pool = ["A collection of high-functioning fuck-wits"]
+    html = _long_paragraph("the budget decision was delayed")
+    new_html, injected = _inject_asides_to_floor(
+        html, pool=pool, current_count=0, target_count=1,
+    )
+    assert len(injected) == 1
+    assert "A collection of high-functioning fuck-wits." in new_html
+    # MUST NOT use the awkward "It is, A" prefix.
+    assert "It is, A " not in new_html
+
+
+def test_lowercase_aside_keeps_It_is_prefix():
+    pool = ["absolute bollocks today"]
+    html = _long_paragraph("the budget decision was delayed")
+    new_html, injected = _inject_asides_to_floor(
+        html, pool=pool, current_count=0, target_count=1,
+    )
+    assert len(injected) == 1
+    assert "It is, absolute bollocks today." in new_html
+
+
+def test_aside_already_ending_with_period_not_double_punctuated():
+    """An aside that brings its own period should not get a second one."""
+    pool = ["A collection of high-functioning fuck-wits."]
+    html = _long_paragraph("the budget decision was delayed")
+    new_html, injected = _inject_asides_to_floor(
+        html, pool=pool, current_count=0, target_count=1,
+    )
+    assert "fuck-wits.." not in new_html
+    assert "fuck-wits." in new_html
+
+
+def test_paragraph_ending_with_diamond_glyph_not_double_punctuated():
+    """TOTT-style paragraphs end with ♦ — must not become '♦.' before splice."""
+    inner = ("the budget decision " * 20).strip() + " ♦"
+    html = f"<p>{inner}</p>"
+    new_html, _ = _inject_asides_to_floor(
+        html, pool=_TEST_POOL, current_count=0, target_count=1,
+    )
+    assert "♦." not in new_html
+    # Should still inject after ♦ without adding extra period.
+    assert "♦ " in new_html
+
+
+def test_excludes_marker_bracketed_newyorker_zone_without_div():
+    """Belt-and-suspenders: a NEWYORKER_START/END comment-marker span MUST
+    be excluded even when no surrounding `<div class="newyorker">` exists."""
+    eligible = _long_paragraph("the budget vote was delayed by failure")
+    tott_text = _long_paragraph(
+        "Ellen Burstyn recalls Edna St Vincent Millay and Hafez and Maya Angelou"
+    )
+    html = (
+        eligible
+        + "<!-- NEWYORKER_START -->\n"
+        + tott_text
+        + "\n<!-- NEWYORKER_END -->"
+    )
+    new_html, injected = _inject_asides_to_floor(
+        html, pool=_TEST_POOL, current_count=0, target_count=2,
+    )
+    # Eligible paragraph gets one or both injections; TOTT zone gets none.
+    ny_start = new_html.find("<!-- NEWYORKER_START -->")
+    ny_end = new_html.find("<!-- NEWYORKER_END -->")
+    for aside in injected:
+        idx = new_html.find(aside)
+        assert idx < ny_start or idx > ny_end, (
+            f"Aside {aside!r} landed inside NEWYORKER marker span"
+        )
+
+
+def test_excludes_multiple_marker_bracketed_zones():
+    """Production briefings have TWO NEWYORKER zones (verbatim + read-link).
+    Both must be excluded."""
+    eligible = _long_paragraph("the budget decision was delayed by failure")
+    html = (
+        eligible
+        + "<!-- NEWYORKER_START -->\n"
+        + _long_paragraph("verbatim TOTT text about Burstyn")
+        + "\n<!-- NEWYORKER_END -->\n"
+        + "<!-- NEWYORKER_START -->\n"
+        + _long_paragraph("read at link section text about more poetry")
+        + "\n<!-- NEWYORKER_END -->"
+    )
+    new_html, injected = _inject_asides_to_floor(
+        html, pool=_TEST_POOL, current_count=0, target_count=2,
+    )
+    # No injection inside either NEWYORKER zone.
+    import re as _re
+    for m in _re.finditer(
+        r"<!--\s*NEWYORKER_START\s*-->(.*?)<!--\s*NEWYORKER_END\s*-->",
+        new_html, _re.DOTALL,
+    ):
+        zone = m.group(1)
+        for aside in injected:
+            assert aside not in zone, (
+                f"Aside {aside!r} landed inside NEWYORKER zone"
+            )
+
+
+def test_excludes_anchor_tag_body():
+    """Injector must NOT splice an aside inside an `<a>` body (link text)."""
+    eligible = _long_paragraph("the budget decision was delayed")
+    # A paragraph that is JUST an anchor — and is long enough to qualify by
+    # word count. The injector should skip it because the anchor span covers
+    # the whole paragraph body.
+    anchor_para = (
+        '<p><a href="https://example.com/x">'
+        + ("read this article about the failure of decisions " * 8)
+        + "</a></p>"
+    )
+    html = eligible + anchor_para
+    new_html, injected = _inject_asides_to_floor(
+        html, pool=_TEST_POOL, current_count=0, target_count=1,
+    )
+    if injected:
+        # Aside must not be inside an anchor body in the output.
+        import re as _re
+        for m in _re.finditer(r"<a\b[^>]*>(.*?)</a>", new_html, _re.DOTALL):
+            body = m.group(1)
+            for aside in injected:
+                assert aside not in body, (
+                    f"Aside {aside!r} landed inside an <a> body"
+                )
+
+
+def test_verb_prefix_constant_is_lowercase():
+    """All entries in _ASIDE_VERB_PREFIXES MUST be lowercase since match
+    runs against lower()."""
+    from jeeves.write import _ASIDE_VERB_PREFIXES
+    for p in _ASIDE_VERB_PREFIXES:
+        assert p == p.lower(), f"_ASIDE_VERB_PREFIXES entry {p!r} not lowercase"
