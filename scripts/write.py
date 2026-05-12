@@ -31,6 +31,7 @@ from jeeves.email import SMTPConfigError, send_html  # noqa: E402
 from jeeves.session_io import load_session_by_date  # noqa: E402
 from jeeves.write import (  # noqa: E402
     ASIDES_FLOOR,
+    ASIDES_TARGET,
     PROFANE_FRAGMENTS,
     _invoke_cerebras_narrative_edit,
     _invoke_openrouter_narrative_edit,
@@ -81,49 +82,63 @@ def _check_prior_briefing_clean(briefing_path: Path) -> tuple[bool, str]:
 
 
 def _apply_asides_gate(cfg, session, result, out_path):
-    """GATE C — asides-floor hard-block with one OR retry.
+    """GATE C — asides-target enforcement (injector-primary, 2026-05-12).
 
-    When the postprocessed briefing has fewer than ``ASIDES_FLOOR`` profane
-    asides, retry the OpenRouter narrative editor once on the current HTML.
-    If still under floor, return ``gate_blocked=True`` so the caller exits
-    non-zero before SMTP send.
+    Three-tier pipeline. The first two are ADVISORY (LLM-based, allowed to
+    fail or no-op); the third is LOAD-BEARING (deterministic, always tops
+    up to ASIDES_TARGET). The send is never blocked on asides anymore —
+    the injector is the floor enforcer.
 
-    Returns ``(result, gate_blocked)``. On retry success, ``result`` is the
-    re-postprocessed BriefingResult and ``out_path`` is rewritten on disk.
+      Tier 1 — OpenRouter narrative-editor retry (advisory).
+              Fires when result.profane_aside_count < ASIDES_FLOOR. May
+              add asides to the prose; may no-op.
+
+      Tier 2 — Cerebras narrative-editor retry (advisory).
+              Fires when still below floor AND cfg.cerebras_api_key set.
+              Separate upstream provider with its own quota envelope.
+
+      Tier 3 — Deterministic injector (LOAD-BEARING).
+              Runs UNCONDITIONALLY after Tiers 1+2 to top up to
+              ASIDES_TARGET. Splices pool phrases into earned-anchor
+              paragraphs (failure / decision / cost / deadline) outside
+              the .newyorker, .signoff, and `<a>` zones.
+
+    Returns ``(result, gate_blocked)``. ``gate_blocked`` is now ALWAYS
+    False — the injector guarantees floor and the send proceeds. The
+    return tuple shape is preserved for caller compatibility.
+
+    2026-05-12 rationale: six PRs in three days fought the model's
+    inability to add asides reliably. The injector (post-PR #116 hardening)
+    is now reliable. Making it primary inverts the safety net: the LLM
+    paths are bonus, not load-bearing.
     """
-    if result.profane_aside_count >= ASIDES_FLOOR:
-        return result, False
-
-    log.warning(
-        "GATE C: asides-floor breached (%d < %d). Retrying OR narrative editor.",
-        result.profane_aside_count, ASIDES_FLOOR,
-    )
     recent = _recently_used_asides(cfg)
     from jeeves.write import postprocess_html as _pp
 
-    # Tier 1 — OR retry (same provider as the original narrative-editor pass).
-    try:
-        retried_html = _invoke_openrouter_narrative_edit(
-            cfg, result.html, recently_used_asides=recent
+    # ─── Tier 1 — OR retry (advisory, only fires when below FLOOR) ──────
+    if result.profane_aside_count < ASIDES_FLOOR:
+        log.warning(
+            "GATE C: asides-floor breached (%d < %d). Trying OR retry (advisory).",
+            result.profane_aside_count, ASIDES_FLOOR,
         )
-        if retried_html and retried_html != result.html:
-            result = _pp(
-                retried_html, session,
-                quality_warnings=list(result.quality_warnings or []),
+        try:
+            retried_html = _invoke_openrouter_narrative_edit(
+                cfg, result.html, recently_used_asides=recent
             )
-            out_path.write_text(result.html, encoding="utf-8")
-            log.info(
-                "GATE C [OR]: retry produced %d asides (floor=%d).",
-                result.profane_aside_count, ASIDES_FLOOR,
-            )
-        else:
-            log.warning("GATE C [OR]: retry returned unchanged HTML.")
-    except Exception as exc:
-        log.error("GATE C [OR]: retry raised %s: %s", type(exc).__name__, exc)
+            if retried_html and retried_html != result.html:
+                result = _pp(
+                    retried_html, session,
+                    quality_warnings=list(result.quality_warnings or []),
+                )
+                out_path.write_text(result.html, encoding="utf-8")
+                log.info(
+                    "GATE C [OR]: retry produced %d asides.",
+                    result.profane_aside_count,
+                )
+        except Exception as exc:
+            log.error("GATE C [OR]: retry raised %s: %s", type(exc).__name__, exc)
 
-    # Tier 2 — Cerebras non-OR fallback. Only fires when OR retry didn't
-    # rescue the briefing AND CEREBRAS_API_KEY is set. Different upstream
-    # provider with separate quota / outage envelope.
+    # ─── Tier 2 — Cerebras retry (advisory) ─────────────────────────────
     if result.profane_aside_count < ASIDES_FLOOR and cfg.cerebras_api_key:
         log.warning("GATE C: still below floor after OR. Trying Cerebras tier-2.")
         try:
@@ -137,71 +152,62 @@ def _apply_asides_gate(cfg, session, result, out_path):
                 )
                 out_path.write_text(result.html, encoding="utf-8")
                 log.info(
-                    "GATE C [Cerebras]: rescued to %d asides (floor=%d).",
-                    result.profane_aside_count, ASIDES_FLOOR,
+                    "GATE C [Cerebras]: produced %d asides.",
+                    result.profane_aside_count,
                 )
-            else:
-                log.warning("GATE C [Cerebras]: returned unchanged HTML.")
         except Exception as exc:
             log.error(
                 "GATE C [Cerebras]: tier-2 raised %s: %s",
                 type(exc).__name__, exc,
             )
-    elif result.profane_aside_count < ASIDES_FLOOR:
-        log.warning(
-            "GATE C: Cerebras tier-2 unavailable (CEREBRAS_API_KEY unset); "
-            "proceeding to block."
-        )
 
-    # Tier 3 — Deterministic asides injector (Patch 2, 2026-05-10). When
-    # OR + Cerebras both leave the briefing sterile, splice asides from the
-    # pre-approved pool into earned positions. Always rescues unless no
-    # qualifying paragraphs (>50 words, outside .newyorker / .signoff)
-    # exist, which only happens on cap-short briefings.
-    if result.profane_aside_count < ASIDES_FLOOR:
-        log.warning(
-            "GATE C: still below floor after LLM retries. Trying Tier 3 "
-            "deterministic injector."
+    # ─── Tier 3 — Deterministic injector (LOAD-BEARING, always runs) ────
+    # Always tops up to ASIDES_TARGET (not just to ASIDES_FLOOR). When
+    # Tiers 1+2 already landed at-or-above target, this no-ops cheaply
+    # (the helper returns the original html unchanged when current >=
+    # target). When they didn't, this is the guarantor.
+    try:
+        from jeeves.write import _inject_asides_to_floor
+        new_html, injected = _inject_asides_to_floor(
+            result.html,
+            recently_used=recent,
+            current_count=result.profane_aside_count,
+            target_count=ASIDES_TARGET,
         )
-        try:
-            from jeeves.write import _inject_asides_to_floor, postprocess_html as _pp
-            new_html, injected = _inject_asides_to_floor(
-                result.html,
-                recently_used=recent,
-                current_count=result.profane_aside_count,
-                target_count=ASIDES_FLOOR,
+        if injected:
+            result = _pp(
+                new_html, session,
+                quality_warnings=list(result.quality_warnings or [])
+                + [f"asides_floor_injected:{len(injected)}"],
             )
-            if injected:
-                result = _pp(
-                    new_html, session,
-                    quality_warnings=list(result.quality_warnings or [])
-                    + [f"asides_floor_injected:{len(injected)}"],
-                )
-                out_path.write_text(result.html, encoding="utf-8")
-                log.warning(
-                    "GATE C [Tier 3]: deterministic injector added %d aside(s); "
-                    "count now %d (floor=%d).",
-                    len(injected), result.profane_aside_count, ASIDES_FLOOR,
-                )
-            else:
-                log.warning(
-                    "GATE C [Tier 3]: no qualifying paragraphs — injector "
-                    "could not rescue briefing."
-                )
-        except Exception as exc:
-            log.error(
-                "GATE C [Tier 3]: injector raised %s: %s",
-                type(exc).__name__, exc,
+            out_path.write_text(result.html, encoding="utf-8")
+            log.info(
+                "GATE C [Tier 3]: injector added %d aside(s) to reach target "
+                "%d; final count %d.",
+                len(injected), ASIDES_TARGET, result.profane_aside_count,
             )
-
-    if result.profane_aside_count < ASIDES_FLOOR:
+        else:
+            log.info(
+                "GATE C [Tier 3]: no injection needed (current=%d >= target=%d) "
+                "OR no qualifying paragraphs available.",
+                result.profane_aside_count, ASIDES_TARGET,
+            )
+    except Exception as exc:
         log.error(
-            "GATE C BLOCK: asides=%d still below floor=%d after retry. "
-            "Briefing NOT sent. HTML kept on disk for forensic. "
-            "Manual review or re-trigger required.",
+            "GATE C [Tier 3]: injector raised %s: %s",
+            type(exc).__name__, exc,
+        )
+
+    # Below-floor outcome is now a WARNING, not a block. The send proceeds.
+    # This only fires when the briefing has no qualifying paragraphs (e.g.
+    # a cap-short fixture or a degenerate run) — extremely rare on real
+    # production output. Telemetry still captures it via quality_warnings.
+    if result.profane_aside_count < ASIDES_FLOOR:
+        log.warning(
+            "GATE C: final count %d still below floor %d after Tier 3 — "
+            "no qualifying paragraphs. Send proceeds; briefing flagged.",
             result.profane_aside_count, ASIDES_FLOOR,
         )
-        return result, True
     return result, False
 
 
