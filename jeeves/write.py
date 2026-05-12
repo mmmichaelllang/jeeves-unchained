@@ -3229,6 +3229,31 @@ _SIGNOFF_OPEN_RE = re.compile(
 _ANY_DIV_TAG_RE = re.compile(r'<(/)?div\b[^>]*>', re.IGNORECASE)
 _P_BLOCK_RE = re.compile(r"<p\b([^>]*)>(.*?)</p>", re.IGNORECASE | re.DOTALL)
 
+# 2026-05-11 belt-and-suspenders — also exclude any zone bracketed by the
+# canonical TOTT comment markers. Defense-in-depth: if the model emits the
+# TOTT block WITHOUT the `<div class="newyorker">` wrapper but WITH the
+# comment markers (the format `_inject_newyorker_verbatim` actually
+# guarantees), the depth-counted div exclusion would miss the TOTT prose.
+# This regex picks up the marker-delimited span too.
+_NEWYORKER_MARKERS_RE = re.compile(
+    r"<!--\s*NEWYORKER_START\s*-->.*?<!--\s*NEWYORKER_END\s*-->",
+    re.DOTALL,
+)
+# 2026-05-11 — `<a>...</a>` anchor zones. The injector currently appends
+# "It is, [aside]." after a paragraph's last sentence; if that paragraph's
+# last sentence happens to be inside an anchor (e.g. a "Read more at X."
+# style link), the aside would land mid-anchor and become part of the
+# link text. Exclude `<a>` body content from injection candidacy.
+_ANCHOR_BLOCK_RE = re.compile(r"<a\b[^>]*>.*?</a>", re.IGNORECASE | re.DOTALL)
+
+# Pool entries that begin with one of these tokens are GRAMMATICALLY
+# COMPLETE follow-ons to "It " — splicing "It is, " before them produces
+# "It is, is, to be blunt, ..." (double stutter) or "It is, has become ..."
+# (broken). We detect and adapt the splice prefix to "It " (no "is,") so
+# the result reads as "[paragraph]. It is, [aside]. [paragraph]. It has
+# become ..." style continuations.
+_ASIDE_VERB_PREFIXES = ("is,", "is ", "has ", "was ", "were ", "had ", "will ")
+
 
 def _balanced_div_span(html: str, open_re: "re.Pattern[str]") -> tuple[int, int] | None:
     """Locate the span of a `<div class="X">...</div>` with depth counting.
@@ -3314,15 +3339,26 @@ def _inject_asides_to_floor(
         return html, []
     available.sort(key=lambda a: a.lower())
 
-    # Exclude the TOTT verbatim block and the signoff from injection.
-    # 2026-05-11 — use depth-counted balanced-div spans, not non-greedy
-    # regex (which terminated early at the inner `<div class="ny-header">`
-    # close and let the TOTT paragraph slip through).
+    # Exclude the TOTT verbatim block, the signoff, and the marker-bracketed
+    # NEWYORKER zone (defense-in-depth) from injection.
+    # 2026-05-11 — depth-counted balanced-div spans + comment-marker span.
+    # Non-greedy regex previously terminated early at the inner
+    # `<div class="ny-header">` close and let the TOTT paragraph slip through.
     excluded_spans: list[tuple[int, int]] = []
     for open_re in (_NEWYORKER_OPEN_RE, _SIGNOFF_OPEN_RE):
         span = _balanced_div_span(html, open_re)
         if span is not None:
             excluded_spans.append(span)
+    # Pick up EVERY marker-bracketed TOTT zone (today's production had two —
+    # one with the verbatim text, one with the "Read at The New Yorker"
+    # link). `finditer` walks every non-overlapping match.
+    for m in _NEWYORKER_MARKERS_RE.finditer(html):
+        excluded_spans.append(m.span())
+    # Anchor-tag bodies — the injector appends after the paragraph's last
+    # sentence; if that paragraph's last sentence is inside an `<a>`, the
+    # aside would land in the link text. Belt-and-suspenders.
+    for m in _ANCHOR_BLOCK_RE.finditer(html):
+        excluded_spans.append(m.span())
 
     def _in_excluded(pos: int) -> bool:
         return any(s <= pos < e for s, e in excluded_spans)
@@ -3369,9 +3405,39 @@ def _inject_asides_to_floor(
         if seg_match is None:
             continue
         inner = seg_match.group(2).rstrip()
-        # Strip trailing punctuation to make the aside read cleanly.
-        sep = "" if inner.endswith((".", "!", "?", "—")) else "."
-        new_inner = f"{inner}{sep} It is, {aside}."
+        # Trailing-punctuation cap: only add a period if the existing prose
+        # doesn't already terminate with sentence-final punctuation. Avoids
+        # the "♦." double-punctuation we saw on 2026-05-11.
+        sep = "" if inner.endswith((".", "!", "?", "—", "♦")) else "."
+        # Splice format — adapt to the shape of the aside so the result
+        # reads as English rather than ungrammatical splicing:
+        #
+        # 1. Aside starts with a verb-form prefix ("is,", "is ", "has ",
+        #    "was ", "were ", "had ", "will "):
+        #       "[paragraph]. It [aside]."
+        #    Yields "It is, to be blunt, a fucking train-wreck." (NOT the
+        #    broken double-stutter "It is, is, to be blunt, ...").
+        #
+        # 2. Aside starts with capital letter (noun-phrase fragment):
+        #       "[paragraph]. [aside]."
+        #    Standalone Jeeves observation, e.g. "A collection of
+        #    high-functioning fuck-wits."
+        #
+        # 3. Otherwise (lowercase opener, e.g. "absolute bollocks today"):
+        #       "[paragraph]. It is, [aside]."
+        #    Reads as continuation of preceding clause.
+        stripped_aside = aside.lstrip()
+        lower_aside = stripped_aside.lower()
+        if any(lower_aside.startswith(p) for p in _ASIDE_VERB_PREFIXES):
+            sentence = f"It {stripped_aside}"
+        elif stripped_aside[:1].isupper():
+            sentence = stripped_aside
+        else:
+            sentence = f"It is, {stripped_aside}"
+        # Append period if the aside didn't bring its own.
+        if not sentence.endswith((".", "!", "?")):
+            sentence = sentence + "."
+        new_inner = f"{inner}{sep} {sentence}"
         new_block = f"<p{seg_match.group(1)}>{new_inner}</p>"
         modified = modified[: seg_match.start()] + new_block + modified[seg_match.end():]
         injected.append(aside)
