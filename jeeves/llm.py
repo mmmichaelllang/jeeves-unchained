@@ -198,6 +198,62 @@ def _build_kimi_class():
     return KimiNVIDIA
 
 
+# Module-level cache of the discovered Kimi model ID. Once NIM tells us
+# which moonshotai/kimi-* is currently hosted, every subsequent call in
+# the process reuses it instead of re-probing.
+_RESOLVED_KIMI_MODEL: str | None = None
+
+
+def _probe_nim_kimi_model(cfg: Config) -> str | None:
+    """GET /v1/models on NIM; return the first moonshotai/kimi-* model ID.
+
+    Returns None on any failure — caller falls back to a hardcoded list.
+
+    Triggered by build_kimi_llm when llama-index-llms-nvidia raises
+    ValueError("No locally hosted <model> was found"), which happens
+    when NIM delists a model upstream (e.g. 2026-05-11: original
+    "moonshotai/kimi-k2-instruct" stopped resolving, killed Pipeline #58).
+    """
+    try:
+        import httpx
+        resp = httpx.get(
+            f"{cfg.kimi_base_url.rstrip('/')}/models",
+            headers={"Authorization": f"Bearer {cfg.nvidia_api_key}"},
+            timeout=10.0,
+        )
+        resp.raise_for_status()
+        payload = resp.json()
+    except Exception as exc:  # network, json, auth — any failure is non-fatal
+        log.warning("NIM /v1/models probe failed: %s", exc)
+        return None
+
+    ids = [m.get("id", "") for m in payload.get("data", [])]
+    # Prefer instruct variants over thinking/vision; prefer the longest
+    # (most-specific) ID — "kimi-k2-instruct-0905" beats "kimi-k2-instruct".
+    kimi_ids = sorted(
+        (i for i in ids if i.startswith("moonshotai/kimi-k2") and "instruct" in i),
+        key=len,
+        reverse=True,
+    )
+    if not kimi_ids:
+        # Fall back to any moonshotai/kimi-* if no instruct variant.
+        kimi_ids = sorted(
+            (i for i in ids if i.startswith("moonshotai/kimi-k2")),
+            key=len,
+            reverse=True,
+        )
+    return kimi_ids[0] if kimi_ids else None
+
+
+# Hardcoded fallback chain — used when the live probe also fails. Ordered
+# newest-to-oldest. Update when NIM rotates models. As of 2026-05-11:
+# kimi-k2-instruct-0905 is the current production tag.
+_KIMI_FALLBACK_CHAIN: tuple[str, ...] = (
+    "moonshotai/kimi-k2-instruct-0905",
+    "moonshotai/kimi-k2-instruct",
+)
+
+
 def build_kimi_llm(
     cfg: Config,
     *,
@@ -210,17 +266,87 @@ def build_kimi_llm(
     The NIM endpoint is OpenAI-compatible. `llama-index-llms-nvidia` handles
     native tool-calling format so FunctionAgent can dispatch parallel tool
     calls without a ReAct shim.
+
+    Resilience (2026-05-11): NIM delists models without warning
+    (e.g. moonshotai/kimi-k2-instruct dropped between 2026-05-10 and
+    2026-05-11, killed Pipeline #58 with ValueError "No locally hosted
+    moonshotai/kimi-k2-instruct was found"). If the configured model
+    fails NVIDIANIM's _validate_model check, this function:
+      1) probes /v1/models for the current Kimi catalog,
+      2) falls through a hardcoded chain of known-good IDs,
+    and caches the winner at module level so subsequent calls in the
+    same process skip the probe.
     """
 
     cls = _build_kimi_class()
-    return cls(
-        model=cfg.kimi_model_id,
-        api_key=cfg.nvidia_api_key,
-        base_url=cfg.kimi_base_url,
-        temperature=temperature,
-        max_tokens=max_tokens,
-        timeout=timeout,
-        max_retries=0,  # let run_sector own all retry logic with proper 60s backoff
+
+    def _instantiate(model_id: str):
+        return cls(
+            model=model_id,
+            api_key=cfg.nvidia_api_key,
+            base_url=cfg.kimi_base_url,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            timeout=timeout,
+            max_retries=0,  # let run_sector own all retry logic with proper 60s backoff
+        )
+
+    global _RESOLVED_KIMI_MODEL
+    # Already resolved earlier in the same process — use it.
+    if _RESOLVED_KIMI_MODEL and _RESOLVED_KIMI_MODEL != cfg.kimi_model_id:
+        log.info("kimi: reusing previously-resolved model %s", _RESOLVED_KIMI_MODEL)
+        return _instantiate(_RESOLVED_KIMI_MODEL)
+
+    try:
+        llm = _instantiate(cfg.kimi_model_id)
+        _RESOLVED_KIMI_MODEL = cfg.kimi_model_id
+        return llm
+    except ValueError as exc:
+        # NVIDIANIM raises ValueError("No locally hosted <model> was found.")
+        # when the model isn't in the live /v1/models catalog. Any other
+        # ValueError shape (auth, base_url) we want to surface untouched.
+        msg = str(exc)
+        if "No locally hosted" not in msg:
+            raise
+        log.warning(
+            "kimi: configured model %s not hosted on NIM (%s); attempting recovery",
+            cfg.kimi_model_id, msg,
+        )
+
+    # Tier 1: live catalog probe.
+    probed = _probe_nim_kimi_model(cfg)
+    candidates: list[str] = []
+    if probed and probed != cfg.kimi_model_id:
+        candidates.append(probed)
+    # Tier 2: hardcoded fallbacks (skip anything we've already tried).
+    tried = {cfg.kimi_model_id}
+    if probed:
+        tried.add(probed)
+    candidates.extend(m for m in _KIMI_FALLBACK_CHAIN if m not in tried)
+
+    last_err: Exception | None = None
+    for candidate in candidates:
+        try:
+            llm = _instantiate(candidate)
+            log.warning(
+                "kimi: recovered with model %s (configured %s was delisted)",
+                candidate, cfg.kimi_model_id,
+            )
+            _RESOLVED_KIMI_MODEL = candidate
+            return llm
+        except ValueError as exc:
+            if "No locally hosted" not in str(exc):
+                raise
+            last_err = exc
+            log.warning("kimi: fallback %s also unavailable; trying next", candidate)
+            continue
+
+    # Exhausted every option — re-raise the most recent NIM error so the
+    # caller (Config validation, healthcheck, or run_sector) sees the
+    # original "model not hosted" shape.
+    raise last_err or ValueError(
+        f"No locally hosted Kimi model found on NIM. Tried: "
+        f"{cfg.kimi_model_id!r}, probed={probed!r}, fallbacks={_KIMI_FALLBACK_CHAIN}"
     )
 
 
