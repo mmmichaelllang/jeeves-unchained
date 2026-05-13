@@ -288,6 +288,15 @@ def build_kimi_llm(
             max_tokens=max_tokens,
             timeout=timeout,
             max_retries=0,  # let run_sector own all retry logic with proper 60s backoff
+            # NIM hosts only /v1/chat/completions for chat models. Without
+            # is_chat_model=True, OpenAILike.chat() falls back to .complete()
+            # which POSTs /v1/completions and gets 404. Run #64 (2026-05-13)
+            # crashed here after the kimi-k2.6 bump.
+            is_chat_model=True,
+            # FunctionAgent needs native tool-call protocol on Kimi (research
+            # phase). Without this, it falls back to ReAct prompting which
+            # collides with the NIM tool_kwargs normalization.
+            is_function_calling_model=True,
         )
 
     global _RESOLVED_KIMI_MODEL
