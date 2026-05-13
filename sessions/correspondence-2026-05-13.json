@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Mrs. Lang: Jeeves pipeline alert sent from Mrs. Lang's email address indicating a permanent failure in the Daily Pipeline.\n- [escalation] Mrs. Lang: Jeeves pipeline alert sent from Mrs. Lang's email address indicating a permanent failure in the Daily Pipeline.\n- [escalation] Mrs. Lang: Jeeves pipeline alert sent from Mrs. Lang's email address indicating a permanent failure in the Daily Pipeline.\n- [escalation] mmmichaelllang: Jeeves-memory workflow run Jeeves — Write Phase failed.\n- [escalation] mmmichaelllang: Jeeves-memory workflow run Jeeves — Research Phase failed.\n- [escalation] mmmichaelllang: Jeeves-unchained workflow run Jeeves — Daily Pipeline failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert permanent failure marker: invalid_grant.\n- [escalation] mmmichaelllang: Jeeves-memory workflow run Jeeves — Correspondence Phase failed.\n- [escalation] Google: Google sent a security alert about Jeeves Unchained access.\n- [escalation] mmmichaelllang: Jeeves-unchained workflow run Jeeves — Daily Pipeline failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert permanent failure marker: invalid_grant.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert Gmail OAuth refresh token revoked.",
+  "counts": {
+    "reply_needed": 0,
+    "decision_required": 5,
+    "scheduling": 0,
+    "follow_up": 1,
+    "escalation": 16,
+    "no_action": 28
+  }
+}
