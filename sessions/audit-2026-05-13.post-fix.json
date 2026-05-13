@@ -1,0 +1,54 @@
+{
+  "date": "2026-05-13",
+  "briefing_chars": 10806,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete",
+    "D10_recurring_opener"
+  ],
+  "detectors_skipped": [
+    "D7_narrative_flow",
+    "D9_writing_quality"
+  ],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "1 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 1,
+        "samples": [
+          "https://www.newyorker.com/magazine/2026/05/11/on-the-high-line-buddha-is-the-new-giant-pigeon"
+        ]
+      }
+    },
+    {
+      "type": "recurring_opener",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "today's first paragraph recurs vs 2026-05-09 (Jaccard=61%; shared 4-gram 'ood morning mister lang').",
+      "evidence": {
+        "matches_date": "2026-05-09",
+        "opener_preview": "g ood morning, mister lang. the world has not improved overnight, but it has at least produced several new opportunities",
+        "prior_opener_preview": "g ood morning, mister lang. the world has not improved overnight, though it has at least produced several new opportunit",
+        "jaccard_similarity": 0.609,
+        "shared_ngram": "ood morning mister lang"
+      }
+    }
+  ],
+  "section_count": 5,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 0,
+  "aside_template_count": 0,
+  "narrative_flow_score": null,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": null
+}

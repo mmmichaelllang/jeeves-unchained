@@ -1,0 +1,171 @@
+{
+  "date": "2026-05-13",
+  "briefing_chars": 11077,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D7_narrative_flow",
+    "D9_writing_quality",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete",
+    "D10_recurring_opener"
+  ],
+  "detectors_skipped": [],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "1 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 1,
+        "samples": [
+          "https://www.newyorker.com/magazine/2026/05/11/on-the-high-line-buddha-is-the-new-giant-pigeon"
+        ]
+      }
+    },
+    {
+      "type": "narrative_flow_low",
+      "severity": "high",
+      "section": null,
+      "detail": "narrative flow score 4/10",
+      "evidence": {
+        "score": 4,
+        "issues": [
+          {
+            "section": "Opening",
+            "issue": "Begins with unrelated CSS block that interrupts narrative flow."
+          },
+          {
+            "section": "Greeting",
+            "issue": "Sudden shift from CSS to date line without transition."
+          },
+          {
+            "section": "Pipeline alerts",
+            "issue": "Abrupt topic change from greeting to technical alert with no linking sentence."
+          },
+          {
+            "section": "Domestic Sphere",
+            "issue": "Heading appears as plain text without formatting, causing disorientation."
+          },
+          {
+            "section": "Intellectual Journals",
+            "issue": "Minimal content followed by abrupt jump to UAP topic."
+          },
+          {
+            "section": "Specific Enquiries",
+            "issue": "Tone shifts to vulgar profanity, undermining butler voice."
+          },
+          {
+            "section": "Commercial Ledger",
+            "issue": "Repetitive negative profanity disrupts logical progression."
+          },
+          {
+            "section": "Talk of the Town",
+            "issue": "Long excerpt lacks clear connection to preceding business topics."
+          },
+          {
+            "section": "Signoff",
+            "issue": "Closing signature appears abruptly after lengthy excerpt without summary."
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Specific Enquiries",
+      "detail": "href 'https://www.congress.gov/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.congress.gov/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Specific Enquiries",
+      "detail": "href 'https://www.pentagon.gov/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.pentagon.gov/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Specific Enquiries",
+      "detail": "href 'https://www.nbcnews.com/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.nbcnews.com/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Commercial Ledger",
+      "detail": "href 'https://www.lightmind.ai/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.lightmind.ai/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Commercial Ledger",
+      "detail": "href 'https://www.luci.ai/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.luci.ai/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Commercial Ledger",
+      "detail": "href 'https://www.magic.school/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.magic.school/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Commercial Ledger",
+      "detail": "href 'https://www.friend.ai/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.friend.ai/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "recurring_opener",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "today's first paragraph recurs vs 2026-05-09 (Jaccard=61%; shared 4-gram 'ood morning mister lang').",
+      "evidence": {
+        "matches_date": "2026-05-09",
+        "opener_preview": "g ood morning, mister lang. the world has not improved overnight, but it has at least produced several new opportunities",
+        "prior_opener_preview": "g ood morning, mister lang. the world has not improved overnight, though it has at least produced several new opportunit",
+        "jaccard_similarity": 0.609,
+        "shared_ngram": "ood morning mister lang"
+      }
+    }
+  ],
+  "section_count": 5,
+  "hallucinated_url_count": 7,
+  "empty_section_count": 0,
+  "aside_template_count": 0,
+  "narrative_flow_score": 4,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free"
+}

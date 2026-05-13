@@ -1,0 +1,83 @@
+{
+  "date": "2026-05-13",
+  "pre_fix_chars": 11077,
+  "post_fix_chars": 10806,
+  "actions": [
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.congress.gov/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.congress.gov/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.pentagon.gov/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.pentagon.gov/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.nbcnews.com/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.nbcnews.com/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.lightmind.ai/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.lightmind.ai/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.luci.ai/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.luci.ai/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.magic.school/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.magic.school/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.friend.ai/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.friend.ai/"
+      }
+    },
+    {
+      "type": "rerender_greeting",
+      "section": "(greeting)",
+      "detail": "validator rejected: non-html prefix: 'We need to produce a single HTML <p> paragraph, 80-150 words'",
+      "status": "failed",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to produce a single HTML <p> paragraph, 80-150 words, Jeeves voice: dry, precise butler. Must mention the weekda"
+      }
+    }
+  ],
+  "pre_fix_defect_count": 10,
+  "post_fix_defect_count": null,
+  "audit_model_used": null
+}
