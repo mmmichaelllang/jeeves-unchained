@@ -153,7 +153,7 @@ def check_nim() -> bool:
         "https://integrate.api.nvidia.com/v1/chat/completions",
         {"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
         {
-            "model": "moonshotai/kimi-k2-instruct-0905",
+            "model": "moonshotai/kimi-k2.6",
             "messages": [{"role": "user", "content": "ping"}],
             "max_tokens": 1,
         },

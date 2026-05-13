@@ -228,20 +228,18 @@ def _probe_nim_kimi_model(cfg: Config) -> str | None:
         return None
 
     ids = [m.get("id", "") for m in payload.get("data", [])]
-    # Prefer instruct variants over thinking/vision; prefer the longest
-    # (most-specific) ID — "kimi-k2-instruct-0905" beats "kimi-k2-instruct".
+    # Exclude non-chat variants (vision/thinking/embed/vl/audio). Sort by
+    # length DESC so the most-specific id wins. 2026-05-13: NIM rotated to
+    # "kimi-k2.6" with no "instruct" suffix; this filter handles that and
+    # future renames in the moonshotai/kimi-k2* family.
+    _NONCHAT_MARKERS = ("vision", "thinking", "embed", "vl", "audio")
     kimi_ids = sorted(
-        (i for i in ids if i.startswith("moonshotai/kimi-k2") and "instruct" in i),
+        (i for i in ids
+         if i.startswith("moonshotai/kimi-k2")
+         and not any(m in i.lower() for m in _NONCHAT_MARKERS)),
         key=len,
         reverse=True,
     )
-    if not kimi_ids:
-        # Fall back to any moonshotai/kimi-* if no instruct variant.
-        kimi_ids = sorted(
-            (i for i in ids if i.startswith("moonshotai/kimi-k2")),
-            key=len,
-            reverse=True,
-        )
     return kimi_ids[0] if kimi_ids else None
 
 
@@ -249,6 +247,7 @@ def _probe_nim_kimi_model(cfg: Config) -> str | None:
 # newest-to-oldest. Update when NIM rotates models. As of 2026-05-11:
 # kimi-k2-instruct-0905 is the current production tag.
 _KIMI_FALLBACK_CHAIN: tuple[str, ...] = (
+    "moonshotai/kimi-k2.6",
     "moonshotai/kimi-k2-instruct-0905",
     "moonshotai/kimi-k2-instruct",
 )
