@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] mmmichaelllang: GitHub workflow failure notification for Jeeves correspondence phase.\n- [escalation] mmmichaelllang: GitHub workflow failure for Jeeves daily pipeline.\n- [reply needed] Mrs. Lang: Morning correspondence from wife Mrs. Lang with assembled papers.\n- [reply needed] Lady Cathy: Personal message from mother Lady Cathy about travel plans and desire to meet.\n- [reply needed] Andrew Lang: Andrew Lang sent a message about making care visible in neighborhoods\n- [reply needed] Alan Beasley: Alan Beasley sent a message with an attachment of Sam Keen's essay\n- [reply needed] Jen Manglos: Jen Manglos sent a message about being on the road and having limited access to email\n- [reply needed] lang.mc@gmail.com: A message was sent about correspondence and GitHub notifications\n- [reply needed] Greg Gorsuch: Greg Gorsuch responded to an email about a pre-crime strategy\n- [decision required] mmmichaelllang: GitHub sent a notification about a failed workflow run in the jeeves-memory repository\n- [decision required] mmmichaelllang: GitHub sent a notification about a failed workflow run in the jeeves-unchained repository\n- [decision required] mmmichaelllang: GitHub sent a notification about a failed workflow run in the jeeves-unchained repository",
+  "text": "- [escalation] lang.mc@gmail.com: Daily correspondence summary indicating a pressing GitHub workflow failure for Jeeves.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting an email from Rob Collins and Esther Wakeman.\n- [reply needed] \"Rob Collins & Esther Wakeman\": Rob Collins and Esther Wakeman express desire to meet with Michael and Piper while in Bremerton.\n- [reply needed] Alan Beasley: Alan Beasley is sharing an annotated version of Sam Keen's essay with the Loder Group.\n- [decision required] lang.mc@gmail.com: Daily correspondence summary highlighting a decision required from Carnival Cruise Line regarding Rewards Terms.\n- [follow up] Greg Gorsuch: Greg Gorsuch continues a philosophical discussion thread about Descartes.\n- [follow up] Greg Gorsuch: Greg Gorsuch shared unfinished notes and responses to a chapter on time.\n- [follow up] Michael Lang: Michael Lang sent himself notes or a draft related to McGilchrist Chapter 22 on time.\n- [follow up] lang.mc@gmail.com: Daily correspondence summary noting pressing GitHub workflow failures in jeeves-unchained and jeeves-memory repositories.\n- [no action] \"Anthropic, PBC\": Receipt from Anthropic for a purchase.",
   "counts": {
-    "reply_needed": 7,
-    "decision_required": 5,
-    "scheduling": 1,
-    "follow_up": 0,
+    "reply_needed": 2,
+    "decision_required": 1,
+    "scheduling": 0,
+    "follow_up": 4,
     "escalation": 2,
-    "no_action": 29
+    "no_action": 41
   }
 }
