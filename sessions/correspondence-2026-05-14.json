@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [reply needed] \"Rob Collins & Esther Wakeman\": Rob Collins and Esther Wakeman are in Bremerton until July 7 and would like to see Michael and Piper again before leaving.\n- [follow up] lang.mc@gmail.com: Daily correspondence briefing noting outstanding GitHub workflow failures in two repositories.\n- [follow up] lang.mc@gmail.com: Daily correspondence briefing noting a decision required from Carnival Cruise Line.\n- [no action] GitClear Support: GitClear subscription cancellation confirmation for entity Mmmichaelllang.\n- [no action] Claude Team: Claude Team notification about new monthly Agent SDK credit availability starting June 15.\n- [no action] \"Anthropic, PBC\": Receipt from Anthropic, PBC for transaction #2811-0533-2167.\n- [no action] \"OpenRouter, Inc\": OpenRouter receipt for $23.36 payment made on May 13, 2026.\n- [no action] \"Anthropic, PBC\": Receipt from Anthropic, PBC for transaction #2984-2357-8298.\n- [no action] \"info@schooljobs.com\": Automated Seattle Public Schools job interest card notification with do-not-reply instructions.\n- [no action] Andrew Lang: Newsletter from Andrew Lang about making care visible in neighborhoods.\n- [no action] \"Login.gov\": Login.gov security notification about new sign-in and authentication on a new device.",
+  "counts": {
+    "reply_needed": 1,
+    "decision_required": 0,
+    "scheduling": 0,
+    "follow_up": 2,
+    "escalation": 0,
+    "no_action": 47
+  }
+}
