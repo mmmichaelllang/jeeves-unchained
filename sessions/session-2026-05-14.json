@@ -3,31 +3,10 @@
   "status": "complete",
   "dedup": {
     "covered_urls": [
-      "https://apnews.com/article/trump-ufos-uap-aliens-pentagon-records-investigation-3e658d2cf3742465127c0049c872240a",
-      "https://arxiv.org/html/2605.06623v1",
-      "https://arxiv.org/html/2605.07182v1",
-      "https://arxiv.org/html/2605.08717v1",
-      "https://arxiv.org/html/2605.09315v1",
-      "https://arxiv.org/html/2605.10052v1",
-      "https://link.springer.com/article/10.1007/s12136-025-00635-5",
-      "https://philarchive.org/rec/ISATRO-4",
-      "https://spectator.com/article/the-only-thing-out-there-is-the-ufo-industrial-complex/",
-      "https://theconversation.com/new-ufo-files-offer-no-answers-but-something-is-happening-in-the-skies-282608",
-      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
-      "https://www.cbsnews.com/news/pentagon-begins-release-ufo-files/",
-      "https://www.nbcnews.com/science/ufos-and-anomalous-phenomena/ufo-uap-files-pentagon-release-trump-rcna344204",
-      "https://www.newsweek.com/ufo-files-pentagon-trump-uap-fbi-photos-moon-11928766",
-      "https://www.newyorker.com/magazine/2026/05/11/colberts-trumpet-player-on-life-after-late-night",
-      "https://www.theatlantic.com/magazine/2026/06/government-ufo-conspiracy/686935/",
-      "https://www.thewellnews.com/in-the-news/the-truth-is-out-there-if-only-the-government-would-disclose-it/",
-      "https://www.war.gov/News/Releases/Release/Article/4480582/department-of-war-releases-unidentified-anomalous-phenomena-files-in-historic-t/",
-      "https://www.washingtonpost.com/politics/2026/05/08/trump-ufos-uap-aliens-pentagon-records-investigation/9888e500-4ad9-11f1-a119-857cd2bf4fd4_story.html"
+      "https://www.newyorker.com/magazine/2026/05/25/where-the-met-gala-really-begins"
     ],
     "covered_headlines": [
-      "The search returned three relevant results on triadic ontology and relational metaphysics from 2025-2026.",
-      "Three fresh papers this week advance how AI agents coordinate, recover from failure, and control their own reasoning budgets. The most novel is \"Swarm Skills\" (arXiv:2605.",
-      "On May 8, 2026, the Pentagon launched a historic transparency effort by releasing 162 declassified files on Unidentified Anomalous Phenomena (UAP) through a new government website, war.gov/UFO, dubbed PURSUE (Presidential Unsealing and Reporting System for UAP Encounters).",
-      "Colbert’s Trumpet Player on Life After Late Night",
+      "Where the Met Gala Really Begins",
       "\"The Illusion of Control\" draws parallels between the Soviet Union's collapse and current AI governance frameworks.",
       "'Make up their own minds': Pentagon releases first tranche of UFO files",
       "**Friend AI Pendant** (MyTabAI, Inc): $99 wearable voice companion with 15-hour battery life, always-listening mic for conversations, and $7.",
@@ -82,6 +61,7 @@
       "Classroom Cash Economy System",
       "Classroom Economy Setup Kit",
       "Classroom Point System Builder",
+      "Colbert’s Trumpet Player on Life After Late Night",
       "Colin Powers' analysis 'The Emirates on the Tightrope' provides a deep dive into the UAE's precarious position during the Iran war.",
       "Colm Tóibín's review of 'For and Against a United Ireland' by Fintan O'Toole and Sam McBride examines the complex practicalities of Irish reunificatio",
       "Congress is accelerating its UAP-disclosure drive.",
@@ -477,46 +457,23 @@
       "functions.tavily_search:2",
       "global news May 8 2026 US Iran tensions Strait of Hormuz",
       "‘The Music of What Happens’ | Nick Laird | The New York Review of Books",
-      "email | \"Rob Collins & Esther Wakeman\"",
-      "email | GitClear Support",
-      "email | Claude Team",
-      "email | \"OpenRouter, Inc\"",
-      "email | \"info@schooljobs.com\""
+      "email | Lady Cathy",
+      "email | Alan Beasley",
+      "email | Jen Manglos"
     ],
     "cross_sector_dupes": []
   },
   "triadic_ontology": {
-    "findings": "The search returned three relevant results on triadic ontology and relational metaphysics from 2025-2026. First, Damiano Migliorini's work explores relational ontologies and Trinitarian metaphysics, arguing that divine relationality offers a path beyond substance metaphysics while maintaining rational theological coherence. Second, Christopher Isabelle's \"Triadic Relational Ontology\" develops TRO as a continuation of Primordial Separation Ontology, proposing that a third term—a relational field—is irreducible and necessary for emergence, continuity, and meaning beyond dyadic structures. Third, Julien Tricard's paper in Acta Analytica critiques nominalistic relationalism, arguing that purely relational accounts fail to ground determinate quantities in objects. Together these sources indicate active scholarly engagement with triadic structures in metaphysics, moving beyond binary oppositions toward frameworks that incorporate irreducible third terms.",
-    "urls": [
-      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
-      "https://philarchive.org/rec/ISATRO-4",
-      "https://link.springer.com/article/10.1007/s12136-025-00635-5"
-    ]
+    "findings": "",
+    "urls": []
   },
   "ai_systems": {
-    "findings": "Three fresh papers this week advance how AI agents coordinate, recover from failure, and control their own reasoning budgets. The most novel is \"Swarm Skills\" (arXiv:2605.10052), which treats multi-agent coordination protocols as portable, self-evolving assets rather than framework-locked code. The specification extends Anthropic's Skills standard with roles, workflows, and execution bounds, then pairs it with an algorithm that distills successful trajectories into new skills and patches existing ones based on effectiveness, utilization, and freshness scores—no human-in-the-loop required. This shifts AI engineering from single-agent prompt tuning to \"Coordination Engineering.\" Separately, \"Star Elastic\" (arXiv:2605.07182) from NVIDIA introduces nested submodels inside a single reasoning LLM, enabling elastic budget control where different submodels handle the thinking versus answering phases; this yields up to 16% higher accuracy and 1.9× lower latency by dynamically matching compute t [TRUNCATED]",
-    "urls": [
-      "https://arxiv.org/html/2605.10052v1",
-      "https://arxiv.org/html/2605.07182v1",
-      "https://arxiv.org/html/2605.08717v1",
-      "https://arxiv.org/html/2605.06623v1",
-      "https://arxiv.org/html/2605.09315v1"
-    ]
+    "findings": "",
+    "urls": []
   },
   "uap": {
-    "findings": "On May 8, 2026, the Pentagon launched a historic transparency effort by releasing 162 declassified files on Unidentified Anomalous Phenomena (UAP) through a new government website, war.gov/UFO, dubbed PURSUE (Presidential Unsealing and Reporting System for UAP Encounters). The initial tranche includes military memos, FBI reports, NASA mission data, eyewitness testimony, photos, and videos dating back decades—including Apollo 12 astronaut Alan Bean's account of seeing \"particles and flashes of lights\" on the Moon. Defense Secretary Pete Hegseth called it \"unprecedented transparency,\" while President Trump declared the public can now decide for themselves \"WHAT THE HELL IS GOING ON.\" However, the files contain no confirmed evidence of extraterrestrial technology or non-human intelligence, with the Pentagon stating these are \"unresolved cases\" where the government cannot make definitive determinations. New materials will be released on a rolling basis every few weeks. Meanwhile, Rep. Anna [TRUNCATED]",
-    "urls": [
-      "https://www.war.gov/News/Releases/Release/Article/4480582/department-of-war-releases-unidentified-anomalous-phenomena-files-in-historic-t/",
-      "https://www.cbsnews.com/news/pentagon-begins-release-ufo-files/",
-      "https://www.nbcnews.com/science/ufos-and-anomalous-phenomena/ufo-uap-files-pentagon-release-trump-rcna344204",
-      "https://theconversation.com/new-ufo-files-offer-no-answers-but-something-is-happening-in-the-skies-282608",
-      "https://www.newsweek.com/ufo-files-pentagon-trump-uap-fbi-photos-moon-11928766",
-      "https://www.theatlantic.com/magazine/2026/06/government-ufo-conspiracy/686935/",
-      "https://spectator.com/article/the-only-thing-out-there-is-the-ufo-industrial-complex/",
-      "https://www.thewellnews.com/in-the-news/the-truth-is-out-there-if-only-the-government-would-disclose-it/",
-      "https://apnews.com/article/trump-ufos-uap-aliens-pentagon-records-investigation-3e658d2cf3742465127c0049c872240a",
-      "https://www.washingtonpost.com/politics/2026/05/08/trump-ufos-uap-aliens-pentagon-records-investigation/9888e500-4ad9-11f1-a119-857cd2bf4fd4_story.html"
-    ]
+    "findings": "",
+    "urls": []
   },
   "weather": "",
   "local_news": [],
@@ -532,13 +489,13 @@
   "wearable_ai": [],
   "newyorker": {
     "available": true,
-    "title": "Colbert’s Trumpet Player on Life After Late Night",
-    "section": "off the air dept.",
-    "dek": "Since 2015, Jon Lampley has played in the house band of “The Late Show,” which CBS unceremoniously cancelled. As the final episode looms, he takes a look back. Mark Yarm writes.",
-    "byline": "By Mark Yarm",
-    "date": "2026-05-04T06:00:00.000-04:00",
-    "text": "Viewers across the country are counting down the days till the final episode of Stephen Colbert’s “Late Show,” which will air on May 21st. When the program’s peculiar, sudden cancellation was announced, last July, the members of the show’s band, Louis Cato and the Great Big Joy Machine, were as surprised as anyone. “It felt like a deep sigh,” Jon (Lamps) Lampley, the group’s trumpet player, recalled the other day, at a sushi place near the Ed Sullivan Theatre.\nCBS defended the cancellation as “purely a financial decision.” But many linked it to Colbert’s criticism of the network’s parent company for paying sixteen million dollars to settle a lawsuit with President Donald Trump—a move that the host decried, on air, as a “big fat bribe.” Lampley, who is thirty-six and wears a neat beard, said, “I don’t really have a lot of interest in fuelling speculation.” He is unhappy, though, about how things went down.\nColbert already has his next gig lined up: writing a “Lord of the Rings” movie with his son Peter McGee and Philippa Boyens. Lampley, meanwhile, will release his second solo album in June—a joyous soul-pop record called “Notes to Self,” whose lead single, “Greener,” features a spoken-word cameo from Colbert. (“Hey, Lamps, how’s your day goin’?”) On the album, the trumpeter levels up as a singer and front man. “It was influenced by the gospel music that’s at the core of what I do,” he said.\nLampley grew up in the predominantly white suburb of Tallmadge, Ohio, but he attended the First Apostolic Faith Church, a Black, Pentecostal congregation in Akron. In seventh grade, he joined the church band. He rattled off the names of various sisters and elders he performed alongside. “Nobody knows who these people are, but they are the ones who taught me, This is what music is,” he said. “This is how you move people. This is how you play the guitar in a way that gets an entire church to clap their hands.” Lampley maintains a deep faith.\nHe went on to play sousaphone in the Ohio State University marching band, where, as a senior, he experienced one of his proudest moments: “dotting the i” in an on-field cursive formation of the word “Ohio.” “This is considered a very great honor,” he said. During college, he also co-founded a jazz-funk band now known as the Huntertones. In 2014, the band moved to New York, where Lampley connected with the keyboardist and singer Jon Batiste, who hired him for the band he was assembling for Colbert. Batiste left the show in 2022, and the musician Louis Cato was promoted to bandleader.\n“I can’t believe that I chose to make my life out of, like, blowing through a metal pipe,” Lampley said. “The Late Show” was taping that afternoon, and he made his way to the theatre for wardrobe, hair, and makeup. Later, between Colbert’s interviews with Anne Hathaway, who zinged her “Devil Wears Prada” co-star Stanley Tucci about his foodie persona (“That bitch has not made me a morsel!”), and the comedian Josh Johnson, who recounted an amusing T.S.A. encounter (“They open my bag, and it wasn’t brass knuckles—it was toe spreaders”), Lampley showed off his chops, soloing on a rendition of the Steve Miller Band’s “Fly Like an Eagle.”\nAt the taping, Colbert, hands in pockets, addressed his trumpet player. “Lampley, I want you to know that a friend of mine came to the show last night,” he said. “And she said, ‘Wooo, that trumpet player.’ ” Colbert grinned. “She goes, ‘If I wasn’t happily married, he’d be in big trouble.’ ” The audience whooped.\n“You know what it is?” Cato interjected. “It’s the hips.”\n“I think that’s it,” Colbert said. “Or it’s the embouchure.”\n“Or it’s both,” Lampley said. He illustrated his lipping technique.\n“You’re always, like, pre-kissing,” Colbert observed.\nAfterward, Lampley and the band’s saxophonist, Louis Fouché, headed to an Italian restaurant. Lampley brought up the exchange involving Colbert’s friend, which ended up being cut before air. “Man,” he said, “I was grateful that my girlfriend was not at the taping today.”\nThe impending end of the Colbert era was weighing on them all. “Somebody who has been that important to the game and to the craft deserves to go out on their own terms,” Lampley said. “And that was taken from Stephen.” ♦",
-    "url": "https://www.newyorker.com/magazine/2026/05/11/colberts-trumpet-player-on-life-after-late-night",
+    "title": "Where the Met Gala Really Begins",
+    "section": "departure lounge",
+    "dek": "Every year, the Mark Hotel is transformed into a chaotic celebrity holding pen. Jane Bua writes.",
+    "byline": "By Jane Bua",
+    "date": "2026-05-14T06:00:00.000-04:00",
+    "text": "By now, half the world has registered an opinion on Kylie Jenner’s nipple-forward Venus de Milo homage or the clipper ship perched on Madonna’s head at this year’s Met Gala. But few have seen the T.S.A.-level machinations behind the deployment of the overdressed guests from their staging areas to the museum’s steps. The Mark Hotel, on Seventy-seventh Street and Madison, was a center of the hubbub, with a hundred and fifty-three rooms and suites booked out to various glam squads.\n“Everything is timed!” Maria Wittorp, the hotel’s head concierge, said, with the haste of an auctioneer, standing in the lobby, as blazer-wearing staffers whipped by. “We only have someone come down when their van is ready.” Wittorp, who has worked the event six times, channelled the gala’s dress code (“Fashion Is Art”) by wearing a pair of bug-eye glasses. “They’re Alain Mikli,” she said. “Elton John has worn his designs.” She raced off, gripping an orange clipboard.\nThe room buzzed.\n“My radio is out. Wait, I think it’s my earpiece.”\n“Murray, you’re breaking up.”\n“This is my first one,” a Mark sales executive named Cher Liu said. She thumbed through a thick packet with the names and photos of every guest, as if cramming for a final. A woman tried to come down the central stairs. “You’re going to have to wait!” a manager told her. “No one through the lobby!” Another woman, in a short skirt and leopard-print heels, slipped by him, holding an empty Martini glass.\nWittorp scurried over to a curtained side entrance. The drapes opened, and in walked Anna Wintour in turquoise-feathered Chanel. She beelined out the street door, where her van awaited. Departures had officially started.\nThe lobby’s elevator doors opened and a woman with a giant white saucer on her head and a matching floor-length coat, embellished with red splotches that evoked stab wounds, slowly exited. It was Naomi Osaka. “You guys gotta move back,” a security guard shouted to a pack of photographers in the room. Osaka stood by a reception desk, apparently early for her driver.\nThe elevator opened again. Liu gripped her packet. Shuffling noises were heard, and then a pointy white gown popped into the lobby. Its wearer was the tech entrepreneur Yu-Chi Lyra Kuo (trickle-down evidence of the gala’s unspoken Silicon Valley subtheme). Kuo showed off her ice-queen garb and noticed a friend in the corner. “Sam! Hi!” she said. The singer Sam Smith, in a black cape dress, stood still as an aide held a portable fan up to their head, which supported a large black feather.\nSprinting through the scene, someone yelled, “I need the lady! I need the lady!”\nElevator doors opened: Venus Williams, in a crystal collar necklace that Ruth Bader Ginsburg might have enjoyed. She dragged a long black train across the marble lobby. (“Our floors are top-tier clean,” a concierge with braces on her teeth said.)\n“Do you guys have truffle fries?”\n“Could you give me two more keys to our room, under ‘Swarovski’?”\nThe K-pop star Ahn Hyo-seop waited by the desk, a helper in a surgical mask prodding at his face with a makeup brush. A service door swung open behind Ahn, almost hitting his striped Valentino jacket. The helper jumped to action: now the hair above Ahn’s right ear was out of place.\n“Have you seen a tripod? It was leaning right there.”\n“What’s the Wi-Fi password?”\nDoors opened: Alexander Wang. “Should I go first?” he asked. “No,” someone on his team said. He ended up waiting for the Russian model Irina Shayk, who soon appeared holding a quivering small dog.\nElevator opened: Maude Apatow stepped out. “It’s the girl from ‘Euphoria’!” a staffer said, embarrassed that he didn’t know her name. “I had a list for this!” Next came Chase Infiniti, wearing a colorful trompe-l’oeil Thom Browne dress (another Venus de Milo tribute). Liu earnestly flipped through her packet.\nThe queue for vans was growing. Someone spurted hair spray on Tate McRae’s long locks. The actress Tessa Thompson explained her blue fingers: “It’s latex!” Joe Burrow, an N.F.L. quarterback, stood by the stairs in a navy Bode suit with bedazzled lapels, kicking his feet from side to side. “Can I have my phone real quick?” he politely asked an aide.\nFinally, a lull. It was time for the last departure: Cardi B, who was behind schedule. “We should all clap for her,” a staffer said.\nThe elevator floor lights clicked downward. 5. 4. 3. 2. The doors opened. The car was empty. Groans all around. Photographers put down their cameras.\nThe lights blinked again. 4. 3. 2. The big reveal: a cluster of black umbrellas, which quickly opened.\n“That’s seven years of bad luck!” a disappointed spectator yelled. Shielded by her team, Cardi B shuffled out to the street, a blob of black nylon. The umbrellas were folded, and the van sped off to drive the four blocks to the Met. ♦",
+    "url": "https://www.newyorker.com/magazine/2026/05/25/where-the-met-gala-really-begins",
     "source": "The New Yorker",
     "archived_from": "",
     "error": null
@@ -555,6 +512,6 @@
   "correspondence": {
     "found": true,
     "fallback_used": false,
-    "text": "- [reply needed] \"Rob Collins & Esther Wakeman\": Rob Collins and Esther Wakeman are in Bremerton until July 7 and would like to see Michael and Piper again before leaving.\n- [follow up] lang.mc@gmail.com: Daily correspondence briefing noting outstanding GitHub workflow failures in two repositories.\n- [follow up] lang.mc@gmail.com: Daily correspondence briefing noting a decision required from Carnival Cruise Line.\n- [no action] GitClear Support: GitClear subscription cancellation confirmation for entity Mmmichaelllang.\n- [no action] Claude Team: Claude Team notification about new monthly Agent SDK credit availability starting June 15.\n- [no action] \"Anthropic, PBC\": Receipt from Anthropic, PBC for transaction #2811-0533-2167.\n- [no action] \"OpenRouter, Inc\": OpenRouter receipt for $23.36 payment made on May 13, 2026.\n- [no action] \"Anthropic, PBC\": Receipt from Anthropic, PBC for transaction #2984-2357-8298.\n- [no action] \"info@schooljobs.com\": Automated Seattle Public Schools job interest card notification with do-not-reply instructions.\n- [no action] Andrew Lang: Newsletter from Andrew Lang about making care visible in neighborhoods.\n- [no action] \"Login.gov\": Login.gov security notification about new sign-in and authentication on a new device."
+    "text": "- [escalation] mmmichaelllang: GitHub workflow failure notification for Jeeves correspondence phase.\n- [escalation] mmmichaelllang: GitHub workflow failure for Jeeves daily pipeline.\n- [reply needed] Mrs. Lang: Morning correspondence from wife Mrs. Lang with assembled papers.\n- [reply needed] Lady Cathy: Personal message from mother Lady Cathy about travel plans and desire to meet.\n- [reply needed] Andrew Lang: Andrew Lang sent a message about making care visible in neighborhoods\n- [reply needed] Alan Beasley: Alan Beasley sent a message with an attachment of Sam Keen's essay\n- [reply needed] Jen Manglos: Jen Manglos sent a message about being on the road and having limited access to email\n- [reply needed] lang.mc@gmail.com: A message was sent about correspondence and GitHub notifications\n- [reply needed] Greg Gorsuch: Greg Gorsuch responded to an email about a pre-crime strategy\n- [decision required] mmmichaelllang: GitHub sent a notification about a failed workflow run in the jeeves-memory repository\n- [decision required] mmmichaelllang: GitHub sent a notification about a failed workflow run in the jeeves-unchained repository\n- [decision required] mmmichaelllang: GitHub sent a notification about a failed workflow run in the jeeves-unchained repository"
   }
 }
