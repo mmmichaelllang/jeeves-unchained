@@ -81,6 +81,101 @@ def _check_prior_briefing_clean(briefing_path: Path) -> tuple[bool, str]:
     return True, f"signoff ok, {profane_count} asides"
 
 
+# 2026-05-14 GATE-A: refuse-to-write-empty.
+#
+# Why: 2026-05-13 daily run produced session-2026-05-13.json with EVERY
+# research sector empty (findings="", urls=[]) yet status="complete". The
+# write phase, having nothing to summarise, fabricated URLs (congress.gov,
+# pentagon.gov, lightmind.ai, etc.). Auditor stripped 7 hallucinated hrefs
+# but the briefing still shipped with invented content under TOTT.
+#
+# Root cause of the empty research was a transient NIM/network blip — the
+# K2.6 + FunctionAgent path was verified end-to-end on 2026-05-14 with
+# probe_agent_path_v2.py (16 real tool dispatches, 0 with empty kwargs).
+# This gate is the durable defense: when a transient happens again, no
+# fabricated briefing ships.
+#
+# Policy: silence > fabrication. If every non-TOTT sector is empty, block
+# the write and email. The newyorker (TOTT) and literary_pick sectors are
+# fetched outside the agent path so they may be populated independently;
+# they alone are NOT enough to justify shipping.
+#
+# Override: JEEVES_FORCE_WRITE_EMPTY=1 (for backfill/testing only).
+_GATE_A_DICT_FINDINGS_SECTORS = (
+    "triadic_ontology",
+    "ai_systems",
+    "uap",
+    "career",
+    "family",
+)
+_GATE_A_LIST_SECTORS = (
+    "local_news",
+    "global_news",
+    "intellectual_journals",
+    "wearable_ai",
+    "enriched_articles",
+)
+
+
+def _session_research_empty(session) -> tuple[bool, str]:
+    """Return ``(is_empty, summary)``.
+
+    ``is_empty`` is True when every non-TOTT research sector returned no
+    content. Excludes newyorker (TOTT) and literary_pick because both are
+    fetched outside the agent path.
+
+    Accepts either a SessionModel (pydantic) or a plain dict.
+    """
+    if hasattr(session, "model_dump"):
+        s = session.model_dump()
+    elif isinstance(session, dict):
+        s = session
+    else:
+        s = {k: getattr(session, k) for k in dir(session) if not k.startswith("_")}
+
+    populated: list[str] = []
+    empty: list[str] = []
+
+    for name in _GATE_A_DICT_FINDINGS_SECTORS:
+        v = s.get(name) or {}
+        if isinstance(v, dict):
+            findings = (v.get("findings") or "").strip()
+            urls = v.get("urls") or []
+            if findings or urls:
+                populated.append(name)
+            else:
+                empty.append(name)
+        else:
+            empty.append(name)
+
+    for name in _GATE_A_LIST_SECTORS:
+        v = s.get(name) or []
+        if isinstance(v, list) and v:
+            populated.append(name)
+        else:
+            empty.append(name)
+
+    elp = s.get("english_lesson_plans") or {}
+    if isinstance(elp, dict):
+        cr = elp.get("classroom_ready") or []
+        pp = elp.get("pedagogy_pieces") or []
+        if cr or pp:
+            populated.append("english_lesson_plans")
+        else:
+            empty.append("english_lesson_plans")
+    else:
+        empty.append("english_lesson_plans")
+
+    w = s.get("weather") or ""
+    if isinstance(w, str) and w.strip():
+        populated.append("weather")
+    else:
+        empty.append("weather")
+
+    summary = f"populated={populated or '(none)'}  empty={empty}"
+    return (len(populated) == 0, summary)
+
+
 def _apply_asides_gate(cfg, session, result, out_path):
     """GATE C — asides-target enforcement (injector-primary, 2026-05-12).
 
@@ -380,6 +475,32 @@ def main(argv: list[str] | None = None) -> int:
     if args.plan_only:
         _plan_only(session)
         return 0
+
+    # ----------------------------------------------------------------- #
+    # 2026-05-14 GATE-A: refuse-to-write-empty. See _session_research_   #
+    # empty() docstring for full rationale.                              #
+    # ----------------------------------------------------------------- #
+    if not (args.dry_run or args.use_fixture):
+        empty_block, empty_summary = _session_research_empty(session)
+        if empty_block:
+            force_empty = os.environ.get(
+                "JEEVES_FORCE_WRITE_EMPTY", ""
+            ).lower() in ("1", "true", "yes")
+            if force_empty:
+                log.warning(
+                    "GATE-A bypassed via JEEVES_FORCE_WRITE_EMPTY=1. %s",
+                    empty_summary,
+                )
+            else:
+                log.error(
+                    "GATE-A: every non-TOTT research sector is empty for %s. "
+                    "Refusing to write or send a briefing — the model would "
+                    "fabricate content. %s. If transient (NIM/network blip), "
+                    "re-run research. To force a write anyway (backfill / "
+                    "testing), set JEEVES_FORCE_WRITE_EMPTY=1.",
+                    cfg.run_date.isoformat(), empty_summary,
+                )
+                return 5
 
     # ----------------------------------------------------------------- #
     # 2026-05-09 run-dedup gate. If an earlier run today already shipped #
