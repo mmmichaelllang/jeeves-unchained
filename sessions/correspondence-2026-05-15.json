@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating permanent failure of Daily Pipeline with rate limit issue.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting pressing GitHub workflow failures in jeeves-unchained and jeeves-memory repositories.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Research Phase workflow failed in jeeves-memory.\n- [escalation] mmmichaelllang: GitHub notification of failed CI workflow in jeeves-unchained repository.\n- [escalation] mmmichaelllang: GitHub notification of failed CI workflow in jeeves-unchained repository.\n- [escalation] mmmichaelllang: GitHub notification of failed CI workflow in jeeves-unchained repository.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Correspondence Phase workflow run failed.\n- [reply needed] Alan Beasley: Alan Beasley shared a version of Sam Keen's essay with paragraph numbers for the Loder Group.\n- [reply needed] lang.mc@gmail.com: Daily correspondence briefing mentioning a decision required from Carnival Cruise Line.\n- [no action] \"Superhuman – Zain Kahn\": Promotional email from Superhuman about Tavus AI image-to-avatar feature.",
+  "counts": {
+    "reply_needed": 2,
+    "decision_required": 0,
+    "scheduling": 0,
+    "follow_up": 0,
+    "escalation": 8,
+    "no_action": 40
+  }
+}
