@@ -1,0 +1,906 @@
+Research	UNKNOWN STEP	﻿2026-05-14T19:28:38.0508640Z Current runner version: '2.334.0'
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0533566Z ##[group]Runner Image Provisioner
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0534502Z Hosted Compute Agent
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0535162Z Version: 20260213.493
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0535815Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0536516Z Build Date: 2026-02-13T00:28:41Z
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0537312Z Worker ID: {1825f13a-52bb-435b-b1ee-fadf67f63081}
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0538051Z Azure Region: northcentralus
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0538985Z ##[endgroup]
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0540636Z ##[group]Operating System
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0541291Z Ubuntu
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0541914Z 24.04.4
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0542411Z LTS
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0542885Z ##[endgroup]
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0543713Z ##[group]Runner Image
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0544320Z Image: ubuntu-24.04
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0544975Z Version: 20260413.86.1
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0546222Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260413.86/images/ubuntu/Ubuntu2404-Readme.md
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0547814Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260413.86
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0548746Z ##[endgroup]
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0549990Z ##[group]GITHUB_TOKEN Permissions
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0552119Z Actions: write
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0552819Z Contents: write
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0553599Z Metadata: read
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0554211Z ##[endgroup]
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0556334Z Secret source: Actions
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0557083Z Prepare workflow directory
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0894485Z Prepare all required actions
+Research	UNKNOWN STEP	2026-05-14T19:28:38.0931386Z Getting action download info
+Research	UNKNOWN STEP	2026-05-14T19:28:38.5190550Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+Research	UNKNOWN STEP	2026-05-14T19:28:38.6340179Z Download action repository 'astral-sh/setup-uv@v3' (SHA:caf0cab7a618c569241d31dcd442f54681755d39)
+Research	UNKNOWN STEP	2026-05-14T19:28:39.1399470Z Complete job name: Research
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2268344Z ##[group]Run actions/checkout@v4
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2269741Z with:
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2270547Z   ref: main
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2271474Z   repository: mmmichaelllang/jeeves-unchained
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2272925Z   token: ***
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2273971Z   ssh-strict: true
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2274837Z   ssh-user: git
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2275715Z   persist-credentials: true
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2276686Z   clean: true
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2277579Z   sparse-checkout-cone-mode: true
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2278632Z   fetch-depth: 1
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2279486Z   fetch-tags: false
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2280363Z   show-progress: true
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2281249Z   lfs: false
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2282072Z   submodules: false
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2282949Z   set-safe-directory: true
+Research	UNKNOWN STEP	2026-05-14T19:28:39.2284843Z ##[endgroup]
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3390856Z Syncing repository: mmmichaelllang/jeeves-unchained
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3393973Z ##[group]Getting Git version info
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3395640Z Working directory is '/home/runner/work/jeeves-unchained/jeeves-unchained'
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3398113Z [command]/usr/bin/git version
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3431240Z git version 2.53.0
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3458955Z ##[endgroup]
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3475383Z Temporarily overriding HOME='/home/runner/work/_temp/a9a43563-0e27-4797-adde-c17a8a516c88' before making global git config changes
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3480429Z Adding repository directory to the temporary git global config as a safe directory
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3488969Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/jeeves-unchained/jeeves-unchained
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3520039Z Deleting the contents of '/home/runner/work/jeeves-unchained/jeeves-unchained'
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3523304Z ##[group]Initializing the repository
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3528050Z [command]/usr/bin/git init /home/runner/work/jeeves-unchained/jeeves-unchained
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3632735Z hint: Using 'master' as the name for the initial branch. This default branch name
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3635599Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3637895Z hint: to use in all of your new repositories, which will suppress this warning,
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3639972Z hint: call:
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3640755Z hint:
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3641874Z hint: 	git config --global init.defaultBranch <name>
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3643451Z hint:
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3645117Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3647036Z hint: 'development'. The just-created branch can be renamed via this command:
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3648571Z hint:
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3649520Z hint: 	git branch -m <name>
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3650463Z hint:
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3651721Z hint: Disable this message with "git config set advice.defaultBranchName false"
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3654219Z Initialized empty Git repository in /home/runner/work/jeeves-unchained/jeeves-unchained/.git/
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3657815Z [command]/usr/bin/git remote add origin https://github.com/mmmichaelllang/jeeves-unchained
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3675906Z ##[endgroup]
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3677588Z ##[group]Disabling automatic garbage collection
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3679411Z [command]/usr/bin/git config --local gc.auto 0
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3706486Z ##[endgroup]
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3707891Z ##[group]Setting up auth
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3712187Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Research	UNKNOWN STEP	2026-05-14T19:28:39.3741552Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Research	UNKNOWN STEP	2026-05-14T19:28:39.4023412Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Research	UNKNOWN STEP	2026-05-14T19:28:39.4054601Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Research	UNKNOWN STEP	2026-05-14T19:28:39.4265619Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Research	UNKNOWN STEP	2026-05-14T19:28:39.4294276Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Research	UNKNOWN STEP	2026-05-14T19:28:39.4515456Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+Research	UNKNOWN STEP	2026-05-14T19:28:39.4548981Z ##[endgroup]
+Research	UNKNOWN STEP	2026-05-14T19:28:39.4550456Z ##[group]Fetching the repository
+Research	UNKNOWN STEP	2026-05-14T19:28:39.4558255Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +refs/heads/main*:refs/remotes/origin/main* +refs/tags/main*:refs/tags/main*
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2026124Z From https://github.com/mmmichaelllang/jeeves-unchained
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2028354Z  * [new branch]      main       -> origin/main
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2050735Z ##[endgroup]
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2053424Z ##[group]Determining the checkout info
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2057405Z [command]/usr/bin/git branch --list --remote origin/main
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2082875Z   origin/main
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2101415Z ##[endgroup]
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2103359Z [command]/usr/bin/git sparse-checkout disable
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2131998Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2161268Z ##[group]Checking out the ref
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2163843Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2511037Z Switched to a new branch 'main'
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2515008Z branch 'main' set up to track 'origin/main'.
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2529910Z ##[endgroup]
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2563521Z [command]/usr/bin/git log -1 --format=%H
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2586597Z 23fe9768015389bd4760ec6696e03839510c18a6
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2922621Z ##[group]Run astral-sh/setup-uv@v3
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2923877Z with:
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2924550Z   version: 0.8.17
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2925637Z   github-token: ***
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2926422Z   enable-cache: false
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2927558Z   cache-dependency-glob: **/uv.lock
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2928531Z   prune-cache: true
+Research	UNKNOWN STEP	2026-05-14T19:28:40.2929285Z ##[endgroup]
+Research	UNKNOWN STEP	2026-05-14T19:28:40.4749343Z Downloading uv from "https://github.com/astral-sh/uv/releases/download/0.8.17/uv-x86_64-unknown-linux-gnu.tar.gz" ...
+Research	UNKNOWN STEP	2026-05-14T19:28:40.9126834Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/93951569-a3fb-488c-a565-02d6bb56bd37 -f /home/runner/work/_temp/dd333f5e-f4ab-449d-ba68-57747fb4f079
+Research	UNKNOWN STEP	2026-05-14T19:28:41.3350966Z Added /opt/hostedtoolcache/uv/0.8.17/x86_64 to the path
+Research	UNKNOWN STEP	2026-05-14T19:28:41.3351907Z Added /home/runner/.local/bin to the path
+Research	UNKNOWN STEP	2026-05-14T19:28:41.3355572Z Successfully installed uv version 0.8.17
+Research	UNKNOWN STEP	2026-05-14T19:28:41.3375022Z Set UV_CACHE_DIR to /home/runner/work/_temp/setup-uv-cache
+Research	UNKNOWN STEP	2026-05-14T19:28:41.3472174Z ##[group]Run uv sync --no-dev --extra vertex --extra playwright
+Research	UNKNOWN STEP	2026-05-14T19:28:41.3472705Z ^[[36;1muv sync --no-dev --extra vertex --extra playwright^[[0m
+Research	UNKNOWN STEP	2026-05-14T19:28:41.3500667Z shell: /usr/bin/bash -e {0}
+Research	UNKNOWN STEP	2026-05-14T19:28:41.3500956Z env:
+Research	UNKNOWN STEP	2026-05-14T19:28:41.3501234Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+Research	UNKNOWN STEP	2026-05-14T19:28:41.3501574Z ##[endgroup]
+Research	UNKNOWN STEP	2026-05-14T19:28:41.5982752Z Downloading cpython-3.11.13-linux-x86_64-gnu (download) (27.7MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:42.4547482Z  Downloading cpython-3.11.13-linux-x86_64-gnu (download)
+Research	UNKNOWN STEP	2026-05-14T19:28:42.8942958Z Using CPython 3.11.13
+Research	UNKNOWN STEP	2026-05-14T19:28:42.8943788Z Creating virtual environment at: .venv
+Research	UNKNOWN STEP	2026-05-14T19:28:43.4918006Z Resolved 135 packages in 591ms
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5073246Z    Building jeeves-unchained @ file:///home/runner/work/jeeves-unchained/jeeves-unchained
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5289565Z Downloading tokenizers (3.1MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5291445Z Downloading aiohttp (1.7MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5299399Z Downloading nltk (1.5MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5299962Z Downloading tiktoken (1.1MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5398433Z Downloading pydantic-core (2.0MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5400635Z Downloading numpy (16.1MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5407385Z Downloading transformers (11.4MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5409632Z Downloading babel (9.7MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5412292Z Downloading sqlalchemy (3.2MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5417150Z Downloading grpcio (6.5MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5423384Z Downloading lxml (5.0MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5428055Z Downloading playwright (45.0MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5430653Z Downloading pillow (6.8MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5433520Z Downloading openai (1.1MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5436374Z Downloading cryptography (4.3MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5439253Z Downloading google-api-python-client (14.3MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5444270Z Downloading pynacl (1.3MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5447290Z Downloading networkx (2.0MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5455063Z Downloading hf-xet (4.0MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5460616Z Downloading google-cloud-aiplatform (8.0MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5463479Z Downloading patchright (45.0MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:43.5466849Z Downloading llama-index-core (11.4MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:44.3359785Z  Downloading tiktoken
+Research	UNKNOWN STEP	2026-05-14T19:28:44.4459768Z  Downloading pynacl
+Research	UNKNOWN STEP	2026-05-14T19:28:44.4477940Z  Downloading aiohttp
+Research	UNKNOWN STEP	2026-05-14T19:28:44.4799152Z  Downloading pydantic-core
+Research	UNKNOWN STEP	2026-05-14T19:28:44.5716886Z       Built jeeves-unchained @ file:///home/runner/work/jeeves-unchained/jeeves-unchained
+Research	UNKNOWN STEP	2026-05-14T19:28:44.6615359Z  Downloading nltk
+Research	UNKNOWN STEP	2026-05-14T19:28:44.6986188Z  Downloading tokenizers
+Research	UNKNOWN STEP	2026-05-14T19:28:44.7730025Z  Downloading sqlalchemy
+Research	UNKNOWN STEP	2026-05-14T19:28:44.8145594Z  Downloading networkx
+Research	UNKNOWN STEP	2026-05-14T19:28:44.8531158Z  Downloading hf-xet
+Research	UNKNOWN STEP	2026-05-14T19:28:44.9848996Z  Downloading cryptography
+Research	UNKNOWN STEP	2026-05-14T19:28:45.0666529Z  Downloading lxml
+Research	UNKNOWN STEP	2026-05-14T19:28:45.1811998Z  Downloading openai
+Research	UNKNOWN STEP	2026-05-14T19:28:45.2916392Z  Downloading grpcio
+Research	UNKNOWN STEP	2026-05-14T19:28:45.3091526Z  Downloading pillow
+Research	UNKNOWN STEP	2026-05-14T19:28:45.7834241Z  Downloading babel
+Research	UNKNOWN STEP	2026-05-14T19:28:45.7864120Z  Downloading google-cloud-aiplatform
+Research	UNKNOWN STEP	2026-05-14T19:28:46.0472087Z  Downloading numpy
+Research	UNKNOWN STEP	2026-05-14T19:28:46.6315537Z  Downloading google-api-python-client
+Research	UNKNOWN STEP	2026-05-14T19:28:46.7245222Z  Downloading llama-index-core
+Research	UNKNOWN STEP	2026-05-14T19:28:46.8025009Z  Downloading playwright
+Research	UNKNOWN STEP	2026-05-14T19:28:46.8178556Z  Downloading patchright
+Research	UNKNOWN STEP	2026-05-14T19:28:46.8341809Z  Downloading transformers
+Research	UNKNOWN STEP	2026-05-14T19:28:46.8344600Z Prepared 128 packages in 3.33s
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0334737Z Installed 128 packages in 198ms
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0336281Z  + aiohappyeyeballs==2.6.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0337013Z  + aiohttp==3.13.5
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0337637Z  + aiosignal==1.4.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0344160Z  + aiosqlite==0.22.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0344788Z  + annotated-types==0.7.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0345380Z  + anyio==4.13.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0345823Z  + attrs==26.1.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0346290Z  + babel==2.18.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0346715Z  + banks==2.4.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0347481Z  + certifi==2026.4.22
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0347970Z  + cffi==2.0.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0348464Z  + charset-normalizer==3.4.7
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0348966Z  + click==8.3.3
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0349437Z  + colorama==0.4.6
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0349924Z  + courlan==1.3.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0350406Z  + cryptography==46.0.7
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0350891Z  + dataclasses-json==0.6.7
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0351417Z  + dateparser==1.4.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0351873Z  + deprecated==1.3.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0352361Z  + dirtyjson==1.0.8
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0352800Z  + distro==1.9.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0353521Z  + docstring-parser==0.18.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0354032Z  + exa-py==2.12.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0354501Z  + filelock==3.29.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0354935Z  + filetype==1.2.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0355444Z  + frozenlist==1.8.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0355891Z  + fsspec==2026.3.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0356380Z  + google-api-core==2.30.3
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0356905Z  + google-api-python-client==2.194.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0357498Z  + google-auth==2.49.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0357982Z  + google-auth-httplib2==0.3.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0358556Z  + google-auth-oauthlib==1.3.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0359098Z  + google-cloud-aiplatform==1.148.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0359701Z  + google-cloud-bigquery==3.41.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0360287Z  + google-cloud-core==2.5.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0360874Z  + google-cloud-resource-manager==1.17.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0361463Z  + google-cloud-storage==3.10.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0362013Z  + google-crc32c==1.8.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0362488Z  + google-genai==1.73.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0363012Z  + google-resumable-media==2.8.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0363869Z  + googleapis-common-protos==1.74.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0364409Z  + greenlet==3.4.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0364760Z  + griffe==2.0.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0365093Z  + griffecli==2.0.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0365431Z  + griffelib==2.0.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0365792Z  + grpc-google-iam-v1==0.14.4
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0366197Z  + grpcio==1.80.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0366553Z  + grpcio-status==1.71.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0366919Z  + h11==0.16.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0367233Z  + hf-xet==1.4.3
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0367559Z  + htmldate==1.9.4
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0367890Z  + httpcore==1.0.9
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0368225Z  + httplib2==0.31.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0368554Z  + httpx==0.28.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0368897Z  + huggingface-hub==0.36.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0369280Z  + idna==3.13
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0369911Z  + jeeves-unchained==0.1.0 (from file:///home/runner/work/jeeves-unchained/jeeves-unchained)
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0370659Z  + jinja2==3.1.6
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0370989Z  + jiter==0.14.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0371315Z  + joblib==1.5.3
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0371652Z  + justext==3.0.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0372131Z  + llama-index-core==0.14.21
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0372739Z  + llama-index-instrumentation==0.5.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0373612Z  + llama-index-llms-groq==0.5.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0374216Z  + llama-index-llms-nvidia==0.5.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0374901Z  + llama-index-llms-openai==0.6.26
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0375500Z  + llama-index-llms-openai-like==0.5.3
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0376201Z  + llama-index-workflows==2.19.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0376707Z  + lxml==6.1.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0377043Z  + lxml-html-clean==0.4.4
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0377683Z  + markupsafe==3.0.3
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0378048Z  + marshmallow==3.26.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0378408Z  + multidict==6.7.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0378763Z  + mypy-extensions==1.1.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0379150Z  + nest-asyncio==1.6.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0379598Z  + networkx==3.6.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0379925Z  + nltk==3.9.4
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0380241Z  + numpy==2.4.4
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0380559Z  + oauthlib==3.3.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0380888Z  + openai==2.32.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0381221Z  + packaging==26.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0381566Z  + patchright==1.59.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0381920Z  + pillow==12.2.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0382256Z  + platformdirs==4.9.6
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0382617Z  + playwright==1.59.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0382966Z  + propcache==0.4.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0383694Z  + proto-plus==1.27.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0384056Z  + protobuf==5.29.6
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0384388Z  + pyasn1==0.6.3
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0384765Z  + pyasn1-modules==0.4.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0385146Z  + pycparser==3.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0385487Z  + pydantic==2.13.3
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0385830Z  + pydantic-core==2.46.3
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0386196Z  + pyee==13.0.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0386518Z  + pygithub==2.9.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0386849Z  + pyjwt==2.12.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0387179Z  + pynacl==1.6.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0387535Z  + pyparsing==3.3.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0387900Z  + python-dateutil==2.9.0.post0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0388319Z  + python-dotenv==1.2.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0388716Z  + pytz==2026.1.post1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0389059Z  + pyyaml==6.0.3
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0389383Z  + regex==2026.4.4
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0389710Z  + requests==2.33.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0390060Z  + requests-oauthlib==2.0.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0390454Z  + safetensors==0.7.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0390985Z  + setuptools==82.0.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0391355Z  + six==1.17.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0391674Z  + sniffio==1.3.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0392008Z  + sqlalchemy==2.0.49
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0392364Z  + tavily-python==0.7.23
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0392740Z  + tenacity==9.1.4
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0393233Z  + tiktoken==0.12.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0393572Z  + tinytag==2.2.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0393893Z  + tld==0.13.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0394215Z  + tokenizers==0.22.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0394552Z  + tqdm==4.67.3
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0394878Z  + trafilatura==2.0.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0395281Z  + transformers==4.57.6
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0395670Z  + typing-extensions==4.15.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0396072Z  + typing-inspect==0.9.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0396453Z  + typing-inspection==0.4.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0396837Z  + tzlocal==5.3.1
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0397170Z  + uritemplate==4.2.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0397515Z  + urllib3==2.6.3
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0397836Z  + websockets==16.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0398165Z  + wrapt==2.1.2
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0398488Z  + yarl==1.23.0
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0548573Z ##[group]Run uv run python -m playwright install --with-deps --only-shell chromium
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0549584Z ^[[36;1muv run python -m playwright install --with-deps --only-shell chromium^[[0m
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0577442Z shell: /usr/bin/bash -e {0}
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0577841Z env:
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0578241Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+Research	UNKNOWN STEP	2026-05-14T19:28:47.0578765Z ##[endgroup]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.1324222Z Downloading pygments (1.2MiB)
+Research	UNKNOWN STEP	2026-05-14T19:28:47.1989883Z  Downloading pygments
+Research	UNKNOWN STEP	2026-05-14T19:28:47.2142053Z Installed 5 packages in 14ms
+Research	UNKNOWN STEP	2026-05-14T19:28:47.4971839Z Installing dependencies...
+Research	UNKNOWN STEP	2026-05-14T19:28:47.5044020Z Switching to root user to install dependencies...
+Research	UNKNOWN STEP	2026-05-14T19:28:47.5945039Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.6362010Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+Research	UNKNOWN STEP	2026-05-14T19:28:47.6384927Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.6433730Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.6525367Z Get:6 https://packages.microsoft.com/repos/azure-cli noble InRelease [3564 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.6532109Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.6697007Z Get:7 https://dl.google.com/linux/chrome-stable/deb stable InRelease [1825 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.6709478Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.7599647Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1969 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.8170270Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [351 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.8244786Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Components [177 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.8299483Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 c-n-f Metadata [17.1 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.8325657Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1689 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.8420539Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [328 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.8465239Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Components [386 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.8768960Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 c-n-f Metadata [34.5 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.9377427Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [3124 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.9484276Z Get:36 https://packages.microsoft.com/repos/azure-cli noble/main amd64 Packages [2192 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:47.9830008Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [721 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.0330268Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Components [212 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.0375588Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 c-n-f Metadata [480 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.0421553Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [44.4 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.0466145Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [10.7 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.0754768Z Get:51 https://dl.google.com/linux/chrome-stable/deb stable/main amd64 Packages [1205 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.0761733Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Components [940 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.0768020Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 c-n-f Metadata [656 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.0807213Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Packages [40.6 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.0836927Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-backports/main Translation-en [9172 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.0855210Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Components [5764 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.0856699Z Get:28 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 c-n-f Metadata [368 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.0891964Z Get:29 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Packages [31.0 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.0893723Z Get:30 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe Translation-en [18.6 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.0895275Z Get:31 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Components [10.5 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.0896666Z Get:32 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 c-n-f Metadata [1484 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.1118534Z Get:52 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [120 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.1249815Z Get:53 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [11.6 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.1278819Z Get:54 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [147 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.1384807Z Get:33 http://azure.archive.ubuntu.com/ubuntu noble-backports/restricted amd64 Components [212 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.1390312Z Get:34 http://azure.archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Packages [748 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.1392064Z Get:35 http://azure.archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Components [212 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.1424232Z Get:37 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1668 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.1475635Z Get:38 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [264 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.1493814Z Get:39 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Components [21.9 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.1503277Z Get:40 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 c-n-f Metadata [11.0 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.1830057Z Get:41 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1187 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.2404224Z Get:42 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [229 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.2788074Z Get:43 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Components [74.3 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.5456556Z Get:44 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 c-n-f Metadata [23.1 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.5806646Z Get:45 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [2943 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.6014818Z Get:46 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [685 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.6054392Z Get:47 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Components [212 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.6066195Z Get:48 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [28.8 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.6527178Z Get:49 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse Translation-en [7656 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:48.6543275Z Get:50 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 Components [208 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:56.3216628Z Fetched 16.8 MB in 2s (8894 kB/s)
+Research	UNKNOWN STEP	2026-05-14T19:28:57.0755475Z Reading package lists...
+Research	UNKNOWN STEP	2026-05-14T19:28:57.2390053Z Reading package lists...
+Research	UNKNOWN STEP	2026-05-14T19:28:57.3952741Z Building dependency tree...
+Research	UNKNOWN STEP	2026-05-14T19:28:57.3959965Z Reading state information...
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5370400Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.2).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5371136Z libasound2t64 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5371826Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5372529Z libatk-bridge2.0-0t64 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5373567Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5374186Z libatk1.0-0t64 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5374879Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5375974Z libatspi2.0-0t64 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5376581Z libcairo2 is already the newest version (1.18.0-3build1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5377163Z libcairo2 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5377781Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.9).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5378407Z libcups2t64 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5378998Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5379612Z libdbus-1-3 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5380004Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5380403Z libdrm2 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5380763Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5381133Z libgbm1 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5381568Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.8).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5381952Z libglib2.0-0t64 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5382323Z libnspr4 is already the newest version (2:4.35-1.1build1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5382690Z libnspr4 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5383268Z libnss3 is already the newest version (2:3.98-1ubuntu0.1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5383989Z libnss3 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5384350Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5384741Z libpango-1.0-0 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5385088Z libx11-6 is already the newest version (2:1.8.7-1build1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5385432Z libx11-6 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5385753Z libxcb1 is already the newest version (1.15-1ubuntu2).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5386088Z libxcb1 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5386440Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5386822Z libxcomposite1 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5387185Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5387557Z libxdamage1 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5387981Z libxext6 is already the newest version (2:1.3.4-1build2).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5388322Z libxext6 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5388663Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5389018Z libxfixes3 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5389366Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5389730Z libxkbcommon0 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5390081Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5390438Z libxrandr2 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5390793Z xvfb is already the newest version (2:21.1.12-1ubuntu1.5).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5391251Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5391817Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5392197Z libfontconfig1 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5392572Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.1).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5392950Z libfreetype6 set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5393461Z fonts-liberation is already the newest version (1:2.1.5-3).
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5393833Z fonts-liberation set to manually installed.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5394178Z The following additional packages will be installed:
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5394508Z   xfonts-encodings xfonts-utils
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5394765Z Recommended packages:
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5395020Z   fonts-ipafont-mincho fonts-tlwg-loma
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5558642Z The following NEW packages will be installed:
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5559264Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5565043Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5565686Z   xfonts-utils
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5732757Z 0 upgraded, 9 newly installed, 0 to remove and 76 not upgraded.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5733914Z Need to get 21.1 MB of archives.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5734420Z After this operation, 79.5 MB of additional disk space will be used.
+Research	UNKNOWN STEP	2026-05-14T19:28:57.5734866Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+Research	UNKNOWN STEP	2026-05-14T19:28:57.6207633Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:57.7524135Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:57.9525586Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:57.9862579Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:58.0855082Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:58.3790668Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:58.5091006Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:58.6113464Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:58.7012872Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+Research	UNKNOWN STEP	2026-05-14T19:28:58.9572765Z Fetched 21.1 MB in 1s (18.3 MB/s)
+Research	UNKNOWN STEP	2026-05-14T19:28:58.9816003Z Selecting previously unselected package fonts-ipafont-gothic.
+Research	UNKNOWN STEP	2026-05-14T19:28:59.0144138Z (Reading database ... 
+Research	UNKNOWN STEP	2026-05-14T19:28:59.0144529Z (Reading database ... 5%
+Research	UNKNOWN STEP	2026-05-14T19:28:59.0144799Z (Reading database ... 10%
+Research	UNKNOWN STEP	2026-05-14T19:28:59.0145052Z (Reading database ... 15%
+Research	UNKNOWN STEP	2026-05-14T19:28:59.0145285Z (Reading database ... 20%
+Research	UNKNOWN STEP	2026-05-14T19:28:59.0145516Z (Reading database ... 25%
+Research	UNKNOWN STEP	2026-05-14T19:28:59.0145750Z (Reading database ... 30%
+Research	UNKNOWN STEP	2026-05-14T19:28:59.0146011Z (Reading database ... 35%
+Research	UNKNOWN STEP	2026-05-14T19:28:59.0146246Z (Reading database ... 40%
+Research	UNKNOWN STEP	2026-05-14T19:28:59.0146473Z (Reading database ... 45%
+Research	UNKNOWN STEP	2026-05-14T19:28:59.0146953Z (Reading database ... 50%
+Research	UNKNOWN STEP	2026-05-14T19:28:59.0236021Z (Reading database ... 55%
+Research	UNKNOWN STEP	2026-05-14T19:28:59.1371487Z (Reading database ... 60%
+Research	UNKNOWN STEP	2026-05-14T19:28:59.2861707Z (Reading database ... 65%
+Research	UNKNOWN STEP	2026-05-14T19:28:59.4787620Z (Reading database ... 70%
+Research	UNKNOWN STEP	2026-05-14T19:28:59.6788651Z (Reading database ... 75%
+Research	UNKNOWN STEP	2026-05-14T19:28:59.8362064Z (Reading database ... 80%
+Research	UNKNOWN STEP	2026-05-14T19:28:59.9786489Z (Reading database ... 85%
+Research	UNKNOWN STEP	2026-05-14T19:29:00.0899614Z (Reading database ... 90%
+Research	UNKNOWN STEP	2026-05-14T19:29:00.2334745Z (Reading database ... 95%
+Research	UNKNOWN STEP	2026-05-14T19:29:00.2335195Z (Reading database ... 100%
+Research	UNKNOWN STEP	2026-05-14T19:29:00.2335668Z (Reading database ... 220764 files and directories currently installed.)
+Research	UNKNOWN STEP	2026-05-14T19:29:00.2380958Z Preparing to unpack .../0-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+Research	UNKNOWN STEP	2026-05-14T19:29:00.2472215Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:00.4746729Z Selecting previously unselected package fonts-freefont-ttf.
+Research	UNKNOWN STEP	2026-05-14T19:29:00.4880540Z Preparing to unpack .../1-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+Research	UNKNOWN STEP	2026-05-14T19:29:00.4888450Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:00.5635097Z Selecting previously unselected package fonts-tlwg-loma-otf.
+Research	UNKNOWN STEP	2026-05-14T19:29:00.5771891Z Preparing to unpack .../2-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+Research	UNKNOWN STEP	2026-05-14T19:29:00.5781490Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:00.6003486Z Selecting previously unselected package fonts-unifont.
+Research	UNKNOWN STEP	2026-05-14T19:29:00.6136704Z Preparing to unpack .../3-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+Research	UNKNOWN STEP	2026-05-14T19:29:00.6146016Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:00.7153666Z Selecting previously unselected package fonts-wqy-zenhei.
+Research	UNKNOWN STEP	2026-05-14T19:29:00.7288730Z Preparing to unpack .../4-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+Research	UNKNOWN STEP	2026-05-14T19:29:00.7383433Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.1939042Z Selecting previously unselected package xfonts-encodings.
+Research	UNKNOWN STEP	2026-05-14T19:29:01.2075185Z Preparing to unpack .../5-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.2083439Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.2399044Z Selecting previously unselected package xfonts-utils.
+Research	UNKNOWN STEP	2026-05-14T19:29:01.2533546Z Preparing to unpack .../6-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.2546321Z Unpacking xfonts-utils (1:7.7+6build3) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.2914599Z Selecting previously unselected package xfonts-cyrillic.
+Research	UNKNOWN STEP	2026-05-14T19:29:01.3049366Z Preparing to unpack .../7-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.3058453Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.3514000Z Selecting previously unselected package xfonts-scalable.
+Research	UNKNOWN STEP	2026-05-14T19:29:01.3648762Z Preparing to unpack .../8-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.3656899Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.4071423Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.4195848Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.4218523Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.4239386Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.4264049Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.4330509Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+Research	UNKNOWN STEP	2026-05-14T19:29:01.4346783Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.4372501Z Setting up xfonts-utils (1:7.7+6build3) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.4438286Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.4710815Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.4972096Z Processing triggers for man-db (2.12.0-4build2) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:01.4992234Z Not building database; man-db/auto-update is not 'true'.
+Research	UNKNOWN STEP	2026-05-14T19:29:01.5005406Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+Research	UNKNOWN STEP	2026-05-14T19:29:02.2172742Z 
+Research	UNKNOWN STEP	2026-05-14T19:29:02.2173258Z Running kernel seems to be up-to-date.
+Research	UNKNOWN STEP	2026-05-14T19:29:02.2173928Z 
+Research	UNKNOWN STEP	2026-05-14T19:29:02.2174116Z No services need to be restarted.
+Research	UNKNOWN STEP	2026-05-14T19:29:02.2174429Z 
+Research	UNKNOWN STEP	2026-05-14T19:29:02.2174602Z No containers need to be restarted.
+Research	UNKNOWN STEP	2026-05-14T19:29:02.2174918Z 
+Research	UNKNOWN STEP	2026-05-14T19:29:02.2175128Z No user sessions are running outdated binaries.
+Research	UNKNOWN STEP	2026-05-14T19:29:02.2175497Z 
+Research	UNKNOWN STEP	2026-05-14T19:29:02.2175837Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+Research	UNKNOWN STEP	2026-05-14T19:29:02.9954877Z Downloading Chrome Headless Shell 147.0.7727.15 (playwright chromium-headless-shell v1217) from https://cdn.playwright.dev/builds/cft/147.0.7727.15/linux64/chrome-headless-shell-linux64.zip
+Research	UNKNOWN STEP	2026-05-14T19:29:03.7890177Z |                                                                                |   0% of 112 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:03.8986618Z |■■■■■■■■                                                                        |  10% of 112 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:04.0084835Z |■■■■■■■■■■■■■■■■                                                                |  20% of 112 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:04.0864569Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 112 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:04.1714308Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 112 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:04.3538122Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 112 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:04.4583928Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 112 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:04.5773802Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 112 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:04.6997384Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 112 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:04.8557457Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 112 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:04.9190170Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 112 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:06.8324714Z Chrome Headless Shell 147.0.7727.15 (playwright chromium-headless-shell v1217) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1217
+Research	UNKNOWN STEP	2026-05-14T19:29:06.8327922Z Downloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+Research	UNKNOWN STEP	2026-05-14T19:29:07.5659979Z |                                                                                |   0% of 2.3 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:07.5713468Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:07.5763451Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:07.5776653Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:07.5800168Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:07.5817253Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:07.5845887Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:07.5856217Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:07.5873408Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:07.5894070Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:07.5903448Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6461564Z FFmpeg (playwright ffmpeg v1011) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1011
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6704866Z ##[group]Run uv run python scripts/research.py
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6705294Z ^[[36;1muv run python scripts/research.py^[[0m
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6726774Z shell: /usr/bin/bash -e {0}
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6727032Z env:
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6727297Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6728092Z   NVIDIA_API_KEY: ***
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6728399Z   SERPER_API_KEY: ***
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6728715Z   TAVILY_API_KEY: ***
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6728973Z   EXA_API_KEY: ***
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6729295Z   GOOGLE_API_KEY: ***
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6729513Z   GOOGLE_CLOUD_PROJECT: 
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6729764Z   GOOGLE_CLOUD_REGION: us-central1
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6730042Z   GOOGLE_APPLICATION_CREDENTIALS_JSON: 
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6730461Z   JINA_API_KEY: ***
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6730674Z   FIRECRAWL_API_KEY: 
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6731090Z   OPENROUTER_API_KEY: ***
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6731421Z   TINYFISH_API_KEY: ***
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6731690Z   JEEVES_TINYFISH_SHADOW: 
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6731921Z   JEEVES_USE_TINYFISH: 
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6732145Z   JEEVES_USE_JINA_SEARCH: 
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6732379Z   JEEVES_USE_JINA_DEEPSEARCH: 
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6732620Z   JEEVES_USE_JINA_RERANK: 
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6732848Z   JEEVES_USE_TINYFISH_SEARCH: 
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6733402Z   JEEVES_USE_PLAYWRIGHT_SEARCH: 
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6733828Z   JEEVES_TELEMETRY: 
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6734064Z   JEEVES_JINA_SEARCH_SHADOW: 
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6734324Z   JEEVES_TINYFISH_SEARCH_SHADOW: 
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6734594Z   JEEVES_PLAYWRIGHT_SEARCH_SHADOW: 
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6735010Z   GITHUB_TOKEN: ***
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6735293Z   GITHUB_REPOSITORY: mmmichaelllang/jeeves-unchained
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6735616Z   GITHUB_REF_NAME: main
+Research	UNKNOWN STEP	2026-05-14T19:29:07.6735840Z ##[endgroup]
+Research	UNKNOWN STEP	2026-05-14T19:29:08.2039534Z 2026-05-14 19:29:08,203 jeeves.research INFO COVERAGE_LOG feedback: 8 URLs added from /home/runner/work/jeeves-unchained/jeeves-unchained/sessions/briefing-2026-05-13.html
+Research	UNKNOWN STEP	2026-05-14T19:29:08.2040879Z 2026-05-14 19:29:08,203 jeeves.research INFO 6 prior sessions loaded: 160 URLs (ordered), 450 headlines, 59 hosts in rolling dedup set.
+Research	UNKNOWN STEP	2026-05-14T19:29:08.2044275Z 2026-05-14 19:29:08,204 jeeves.research INFO running 13 non-enriched sectors sequentially: 3 deep, 10 light…
+Research	UNKNOWN STEP	2026-05-14T19:29:11.6451221Z None of PyTorch, TensorFlow >= 2.0, or Flax have been found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Research	UNKNOWN STEP	2026-05-14T19:29:11.6452914Z 2026-05-14 19:29:11,644 transformers WARNING None of PyTorch, TensorFlow >= 2.0, or Flax have been found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Research	UNKNOWN STEP	2026-05-14T19:29:12.3970635Z 2026-05-14 19:29:12,396 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:29:12.4048011Z 2026-05-14 19:29:12,404 jeeves.site_skills INFO site_skills: loaded 3 skills from /home/runner/work/jeeves-unchained/jeeves-unchained/jeeves/site_skills/registry
+Research	UNKNOWN STEP	2026-05-14T19:29:12.4217987Z 2026-05-14 19:29:12,421 jeeves.research_sectors INFO sector triadic_ontology: agent starting.
+Research	UNKNOWN STEP	2026-05-14T19:30:35.9667340Z 2026-05-14 19:30:35,966 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:30:36.5191678Z 2026-05-14 19:30:36,518 jeeves.llm WARNING kimi tool call exa_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:30:37.4845598Z 2026-05-14 19:30:37,484 jeeves.llm WARNING kimi tool call exa_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:31:20.0869866Z 2026-05-14 19:31:20,086 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:31:20.2971273Z 2026-05-14 19:31:20,296 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:31:21.0910668Z 2026-05-14 19:31:21,090 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:31:21.8833965Z 2026-05-14 19:31:21,883 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:31:23.1611079Z 2026-05-14 19:31:23,160 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:31:23.6365482Z 2026-05-14 19:31:23,636 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:31:23.6449716Z 2026-05-14 19:31:23,644 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:34:23.7659167Z 2026-05-14 19:34:23,765 jeeves.research_sectors WARNING sector triadic_ontology: agent crashed (Request timed out.); returning default
+Research	UNKNOWN STEP	2026-05-14T19:34:23.9005244Z 2026-05-14 19:34:23,900 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:34:23.9049243Z 2026-05-14 19:34:23,904 jeeves.site_skills INFO site_skills: truncating skills block at 307/4000 chars (skipping 1 remaining)
+Research	UNKNOWN STEP	2026-05-14T19:34:23.9055994Z 2026-05-14 19:34:23,905 jeeves.research_sectors INFO sector ai_systems: agent starting.
+Research	UNKNOWN STEP	2026-05-14T19:35:05.9213908Z 2026-05-14 19:35:05,921 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:35:05.9222334Z 2026-05-14 19:35:05,922 jeeves.llm WARNING kimi tool call exa_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:35:08.3782305Z 2026-05-14 19:35:08,377 jeeves.llm WARNING kimi tool call exa_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:36:06.5600149Z 2026-05-14 19:36:06,559 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:36:13.5324534Z 2026-05-14 19:36:13,532 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:36:14.8628277Z 2026-05-14 19:36:14,862 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:36:29.3504666Z 2026-05-14 19:36:29,350 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:36:29.6173507Z 2026-05-14 19:36:29,617 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:36:32.4054784Z 2026-05-14 19:36:32,405 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:39:32.5654788Z 2026-05-14 19:39:32,565 jeeves.research_sectors WARNING sector ai_systems: agent crashed (Request timed out.); returning default
+Research	UNKNOWN STEP	2026-05-14T19:39:32.6904309Z 2026-05-14 19:39:32,690 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:39:32.6971801Z 2026-05-14 19:39:32,697 jeeves.research_sectors INFO sector uap: agent starting.
+Research	UNKNOWN STEP	2026-05-14T19:39:44.4217103Z 2026-05-14 19:39:44,421 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:39:48.7826846Z 2026-05-14 19:39:48,782 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:39:50.5875889Z 2026-05-14 19:39:50,587 jeeves.llm WARNING kimi tool call tavily_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:39:51.9762813Z 2026-05-14 19:39:51,975 jeeves.llm WARNING kimi tool call exa_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:39:53.8848425Z 2026-05-14 19:39:53,884 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:40:11.7790752Z 2026-05-14 19:40:11,778 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:40:12.0749832Z 2026-05-14 19:40:12,074 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:40:13.8565118Z 2026-05-14 19:40:13,856 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:40:15.9034985Z 2026-05-14 19:40:15,903 jeeves.llm WARNING kimi tool call gemini_grounded_synthesize returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:40:17.8452429Z 2026-05-14 19:40:17,844 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:40:18.1541423Z 2026-05-14 19:40:18,153 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:40:18.4562995Z 2026-05-14 19:40:18,456 google_genai.models INFO AFC is enabled with max remote calls: 10.
+Research	UNKNOWN STEP	2026-05-14T19:40:27.6115201Z 2026-05-14 19:40:27,611 httpx INFO HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:40:27.6134650Z 2026-05-14 19:40:27,613 jeeves.tools.gemini_grounded INFO gemini_grounded: answered (1849 chars, 17 citations) [daily=5/12]
+Research	UNKNOWN STEP	2026-05-14T19:41:51.5500746Z 2026-05-14 19:41:51,549 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:41:51.5513914Z 2026-05-14 19:41:51,551 jeeves.llm WARNING kimi tool call tavily_extract returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:42:25.5272077Z 2026-05-14 19:42:25,526 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:42:25.7572979Z 2026-05-14 19:42:25,757 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:42:27.1681974Z 2026-05-14 19:42:27,167 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:42:28.5240830Z 2026-05-14 19:42:28,523 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:42:28.9176136Z 2026-05-14 19:42:28,917 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:43:21.1469789Z 2026-05-14 19:43:21,146 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:43:21.3757546Z 2026-05-14 19:43:21,375 jeeves.llm WARNING kimi tool call fetch_article_text returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:43:22.5268514Z 2026-05-14 19:43:22,526 jeeves.llm WARNING kimi tool call fetch_article_text returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:43:22.9123970Z 2026-05-14 19:43:22,912 jeeves.llm WARNING kimi tool call fetch_article_text returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:43:23.9047497Z 2026-05-14 19:43:23,904 httpx INFO HTTP Request: GET https://www.opb.org/article/2026/05/08/pentagon-ufo-files/ "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:43:24.1838693Z 2026-05-14 19:43:24,183 httpx INFO HTTP Request: GET https://www.meritalk.com/articles/pentagon-begins-release-of-uap-files/ "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:43:24.2046691Z 2026-05-14 19:43:24,204 httpx INFO HTTP Request: GET https://www.newsweek.com/anna-paulina-luna-teases-ufo-alien-disclosure-today-what-we-know-11927653 "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:44:14.0294300Z 2026-05-14 19:44:14,029 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:44:16.7447349Z 2026-05-14 19:44:16,744 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:44:17.9468530Z 2026-05-14 19:44:17,946 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:44:20.4859310Z 2026-05-14 19:44:20,485 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:44:20.6319289Z 2026-05-14 19:44:20,631 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:44:43.5970996Z 2026-05-14 19:44:43,596 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:44:43.5983470Z 2026-05-14 19:44:43,598 jeeves.llm WARNING kimi tool call fetch_article_text returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:44:43.9782521Z 2026-05-14 19:44:43,977 jeeves.llm WARNING kimi tool call fetch_article_text returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:44:45.0218784Z 2026-05-14 19:44:45,021 jeeves.llm WARNING kimi tool call fetch_article_text returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:44:46.4652825Z 2026-05-14 19:44:46,465 httpx INFO HTTP Request: GET https://theconversation.com/new-ufo-files-offer-no-answers-but-something-is-happening-in-the-skies-282608 "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:44:46.4970318Z 2026-05-14 19:44:46,496 httpx INFO HTTP Request: GET https://www.newsnationnow.com/space/ufo/pentagon-ufo-website-340-million-hits/ "HTTP/1.1 403 Forbidden"
+Research	UNKNOWN STEP	2026-05-14T19:44:46.4974838Z 2026-05-14 19:44:46,497 jeeves.tools.enrichment INFO fetch failed https://www.newsnationnow.com/space/ufo/pentagon-ufo-website-340-million-hits/: Client error '403 Forbidden' for url 'https://www.newsnationnow.com/space/ufo/pentagon-ufo-website-340-million-hits/'
+Research	UNKNOWN STEP	2026-05-14T19:44:46.4977173Z For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403
+Research	UNKNOWN STEP	2026-05-14T19:44:46.5063294Z 2026-05-14 19:44:46,506 httpx INFO HTTP Request: GET https://www.theatlantic.com/magazine/2026/06/government-ufo-conspiracy/686935/ "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:44:48.3627149Z 2026-05-14 19:44:48,362 jeeves.tools.playwright_extractor INFO playwright_extractor: launched patchright chromium singleton
+Research	UNKNOWN STEP	2026-05-14T19:44:48.5651902Z 2026-05-14 19:44:48,564 jeeves.tools.playwright_extractor WARNING playwright extraction failed for https://www.newsnationnow.com/space/ufo/pentagon-ufo-website-340-million-hits/: Page.goto: net::ERR_NAME_NOT_RESOLVED at https://www.newsnationnow.com/space/ufo/pentagon-ufo-website-340-million-hits/
+Research	UNKNOWN STEP	2026-05-14T19:44:48.5654028Z Call log:
+Research	UNKNOWN STEP	2026-05-14T19:44:48.5654628Z   - navigating to "https://www.newsnationnow.com/space/ufo/pentagon-ufo-website-340-million-hits/", waiting until "domcontentloaded"
+Research	UNKNOWN STEP	2026-05-14T19:44:48.5655183Z 
+Research	UNKNOWN STEP	2026-05-14T19:46:06.2543486Z 2026-05-14 19:46:06,253 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:46:07.5178680Z 2026-05-14 19:46:07,517 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:46:08.4884800Z 2026-05-14 19:46:08,488 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:46:09.6745441Z 2026-05-14 19:46:09,674 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:46:10.8834322Z 2026-05-14 19:46:10,883 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:47:09.0823965Z 2026-05-14 19:47:09,082 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:47:09.0839408Z 2026-05-14 19:47:09,083 jeeves.llm WARNING kimi tool call fetch_article_text returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:47:10.6145264Z 2026-05-14 19:47:10,614 jeeves.llm WARNING kimi tool call fetch_article_text returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:47:11.6040757Z 2026-05-14 19:47:11,603 httpx INFO HTTP Request: GET https://people.com/pentagons-new-ufo-website-draws-340-million-hits-in-12-hours-official-says-11971153 "HTTP/1.1 402 Payment Required"
+Research	UNKNOWN STEP	2026-05-14T19:47:11.6045463Z 2026-05-14 19:47:11,603 jeeves.tools.enrichment INFO fetch failed https://people.com/pentagons-new-ufo-website-draws-340-million-hits-in-12-hours-official-says-11971153: Client error '402 Payment Required' for url 'https://people.com/pentagons-new-ufo-website-draws-340-million-hits-in-12-hours-official-says-11971153'
+Research	UNKNOWN STEP	2026-05-14T19:47:11.6048654Z For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/402
+Research	UNKNOWN STEP	2026-05-14T19:47:11.6051573Z 2026-05-14 19:47:11,604 jeeves.tools.playwright_extractor WARNING new_page failed: Cannot switch to a different thread
+Research	UNKNOWN STEP	2026-05-14T19:47:11.6052887Z 	Current:  <greenlet.greenlet object at 0x7f9d746b9240 (otid=0x7f9d7c3b1d90) current active started main>
+Research	UNKNOWN STEP	2026-05-14T19:47:11.6054909Z 	Expected: <greenlet.greenlet object at 0x7f9d75d87580 (otid=0x7f9d780ce6b0) suspended active started main>
+Research	UNKNOWN STEP	2026-05-14T19:47:12.0007536Z 2026-05-14 19:47:12,000 httpx INFO HTTP Request: GET https://nypost.com/2026/05/10/us-news/pentagons-ufo-website-bombarded-with-340-million-hits-in-first-12-hours/ "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:47:18.1266608Z 2026-05-14 19:47:18,126 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:47:18.4210689Z 2026-05-14 19:47:18,420 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:47:19.8352269Z 2026-05-14 19:47:19,834 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:47:21.4092270Z 2026-05-14 19:47:21,408 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:47:22.6254140Z 2026-05-14 19:47:22,625 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:50:22.8478956Z 2026-05-14 19:50:22,847 jeeves.research_sectors WARNING sector uap: agent crashed (Request timed out.); returning default
+Research	UNKNOWN STEP	2026-05-14T19:50:22.9952995Z 2026-05-14 19:50:22,994 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:50:23.0007473Z 2026-05-14 19:50:23,000 jeeves.research_sectors INFO sector weather: agent starting.
+Research	UNKNOWN STEP	2026-05-14T19:51:20.2138989Z 2026-05-14 19:51:20,213 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:51:26.7190111Z 2026-05-14 19:51:26,718 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:51:29.2805059Z 2026-05-14 19:51:29,280 jeeves.llm WARNING kimi tool call tavily_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:51:33.5121087Z 2026-05-14 19:51:33,511 jeeves.llm WARNING kimi tool call gemini_grounded_synthesize returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:51:34.3814164Z 2026-05-14 19:51:34,381 google_genai.models INFO AFC is enabled with max remote calls: 10.
+Research	UNKNOWN STEP	2026-05-14T19:51:35.0401653Z 2026-05-14 19:51:35,039 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:51:40.8582310Z 2026-05-14 19:51:40,857 httpx INFO HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:51:40.8598517Z 2026-05-14 19:51:40,859 jeeves.tools.gemini_grounded INFO gemini_grounded: answered (1035 chars, 9 citations) [daily=6/12]
+Research	UNKNOWN STEP	2026-05-14T19:52:07.2630936Z 2026-05-14 19:52:07,262 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:52:07.6145349Z 2026-05-14 19:52:07,614 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:52:09.1213521Z 2026-05-14 19:52:09,121 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:52:12.0816504Z 2026-05-14 19:52:12,081 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:52:12.5466490Z 2026-05-14 19:52:12,546 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:53:35.0700862Z 2026-05-14 19:53:35,069 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:53:35.3787646Z 2026-05-14 19:53:35,378 jeeves.llm WARNING kimi tool call tavily_extract returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:53:42.9036610Z 2026-05-14 19:53:42,903 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:53:42.9058513Z 2026-05-14 19:53:42,905 jeeves.llm WARNING kimi tool call fetch_article_text returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:53:46.2831862Z 2026-05-14 19:53:46,282 httpx INFO HTTP Request: GET https://forecast.weather.gov/MapClick.php?zoneid=WAZ313 "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:56:46.4562634Z 2026-05-14 19:56:46,455 jeeves.research_sectors WARNING sector weather: agent crashed (Request timed out.); returning default
+Research	UNKNOWN STEP	2026-05-14T19:56:46.6699195Z 2026-05-14 19:56:46,669 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:56:46.6756287Z 2026-05-14 19:56:46,675 jeeves.research_sectors INFO sector local_news: agent starting.
+Research	UNKNOWN STEP	2026-05-14T19:56:48.1388628Z 2026-05-14 19:56:48,138 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:56:48.4148105Z 2026-05-14 19:56:48,414 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:56:49.2390905Z 2026-05-14 19:56:49,238 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:56:50.3367660Z 2026-05-14 19:56:50,336 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:56:51.1684308Z 2026-05-14 19:56:51,168 jeeves.llm WARNING kimi tool call gemini_grounded_synthesize returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:56:52.3194720Z 2026-05-14 19:56:52,319 google_genai.models INFO AFC is enabled with max remote calls: 10.
+Research	UNKNOWN STEP	2026-05-14T19:56:52.8297233Z 2026-05-14 19:56:52,829 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:56:53.7741598Z 2026-05-14 19:56:53,773 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:56:54.3923394Z 2026-05-14 19:56:54,391 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:57:00.5408493Z 2026-05-14 19:57:00,540 httpx INFO HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:57:00.5424847Z 2026-05-14 19:57:00,542 jeeves.tools.gemini_grounded INFO gemini_grounded: answered (2573 chars, 7 citations) [daily=7/12]
+Research	UNKNOWN STEP	2026-05-14T19:57:43.0611459Z 2026-05-14 19:57:43,060 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:57:43.6739751Z 2026-05-14 19:57:43,673 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:57:45.0110288Z 2026-05-14 19:57:45,010 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:57:45.3320665Z 2026-05-14 19:57:45,331 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T19:57:46.7725619Z 2026-05-14 19:57:46,772 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:57:46.9824159Z 2026-05-14 19:57:46,982 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:57:47.5037269Z 2026-05-14 19:57:47,503 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:57:47.6555220Z 2026-05-14 19:57:47,655 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T19:57:47.6570434Z 2026-05-14 19:57:47,656 jeeves.research_sectors WARNING sector local_news: NIM 429 rate-limit (attempt 1) — sleeping 60s.
+Research	UNKNOWN STEP	2026-05-14T19:58:47.8574241Z 2026-05-14 19:58:47,857 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T19:58:47.9951255Z 2026-05-14 19:58:47,994 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T19:58:47.9965974Z 2026-05-14 19:58:47,996 jeeves.research_sectors WARNING sector local_news: NIM 429 rate-limit (attempt 2) — sleeping 120s.
+Research	UNKNOWN STEP	2026-05-14T20:00:48.1327059Z 2026-05-14 20:00:48,132 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:00:48.3173607Z 2026-05-14 20:00:48,316 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:00:48.3187238Z 2026-05-14 20:00:48,318 jeeves.research_sectors WARNING sector local_news: NIM 429 on all 3 rate-limit retries (Error code: 429 - {'status': 429, 'title': 'Too Many Requests'}); returning default.
+Research	UNKNOWN STEP	2026-05-14T20:00:48.4666584Z 2026-05-14 20:00:48,466 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:00:48.4717835Z 2026-05-14 20:00:48,471 jeeves.research_sectors INFO sector career: agent starting.
+Research	UNKNOWN STEP	2026-05-14T20:00:48.5997996Z 2026-05-14 20:00:48,599 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:00:48.6010413Z 2026-05-14 20:00:48,600 jeeves.research_sectors WARNING sector career: NIM 429 rate-limit (attempt 1) — sleeping 60s.
+Research	UNKNOWN STEP	2026-05-14T20:01:48.7970470Z 2026-05-14 20:01:48,796 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:01:48.9904126Z 2026-05-14 20:01:48,990 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:01:48.9919967Z 2026-05-14 20:01:48,991 jeeves.research_sectors WARNING sector career: NIM 429 rate-limit (attempt 2) — sleeping 120s.
+Research	UNKNOWN STEP	2026-05-14T20:03:49.2304680Z 2026-05-14 20:03:49,230 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:03:49.4180939Z 2026-05-14 20:03:49,417 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:03:49.4193865Z 2026-05-14 20:03:49,419 jeeves.research_sectors WARNING sector career: NIM 429 on all 3 rate-limit retries (Error code: 429 - {'status': 429, 'title': 'Too Many Requests'}); returning default.
+Research	UNKNOWN STEP	2026-05-14T20:03:49.5250454Z 2026-05-14 20:03:49,524 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:03:49.5299604Z 2026-05-14 20:03:49,529 jeeves.research_sectors INFO sector english_lesson_plans: agent starting.
+Research	UNKNOWN STEP	2026-05-14T20:03:49.6466403Z 2026-05-14 20:03:49,646 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:03:49.6479280Z 2026-05-14 20:03:49,647 jeeves.research_sectors WARNING sector english_lesson_plans: NIM 429 rate-limit (attempt 1) — sleeping 60s.
+Research	UNKNOWN STEP	2026-05-14T20:04:49.7927165Z 2026-05-14 20:04:49,792 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:04:49.9721544Z 2026-05-14 20:04:49,971 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:04:49.9734346Z 2026-05-14 20:04:49,973 jeeves.research_sectors WARNING sector english_lesson_plans: NIM 429 rate-limit (attempt 2) — sleeping 120s.
+Research	UNKNOWN STEP	2026-05-14T20:06:50.1679488Z 2026-05-14 20:06:50,167 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:06:50.3253842Z 2026-05-14 20:06:50,325 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:06:50.3268267Z 2026-05-14 20:06:50,326 jeeves.research_sectors WARNING sector english_lesson_plans: NIM 429 on all 3 rate-limit retries (Error code: 429 - {'status': 429, 'title': 'Too Many Requests'}); returning default.
+Research	UNKNOWN STEP	2026-05-14T20:06:50.4200212Z 2026-05-14 20:06:50,419 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:06:50.4284027Z 2026-05-14 20:06:50,428 jeeves.research_sectors INFO sector family: agent starting.
+Research	UNKNOWN STEP	2026-05-14T20:06:50.5571846Z 2026-05-14 20:06:50,556 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:06:50.5585410Z 2026-05-14 20:06:50,558 jeeves.research_sectors WARNING sector family: NIM 429 rate-limit (attempt 1) — sleeping 60s.
+Research	UNKNOWN STEP	2026-05-14T20:07:50.6951463Z 2026-05-14 20:07:50,694 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:07:50.8310014Z 2026-05-14 20:07:50,830 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:07:50.8323615Z 2026-05-14 20:07:50,832 jeeves.research_sectors WARNING sector family: NIM 429 rate-limit (attempt 2) — sleeping 120s.
+Research	UNKNOWN STEP	2026-05-14T20:09:51.0168177Z 2026-05-14 20:09:51,016 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:09:51.1464027Z 2026-05-14 20:09:51,146 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:09:51.1478754Z 2026-05-14 20:09:51,147 jeeves.research_sectors WARNING sector family: NIM 429 on all 3 rate-limit retries (Error code: 429 - {'status': 429, 'title': 'Too Many Requests'}); returning default.
+Research	UNKNOWN STEP	2026-05-14T20:09:51.2418632Z 2026-05-14 20:09:51,241 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:09:51.2468051Z 2026-05-14 20:09:51,246 jeeves.research_sectors INFO sector global_news: agent starting.
+Research	UNKNOWN STEP	2026-05-14T20:09:51.3872585Z 2026-05-14 20:09:51,386 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:09:51.3887433Z 2026-05-14 20:09:51,388 jeeves.research_sectors WARNING sector global_news: NIM 429 rate-limit (attempt 1) — sleeping 60s.
+Research	UNKNOWN STEP	2026-05-14T20:10:51.5834155Z 2026-05-14 20:10:51,583 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:10:51.7109237Z 2026-05-14 20:10:51,710 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:10:51.7122816Z 2026-05-14 20:10:51,712 jeeves.research_sectors WARNING sector global_news: NIM 429 rate-limit (attempt 2) — sleeping 120s.
+Research	UNKNOWN STEP	2026-05-14T20:12:51.8645225Z 2026-05-14 20:12:51,864 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:12:52.0211410Z 2026-05-14 20:12:52,020 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:12:52.0225907Z 2026-05-14 20:12:52,022 jeeves.research_sectors WARNING sector global_news: NIM 429 on all 3 rate-limit retries (Error code: 429 - {'status': 429, 'title': 'Too Many Requests'}); returning default.
+Research	UNKNOWN STEP	2026-05-14T20:12:52.1697620Z 2026-05-14 20:12:52,169 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:12:52.1748711Z 2026-05-14 20:12:52,174 jeeves.research_sectors INFO sector intellectual_journals: agent starting.
+Research	UNKNOWN STEP	2026-05-14T20:12:52.3130231Z 2026-05-14 20:12:52,312 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:12:52.3144152Z 2026-05-14 20:12:52,314 jeeves.research_sectors WARNING sector intellectual_journals: NIM 429 rate-limit (attempt 1) — sleeping 60s.
+Research	UNKNOWN STEP	2026-05-14T20:13:52.4790269Z 2026-05-14 20:13:52,478 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:13:52.6963009Z 2026-05-14 20:13:52,695 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:13:52.6978727Z 2026-05-14 20:13:52,697 jeeves.research_sectors WARNING sector intellectual_journals: NIM 429 rate-limit (attempt 2) — sleeping 120s.
+Research	UNKNOWN STEP	2026-05-14T20:15:52.9040246Z 2026-05-14 20:15:52,903 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:15:53.0875847Z 2026-05-14 20:15:53,087 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:15:53.0892409Z 2026-05-14 20:15:53,088 jeeves.research_sectors WARNING sector intellectual_journals: NIM 429 on all 3 rate-limit retries (Error code: 429 - {'status': 429, 'title': 'Too Many Requests'}); returning default.
+Research	UNKNOWN STEP	2026-05-14T20:15:53.2392446Z 2026-05-14 20:15:53,238 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:15:53.2441040Z 2026-05-14 20:15:53,243 jeeves.research_sectors INFO sector wearable_ai: agent starting.
+Research	UNKNOWN STEP	2026-05-14T20:15:53.4329216Z 2026-05-14 20:15:53,432 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:15:53.4344378Z 2026-05-14 20:15:53,434 jeeves.research_sectors WARNING sector wearable_ai: NIM 429 rate-limit (attempt 1) — sleeping 60s.
+Research	UNKNOWN STEP	2026-05-14T20:16:53.6027826Z 2026-05-14 20:16:53,602 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:16:53.7425940Z 2026-05-14 20:16:53,742 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:16:53.7440172Z 2026-05-14 20:16:53,743 jeeves.research_sectors WARNING sector wearable_ai: NIM 429 rate-limit (attempt 2) — sleeping 120s.
+Research	UNKNOWN STEP	2026-05-14T20:18:53.9093977Z 2026-05-14 20:18:53,909 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:18:54.0532582Z 2026-05-14 20:18:54,052 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:18:54.0548890Z 2026-05-14 20:18:54,054 jeeves.research_sectors WARNING sector wearable_ai: NIM 429 on all 3 rate-limit retries (Error code: 429 - {'status': 429, 'title': 'Too Many Requests'}); returning default.
+Research	UNKNOWN STEP	2026-05-14T20:18:54.0551049Z 2026-05-14 20:18:54,054 jeeves.research_sectors INFO sector newyorker: direct Python fetch (no agent).
+Research	UNKNOWN STEP	2026-05-14T20:18:55.2542540Z 2026-05-14 20:18:55,253 jeeves.research_sectors INFO sector newyorker: direct fetch done (available=True).
+Research	UNKNOWN STEP	2026-05-14T20:18:55.4115095Z 2026-05-14 20:18:55,411 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:18:55.4164001Z 2026-05-14 20:18:55,416 jeeves.research_sectors INFO sector literary_pick: agent starting.
+Research	UNKNOWN STEP	2026-05-14T20:18:55.5553240Z 2026-05-14 20:18:55,554 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:18:55.5568947Z 2026-05-14 20:18:55,556 jeeves.research_sectors WARNING sector literary_pick: NIM 429 rate-limit (attempt 1) — sleeping 60s.
+Research	UNKNOWN STEP	2026-05-14T20:19:55.6956863Z 2026-05-14 20:19:55,695 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:19:55.8347446Z 2026-05-14 20:19:55,834 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:19:55.8361346Z 2026-05-14 20:19:55,835 jeeves.research_sectors WARNING sector literary_pick: NIM 429 rate-limit (attempt 2) — sleeping 120s.
+Research	UNKNOWN STEP	2026-05-14T20:21:56.0349021Z 2026-05-14 20:21:56,034 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:21:56.2200083Z 2026-05-14 20:21:56,219 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:21:56.2214114Z 2026-05-14 20:21:56,221 jeeves.research_sectors WARNING sector literary_pick: NIM 429 on all 3 rate-limit retries (Error code: 429 - {'status': 429, 'title': 'Too Many Requests'}); returning default.
+Research	UNKNOWN STEP	2026-05-14T20:21:56.2215867Z 2026-05-14 20:21:56,221 jeeves.research INFO running enriched_articles sector (seeded with 1 URLs)…
+Research	UNKNOWN STEP	2026-05-14T20:21:56.3064276Z 2026-05-14 20:21:56,306 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:21:56.3112930Z 2026-05-14 20:21:56,311 jeeves.research_sectors INFO sector enriched_articles: agent starting.
+Research	UNKNOWN STEP	2026-05-14T20:21:56.5220932Z 2026-05-14 20:21:56,521 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+Research	UNKNOWN STEP	2026-05-14T20:21:56.5233617Z 2026-05-14 20:21:56,523 jeeves.research_sectors WARNING sector enriched_articles: NIM 429 rate-limit (attempt 1) — sleeping 60s.
+Research	UNKNOWN STEP	2026-05-14T20:22:56.6721422Z 2026-05-14 20:22:56,671 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:23:00.9545335Z 2026-05-14 20:23:00,954 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:23:01.2188754Z 2026-05-14 20:23:01,218 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:23:02.5592554Z 2026-05-14 20:23:02,558 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:23:03.6521101Z 2026-05-14 20:23:03,651 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:23:04.7065436Z 2026-05-14 20:23:04,706 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:23:06.2756463Z 2026-05-14 20:23:06,275 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:23:06.6042793Z 2026-05-14 20:23:06,603 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:23:06.6455993Z 2026-05-14 20:23:06,645 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:23:06.8916542Z 2026-05-14 20:23:06,891 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:24:11.2486496Z 2026-05-14 20:24:11,248 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:24:12.4084839Z 2026-05-14 20:24:12,408 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:24:13.6872752Z 2026-05-14 20:24:13,686 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:24:14.9601677Z 2026-05-14 20:24:14,959 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:24:16.4851069Z 2026-05-14 20:24:16,484 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:24:16.6171771Z 2026-05-14 20:24:16,616 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:24:17.8590384Z 2026-05-14 20:24:17,858 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:24:25.2794820Z 2026-05-14 20:24:25,279 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:24:25.2803163Z 2026-05-14 20:24:25,280 jeeves.llm WARNING kimi tool call tavily_extract returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:25:07.2424526Z 2026-05-14 20:25:07,242 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:25:07.5884806Z 2026-05-14 20:25:07,588 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:25:08.6961066Z 2026-05-14 20:25:08,695 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:25:09.6004817Z 2026-05-14 20:25:09,600 jeeves.research_sectors WARNING sector enriched_articles: transient network error (attempt 1, peer closed connection without sending complete message body (incomplete chunked read)) — retrying in 10s.
+Research	UNKNOWN STEP	2026-05-14T20:25:19.7522312Z 2026-05-14 20:25:19,751 httpx INFO HTTP Request: GET https://integrate.api.nvidia.com/v1/models "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:27:40.6754979Z 2026-05-14 20:27:40,675 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:27:40.9518430Z 2026-05-14 20:27:40,951 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:27:41.8572527Z 2026-05-14 20:27:41,856 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:27:42.7672500Z 2026-05-14 20:27:42,766 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:27:43.4655051Z 2026-05-14 20:27:43,465 jeeves.llm WARNING kimi tool call gemini_grounded_synthesize returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:27:44.3578589Z 2026-05-14 20:27:44,357 google_genai.models INFO AFC is enabled with max remote calls: 10.
+Research	UNKNOWN STEP	2026-05-14T20:27:44.9606284Z 2026-05-14 20:27:44,960 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:27:45.3943897Z 2026-05-14 20:27:45,394 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:27:45.7766469Z 2026-05-14 20:27:45,776 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:27:54.3188785Z 2026-05-14 20:27:54,318 httpx INFO HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:27:54.3212723Z 2026-05-14 20:27:54,321 jeeves.tools.gemini_grounded INFO gemini_grounded: answered (3902 chars, 16 citations) [daily=8/12]
+Research	UNKNOWN STEP	2026-05-14T20:27:56.7728307Z 2026-05-14 20:27:56,772 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:27:57.0525858Z 2026-05-14 20:27:57,052 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:27:58.4283579Z 2026-05-14 20:27:58,428 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:27:59.5258011Z 2026-05-14 20:27:59,525 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:28:01.4360652Z 2026-05-14 20:28:01,435 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:28:01.9479116Z 2026-05-14 20:28:01,947 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:28:02.7945121Z 2026-05-14 20:28:02,794 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:30:12.6514279Z 2026-05-14 20:30:12,651 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:30:13.8331095Z 2026-05-14 20:30:13,832 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:30:15.1976422Z 2026-05-14 20:30:15,197 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:30:15.7308290Z 2026-05-14 20:30:15,730 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:30:16.9355784Z 2026-05-14 20:30:16,935 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:30:17.2104043Z 2026-05-14 20:30:17,210 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:30:17.9008107Z 2026-05-14 20:30:17,900 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:30:27.8237489Z 2026-05-14 20:30:27,823 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:30:28.1104806Z 2026-05-14 20:30:28,110 jeeves.llm WARNING kimi tool call tavily_extract returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:30:33.9824641Z 2026-05-14 20:30:33,982 jeeves.tools.playwright_extractor WARNING nojs context creation failed: Cannot switch to a different thread
+Research	UNKNOWN STEP	2026-05-14T20:30:33.9825755Z 	Current:  <greenlet.greenlet object at 0x7f9d9e3c3480 (otid=0x7f9d68225cc0) current active started main>
+Research	UNKNOWN STEP	2026-05-14T20:30:33.9826705Z 	Expected: <greenlet.greenlet object at 0x7f9d75d87580 (otid=0x7f9d780ce6b0) suspended active started main>
+Research	UNKNOWN STEP	2026-05-14T20:30:37.7088901Z 2026-05-14 20:30:37,708 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:30:38.4972095Z 2026-05-14 20:30:38,496 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:30:39.9838037Z 2026-05-14 20:30:39,983 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:30:42.4554564Z 2026-05-14 20:30:42,455 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:30:44.3798996Z 2026-05-14 20:30:44,379 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:30:44.3996094Z 2026-05-14 20:30:44,399 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:30:44.5025993Z 2026-05-14 20:30:44,502 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:31:06.5561053Z 2026-05-14 20:31:06,555 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:31:07.1130317Z 2026-05-14 20:31:07,112 jeeves.llm WARNING kimi tool call tavily_extract returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:31:38.9867898Z 2026-05-14 20:31:38,986 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:31:39.1966456Z 2026-05-14 20:31:39,196 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:31:40.2500376Z 2026-05-14 20:31:40,249 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:31:41.0942968Z 2026-05-14 20:31:41,094 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:31:42.3860420Z 2026-05-14 20:31:42,385 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:31:42.4149226Z 2026-05-14 20:31:42,414 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:31:42.6584223Z 2026-05-14 20:31:42,658 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:32:10.5382175Z 2026-05-14 20:32:10,537 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:32:10.7605446Z 2026-05-14 20:32:10,760 jeeves.llm WARNING kimi tool call tavily_extract returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:32:59.9171507Z 2026-05-14 20:32:59,916 httpx INFO HTTP Request: POST https://integrate.api.nvidia.com/v1/chat/completions "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:33:01.2811537Z 2026-05-14 20:33:01,280 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:33:02.5901689Z 2026-05-14 20:33:02,589 jeeves.llm WARNING kimi tool call serper_search returned None/empty arguments; coercing to {}
+Research	UNKNOWN STEP	2026-05-14T20:33:04.0437762Z 2026-05-14 20:33:04,043 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:33:04.9987845Z 2026-05-14 20:33:04,998 httpx INFO HTTP Request: POST https://google.serper.dev/search "HTTP/1.1 200 OK"
+Research	UNKNOWN STEP	2026-05-14T20:34:05.9286835Z ##[error]The operation was canceled.
+Research	UNKNOWN STEP	2026-05-14T20:34:05.9394205Z Post job cleanup.
+Research	UNKNOWN STEP	2026-05-14T20:34:06.0352278Z [command]/usr/bin/git version
+Research	UNKNOWN STEP	2026-05-14T20:34:06.0387400Z git version 2.53.0
+Research	UNKNOWN STEP	2026-05-14T20:34:06.0427819Z Temporarily overriding HOME='/home/runner/work/_temp/ba1df926-18f3-41af-beea-92812518597a' before making global git config changes
+Research	UNKNOWN STEP	2026-05-14T20:34:06.0429029Z Adding repository directory to the temporary git global config as a safe directory
+Research	UNKNOWN STEP	2026-05-14T20:34:06.0433144Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/jeeves-unchained/jeeves-unchained
+Research	UNKNOWN STEP	2026-05-14T20:34:06.0468498Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Research	UNKNOWN STEP	2026-05-14T20:34:06.0500338Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Research	UNKNOWN STEP	2026-05-14T20:34:06.0719907Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Research	UNKNOWN STEP	2026-05-14T20:34:06.0740043Z http.https://github.com/.extraheader
+Research	UNKNOWN STEP	2026-05-14T20:34:06.0752486Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+Research	UNKNOWN STEP	2026-05-14T20:34:06.0781798Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Research	UNKNOWN STEP	2026-05-14T20:34:06.0994026Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Research	UNKNOWN STEP	2026-05-14T20:34:06.1022810Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Research	UNKNOWN STEP	2026-05-14T20:34:06.1344550Z Cleaning up orphan processes
+Research	UNKNOWN STEP	2026-05-14T20:34:06.1658109Z Terminate orphan process: pid (3091) (uv)
+Research	UNKNOWN STEP	2026-05-14T20:34:06.1686718Z Terminate orphan process: pid (3094) (python3)
+Research	UNKNOWN STEP	2026-05-14T20:34:06.1725124Z Terminate orphan process: pid (3345) (MainThread)
+Research	UNKNOWN STEP	2026-05-14T20:34:06.1749106Z Terminate orphan process: pid (3358) (chrome-headless-shell)
+Research	UNKNOWN STEP	2026-05-14T20:34:06.1868874Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v4, astral-sh/setup-uv@v3. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Node.js 20 will be removed from the runner on September 16th, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

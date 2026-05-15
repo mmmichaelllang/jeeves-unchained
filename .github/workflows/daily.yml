@@ -123,11 +123,19 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────
   # Phase 2 — Research  (needs correspondence so it sees the handoff JSON)
   # ─────────────────────────────────────────────────────────────────────────
+  # 2026-05-15: timeout-minutes bumped 65→120. On bad-NIM days the circuit
+  # breakers in jeeves/research_sectors.py short-circuit subsequent sectors
+  # after the first 429-exhausted or 2 consecutive stream-timeouts, so a
+  # healthy run finishes well under 65min. The 120min ceiling is INSURANCE:
+  # if NIM is intermittently healthy (some sectors succeed slowly, breaker
+  # never trips) the job completes instead of being cancelled, letting
+  # write phase run and GATE-A correctly refuse-or-emit. Without the bump
+  # the cancel-cascade via ``needs:`` swallowed the write phase entirely.
   research:
     name: Research
     needs: correspondence
     runs-on: ubuntu-latest
-    timeout-minutes: 65
+    timeout-minutes: 120
 
     steps:
       - uses: actions/checkout@v4

@@ -1060,6 +1060,78 @@ def _is_nim_rate_limit(exc: Exception) -> bool:
     return "429" in msg or "too many requests" in msg
 
 
+def _is_stream_timeout(exc: Exception) -> bool:
+    """Match agent-crashed-with-timeout shape.
+
+    Covers ``asyncio.TimeoutError``, ``openai.APITimeoutError``, ``httpx``
+    timeout variants, and the bare LlamaIndex ``Request timed out.`` message
+    that surfaces when NIM closes a streaming connection mid-response.
+    Distinct from ``_is_retryable_network_error`` which covers transient
+    peer-close shapes.
+
+    The 2026-05-14 run #68 deep sectors (triadic_ontology, ai_systems, uap,
+    weather) all crashed with ``str(e) == "Request timed out."`` — the bare
+    message takes precedence over any class-name match.
+    """
+    cls = type(exc).__name__.lower()
+    msg = str(exc).strip().lower()
+    if msg.startswith("request timed out"):
+        return True
+    if "timeout" in cls:
+        return True
+    if "timed out" in msg:
+        return True
+    return False
+
+
+# ---------------------------------------------------------------------------
+# NIM circuit breakers (2026-05-15 — diagnosis of run #68 cancellation)
+#
+# Each pipeline run starts a fresh Python process, so these reset implicitly
+# between runs. Tests must call ``_reset_circuit_breakers()`` in fixture setup
+# to avoid leaking state between cases.
+#
+# _NIM_429_TRIPPED: flipped True when ANY sector exhausts its full 60+120s
+# rate-limit retry budget. Subsequent sectors then skip the agent loop and
+# return ``spec.default`` fast (~milliseconds vs ~180s wasted per sector on
+# the retry chain).
+#
+# _NIM_TIMEOUT_CONSECUTIVE: counts back-to-back agent crashes with a
+# ``_is_stream_timeout``-shaped exception. Resets to 0 on any successful
+# agent return. Reaches ``_NIM_TIMEOUT_THRESHOLD`` → flips
+# ``_NIM_TIMEOUT_TRIPPED``. Threshold is 2 — 2026-05-14 run #68 burned
+# ~16min on uap (10m50s) + weather (6m23s) after the first two crashes
+# (triadic_ontology, ai_systems) had already shown NIM streams were unhealthy.
+# A threshold of 2 lets us trip after the second crash and save the third
+# onward.
+#
+# Each trip emits a ``circuit_breaker_trip`` telemetry event so the rollup
+# reports can flag NIM-degraded days.
+# ---------------------------------------------------------------------------
+_NIM_429_TRIPPED: bool = False
+_NIM_TIMEOUT_CONSECUTIVE: int = 0
+_NIM_TIMEOUT_TRIPPED: bool = False
+_NIM_TIMEOUT_THRESHOLD: int = 2
+
+
+def _reset_circuit_breakers() -> None:
+    """Reset all NIM circuit-breaker state. Tests call this in setup."""
+    global _NIM_429_TRIPPED, _NIM_TIMEOUT_CONSECUTIVE, _NIM_TIMEOUT_TRIPPED
+    _NIM_429_TRIPPED = False
+    _NIM_TIMEOUT_CONSECUTIVE = 0
+    _NIM_TIMEOUT_TRIPPED = False
+
+
+def _circuit_breaker_state() -> dict[str, Any]:
+    """Read-only snapshot of breaker state (telemetry + tests)."""
+    return {
+        "nim_429_tripped": _NIM_429_TRIPPED,
+        "nim_timeout_consecutive": _NIM_TIMEOUT_CONSECUTIVE,
+        "nim_timeout_tripped": _NIM_TIMEOUT_TRIPPED,
+        "nim_timeout_threshold": _NIM_TIMEOUT_THRESHOLD,
+    }
+
+
 # Sectors whose agents call non-quota tools (fetch_new_yorker_talk_of_the_town
 # or fetch_article_text) — skip the quota-increment check for these.
 _NO_QUOTA_CHECK = frozenset({"newyorker"})
@@ -1592,6 +1664,12 @@ async def run_sector(
 ) -> Any:
     """Run one sector's agent and return the parsed sector-shape value."""
 
+    # Declare all module-level circuit-breaker variables we may mutate.
+    # Python requires every ``global`` declaration to appear BEFORE the first
+    # reference to the name in the function — placing them up-front avoids
+    # SyntaxError when nested branches both read and write the state.
+    global _NIM_429_TRIPPED, _NIM_TIMEOUT_CONSECUTIVE, _NIM_TIMEOUT_TRIPPED
+
     # Fast path: newyorker bypasses the LLM agent entirely.
     # fetch_talk_of_the_town is pure Python — no LLM needed or wanted.
     # Routing it through Kimi introduces three hallucination vectors:
@@ -1621,6 +1699,35 @@ async def run_sector(
             parsed.get("available") if isinstance(parsed, dict) else "?",
         )
         return parsed
+
+    # Circuit-breaker short-circuit. If a prior sector tripped the 429 or
+    # consecutive-timeout breaker, skip the agent loop entirely and return
+    # spec.default. Each short-circuit costs ~ms instead of the 3-10min the
+    # full retry chain would burn on a confirmed-bad NIM endpoint.
+    if _NIM_429_TRIPPED or _NIM_TIMEOUT_TRIPPED:
+        kind = (
+            "nim_429_breaker_short_circuit"
+            if _NIM_429_TRIPPED
+            else "nim_timeout_breaker_short_circuit"
+        )
+        log.warning(
+            "sector %s: %s — skipping agent loop, returning default.",
+            spec.name, kind,
+        )
+        try:
+            from .tools.telemetry import emit_llm_call as _emit_llm_call
+            _emit_llm_call(
+                provider="nim",
+                model="kimi-k2",
+                label="research_sector",
+                sector=spec.name,
+                latency_ms=0.0,
+                ok=False,
+                error=kind,
+            )
+        except Exception:
+            pass
+        return spec.default
 
     from llama_index.core.agent.workflow import FunctionAgent
 
@@ -1733,6 +1840,11 @@ async def run_sector(
                 latency_ms=(_t.monotonic() - _sector_t0) * 1000,
                 ok=True,
             )
+            # Reset consecutive-timeout counter — isolated timeouts shouldn't
+            # trip the breaker, only SUSTAINED ones. A sector that retried
+            # successfully (or succeeded first-try) is evidence NIM is alive.
+            # ``global _NIM_TIMEOUT_CONSECUTIVE`` declared at top of run_sector.
+            _NIM_TIMEOUT_CONSECUTIVE = 0
             break  # success — exit retry loop
         except Exception as e:
             last_exc = e
@@ -1752,6 +1864,29 @@ async def run_sector(
                         ok=False,
                         error="rate_limit_exhausted",
                     )
+                    # Trip the 429 circuit breaker — subsequent sectors will
+                    # short-circuit instead of burning another 60+120s on the
+                    # same broken NIM endpoint. Observed 2026-05-14 run #68:
+                    # 9 sectors hit this branch sequentially before cancel.
+                    # ``global _NIM_429_TRIPPED`` is declared at the top of
+                    # run_sector.
+                    if not _NIM_429_TRIPPED:
+                        _NIM_429_TRIPPED = True
+                        log.warning(
+                            "sector %s: tripped NIM 429 circuit breaker; "
+                            "remaining sectors will skip agent loop.",
+                            spec.name,
+                        )
+                        try:
+                            from .tools.telemetry import emit as _emit
+                            _emit(
+                                "circuit_breaker_trip",
+                                breaker="nim_429",
+                                sector=spec.name,
+                                threshold=len(_ratelimit_delays) + 1,
+                            )
+                        except Exception:
+                            pass
                     return spec.default
                 delay = _ratelimit_delays[rl_attempts]
                 log.warning(
@@ -1786,7 +1921,43 @@ async def run_sector(
                 await asyncio.sleep(delay)
                 net_attempts += 1
             else:
-                log.warning("sector %s: agent crashed (%s); returning default", spec.name, e)
+                # Track consecutive stream-timeouts. After threshold consecutive
+                # crashes, trip the breaker — subsequent sectors will skip the
+                # agent loop. Observed 2026-05-14 run #68: 4 deep sectors
+                # (triadic_ontology, ai_systems, uap, weather) crashed back-to-
+                # back with str(e)=="Request timed out.", burning ~28min before
+                # the 429 cascade started.
+                # ``global`` declarations are at the top of run_sector.
+                if _is_stream_timeout(e):
+                    _NIM_TIMEOUT_CONSECUTIVE += 1
+                    if (
+                        not _NIM_TIMEOUT_TRIPPED
+                        and _NIM_TIMEOUT_CONSECUTIVE >= _NIM_TIMEOUT_THRESHOLD
+                    ):
+                        _NIM_TIMEOUT_TRIPPED = True
+                        log.warning(
+                            "sector %s: %d consecutive NIM stream-timeouts "
+                            "(threshold=%d) — tripping circuit breaker; "
+                            "remaining sectors will skip agent loop.",
+                            spec.name,
+                            _NIM_TIMEOUT_CONSECUTIVE,
+                            _NIM_TIMEOUT_THRESHOLD,
+                        )
+                        try:
+                            from .tools.telemetry import emit as _emit
+                            _emit(
+                                "circuit_breaker_trip",
+                                breaker="nim_timeout",
+                                sector=spec.name,
+                                consecutive=_NIM_TIMEOUT_CONSECUTIVE,
+                                threshold=_NIM_TIMEOUT_THRESHOLD,
+                            )
+                        except Exception:
+                            pass
+                log.warning(
+                    "sector %s: agent crashed (%s); returning default",
+                    spec.name, e,
+                )
                 return spec.default
     else:
         log.warning("sector %s: retry loop guard triggered; returning default.", spec.name)
