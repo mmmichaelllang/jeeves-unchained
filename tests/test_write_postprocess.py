@@ -360,23 +360,41 @@ def test_nim_write_fallback_triggers_on_tpd_error(monkeypatch):
     assert nim_calls == ["part2"]
 
 
-def test_nim_write_fallback_does_not_trigger_on_tpm_error(monkeypatch):
-    """_invoke_write_llm re-raises non-TPD rate limit errors without falling back."""
+def test_nim_write_fallback_triggers_on_tpm_error(monkeypatch):
+    """_invoke_write_llm falls through to NIM/OR on Groq TPM 413.
+
+    Policy reversal landed 2026-05-15 after run #69 crashed with Groq
+    413 "tokens per minute (TPM): Limit 12000, Requested 12197".
+    Previously this test asserted re-raise on TPM — that was the wrong
+    policy and caused the production crash. TPM overage now falls
+    through to _try_nim_then_or (same path as TPD), because the
+    alternative is a crashed Write phase with no email shipped at all.
+    """
     from jeeves.config import Config
     from jeeves.write import _invoke_write_llm
 
     monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
     cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
+    object.__setattr__(cfg, "nvidia_api_key", "test-nim-key")
+    object.__setattr__(cfg, "nim_write_model_id", "meta/llama-3.3-70b-instruct")
+
+    nim_calls: list[str] = []
 
     def fake_groq(c, s, u, *, max_tokens, label):
         raise RuntimeError("Rate limit reached ... tokens per minute (TPM): Limit 12000")
 
+    def fake_nim(c, s, u, *, max_tokens, label):
+        nim_calls.append(label)
+        return "<p>NIM rescued from TPM overage</p>"
+
     import jeeves.write as wmod
     monkeypatch.setattr(wmod, "_invoke_groq", fake_groq)
+    monkeypatch.setattr(wmod, "_invoke_nim_write", fake_nim)
 
-    import pytest
-    with pytest.raises(RuntimeError, match="tokens per minute"):
-        _invoke_write_llm(cfg, "sys", "user", max_tokens=3000, label="part1")
+    text, used_groq = _invoke_write_llm(cfg, "sys", "user", max_tokens=3000, label="part1")
+    assert text == "<p>NIM rescued from TPM overage</p>"
+    assert not used_groq
+    assert nim_calls == ["part1"]
 
 
 def test_nim_fallback_skips_groq_tpm_sleep(monkeypatch):

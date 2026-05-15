@@ -1944,7 +1944,12 @@ def _enforce_single_close_tag(html: str, tag: str) -> tuple[str, int]:
 # ~3 500 of headroom for the output budget. We clamp `max_tokens` dynamically
 # against the live input size so the request can never breach the ceiling.
 _GROQ_TPM_LIMIT = 12000
-_GROQ_TPM_SAFETY = 600  # absorbs tokenizer drift between chars/4 and Groq's actual count
+_GROQ_TPM_SAFETY = 1200  # absorbs tokenizer drift between chars/4 and Groq's actual count
+# 2026-05-15 bumped 600 → 1200 after run #69 returned Groq 413: requested
+# 12197 vs cap 12000 (197 over). Pre-flight tokenizer undercount of ~200
+# tokens was within the 600-token margin's noise floor. Doubling the
+# margin gives ~600 tokens of additional headroom while still leaving
+# 10800 tokens of effective input ceiling for normal-shaped requests.
 _GROQ_MIN_OUTPUT_TOKENS = 1500  # floor — short sections still ship readable HTML
 
 
@@ -2669,11 +2674,29 @@ def _invoke_write_llm(
     try:
         return _invoke_groq(cfg, system, user, max_tokens=max_tokens, label=label), True
     except Exception as e:
-        if "tokens per day" in str(e).lower():
+        msg = str(e).lower()
+        if "tokens per day" in msg:
             log.warning(
                 "Groq daily TPD quota exhausted on [%s]; retrying on NIM/OR. "
                 "Groq free-tier resets at midnight UTC.",
                 label,
+            )
+            return _try_nim_then_or(cfg, system, user, max_tokens=max_tokens, label=label), False
+        # 2026-05-15 add TPM-overage catch. Run #69's Groq returned 413
+        # "tokens per minute (TPM): Limit 12000, Requested 12197" — 197
+        # tokens over the cap, pre-flight tokenizer undercount. The
+        # _GROQ_TPM_SAFETY bump (600 → 1200) makes this rarer but the
+        # catch is the durable defense: when the tokenizer misses,
+        # fall through to NIM/OR rather than crashing the run.
+        if (
+            "tokens per minute" in msg
+            or "request too large" in msg
+            or ("rate_limit_exceeded" in msg and "tpm" in msg)
+        ):
+            log.warning(
+                "Groq TPM ceiling breached on [%s] (input estimate undercount); "
+                "routing to NIM/OR. Bump _GROQ_TPM_SAFETY if this recurs. err=%s",
+                label, e,
             )
             return _try_nim_then_or(cfg, system, user, max_tokens=max_tokens, label=label), False
         raise
