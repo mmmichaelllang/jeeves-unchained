@@ -3,20 +3,9 @@
   "status": "complete",
   "dedup": {
     "covered_urls": [
-      "https://arxiv.org/html/2605.08717v1",
-      "https://arxiv.org/html/2605.09315v1",
-      "https://arxiv.org/html/2605.10052v1",
-      "https://arxiv.org/html/2605.11625v1",
-      "https://arxiv.org/html/2605.14163v1",
-      "https://arxiv.org/html/2605.14443v1",
-      "https://ersearch2.cvtisr.sk/vufind/EdsRecord/edsair,edsair.doi.dedup.....448a95726a3e08715423b148d8dee692",
-      "https://link.springer.com/article/10.1007/s12136-025-00635-5",
-      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
       "https://www.newyorker.com/magazine/2026/05/11/colberts-trumpet-player-on-life-after-late-night"
     ],
     "covered_headlines": [
-      "Three results span triadic ontology and relational metaphysics in 2025-2026. (1) Slade's Zenodo preprint proposes a 'Triadic Ontology with SU(3) Invariants' for qutrit-based quantum dynamics, treating the qutrit as an ontic primitive via SU(3) Casimir invariants and a discrete ℤ₃ rotation operator.",
-      "A wave of May 2026 arXiv papers is reshaping how AI agents evolve, coordinate, and reason.",
       "Colbert’s Trumpet Player on Life After Late Night",
       "\"The Illusion of Control\" draws parallels between the Soviet Union's collapse and current AI governance frameworks.",
       "'Make up their own minds': Pentagon releases first tranche of UFO files",
@@ -470,28 +459,18 @@
       "functions.tavily_extract:5{\"urls\": [\"https://www.",
       "functions.tavily_search:2",
       "global news May 8 2026 US Iran tensions Strait of Hormuz",
-      "‘The Music of What Happens’ | Nick Laird | The New York Review of Books"
+      "‘The Music of What Happens’ | Nick Laird | The New York Review of Books",
+      "email | \"info@schooljobs.com\""
     ],
     "cross_sector_dupes": []
   },
   "triadic_ontology": {
-    "findings": "Three results span triadic ontology and relational metaphysics in 2025-2026. (1) Slade's Zenodo preprint proposes a 'Triadic Ontology with SU(3) Invariants' for qutrit-based quantum dynamics, treating the qutrit as an ontic primitive via SU(3) Casimir invariants and a discrete ℤ₃ rotation operator. (2) Migliorini's Academia paper explores 'Relational Ontologies and Trinitarian Metaphysics,' developing a speculative model of divine relationality against monism/pantheism through Aristotelian substance theory and quantum physics. (3) Tricard's Springer article (March 2025) offers an 'Ultimate Argument Against Nominalistic Relationalism,' arguing that purely relational accounts fail to ground determinate quantities in objects.",
-    "urls": [
-      "https://ersearch2.cvtisr.sk/vufind/EdsRecord/edsair,edsair.doi.dedup.....448a95726a3e08715423b148d8dee692",
-      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
-      "https://link.springer.com/article/10.1007/s12136-025-00635-5"
-    ]
+    "findings": "",
+    "urls": []
   },
   "ai_systems": {
-    "findings": "A wave of May 2026 arXiv papers is reshaping how AI agents evolve, coordinate, and reason. On the self-evolution front, researchers identified a critical failure mode called \"capability erosion\" — when LLM agents continually adapt to new tasks, they progressively degrade previously acquired skills across workflows, skills, models, and memory. The proposed fix, Capability-Preserving Evolution (CPE), improved retained simple-task performance from 41.8% to 52.8% while still enabling stronger complex-task adaptation. Complementing this, the Swarm Skills specification introduces a portable, self-evolving multi-agent system standard that extends Anthropic's Skills format with multi-agent semantics, allowing coordination protocols to be shared across frameworks and improved automatically without human oversight. On reasoning efficiency, Budget-Efficient Thinking (BET) reframes adaptive reasoning as a computational investment problem, teaching models to \"fold\" early on unsolvable queries, answ [TRUNCATED]",
-    "urls": [
-      "https://arxiv.org/html/2605.09315v1",
-      "https://arxiv.org/html/2605.10052v1",
-      "https://arxiv.org/html/2605.11625v1",
-      "https://arxiv.org/html/2605.14163v1",
-      "https://arxiv.org/html/2605.14443v1",
-      "https://arxiv.org/html/2605.08717v1"
-    ]
+    "findings": "",
+    "urls": []
   },
   "uap": {
     "findings": "",
@@ -534,6 +513,6 @@
   "correspondence": {
     "found": true,
     "fallback_used": false,
-    "text": "- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating permanent failure of Daily Pipeline with rate limit issue.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting pressing GitHub workflow failures in jeeves-unchained and jeeves-memory repositories.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Research Phase workflow failed in jeeves-memory.\n- [escalation] mmmichaelllang: GitHub notification of failed CI workflow in jeeves-unchained repository.\n- [escalation] mmmichaelllang: GitHub notification of failed CI workflow in jeeves-unchained repository.\n- [escalation] mmmichaelllang: GitHub notification of failed CI workflow in jeeves-unchained repository.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Correspondence Phase workflow run failed.\n- [reply needed] Alan Beasley: Alan Beasley shared a version of Sam Keen's essay with paragraph numbers for the Loder Group.\n- [reply needed] lang.mc@gmail.com: Daily correspondence briefing mentioning a decision required from Carnival Cruise Line.\n- [no action] \"Superhuman – Zain Kahn\": Promotional email from Superhuman about Tavus AI image-to-avatar feature."
+    "text": "- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure\n- [escalation] Google: Google security alert for app password creation\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure\n- [reply needed] Andy: Message from Andrew Lang about making care visible\n- [reply needed] Alan Beasley: Message from Alan Beasley about an essay\n- [reply needed] Jen Manglos: Message from Jen Manglos about being on the road\n- [reply needed] Andy: Correspondence from lang.mc@gmail.com\n- [decision required] lang.mc@gmail.com: Correspondence about a decision required from Carnival Cruise Line\n- [follow up] Greg Gorsuch: Response to an email about a pre-crime strategy\n- [follow up] mmmichaelllang: Jeeves daily pipeline run failed\n- [no action] mmmichaelllang: GitHub workflow run failed for Jeeves-unchained repository\n- [no action] mmmichaelllang: GitHub workflow run failed for Jeeves Daily Pipeline\n- [no action] lang.mc@gmail.com: Correspondence summary for Friday, May 15, 2026\n- [no action] \"Superhuman – Zain Kahn\": Superhuman newsletter about Tavus image processing\n- [no action] \"info@schooljobs.com\": SchoolJobs job interest card notification\n- [no action] mmmichaelllang: GitHub workflow run failed for Jeeves-unchained repository"
   }
 }
