@@ -2,22 +2,22 @@
   "month": "2026-05",
   "providers": {
     "serper": {
-      "used": 413,
+      "used": 434,
       "free_cap": 2500,
       "overage_per_1k_usd": 0.3
     },
     "tavily": {
-      "used": 1036,
+      "used": 1062,
       "free_cap": 1000,
       "overage_per_1k_usd": 8.0
     },
     "exa": {
-      "used": 530,
+      "used": 533,
       "free_cap": 500,
       "overage_per_1k_usd": 5.0
     },
     "gemini": {
-      "used": 96,
+      "used": 97,
       "free_cap": 1500,
       "overage_per_1k_usd": 35.0
     },
@@ -58,7 +58,7 @@
     }
   },
   "daily": {
-    "date": "2026-05-14",
-    "gemini_grounded": 4
+    "date": "2026-05-15",
+    "gemini_grounded": 1
   }
 }
