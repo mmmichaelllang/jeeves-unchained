@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating permanent failure of Daily Pipeline with rate limit issue.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting pressing GitHub workflow failures in jeeves-unchained and jeeves-memory repositories.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Research Phase workflow failed in jeeves-memory.\n- [escalation] mmmichaelllang: GitHub notification of failed CI workflow in jeeves-unchained repository.\n- [escalation] mmmichaelllang: GitHub notification of failed CI workflow in jeeves-unchained repository.\n- [escalation] mmmichaelllang: GitHub notification of failed CI workflow in jeeves-unchained repository.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Correspondence Phase workflow run failed.\n- [reply needed] Alan Beasley: Alan Beasley shared a version of Sam Keen's essay with paragraph numbers for the Loder Group.\n- [reply needed] lang.mc@gmail.com: Daily correspondence briefing mentioning a decision required from Carnival Cruise Line.\n- [no action] \"Superhuman – Zain Kahn\": Promotional email from Superhuman about Tavus AI image-to-avatar feature.",
+  "text": "- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure\n- [escalation] Google: Google security alert for app password creation\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure\n- [reply needed] Andy: Message from Andrew Lang about making care visible\n- [reply needed] Alan Beasley: Message from Alan Beasley about an essay\n- [reply needed] Jen Manglos: Message from Jen Manglos about being on the road\n- [reply needed] Andy: Correspondence from lang.mc@gmail.com\n- [decision required] lang.mc@gmail.com: Correspondence about a decision required from Carnival Cruise Line\n- [follow up] Greg Gorsuch: Response to an email about a pre-crime strategy\n- [follow up] mmmichaelllang: Jeeves daily pipeline run failed\n- [no action] mmmichaelllang: GitHub workflow run failed for Jeeves-unchained repository\n- [no action] mmmichaelllang: GitHub workflow run failed for Jeeves Daily Pipeline\n- [no action] lang.mc@gmail.com: Correspondence summary for Friday, May 15, 2026\n- [no action] \"Superhuman – Zain Kahn\": Superhuman newsletter about Tavus image processing\n- [no action] \"info@schooljobs.com\": SchoolJobs job interest card notification\n- [no action] mmmichaelllang: GitHub workflow run failed for Jeeves-unchained repository",
   "counts": {
-    "reply_needed": 2,
-    "decision_required": 0,
+    "reply_needed": 4,
+    "decision_required": 1,
     "scheduling": 0,
-    "follow_up": 0,
-    "escalation": 8,
+    "follow_up": 2,
+    "escalation": 3,
     "no_action": 40
   }
 }
