@@ -1807,7 +1807,11 @@ async def run_sector(
     )
 
     tools = all_search_tools(cfg, ledger, set(prior_urls_sample))
-    llm = build_kimi_llm(cfg, max_tokens=sector_max_tokens)
+    # 60s timeout (down from 180s default). Run #70/25939633324 showed first 2
+    # NIM calls succeed in <20s each, then a 3rd call hangs for 180s before
+    # timing out. 60s is generous for any single NIM call; if it hasn't
+    # responded by then, it's dead for this invocation.
+    llm = build_kimi_llm(cfg, max_tokens=sector_max_tokens, timeout=60.0)
 
     user_msg = _build_user_prompt(
         spec, cfg.run_date.isoformat(), prior_urls_sample, extra_user,
@@ -1846,13 +1850,19 @@ async def run_sector(
 
     log.info("sector %s: agent starting.", spec.name)
     response = None
-    # Two separate retry budgets:
-    #   - Network drops (peer closed, timeout): 3 retries at 10/30/60s
+    # Three separate retry budgets:
+    #   - Network drops (peer closed, chunked read): 3 retries at 10/30/60s
     #   - NIM 429 rate limit: 2 retries at 60/120s (longer window to clear quota)
+    #   - Stream timeout ("Request timed out."): 1 retry at 10s — gives NIM a
+    #     second chance before tripping the circuit breaker. Run #25939633324
+    #     showed NIM first 2 calls OK then 3rd hangs → timeout → breaker →
+    #     all sectors empty. A single retry can recover transient NIM flakes.
     _net_delays = [10, 30, 60]
     _ratelimit_delays = [60, 120]
+    _timeout_delays = [10]
     net_attempts = 0
     rl_attempts = 0
+    timeout_attempts = 0
     last_exc: Exception | None = None
     # Sector-level LLM-call telemetry. Records ONE event per agent.run()
     # invocation — this is the high-water mark for NIM TPM pressure since
@@ -1868,13 +1878,13 @@ async def run_sector(
 
     for _loop_guard in range(20):  # hard cap prevents infinite loop
         try:
-            if response is None and net_attempts == 0 and rl_attempts == 0:
+            if response is None and net_attempts == 0 and rl_attempts == 0 and timeout_attempts == 0:
                 response = await agent.run(user_msg)
             else:
                 # Rebuild agent with fresh instances for every retry so no
                 # stale streaming state leaks from the previous crashed connection.
                 tools_r = all_search_tools(cfg, ledger, set(prior_urls_sample))
-                llm_r = build_kimi_llm(cfg, max_tokens=sector_max_tokens)
+                llm_r = build_kimi_llm(cfg, max_tokens=sector_max_tokens, timeout=60.0)
                 agent_r = FunctionAgent(
                     tools=tools_r, llm=llm_r,
                     system_prompt=_system_prompt,
@@ -1969,15 +1979,15 @@ async def run_sector(
                 )
                 await asyncio.sleep(delay)
                 net_attempts += 1
-            else:
-                # Track consecutive stream-timeouts. After threshold consecutive
-                # crashes, trip the breaker — subsequent sectors will skip the
-                # agent loop. Observed 2026-05-14 run #68: 4 deep sectors
-                # (triadic_ontology, ai_systems, uap, weather) crashed back-to-
-                # back with str(e)=="Request timed out.", burning ~28min before
-                # the 429 cascade started.
-                # ``global`` declarations are at the top of run_sector.
-                if _is_stream_timeout(e):
+            elif _is_stream_timeout(e):
+                # Stream timeout retry — gives NIM one more chance before
+                # tripping the circuit breaker. Run #25939633324 showed NIM
+                # first 2 calls OK (18s, 3s) then 3rd call hangs → timeout →
+                # breaker → all 13 sectors empty. A single retry at 10s delay
+                # can recover from transient NIM flakes; if both attempts fail,
+                # THEN trip the breaker so remaining sectors short-circuit.
+                if timeout_attempts >= len(_timeout_delays):
+                    # Retry exhausted — now trip the circuit breaker.
                     _NIM_TIMEOUT_CONSECUTIVE += 1
                     if (
                         not _NIM_TIMEOUT_TRIPPED
@@ -2003,6 +2013,30 @@ async def run_sector(
                             )
                         except Exception:
                             pass
+                    log.warning(
+                        "sector %s: stream timeout on all %d retries (%s); "
+                        "returning default.",
+                        spec.name, timeout_attempts + 1, e,
+                    )
+                    emit_llm_call(
+                        provider="nim",
+                        model="kimi-k2",
+                        label="research_sector",
+                        sector=spec.name,
+                        latency_ms=(_t.monotonic() - _sector_t0) * 1000,
+                        ok=False,
+                        error="stream_timeout_exhausted",
+                    )
+                    return spec.default
+                delay = _timeout_delays[timeout_attempts]
+                log.warning(
+                    "sector %s: stream timeout (attempt %d, %s) — "
+                    "retrying in %ds.",
+                    spec.name, timeout_attempts + 1, e, delay,
+                )
+                await asyncio.sleep(delay)
+                timeout_attempts += 1
+            else:
                 log.warning(
                     "sector %s: agent crashed (%s); returning default",
                     spec.name, e,
