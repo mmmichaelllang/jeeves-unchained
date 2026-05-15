@@ -285,18 +285,23 @@ def test_429_breaker_trip_emits_telemetry_event(light_spec, cfg, ledger, monkeyp
 def test_timeout_breaker_trips_after_consecutive_threshold(
     deep_spec, cfg, ledger, monkeypatch,
 ):
-    """One 'Request timed out.' crash flips the timeout breaker (threshold=1)."""
+    """Stream timeout retries once, then trips breaker (threshold=1).
+
+    With the timeout retry (1 attempt at 10s delay), a sector that times out
+    gets a second chance. Both attempts raise 'Request timed out.' here, so
+    the retry exhausts → counter=1 = threshold=1 → breaker tripped.
+    """
     _patch_agent_path(monkeypatch, Exception("Request timed out."))
 
     async def _no_sleep(*_a, **_kw):
         return None
     monkeypatch.setattr("asyncio.sleep", _no_sleep)
 
-    # First sector crashes with timeout → counter=1 = threshold=1 → breaker tripped
+    # Both attempts (initial + 1 retry) timeout → counter=1 → breaker tripped
     result = asyncio.run(run_sector(cfg, deep_spec, [], ledger))
     assert result == deep_spec.default
     assert rs._NIM_TIMEOUT_CONSECUTIVE == 1
-    assert rs._NIM_TIMEOUT_TRIPPED is True, "timeout breaker should trip after 1 consecutive"
+    assert rs._NIM_TIMEOUT_TRIPPED is True, "timeout breaker should trip after retry exhaustion"
 
 
 def test_timeout_breaker_does_not_trip_on_non_timeout_crash(
@@ -322,13 +327,19 @@ def test_timeout_counter_resets_on_successful_sector(
 ):
     """Counter resets to 0 after a successful sector. Tested with threshold=2
     (patched) so the first timeout increments counter without tripping the
-    breaker, letting the subsequent success sector exercise the reset path."""
+    breaker, letting the subsequent success sector exercise the reset path.
+
+    With timeout retry (1 attempt), sector 1 creates agents n=0 (initial,
+    timeout) and n=1 (retry, also timeout). Sector 2 creates agent n=2
+    (success). Threshold=2 means the first sector's exhaust (counter=1) does
+    not trip the breaker, and the second sector's success resets counter to 0.
+    """
     # Patch threshold to 2 for this test so one timeout doesn't immediately
     # trip the breaker — we want to reach the success sector.
     monkeypatch.setattr(rs, "_NIM_TIMEOUT_THRESHOLD", 2)
 
-    # First call: timeout.  Patch FunctionAgent to raise on call 1, then
-    # behave normally on call 2 (returning a parseable empty list payload).
+    # Sector 1: raises on calls 0 AND 1 (initial + timeout retry).
+    # Sector 2: succeeds on call 2 (returning a parseable empty list payload).
     call_counter = {"n": 0}
 
     class _FlipAgent:
@@ -337,11 +348,9 @@ def test_timeout_counter_resets_on_successful_sector(
             call_counter["n"] += 1
 
         async def run(self, _msg):
-            if self._n == 0:
+            if self._n <= 1:
                 raise Exception("Request timed out.")
-            # Second call: return a list-shape sector output. agent.run
-            # returns an AgentChatResponse-like object whose str() is the
-            # final assistant text. We mimic that with a dataclass-ish wrapper.
+            # Third instantiation (sector 2): return a list-shape sector output.
             resp = SimpleNamespace()
             resp.__str__ = lambda self_: '[]'  # type: ignore[assignment]
             return resp
@@ -384,5 +393,63 @@ def test_timeout_counter_resets_on_successful_sector(
 
     # Sector 2: success → counter must reset to 0
     asyncio.run(run_sector(cfg, light_spec, [], ledger))
+    assert rs._NIM_TIMEOUT_CONSECUTIVE == 0
+    assert rs._NIM_TIMEOUT_TRIPPED is False
+
+
+def test_timeout_retry_recovers_on_second_attempt(
+    light_spec, cfg, ledger, monkeypatch,
+):
+    """Stream timeout retry succeeds if NIM recovers on the second attempt.
+
+    Sector creates agent n=0 (initial, times out), then agent n=1 (retry,
+    succeeds). Result should be the parsed output, NOT spec.default. The
+    timeout counter should NOT increment (success resets it).
+    """
+    call_counter = {"n": 0}
+
+    class _RecoverAgent:
+        def __init__(self, **_kw):
+            self._n = call_counter["n"]
+            call_counter["n"] += 1
+
+        async def run(self, _msg):
+            if self._n == 0:
+                raise Exception("Request timed out.")
+            resp = SimpleNamespace()
+            resp.__str__ = lambda self_: '[]'  # type: ignore[assignment]
+            return resp
+
+    def factory(*_a, **_kw):
+        return _RecoverAgent()
+
+    monkeypatch.setattr(
+        "llama_index.core.agent.workflow.FunctionAgent", factory
+    )
+    monkeypatch.setattr(
+        "jeeves.llm.build_kimi_llm", lambda *_a, **_kw: MagicMock()
+    )
+    monkeypatch.setattr(
+        "jeeves.tools.all_search_tools", lambda *_a, **_kw: []
+    )
+
+    def fake_snapshot(_l):
+        return {}
+
+    def fake_increased(_before, _l):
+        return True
+
+    monkeypatch.setattr(rs, "_quota_snapshot", fake_snapshot)
+    monkeypatch.setattr(rs, "_quota_increased", fake_increased)
+
+    async def _no_sleep(*_a, **_kw):
+        return None
+    monkeypatch.setattr("asyncio.sleep", _no_sleep)
+
+    result = asyncio.run(run_sector(cfg, light_spec, [], ledger))
+
+    # Retry succeeded — result should be parsed output, not default
+    assert result == []  # parsed from '[]'
+    # No timeout counter increment on recovered sector
     assert rs._NIM_TIMEOUT_CONSECUTIVE == 0
     assert rs._NIM_TIMEOUT_TRIPPED is False
