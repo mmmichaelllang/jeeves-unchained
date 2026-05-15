@@ -167,3 +167,104 @@ def test_is_nim_timeout_matches_common_error_classes():
     assert wmod._is_nim_timeout(RuntimeError("peer closed connection"))
     assert not wmod._is_nim_timeout(ValueError("bad data"))
     assert not wmod._is_nim_timeout(RuntimeError("429 Too Many Requests"))
+
+
+# ----------------------------------------------------------------------- #
+# 2026-05-15 — Groq TPM (413) overage catch in _invoke_write_llm          #
+# Reproduces the run #69 (2026-05-15) failure shape exactly.              #
+# ----------------------------------------------------------------------- #
+
+# Exact error string from Groq's 413 response (production-observed).
+_GROQ_413_MSG = (
+    "Error code: 413 - {'error': {'message': "
+    "'Request too large for model `llama-3.3-70b-versatile` in organization "
+    "`org_01kpxwvcfwev0vqbczcsgzb11g` service tier `on_demand` on tokens per "
+    "minute (TPM): Limit 12000, Requested 12197, please reduce your message "
+    "size and try again.', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+)
+
+
+def test_invoke_write_llm_groq_413_tpm_falls_through_to_nim_or(monkeypatch):
+    """Reproduce run #69: Groq 413 'tokens per minute' must NOT crash —
+    must fall through to _try_nim_then_or."""
+    def _fake_groq_raises_413(*a, **kw):
+        raise Exception(_GROQ_413_MSG)
+
+    nim_or_called = []
+
+    def _fake_nim_or(cfg, system, user, *, max_tokens, label):
+        nim_or_called.append(label)
+        return f"<p>NIM rescued {label}</p>"
+
+    monkeypatch.setattr(wmod, "_invoke_groq", _fake_groq_raises_413)
+    monkeypatch.setattr(wmod, "_try_nim_then_or", _fake_nim_or)
+    # Pre-flight gate must allow the call through (small input).
+    monkeypatch.setattr(
+        wmod, "_clamp_groq_max_tokens",
+        lambda s, u, mt: (mt, 100),  # input_tokens=100, well under cap
+    )
+
+    out, used_groq = wmod._invoke_write_llm(
+        _cfg(), "sys", "user", max_tokens=4096, label="part1",
+    )
+    assert "NIM rescued part1" in out
+    assert used_groq is False
+    assert nim_or_called == ["part1"]
+
+
+def test_invoke_write_llm_groq_tpd_still_falls_through(monkeypatch):
+    """Pre-existing TPD catch still works after refactor (regression)."""
+    def _fake_groq_raises_tpd(*a, **kw):
+        raise Exception(
+            "Error code: 429 - Rate limit reached for model llama-3.3-70b-versatile "
+            "tokens per day (TPD): Limit 100000, Used 95811, Requested 10150"
+        )
+
+    monkeypatch.setattr(wmod, "_invoke_groq", _fake_groq_raises_tpd)
+    monkeypatch.setattr(
+        wmod, "_try_nim_then_or",
+        lambda cfg, s, u, *, max_tokens, label: f"<p>NIM TPD {label}</p>",
+    )
+    monkeypatch.setattr(
+        wmod, "_clamp_groq_max_tokens", lambda s, u, mt: (mt, 100)
+    )
+
+    out, used_groq = wmod._invoke_write_llm(
+        _cfg(), "sys", "user", max_tokens=4096, label="part2",
+    )
+    assert "NIM TPD part2" in out
+    assert used_groq is False
+
+
+def test_invoke_write_llm_unrelated_groq_error_still_raises(monkeypatch):
+    """Non-rate-limit Groq errors must NOT silently fall through —
+    those are real bugs the caller should surface."""
+    def _fake_groq_raises_bad(*a, **kw):
+        raise ValueError("invalid request shape — not a rate limit")
+
+    monkeypatch.setattr(wmod, "_invoke_groq", _fake_groq_raises_bad)
+    fall_through_called = []
+    monkeypatch.setattr(
+        wmod, "_try_nim_then_or",
+        lambda *a, **kw: fall_through_called.append(True) or "<p>oops</p>",
+    )
+    monkeypatch.setattr(
+        wmod, "_clamp_groq_max_tokens", lambda s, u, mt: (mt, 100)
+    )
+
+    with pytest.raises(ValueError, match="invalid request shape"):
+        wmod._invoke_write_llm(
+            _cfg(), "sys", "user", max_tokens=4096, label="part3",
+        )
+    assert fall_through_called == []
+
+
+def test_groq_tpm_safety_constant_bumped_for_tokenizer_drift():
+    """Regression: _GROQ_TPM_SAFETY should give >=1000 tokens of headroom
+    against pre-flight tokenizer undercount. Run #69 missed by 197 tokens
+    with a 600-token margin; doubling+ is the durable fix."""
+    assert wmod._GROQ_TPM_SAFETY >= 1000, (
+        f"safety margin {wmod._GROQ_TPM_SAFETY} too narrow; "
+        "run #69 (2026-05-15) shows tokenizer drift up to ~200 tokens "
+        "and the catch is a backstop, not the primary defense."
+    )

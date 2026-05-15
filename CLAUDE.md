@@ -7,7 +7,8 @@ Full project docs (phase table, model split, flags, secrets, Gmail OAuth, schema
 ---
 
 <state>
-branch: feat/research-circuit-breakers (off origin/main 5f9f4d8 GATE-A merged) | date: 2026-05-15 | tests: 12/12 passing for test_research_circuit_breakers.py; 109/110 passing across research_sectors+dedup+write_guard+breakers (1 pre-existing flaky e2e subprocess timeout in test_write_empty_guard, unrelated).
+branch: feat/research-circuit-breakers (off origin/main 5f9f4d8 GATE-A merged) | date: 2026-05-15 | tests: 34/34 passing across test_research_circuit_breakers (12) + test_write_empty_guard (10) + test_write_or_fallback (12 incl. 4 new for Groq 413 TPM).
+groq-413-fix-2026-05-15: jeeves/write.py _invoke_write_llm now catches Groq TPM 413 (Run #69 today returned 413: input 12197 > cap 12000, 197 over the pre-flight tokenizer estimate). Extended existing TPD catch with "tokens per minute" / "request too large" / "rate_limit_exceeded+tpm" string matches → falls through to _try_nim_then_or just like TPD does. Also bumped _GROQ_TPM_SAFETY 600 → 1200 to absorb the tokenizer drift (chars/4 estimator vs Groq's actual count) — primary defense; the catch is the backstop. Unrelated Groq errors (non-rate-limit) still raise. Tests: test_invoke_write_llm_groq_413_tpm_falls_through_to_nim_or + 3 sibling cases. Bundled with circuit-breakers commit.
 circuit-breakers-2026-05-15: jeeves/research_sectors.py NEW module-level _NIM_429_TRIPPED + _NIM_TIMEOUT_CONSECUTIVE/_TRIPPED (threshold=2). Helpers: _is_stream_timeout(), _reset_circuit_breakers(), _circuit_breaker_state(). Short-circuit check at run_sector entry (after newyorker fast-path, before agent imports) — skips FunctionAgent instantiation entirely, returns spec.default + emits llm_call telemetry with error="nim_429_breaker_short_circuit" or "nim_timeout_breaker_short_circuit". Trip points: (a) inside 429 rate-limit-retry-exhaustion branch — flips _NIM_429_TRIPPED on first all-retries-failed sector. (b) inside agent-crashed else branch — increments _NIM_TIMEOUT_CONSECUTIVE on _is_stream_timeout(e); reaches threshold → flips _NIM_TIMEOUT_TRIPPED. Counter resets to 0 on successful agent return. Trip emits "circuit_breaker_trip" event via jeeves.tools.telemetry.emit (breaker=nim_429|nim_timeout, sector, threshold, consecutive). `global` consolidated at top of run_sector — Python "uses prior to global declaration" rule (initially nested globals errored). daily.yml research job timeout-minutes 65→120 as insurance for partially-degraded days. scripts/diagnostics/README.md + run68-research.log committed.
 run68-forensics-2026-05-15: pulled actual GHA log for run #68 (cancelled at 65min, 2026-05-14 19:21 UTC). Per-sector durations: triadic_ontology 5m11s/timeout, ai_systems 5m09s/timeout, uap 10m50s/timeout, weather 6m23s/timeout, then local_news + 8 light sectors each ~3m on NIM 429 rate-limit-retry-exhaustion, newyorker 1s SUCCESS (direct fetch), literary_pick 3m01s/429, enriched_articles 3m13s cancelled. 13 of 14 agent-using sectors FAILED. Prior session HANDOFF.md diagnosed as "K2.6 slow" and prescribed asyncio.wait_for(300s) — wrong on both counts (errors not slowness; wait_for clips only uap+weather saving ~7min). Real cost: 50min on retry chains while NIM was sustainedly broken. Fix shape: circuit breakers (above), NOT per-sector wait_for cap.
 gate-a-2026-05-14: scripts/write.py NEW helper _session_research_empty + GATE-A in main() (exit 5 when every non-TOTT sector empty). Override: JEEVES_FORCE_WRITE_EMPTY=1. Tests/test_write_empty_guard.py (10 tests). Triggered by 2026-05-13 incident: pipeline shipped 7 fabricated URLs (congress.gov, pentagon.gov, etc.) on an all-empty session. Auditor stripped URLs; briefing still shipped with invented content. GATE-A blocks future occurrences. PR #120 MERGED 2026-05-14 19:31 UTC.
@@ -116,8 +117,14 @@ stream-drop:
 <groq-gotchas>
 
 TPM-clamp:
-  fix: _clamp_groq_max_tokens() = min(max_tokens, available=12000-input_tokens-600)
+  fix: _clamp_groq_max_tokens() = min(max_tokens, available=12000-input_tokens-1200)
   why: system prompt grows part-over-part; by part4 input≈8500tok; 4096 output breaches 12000 TPM ceiling
+  safety: _GROQ_TPM_SAFETY=1200 (bumped 600→1200 on 2026-05-15 after run #69 missed by 197 tokens)
+
+TPM-413-overage:
+  bug: pre-flight tokenizer can undercount by ~200 tokens; Groq returns 413 "tokens per minute (TPM): Limit 12000, Requested 12197"
+  fix: _invoke_write_llm catches "tokens per minute"/"request too large"/"rate_limit_exceeded+tpm" → falls through to _try_nim_then_or (same path as TPD overage)
+  history: run #69 (2026-05-15) shipped 413 uncaught → Write phase crashed exit 1 → GATE-A never got a chance to evaluate (research was non-empty). Fix lands together with circuit breakers.
 
 TPD-budget:
   limit: 100k tokens/day free tier
