@@ -461,6 +461,12 @@ def main(argv: list[str] | None = None) -> int:
         log.info("DRY RUN — using fixture mock agent.")
         _run_dry_agent(cfg, ctx)
     else:
+        from jeeves.research_sectors import nim_preflight_probe
+        if not nim_preflight_probe(cfg):
+            log.warning(
+                "NIM pre-flight probe failed — circuit breaker tripped; "
+                "agent sectors will short-circuit to default."
+            )
         quota_sum = _quota_summary(ledger)
         story_ctx = _story_continuity_block(prior_sessions)
         asyncio.run(

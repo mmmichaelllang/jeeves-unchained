@@ -1102,8 +1102,9 @@ def _is_stream_timeout(exc: Exception) -> bool:
 # ``_NIM_TIMEOUT_TRIPPED``. Threshold is 2 — 2026-05-14 run #68 burned
 # ~16min on uap (10m50s) + weather (6m23s) after the first two crashes
 # (triadic_ontology, ai_systems) had already shown NIM streams were unhealthy.
-# A threshold of 2 lets us trip after the second crash and save the third
-# onward.
+# A threshold of 1 trips after the FIRST crash and saves all subsequent
+# sectors. Lowered from 2 on 2026-05-15: run #70 showed triadic_ontology +
+# ai_systems each burned ~9-12 min before the threshold=2 breaker fired.
 #
 # Each trip emits a ``circuit_breaker_trip`` telemetry event so the rollup
 # reports can flag NIM-degraded days.
@@ -1111,7 +1112,7 @@ def _is_stream_timeout(exc: Exception) -> bool:
 _NIM_429_TRIPPED: bool = False
 _NIM_TIMEOUT_CONSECUTIVE: int = 0
 _NIM_TIMEOUT_TRIPPED: bool = False
-_NIM_TIMEOUT_THRESHOLD: int = 2
+_NIM_TIMEOUT_THRESHOLD: int = 1
 
 
 def _reset_circuit_breakers() -> None:
@@ -1130,6 +1131,54 @@ def _circuit_breaker_state() -> dict[str, Any]:
         "nim_timeout_tripped": _NIM_TIMEOUT_TRIPPED,
         "nim_timeout_threshold": _NIM_TIMEOUT_THRESHOLD,
     }
+
+
+def nim_preflight_probe(cfg: Any) -> bool:
+    """GET /v1/models on NIM to confirm the endpoint is reachable before
+    spending time on FunctionAgent loops.
+
+    Returns True when NIM responds OK. On 429 → trips _NIM_429_TRIPPED.
+    On any other failure → trips _NIM_TIMEOUT_TRIPPED. Either way returns
+    False so scripts/research.py can log a single warning and run_sector
+    short-circuits every agent sector via the normal breaker path.
+
+    Skipped (returns True) when cfg.dry_run or NVIDIA_API_KEY is absent.
+    """
+    global _NIM_429_TRIPPED, _NIM_TIMEOUT_TRIPPED
+
+    nvidia_key = getattr(cfg, "nvidia_api_key", None)
+    dry_run = getattr(cfg, "dry_run", False)
+    if dry_run or not nvidia_key:
+        return True
+
+    kimi_base = getattr(cfg, "kimi_base_url", "https://integrate.api.nvidia.com/v1")
+
+    try:
+        import httpx
+        resp = httpx.get(
+            f"{kimi_base.rstrip('/')}/models",
+            headers={"Authorization": f"Bearer {nvidia_key}"},
+            timeout=15.0,
+        )
+        if resp.status_code == 429:
+            log.warning(
+                "NIM pre-flight probe: 429 rate-limited — tripping 429 breaker; "
+                "all agent sectors will be skipped."
+            )
+            _NIM_429_TRIPPED = True
+            return False
+        resp.raise_for_status()
+        n_models = len(resp.json().get("data", []))
+        log.info("NIM pre-flight probe: OK (%d models listed).", n_models)
+        return True
+    except Exception as exc:
+        log.warning(
+            "NIM pre-flight probe failed (%s) — tripping timeout breaker; "
+            "all agent sectors will be skipped.",
+            exc,
+        )
+        _NIM_TIMEOUT_TRIPPED = True
+        return False
 
 
 # Sectors whose agents call non-quota tools (fetch_new_yorker_talk_of_the_town

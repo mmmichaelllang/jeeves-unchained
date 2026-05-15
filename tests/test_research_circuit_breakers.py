@@ -13,7 +13,7 @@ The two breakers in research_sectors.py short-circuit subsequent sectors
 once NIM is provably bad:
     _NIM_429_TRIPPED: set on first all-retries-exhausted 429
     _NIM_TIMEOUT_TRIPPED: set after N consecutive stream-timeout crashes
-                          (default threshold=2)
+                          (threshold=1 as of 2026-05-15)
 
 Each subsequent sector then returns spec.default in ~milliseconds instead
 of burning another 3-10min on the same broken endpoint.
@@ -24,7 +24,7 @@ These tests verify:
   3. Short-circuit path: tripped breaker → run_sector returns spec.default
      without ever instantiating the agent
   4. Trip-on-429-exhaustion: agent that always 429s sets _NIM_429_TRIPPED
-  5. Trip-on-consecutive-timeouts: 2 sectors in a row crash with
+  5. Trip-on-consecutive-timeouts: 1 sector crashes with
      "Request timed out." → _NIM_TIMEOUT_TRIPPED True
   6. Counter resets on success: timeout sector then success sector → counter
      back to 0
@@ -151,7 +151,7 @@ def test_reset_and_state_roundtrip():
     assert state["nim_timeout_consecutive"] == 0
     assert state["nim_timeout_tripped"] is False
     # Threshold is configuration, not state — should not reset.
-    assert state["nim_timeout_threshold"] == 2
+    assert state["nim_timeout_threshold"] == 1
 
 
 # ---------------------------------------------------------------------------
@@ -283,27 +283,20 @@ def test_429_breaker_trip_emits_telemetry_event(light_spec, cfg, ledger, monkeyp
 
 
 def test_timeout_breaker_trips_after_consecutive_threshold(
-    deep_spec, light_spec, cfg, ledger, monkeypatch,
+    deep_spec, cfg, ledger, monkeypatch,
 ):
-    """Two consecutive 'Request timed out.' crashes flip the timeout breaker.
-    Threshold is 2 — first crash increments counter to 1, second to 2 → trip."""
+    """One 'Request timed out.' crash flips the timeout breaker (threshold=1)."""
     _patch_agent_path(monkeypatch, Exception("Request timed out."))
 
     async def _no_sleep(*_a, **_kw):
         return None
     monkeypatch.setattr("asyncio.sleep", _no_sleep)
 
-    # First sector crashes with timeout → counter=1, breaker NOT yet tripped
-    result1 = asyncio.run(run_sector(cfg, deep_spec, [], ledger))
-    assert result1 == deep_spec.default
+    # First sector crashes with timeout → counter=1 = threshold=1 → breaker tripped
+    result = asyncio.run(run_sector(cfg, deep_spec, [], ledger))
+    assert result == deep_spec.default
     assert rs._NIM_TIMEOUT_CONSECUTIVE == 1
-    assert rs._NIM_TIMEOUT_TRIPPED is False
-
-    # Second sector crashes with timeout → counter=2, breaker NOW tripped
-    result2 = asyncio.run(run_sector(cfg, light_spec, [], ledger))
-    assert result2 == light_spec.default
-    assert rs._NIM_TIMEOUT_CONSECUTIVE == 2
-    assert rs._NIM_TIMEOUT_TRIPPED is True, "timeout breaker should trip after 2 consecutive"
+    assert rs._NIM_TIMEOUT_TRIPPED is True, "timeout breaker should trip after 1 consecutive"
 
 
 def test_timeout_breaker_does_not_trip_on_non_timeout_crash(
@@ -327,9 +320,12 @@ def test_timeout_breaker_does_not_trip_on_non_timeout_crash(
 def test_timeout_counter_resets_on_successful_sector(
     deep_spec, light_spec, cfg, ledger, monkeypatch,
 ):
-    """Counter is for SUSTAINED timeouts. An isolated timeout followed by a
-    successful sector resets the counter so a transient blip doesn't trip
-    the breaker on the third sector."""
+    """Counter resets to 0 after a successful sector. Tested with threshold=2
+    (patched) so the first timeout increments counter without tripping the
+    breaker, letting the subsequent success sector exercise the reset path."""
+    # Patch threshold to 2 for this test so one timeout doesn't immediately
+    # trip the breaker — we want to reach the success sector.
+    monkeypatch.setattr(rs, "_NIM_TIMEOUT_THRESHOLD", 2)
 
     # First call: timeout.  Patch FunctionAgent to raise on call 1, then
     # behave normally on call 2 (returning a parseable empty list payload).
