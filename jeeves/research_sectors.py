@@ -1972,7 +1972,12 @@ async def run_sector(
     #     showed NIM first 2 calls OK then 3rd hangs → timeout → breaker →
     #     all sectors empty. A single retry can recover transient NIM flakes.
     _net_delays = [10, 30, 60]
-    _ratelimit_delays = [60, 120]
+    # Cerebras free tier rate-limits after 2-3 calls with ~10s cooldown.
+    # NIM 429s need longer 60+120s windows. Pick delays based on provider.
+    _ratelimit_delays = (
+        [10, 10, 10, 10, 10, 10] if _use_cerebras_fallback is not None
+        else [60, 120]
+    )
     _timeout_delays = [10]
     net_attempts = 0
     rl_attempts = 0
@@ -2037,13 +2042,11 @@ async def run_sector(
                         ok=False,
                         error="rate_limit_exhausted",
                     )
-                    # Trip the 429 circuit breaker — subsequent sectors will
-                    # short-circuit instead of burning another 60+120s on the
-                    # same broken NIM endpoint. Observed 2026-05-14 run #68:
-                    # 9 sectors hit this branch sequentially before cancel.
-                    # ``global _NIM_429_TRIPPED`` is declared at the top of
-                    # run_sector.
-                    if not _NIM_429_TRIPPED:
+                    # Trip the 429 circuit breaker ONLY for NIM — Cerebras 429s
+                    # are rate-limit cooldowns that clear quickly (~10s) and
+                    # should NOT cascade to other sectors. Run 25955574312 showed
+                    # Cerebras 429 tripping NIM breaker → all sectors empty.
+                    if _use_cerebras_fallback is None and not _NIM_429_TRIPPED:
                         _NIM_429_TRIPPED = True
                         log.warning(
                             "sector %s: tripped NIM 429 circuit breaker; "
