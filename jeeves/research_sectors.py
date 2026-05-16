@@ -1135,13 +1135,17 @@ def _circuit_breaker_state() -> dict[str, Any]:
 
 _CEREBRAS_BASE = "https://api.cerebras.ai/v1"
 _CEREBRAS_MODEL_CHAIN = [
+    # Prefer larger context models — research prompts are 8-12k tokens.
+    # llama3.1-8b (8192 ctx) is too small; gpt-oss-120b and qwen-3-235b
+    # have 128k+ context windows.
+    "gpt-oss-120b",
+    "qwen-3-235b-a22b-instruct-2507",
+    "zai-glm-4.7",
     "llama-3.3-70b",
     "llama3.3-70b",
-    "qwen-3-32b",
-    "qwen-2.5-32b",
     "llama-3.1-70b",
     "llama3.1-70b",
-    "llama-3.1-8b",
+    # llama3.1-8b deliberately last — 8192 ctx too small for research
     "llama3.1-8b",
 ]
 _RESOLVED_CEREBRAS_MODEL: str | None = None
