@@ -1133,6 +1133,20 @@ def _circuit_breaker_state() -> dict[str, Any]:
     }
 
 
+_CEREBRAS_BASE = "https://api.cerebras.ai/v1"
+_CEREBRAS_MODEL_CHAIN = [
+    "llama-3.3-70b",
+    "llama3.3-70b",
+    "qwen-3-32b",
+    "qwen-2.5-32b",
+    "llama-3.1-70b",
+    "llama3.1-70b",
+    "llama-3.1-8b",
+    "llama3.1-8b",
+]
+_RESOLVED_CEREBRAS_MODEL: str | None = None
+
+
 def _build_cerebras_llm(max_tokens: int = 8192):
     """Build a Cerebras LLM via OpenAILike for use as NIM fallback.
 
@@ -1140,17 +1154,59 @@ def _build_cerebras_llm(max_tokens: int = 8192):
     with native tool-calling support. Used when NIM circuit breaker trips
     so remaining sectors can still produce data instead of returning empty.
 
-    Returns None if CEREBRAS_API_KEY is not set.
+    Probes /v1/models on first call to find a valid model ID from the
+    fallback chain, then caches it for subsequent calls in the same process.
+
+    Returns None if CEREBRAS_API_KEY is not set or no model is available.
     """
+    global _RESOLVED_CEREBRAS_MODEL
+
     import os
     api_key = os.environ.get("CEREBRAS_API_KEY", "").strip()
     if not api_key:
         return None
+
+    # Resolve model ID on first call
+    if _RESOLVED_CEREBRAS_MODEL is None:
+        try:
+            import httpx
+            resp = httpx.get(
+                f"{_CEREBRAS_BASE}/models",
+                headers={"Authorization": f"Bearer {api_key}"},
+                timeout=10.0,
+            )
+            if resp.status_code == 200:
+                available = {m["id"] for m in resp.json().get("data", [])}
+                log.info("Cerebras models available: %s", sorted(available))
+                for candidate in _CEREBRAS_MODEL_CHAIN:
+                    if candidate in available:
+                        _RESOLVED_CEREBRAS_MODEL = candidate
+                        log.info("Cerebras: resolved model → %s", candidate)
+                        break
+                if _RESOLVED_CEREBRAS_MODEL is None:
+                    # None of our candidates matched — try first available
+                    if available:
+                        _RESOLVED_CEREBRAS_MODEL = sorted(available)[0]
+                        log.warning(
+                            "Cerebras: no preferred model found; using %s",
+                            _RESOLVED_CEREBRAS_MODEL,
+                        )
+                    else:
+                        log.warning("Cerebras: no models listed at /v1/models")
+                        return None
+            else:
+                log.warning("Cerebras /v1/models returned %d", resp.status_code)
+                # Try first candidate blindly
+                _RESOLVED_CEREBRAS_MODEL = _CEREBRAS_MODEL_CHAIN[0]
+        except Exception as e:
+            log.warning("Cerebras model probe failed: %s", e)
+            _RESOLVED_CEREBRAS_MODEL = _CEREBRAS_MODEL_CHAIN[0]
+
     try:
         from llama_index.llms.openai_like import OpenAILike
         return OpenAILike(
-            model="llama-3.3-70b",
-            api_base="https://api.cerebras.ai/v1",
+            model=_RESOLVED_CEREBRAS_MODEL,
+            api_base=_CEREBRAS_BASE,
             api_key=api_key,
             max_tokens=max_tokens,
             temperature=0.3,
