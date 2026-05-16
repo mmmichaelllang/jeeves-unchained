@@ -1852,10 +1852,15 @@ async def run_sector(
         # Try Cerebras fallback before giving up. NIM stream truncation
         # (2026-05-15/16) empties tool_call arguments — Cerebras can serve
         # as a working alternative for the remaining sectors.
-        cerebras_llm = _build_cerebras_llm(
+        #
+        # Skip deep sectors on Cerebras — they consume 5-10 LLM calls each
+        # and exhaust the free-tier rate limit before light sectors can run.
+        # Run 25956734496: 3 deep sectors consumed the entire Cerebras budget,
+        # leaving 10 light sectors with zero capacity (all 429). Light sectors
+        # need only 2-3 calls and are more likely to complete within budget.
+        cerebras_llm = None if spec.shape == "deep" else _build_cerebras_llm(
             max_tokens=(
-                4096 if spec.shape == "deep"
-                else 2048 if spec.shape == "enriched"
+                2048 if spec.shape == "enriched"
                 else 8192
             )
         )
