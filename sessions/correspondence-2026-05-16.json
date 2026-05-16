@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure with no auto-retry.\n- [escalation] mmmichaelllang: GitHub notification that a CI workflow run for a pull request failed.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for transient failure due to rate limiting.\n- [escalation] mmmichaelllang: GitHub notification that a CI workflow run for a pull request had no jobs run.\n- [escalation] Google: Google security alert about a new app password created for Readwise Essay Architect.\n- [escalation] mmmichaelllang: GitHub workflow failure notification for Jeeves Daily Pipeline.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure due to rate limiting.\n- [escalation] Mrs. Lang: Daily correspondence summary from Mrs. Lang highlighting pressing GitHub workflow failures.\n- [escalation] Mrs. Lang: Daily correspondence summary from Mrs. Lang mentioning a decision required from Carnival Cruise Line.\n- [no action] Audible: Monthly Audible credit summary notification.",
+  "counts": {
+    "reply_needed": 0,
+    "decision_required": 0,
+    "scheduling": 0,
+    "follow_up": 0,
+    "escalation": 11,
+    "no_action": 39
+  }
+}
