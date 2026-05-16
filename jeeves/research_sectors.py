@@ -1133,6 +1133,36 @@ def _circuit_breaker_state() -> dict[str, Any]:
     }
 
 
+def _build_cerebras_llm(max_tokens: int = 8192):
+    """Build a Cerebras LLM via OpenAILike for use as NIM fallback.
+
+    Cerebras exposes an OpenAI-compatible /v1/chat/completions endpoint
+    with native tool-calling support. Used when NIM circuit breaker trips
+    so remaining sectors can still produce data instead of returning empty.
+
+    Returns None if CEREBRAS_API_KEY is not set.
+    """
+    import os
+    api_key = os.environ.get("CEREBRAS_API_KEY", "").strip()
+    if not api_key:
+        return None
+    try:
+        from llama_index.llms.openai_like import OpenAILike
+        return OpenAILike(
+            model="llama-3.3-70b",
+            api_base="https://api.cerebras.ai/v1",
+            api_key=api_key,
+            max_tokens=max_tokens,
+            temperature=0.3,
+            timeout=60.0,
+            is_chat_model=True,
+            is_function_calling_model=True,
+        )
+    except Exception as e:
+        log.warning("Failed to build Cerebras LLM: %s", e)
+        return None
+
+
 def nim_preflight_probe(cfg: Any) -> bool:
     """GET /v1/models on NIM to confirm the endpoint is reachable before
     spending time on FunctionAgent loops.
@@ -1759,24 +1789,45 @@ async def run_sector(
             if _NIM_429_TRIPPED
             else "nim_timeout_breaker_short_circuit"
         )
-        log.warning(
-            "sector %s: %s — skipping agent loop, returning default.",
-            spec.name, kind,
-        )
-        try:
-            from .tools.telemetry import emit_llm_call as _emit_llm_call
-            _emit_llm_call(
-                provider="nim",
-                model="kimi-k2",
-                label="research_sector",
-                sector=spec.name,
-                latency_ms=0.0,
-                ok=False,
-                error=kind,
+        # Try Cerebras fallback before giving up. NIM stream truncation
+        # (2026-05-15/16) empties tool_call arguments — Cerebras can serve
+        # as a working alternative for the remaining sectors.
+        cerebras_llm = _build_cerebras_llm(
+            max_tokens=(
+                4096 if spec.shape == "deep"
+                else 2048 if spec.shape == "enriched"
+                else 8192
             )
-        except Exception:
-            pass
-        return spec.default
+        )
+        if cerebras_llm is not None:
+            log.warning(
+                "sector %s: %s — falling back to Cerebras.",
+                spec.name, kind,
+            )
+            # Fall through to the normal agent path below using Cerebras LLM.
+            # We set _use_cerebras_fallback so the agent construction picks it up.
+            _use_cerebras_fallback = cerebras_llm
+        else:
+            log.warning(
+                "sector %s: %s — no Cerebras key; returning default.",
+                spec.name, kind,
+            )
+            try:
+                from .tools.telemetry import emit_llm_call as _emit_llm_call
+                _emit_llm_call(
+                    provider="nim",
+                    model="kimi-k2",
+                    label="research_sector",
+                    sector=spec.name,
+                    latency_ms=0.0,
+                    ok=False,
+                    error=kind,
+                )
+            except Exception:
+                pass
+            return spec.default
+    else:
+        _use_cerebras_fallback = None
 
     from llama_index.core.agent.workflow import FunctionAgent
 
@@ -1807,11 +1858,14 @@ async def run_sector(
     )
 
     tools = all_search_tools(cfg, ledger, set(prior_urls_sample))
-    # 60s timeout (down from 180s default). Run #70/25939633324 showed first 2
-    # NIM calls succeed in <20s each, then a 3rd call hangs for 180s before
-    # timing out. 60s is generous for any single NIM call; if it hasn't
-    # responded by then, it's dead for this invocation.
-    llm = build_kimi_llm(cfg, max_tokens=sector_max_tokens, timeout=60.0)
+    if _use_cerebras_fallback is not None:
+        llm = _use_cerebras_fallback
+    else:
+        # 60s timeout (down from 180s default). Run #70/25939633324 showed first 2
+        # NIM calls succeed in <20s each, then a 3rd call hangs for 180s before
+        # timing out. 60s is generous for any single NIM call; if it hasn't
+        # responded by then, it's dead for this invocation.
+        llm = build_kimi_llm(cfg, max_tokens=sector_max_tokens, timeout=60.0)
 
     user_msg = _build_user_prompt(
         spec, cfg.run_date.isoformat(), prior_urls_sample, extra_user,
