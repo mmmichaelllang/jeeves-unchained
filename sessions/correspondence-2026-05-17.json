@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves\n- [escalation] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure\n- [escalation] mmmichaelllang: GitHub notification about a failed workflow run for Jeeves\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure\n- [escalation] mmmichaelllang: GitHub notification about a failed PR run for Jeeves\n- [escalation] Google: Security alert about an app password creation\n- [reply needed] Andy: Message from Andrew Lang about making care visible\n- [reply needed] Mrs. Lang: Correspondence from lang.mc@gmail.com\n- [reply needed] Greg Gorsuch: Greg Gorsuch is discussing a pre-crime strategy and its implications.\n- [decision required] mmmichaelllang: GitHub notification about failed workflow run\n- [decision required] mmmichaelllang: GitHub notification about failed PR run\n- [decision required] mmmichaelllang: GitHub notification about failed PR run\n- [decision required] mmmichaelllang: GitHub notification about failed PR run\n- [decision required] lang.mc@gmail.com: A decision is required regarding Carnival Cruise Line's Rewards Terms.",
+  "counts": {
+    "reply_needed": 3,
+    "decision_required": 5,
+    "scheduling": 0,
+    "follow_up": 1,
+    "escalation": 7,
+    "no_action": 34
+  }
+}
