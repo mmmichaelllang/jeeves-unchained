@@ -2,17 +2,17 @@
   "month": "2026-05",
   "providers": {
     "serper": {
-      "used": 529,
+      "used": 536,
       "free_cap": 2500,
       "overage_per_1k_usd": 0.3
     },
     "tavily": {
-      "used": 1153,
+      "used": 1155,
       "free_cap": 1000,
       "overage_per_1k_usd": 8.0
     },
     "exa": {
-      "used": 602,
+      "used": 606,
       "free_cap": 500,
       "overage_per_1k_usd": 5.0
     },
