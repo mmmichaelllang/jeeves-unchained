@@ -1112,7 +1112,7 @@ def _is_stream_timeout(exc: Exception) -> bool:
 _NIM_429_TRIPPED: bool = False
 _NIM_TIMEOUT_CONSECUTIVE: int = 0
 _NIM_TIMEOUT_TRIPPED: bool = False
-_NIM_TIMEOUT_THRESHOLD: int = 1
+_NIM_TIMEOUT_THRESHOLD: int = 2
 
 
 def _reset_circuit_breakers() -> None:
