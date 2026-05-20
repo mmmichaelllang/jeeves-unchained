@@ -17,6 +17,7 @@ import argparse
 import asyncio
 import json as _json
 import logging
+import os
 import re
 import sys
 from pathlib import Path
@@ -461,12 +462,6 @@ def main(argv: list[str] | None = None) -> int:
         log.info("DRY RUN — using fixture mock agent.")
         _run_dry_agent(cfg, ctx)
     else:
-        from jeeves.research_sectors import nim_preflight_probe
-        if not nim_preflight_probe(cfg):
-            log.warning(
-                "NIM pre-flight probe failed — circuit breaker tripped; "
-                "agent sectors will short-circuit to default."
-            )
         quota_sum = _quota_summary(ledger)
         story_ctx = _story_continuity_block(prior_sessions)
         asyncio.run(
@@ -506,6 +501,43 @@ def main(argv: list[str] | None = None) -> int:
     path = save_session(session, cfg)
     ledger.save()
     log.info("session saved: %s (quota state: %s)", path, cfg.quota_state_path)
+
+    # GATE-B: refuse-to-ship-empty research session.
+    # Mirror of write-phase GATE-A. If every agent-using sector is empty
+    # (newyorker is the only direct-fetch sector and doesn't count alone),
+    # exit 6 so the write phase doesn't waste effort on garbage input.
+    _AGENT_SECTOR_NAMES = frozenset(
+        s.name for s in SECTOR_SPECS if s.name != "newyorker"
+    )
+
+    def _spec_default_for(name: str):
+        for s in SECTOR_SPECS:
+            if s.name == name:
+                return s.default
+        return None
+
+    def _sector_is_empty(value) -> bool:
+        if isinstance(value, list):
+            return len(value) == 0
+        if isinstance(value, dict):
+            return not any(value.values())
+        if isinstance(value, str):
+            return value == ""
+        return False
+
+    if os.environ.get("JEEVES_FORCE_RESEARCH_EMPTY") != "1":
+        empty_agent_sectors = [
+            name for name in _AGENT_SECTOR_NAMES
+            if _sector_is_empty(session.get(name, _spec_default_for(name)))
+        ]
+        if len(empty_agent_sectors) == len(_AGENT_SECTOR_NAMES):
+            log.error(
+                "GATE-B: all %d agent sectors empty — refusing to commit garbage session. "
+                "Set JEEVES_FORCE_RESEARCH_EMPTY=1 to override.",
+                len(_AGENT_SECTOR_NAMES),
+            )
+            return 6
+
     return 0
 
 

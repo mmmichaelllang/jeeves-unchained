@@ -1084,53 +1084,6 @@ def _is_stream_timeout(exc: Exception) -> bool:
     return False
 
 
-# ---------------------------------------------------------------------------
-# NIM circuit breakers (2026-05-15 — diagnosis of run #68 cancellation)
-#
-# Each pipeline run starts a fresh Python process, so these reset implicitly
-# between runs. Tests must call ``_reset_circuit_breakers()`` in fixture setup
-# to avoid leaking state between cases.
-#
-# _NIM_429_TRIPPED: flipped True when ANY sector exhausts its full 60+120s
-# rate-limit retry budget. Subsequent sectors then skip the agent loop and
-# return ``spec.default`` fast (~milliseconds vs ~180s wasted per sector on
-# the retry chain).
-#
-# _NIM_TIMEOUT_CONSECUTIVE: counts back-to-back agent crashes with a
-# ``_is_stream_timeout``-shaped exception. Resets to 0 on any successful
-# agent return. Reaches ``_NIM_TIMEOUT_THRESHOLD`` → flips
-# ``_NIM_TIMEOUT_TRIPPED``. Threshold is 2 — 2026-05-14 run #68 burned
-# ~16min on uap (10m50s) + weather (6m23s) after the first two crashes
-# (triadic_ontology, ai_systems) had already shown NIM streams were unhealthy.
-# A threshold of 1 trips after the FIRST crash and saves all subsequent
-# sectors. Lowered from 2 on 2026-05-15: run #70 showed triadic_ontology +
-# ai_systems each burned ~9-12 min before the threshold=2 breaker fired.
-#
-# Each trip emits a ``circuit_breaker_trip`` telemetry event so the rollup
-# reports can flag NIM-degraded days.
-# ---------------------------------------------------------------------------
-_NIM_429_TRIPPED: bool = False
-_NIM_TIMEOUT_CONSECUTIVE: int = 0
-_NIM_TIMEOUT_TRIPPED: bool = False
-_NIM_TIMEOUT_THRESHOLD: int = 1
-
-
-def _reset_circuit_breakers() -> None:
-    """Reset all NIM circuit-breaker state. Tests call this in setup."""
-    global _NIM_429_TRIPPED, _NIM_TIMEOUT_CONSECUTIVE, _NIM_TIMEOUT_TRIPPED
-    _NIM_429_TRIPPED = False
-    _NIM_TIMEOUT_CONSECUTIVE = 0
-    _NIM_TIMEOUT_TRIPPED = False
-
-
-def _circuit_breaker_state() -> dict[str, Any]:
-    """Read-only snapshot of breaker state (telemetry + tests)."""
-    return {
-        "nim_429_tripped": _NIM_429_TRIPPED,
-        "nim_timeout_consecutive": _NIM_TIMEOUT_CONSECUTIVE,
-        "nim_timeout_tripped": _NIM_TIMEOUT_TRIPPED,
-        "nim_timeout_threshold": _NIM_TIMEOUT_THRESHOLD,
-    }
 
 
 _CEREBRAS_BASE = "https://api.cerebras.ai/v1"
@@ -1223,52 +1176,23 @@ def _build_cerebras_llm(max_tokens: int = 8192):
         return None
 
 
-def nim_preflight_probe(cfg: Any) -> bool:
-    """GET /v1/models on NIM to confirm the endpoint is reachable before
-    spending time on FunctionAgent loops.
-
-    Returns True when NIM responds OK. On 429 → trips _NIM_429_TRIPPED.
-    On any other failure → trips _NIM_TIMEOUT_TRIPPED. Either way returns
-    False so scripts/research.py can log a single warning and run_sector
-    short-circuits every agent sector via the normal breaker path.
-
-    Skipped (returns True) when cfg.dry_run or NVIDIA_API_KEY is absent.
-    """
-    global _NIM_429_TRIPPED, _NIM_TIMEOUT_TRIPPED
-
-    nvidia_key = getattr(cfg, "nvidia_api_key", None)
-    dry_run = getattr(cfg, "dry_run", False)
-    if dry_run or not nvidia_key:
-        return True
-
-    kimi_base = getattr(cfg, "kimi_base_url", "https://integrate.api.nvidia.com/v1")
-
-    try:
-        import httpx
-        resp = httpx.get(
-            f"{kimi_base.rstrip('/')}/models",
-            headers={"Authorization": f"Bearer {nvidia_key}"},
-            timeout=15.0,
-        )
-        if resp.status_code == 429:
-            log.warning(
-                "NIM pre-flight probe: 429 rate-limited — tripping 429 breaker; "
-                "all agent sectors will be skipped."
-            )
-            _NIM_429_TRIPPED = True
-            return False
-        resp.raise_for_status()
-        n_models = len(resp.json().get("data", []))
-        log.info("NIM pre-flight probe: OK (%d models listed).", n_models)
-        return True
-    except Exception as exc:
-        log.warning(
-            "NIM pre-flight probe failed (%s) — tripping timeout breaker; "
-            "all agent sectors will be skipped.",
-            exc,
-        )
-        _NIM_TIMEOUT_TRIPPED = True
-        return False
+def _build_openrouter_llm(max_tokens: int = 8192):
+    """OpenRouter Llama 3.3 70B free as Cerebras fallback for research sectors."""
+    from llama_index.llms.openai_like import OpenAILike
+    import os as _os
+    api_key = _os.environ.get("OPENROUTER_API_KEY", "").strip()
+    if not api_key:
+        return None
+    return OpenAILike(
+        model="meta-llama/llama-3.3-70b-instruct:free",
+        api_base="https://openrouter.ai/api/v1",
+        api_key=api_key,
+        is_chat_model=True,
+        is_function_calling_model=True,
+        max_tokens=max_tokens,
+        temperature=0.3,
+        timeout=120.0,
+    )
 
 
 # Sectors whose agents call non-quota tools (fetch_new_yorker_talk_of_the_town
@@ -1803,12 +1727,6 @@ async def run_sector(
 ) -> Any:
     """Run one sector's agent and return the parsed sector-shape value."""
 
-    # Declare all module-level circuit-breaker variables we may mutate.
-    # Python requires every ``global`` declaration to appear BEFORE the first
-    # reference to the name in the function — placing them up-front avoids
-    # SyntaxError when nested branches both read and write the state.
-    global _NIM_429_TRIPPED, _NIM_TIMEOUT_CONSECUTIVE, _NIM_TIMEOUT_TRIPPED
-
     # Fast path: newyorker bypasses the LLM agent entirely.
     # fetch_talk_of_the_town is pure Python — no LLM needed or wanted.
     # Routing it through Kimi introduces three hallucination vectors:
@@ -1839,64 +1757,34 @@ async def run_sector(
         )
         return parsed
 
-    # Circuit-breaker short-circuit. If a prior sector tripped the 429 or
-    # consecutive-timeout breaker, skip the agent loop entirely and return
-    # spec.default. Each short-circuit costs ~ms instead of the 3-10min the
-    # full retry chain would burn on a confirmed-bad NIM endpoint.
-    if _NIM_429_TRIPPED or _NIM_TIMEOUT_TRIPPED:
-        kind = (
-            "nim_429_breaker_short_circuit"
-            if _NIM_429_TRIPPED
-            else "nim_timeout_breaker_short_circuit"
+    # Research now uses Cerebras as primary, OpenRouter as fallback.
+    # NIM Kimi removed from research path (broken streaming protocol since 2026-05-13).
+    # Newyorker fast-path above already handled the no-LLM case.
+    _use_cerebras_fallback = _build_cerebras_llm(
+        max_tokens=(
+            2048 if spec.shape == "enriched"
+            else 4096 if spec.shape == "deep"
+            else 8192
         )
-        # Try Cerebras fallback before giving up. NIM stream truncation
-        # (2026-05-15/16) empties tool_call arguments — Cerebras can serve
-        # as a working alternative for the remaining sectors.
-        #
-        # Skip deep sectors on Cerebras — they consume 5-10 LLM calls each
-        # and exhaust the free-tier rate limit before light sectors can run.
-        # Run 25956734496: 3 deep sectors consumed the entire Cerebras budget,
-        # leaving 10 light sectors with zero capacity (all 429). Light sectors
-        # need only 2-3 calls and are more likely to complete within budget.
-        cerebras_llm = None if spec.shape == "deep" else _build_cerebras_llm(
-            max_tokens=(
-                2048 if spec.shape == "enriched"
-                else 8192
-            )
+    )
+    _use_openrouter_fallback = None
+    if _use_cerebras_fallback is None:
+        log.warning(
+            "sector %s: Cerebras unavailable (no key or model resolution failed); "
+            "trying OpenRouter.", spec.name,
         )
-        if cerebras_llm is not None:
+        _use_openrouter_fallback = _build_openrouter_llm(
+            max_tokens=4096 if spec.shape != "enriched" else 2048
+        )
+        if _use_openrouter_fallback is None:
             log.warning(
-                "sector %s: %s — falling back to Cerebras.",
-                spec.name, kind,
+                "sector %s: no LLM available (Cerebras + OpenRouter both unconfigured); "
+                "returning default.", spec.name,
             )
-            # Fall through to the normal agent path below using Cerebras LLM.
-            # We set _use_cerebras_fallback so the agent construction picks it up.
-            _use_cerebras_fallback = cerebras_llm
-        else:
-            log.warning(
-                "sector %s: %s — no Cerebras key; returning default.",
-                spec.name, kind,
-            )
-            try:
-                from .tools.telemetry import emit_llm_call as _emit_llm_call
-                _emit_llm_call(
-                    provider="nim",
-                    model="kimi-k2",
-                    label="research_sector",
-                    sector=spec.name,
-                    latency_ms=0.0,
-                    ok=False,
-                    error=kind,
-                )
-            except Exception:
-                pass
             return spec.default
-    else:
-        _use_cerebras_fallback = None
 
     from llama_index.core.agent.workflow import FunctionAgent
 
-    from .llm import build_kimi_llm
     from .tools import all_search_tools
 
     # Each sector gets its own agent, LLM, and tool instances so no state
@@ -1925,12 +1813,13 @@ async def run_sector(
     tools = all_search_tools(cfg, ledger, set(prior_urls_sample))
     if _use_cerebras_fallback is not None:
         llm = _use_cerebras_fallback
+        _provider_label = "cerebras"
+    elif _use_openrouter_fallback is not None:
+        llm = _use_openrouter_fallback
+        _provider_label = "openrouter"
     else:
-        # 60s timeout (down from 180s default). Run #70/25939633324 showed first 2
-        # NIM calls succeed in <20s each, then a 3rd call hangs for 180s before
-        # timing out. 60s is generous for any single NIM call; if it hasn't
-        # responded by then, it's dead for this invocation.
-        llm = build_kimi_llm(cfg, max_tokens=sector_max_tokens, timeout=60.0)
+        # Should never reach here — earlier code returns spec.default.
+        return spec.default
 
     user_msg = _build_user_prompt(
         spec, cfg.run_date.isoformat(), prior_urls_sample, extra_user,
@@ -1971,30 +1860,18 @@ async def run_sector(
     response = None
     # Three separate retry budgets:
     #   - Network drops (peer closed, chunked read): 3 retries at 10/30/60s
-    #   - NIM 429 rate limit: 2 retries at 60/120s (longer window to clear quota)
-    #   - Stream timeout ("Request timed out."): 1 retry at 10s — gives NIM a
-    #     second chance before tripping the circuit breaker. Run #25939633324
-    #     showed NIM first 2 calls OK then 3rd hangs → timeout → breaker →
-    #     all sectors empty. A single retry can recover transient NIM flakes.
+    #   - 429 rate limit: 6 retries at 10s each (Cerebras + OpenRouter free-tier cooldown)
+    #   - Stream timeout: 1 retry at 10s
     _net_delays = [10, 30, 60]
-    # Cerebras free tier rate-limits after 2-3 calls with ~10s cooldown.
-    # NIM 429s need longer 60+120s windows. Pick delays based on provider.
-    _ratelimit_delays = (
-        [10, 10, 10, 10, 10, 10] if _use_cerebras_fallback is not None
-        else [60, 120]
-    )
+    _ratelimit_delays = [10, 10, 10, 10, 10, 10]
     _timeout_delays = [10]
     net_attempts = 0
     rl_attempts = 0
     timeout_attempts = 0
     last_exc: Exception | None = None
     # Sector-level LLM-call telemetry. Records ONE event per agent.run()
-    # invocation — this is the high-water mark for NIM TPM pressure since
-    # each run loops over many tool calls + Kimi inferences. Token usage is
-    # rarely surfaced through the FunctionAgent abstraction (NIM streams),
-    # so we record call-count + latency + ok and let the rollup show what's
-    # available. No retry-attempt is double-counted: only the SUCCESSFUL or
-    # FINALLY-FAILED outcome lands.
+    # invocation — call-count + latency + ok. Only the SUCCESSFUL or
+    # FINALLY-FAILED outcome lands; individual retries are not double-counted.
     import time as _t
     from .tools.telemetry import emit_llm_call
 
@@ -2008,71 +1885,67 @@ async def run_sector(
                 # Rebuild agent with fresh instances for every retry so no
                 # stale streaming state leaks from the previous crashed connection.
                 tools_r = all_search_tools(cfg, ledger, set(prior_urls_sample))
-                llm_r = build_kimi_llm(cfg, max_tokens=sector_max_tokens, timeout=60.0)
                 agent_r = FunctionAgent(
-                    tools=tools_r, llm=llm_r,
+                    tools=tools_r, llm=llm,
                     system_prompt=_system_prompt,
                     verbose=cfg.verbose,
                 )
                 response = await agent_r.run(user_msg)
             emit_llm_call(
-                provider="nim",
-                model="kimi-k2",
+                provider=_provider_label,
+                model=getattr(llm, "model", "unknown"),
                 label="research_sector",
                 sector=spec.name,
                 latency_ms=(_t.monotonic() - _sector_t0) * 1000,
                 ok=True,
             )
-            # Reset consecutive-timeout counter — isolated timeouts shouldn't
-            # trip the breaker, only SUSTAINED ones. A sector that retried
-            # successfully (or succeeded first-try) is evidence NIM is alive.
-            # ``global _NIM_TIMEOUT_CONSECUTIVE`` declared at top of run_sector.
-            _NIM_TIMEOUT_CONSECUTIVE = 0
             break  # success — exit retry loop
         except Exception as e:
             last_exc = e
             if _is_nim_rate_limit(e):
                 if rl_attempts >= len(_ratelimit_delays):
-                    log.warning(
-                        "sector %s: NIM 429 on all %d rate-limit retries (%s); "
-                        "returning default.",
-                        spec.name, rl_attempts + 1, e,
-                    )
                     emit_llm_call(
-                        provider="nim",
-                        model="kimi-k2",
+                        provider=_provider_label,
+                        model=getattr(llm, "model", "unknown"),
                         label="research_sector",
                         sector=spec.name,
                         latency_ms=(_t.monotonic() - _sector_t0) * 1000,
                         ok=False,
                         error="rate_limit_exhausted",
                     )
-                    # Trip the 429 circuit breaker ONLY for NIM — Cerebras 429s
-                    # are rate-limit cooldowns that clear quickly (~10s) and
-                    # should NOT cascade to other sectors. Run 25955574312 showed
-                    # Cerebras 429 tripping NIM breaker → all sectors empty.
-                    if _use_cerebras_fallback is None and not _NIM_429_TRIPPED:
-                        _NIM_429_TRIPPED = True
+                    # Cerebras exhausted — try OpenRouter as last resort.
+                    if _provider_label == "cerebras" and _use_openrouter_fallback is None:
+                        _use_openrouter_fallback = _build_openrouter_llm(
+                            max_tokens=4096 if spec.shape != "enriched" else 2048
+                        )
+                    if _use_openrouter_fallback is not None and _provider_label != "openrouter":
                         log.warning(
-                            "sector %s: tripped NIM 429 circuit breaker; "
-                            "remaining sectors will skip agent loop.",
+                            "sector %s: Cerebras rate-limit exhausted; falling through to OpenRouter.",
                             spec.name,
                         )
-                        try:
-                            from .tools.telemetry import emit as _emit
-                            _emit(
-                                "circuit_breaker_trip",
-                                breaker="nim_429",
-                                sector=spec.name,
-                                threshold=len(_ratelimit_delays) + 1,
-                            )
-                        except Exception:
-                            pass
+                        llm = _use_openrouter_fallback
+                        _provider_label = "openrouter"
+                        rl_attempts = 0
+                        net_attempts = 0
+                        timeout_attempts = 0
+                        last_exc = None
+                        tools = all_search_tools(cfg, ledger, set(prior_urls_sample))
+                        agent = FunctionAgent(
+                            tools=tools, llm=llm,
+                            system_prompt=_system_prompt, verbose=cfg.verbose,
+                        )
+                        continue  # Re-enter the loop with OpenRouter
+                    # Both providers exhausted — give up.
+                    log.warning(
+                        "sector %s: %s 429 on all %d rate-limit retries (%s); "
+                        "returning default.",
+                        spec.name, _provider_label, rl_attempts + 1, e,
+                    )
                     return spec.default
                 delay = _ratelimit_delays[rl_attempts]
                 log.warning(
-                    "sector %s: NIM 429 rate-limit (attempt %d) — sleeping %ds.",
-                    spec.name, rl_attempts + 1, delay,
+                    "sector %s: %s 429 rate-limit (attempt %d) — sleeping %ds.",
+                    spec.name, _provider_label, rl_attempts + 1, delay,
                 )
                 await asyncio.sleep(delay)
                 rl_attempts += 1
@@ -2084,8 +1957,8 @@ async def run_sector(
                         spec.name, net_attempts + 1, e,
                     )
                     emit_llm_call(
-                        provider="nim",
-                        model="kimi-k2",
+                        provider=_provider_label,
+                        model=getattr(llm, "model", "unknown"),
                         label="research_sector",
                         sector=spec.name,
                         latency_ms=(_t.monotonic() - _sector_t0) * 1000,
@@ -2102,47 +1975,15 @@ async def run_sector(
                 await asyncio.sleep(delay)
                 net_attempts += 1
             elif _is_stream_timeout(e):
-                # Stream timeout retry — gives NIM one more chance before
-                # tripping the circuit breaker. Run #25939633324 showed NIM
-                # first 2 calls OK (18s, 3s) then 3rd call hangs → timeout →
-                # breaker → all 13 sectors empty. A single retry at 10s delay
-                # can recover from transient NIM flakes; if both attempts fail,
-                # THEN trip the breaker so remaining sectors short-circuit.
                 if timeout_attempts >= len(_timeout_delays):
-                    # Retry exhausted — now trip the circuit breaker.
-                    _NIM_TIMEOUT_CONSECUTIVE += 1
-                    if (
-                        not _NIM_TIMEOUT_TRIPPED
-                        and _NIM_TIMEOUT_CONSECUTIVE >= _NIM_TIMEOUT_THRESHOLD
-                    ):
-                        _NIM_TIMEOUT_TRIPPED = True
-                        log.warning(
-                            "sector %s: %d consecutive NIM stream-timeouts "
-                            "(threshold=%d) — tripping circuit breaker; "
-                            "remaining sectors will skip agent loop.",
-                            spec.name,
-                            _NIM_TIMEOUT_CONSECUTIVE,
-                            _NIM_TIMEOUT_THRESHOLD,
-                        )
-                        try:
-                            from .tools.telemetry import emit as _emit
-                            _emit(
-                                "circuit_breaker_trip",
-                                breaker="nim_timeout",
-                                sector=spec.name,
-                                consecutive=_NIM_TIMEOUT_CONSECUTIVE,
-                                threshold=_NIM_TIMEOUT_THRESHOLD,
-                            )
-                        except Exception:
-                            pass
                     log.warning(
                         "sector %s: stream timeout on all %d retries (%s); "
                         "returning default.",
                         spec.name, timeout_attempts + 1, e,
                     )
                     emit_llm_call(
-                        provider="nim",
-                        model="kimi-k2",
+                        provider=_provider_label,
+                        model=getattr(llm, "model", "unknown"),
                         label="research_sector",
                         sector=spec.name,
                         latency_ms=(_t.monotonic() - _sector_t0) * 1000,
