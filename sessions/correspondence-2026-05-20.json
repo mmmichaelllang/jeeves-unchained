@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Andy: Newsletter from brother Andrew Lang about staying caring amid outrage.\n- [escalation] Lady Cathy: Mother Cathy Lang sharing cabin planning information for 2026.\n- [escalation] mmmichaelllang: GitHub notification of failed Jeeves Daily Pipeline workflow run.\n- [escalation] lang.mc@gmail.com: Critical Jeeves pipeline alert for permanent failure with no auto-retry.\n- [escalation] lang.mc@gmail.com: Critical Jeeves pipeline alert for permanent failure with no auto-retry.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Daily Pipeline workflow failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure with no auto-retry.\n- [escalation] mmmichaelllang: GitHub notification that CI workflow failed for a pull request.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Daily Pipeline workflow failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure due to rate limit.\n- [escalation] mmmichaelllang: GitHub notification that CI workflow failed to run for a pull request.\n- [escalation] Google: Google security alert about an app password created for Readwise Essay Architect on his account.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.",
+  "counts": {
+    "reply_needed": 2,
+    "decision_required": 0,
+    "scheduling": 1,
+    "follow_up": 0,
+    "escalation": 14,
+    "no_action": 33
+  }
+}
