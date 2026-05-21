@@ -1060,6 +1060,20 @@ def _is_nim_rate_limit(exc: Exception) -> bool:
     return "429" in msg or "too many requests" in msg
 
 
+def _is_or_dead_endpoint(exc: Exception) -> bool:
+    """True when OpenRouter returns 404 "No endpoints found for X".
+
+    OR deprecates model variants from time to time (e.g.,
+    qwen/qwen-2.5-72b-instruct:free 2026-05). When that happens, the
+    request returns ``404 - {'error': {'message': 'No endpoints found
+    for ...'}}``. The semantically-correct response is the same as a
+    429 — rotate to the next chain entry — not "agent crashed". This
+    helper lets the retry loop treat dead routes as rotation triggers.
+    """
+    msg = str(exc).lower()
+    return "no endpoints found" in msg and "404" in msg
+
+
 def _is_stream_timeout(exc: Exception) -> bool:
     """Match agent-crashed-with-timeout shape.
 
@@ -1106,8 +1120,13 @@ _CEREBRAS_MODEL_CHAIN = [
     "llama3.3-70b",
     "llama-3.1-70b",
     "llama3.1-70b",
-    # llama3.1-8b deliberately last — 8192 ctx too small for research
-    "llama3.1-8b",
+    # 2026-05-21 round 5: llama3.1-8b REMOVED from chain entirely. Production
+    # Run #48 (commit 39c85c6) confirmed its 8192-token context window crashes
+    # deep sectors with "Cerebras: Current length is 9739 while limit is 8192".
+    # The crash hits the agent-loop's else branch as "agent crashed" and
+    # returns spec.default — no fallthrough to OR. Dropping the entry means
+    # rotation falls straight to OpenRouter once the 3 usable Cerebras models
+    # (gpt-oss-120b, qwen-3-235b-a22b-instruct-2507, zai-glm-4.7) all 429.
 ]
 _RESOLVED_CEREBRAS_MODEL: str | None = None
 _CEREBRAS_TRIED_MODELS: set[str] = set()  # models that 429'd this session
@@ -1239,10 +1258,14 @@ def _build_cerebras_llm(max_tokens: int = 8192):
 # spending cap so the worst case is bounded.
 _OPENROUTER_MODEL_CHAIN = [
     # Free tier — try first; 8 RPM per model, daily cap shared across users.
+    # 2026-05-21 round 5: qwen/qwen-2.5-72b-instruct:free DROPPED. OR has
+    # deprecated the route and returns 404 "No endpoints found for
+    # qwen/qwen-2.5-72b-instruct:free" — same dead-route fix that landed
+    # in correspondence.py round 2 (commit fbcff57), now propagated here.
     "meta-llama/llama-3.3-70b-instruct:free",
-    "qwen/qwen-2.5-72b-instruct:free",
     "google/gemma-2-27b-it:free",
     "deepseek/deepseek-chat-v3:free",
+    "mistralai/mistral-small-3.1-24b-instruct:free",
     # PAID backstop — :floor picks cheapest healthy provider for each.
     # ~$0.13/M input + ~$0.40/M output for llama-3.3-70b on paid endpoints.
     # 13-sector run if EVERY sector falls to paid = ~$0.03. $5 cap = ~165 runs.
@@ -1935,12 +1958,17 @@ async def _run_crawl4ai_sector(
         log.warning("sector %s: crawl4ai no content extracted; returning default.", spec.name)
         return spec.default
 
-    # 3. Cerebras synthesis call with model rotation on 429.
-    # 2026-05-21: Same model-rotation pattern as the FunctionAgent path
-    # (see _is_nim_rate_limit handler). On 429 from gpt-oss-120b we rotate
-    # to the next entry of _CEREBRAS_MODEL_CHAIN instead of returning default.
-    # Caps total attempts at the number of available Cerebras models so a
-    # totally-down provider can't loop forever.
+    # 3. Synthesis call with TWO-phase rotation.
+    #
+    # Phase 1: Cerebras (fast + free). Rotates through _CEREBRAS_MODEL_CHAIN
+    # on 429, mirroring the FunctionAgent path's _is_nim_rate_limit handler.
+    #
+    # Phase 2 (2026-05-21 round 6): when the Cerebras chain is fully
+    # exhausted (cumulative TRIED set populated by earlier sectors), fall
+    # through to the OpenRouter chain — same rotation pattern, terminates
+    # on :floor paid backstops. Run #48 confirmed Crawl4AI sectors were
+    # being starved because Cerebras had already burnt out on the 3 deep
+    # sectors; phase 2 unblocks the 6 Crawl4AI-eligible sectors.
     from llama_index.core.llms import ChatMessage
 
     content_block = "\n\n".join(content_parts)
@@ -1955,21 +1983,25 @@ async def _run_crawl4ai_sector(
     messages = [ChatMessage(role="user", content=synthesis_prompt)]
 
     raw: str = ""
+
+    # ── Phase 1: Cerebras rotation ─────────────────────────────────────
+    cerebras_chain_exhausted = False
     for _rotation_attempt in range(len(_CEREBRAS_MODEL_CHAIN) + 1):
         llm = _build_cerebras_llm(max_tokens=8192)
         if llm is None:
-            log.warning(
-                "sector %s: crawl4ai Cerebras unavailable (all models tried?); "
-                "returning default.",
+            log.info(
+                "sector %s: crawl4ai Cerebras unavailable (chain exhausted); "
+                "falling through to OpenRouter.",
                 spec.name,
             )
-            return spec.default
+            cerebras_chain_exhausted = True
+            break
         current_model = getattr(llm, "model", None)
         try:
             resp = await llm.achat(messages)
             raw = (resp.message.content or "").strip()
             log.info(
-                "sector %s: crawl4ai synthesis done on %s (%d chars).",
+                "sector %s: crawl4ai synthesis done on cerebras/%s (%d chars).",
                 spec.name, current_model, len(raw),
             )
             break  # success
@@ -1982,14 +2014,76 @@ async def _run_crawl4ai_sector(
                         spec.name, current_model, next_model,
                     )
                     continue  # rebuild LLM with rotated model on next iter
+                # Cerebras chain exhausted via rotation — fall to OR.
+                cerebras_chain_exhausted = True
+                break
+            # Non-rate-limit exception (timeout, parse error, etc.) — bail.
             log.warning(
-                "sector %s: crawl4ai synthesis failed on %s (%s); returning default.",
+                "sector %s: crawl4ai cerebras synthesis failed on %s (%s); "
+                "returning default.",
                 spec.name, current_model, exc,
             )
             return spec.default
     else:
+        cerebras_chain_exhausted = True
+
+    # ── Phase 2: OpenRouter rotation (only if Cerebras fully exhausted) ──
+    if not raw and cerebras_chain_exhausted:
+        log.info(
+            "sector %s: crawl4ai synthesis → OR rotation phase.", spec.name,
+        )
+        for _or_attempt in range(len(_OPENROUTER_MODEL_CHAIN) + 1):
+            or_llm = _build_openrouter_llm(max_tokens=4096)
+            if or_llm is None:
+                log.warning(
+                    "sector %s: crawl4ai OR unavailable (chain exhausted or "
+                    "no key); returning default.",
+                    spec.name,
+                )
+                return spec.default
+            or_model = getattr(or_llm, "model", None)
+            try:
+                resp = await or_llm.achat(messages)
+                raw = (resp.message.content or "").strip()
+                log.info(
+                    "sector %s: crawl4ai synthesis done on openrouter/%s "
+                    "(%d chars).",
+                    spec.name, or_model, len(raw),
+                )
+                break  # success
+            except Exception as exc:
+                # OR rotates on 429 AND on dead-endpoint 404. Anything else
+                # is treated as terminal — don't burn budget hopping models
+                # for non-rate-limit failures (e.g., auth, network).
+                rotatable = (
+                    _is_nim_rate_limit(exc) or _is_or_dead_endpoint(exc)
+                )
+                if rotatable and or_model:
+                    next_or = _rotate_openrouter_on_429(or_model)
+                    if next_or is not None:
+                        log.info(
+                            "sector %s: crawl4ai or 429/404 on %s → rotating "
+                            "to %s.",
+                            spec.name, or_model, next_or,
+                        )
+                        continue
+                log.warning(
+                    "sector %s: crawl4ai or synthesis failed on %s (%s); "
+                    "returning default.",
+                    spec.name, or_model, exc,
+                )
+                return spec.default
+        else:
+            log.warning(
+                "sector %s: crawl4ai synthesis exhausted both Cerebras and "
+                "OR chains; returning default.",
+                spec.name,
+            )
+            return spec.default
+
+    if not raw:
         log.warning(
-            "sector %s: crawl4ai synthesis exhausted Cerebras chain; "
+            "sector %s: crawl4ai synthesis produced empty output; "
             "returning default.",
             spec.name,
         )
@@ -2208,7 +2302,16 @@ async def run_sector(
             break  # success — exit retry loop
         except Exception as e:
             last_exc = e
-            if _is_nim_rate_limit(e):
+            # 2026-05-21 round 5: dead-endpoint 404 from OpenRouter is a
+            # rotation trigger, NOT an "agent crashed" terminal error. OR
+            # periodically removes :free routes (e.g., qwen-2.5-72b-instruct
+            # 2026-05); the right response is to mark the model TRIED and
+            # try the next one, exactly like a 429.
+            is_rate_or_dead = (
+                _is_nim_rate_limit(e)
+                or (_provider_label == "openrouter" and _is_or_dead_endpoint(e))
+            )
+            if is_rate_or_dead:
                 # 2026-05-21: Cerebras free-tier RPM is per-model, not per-key.
                 # Sleeping 10s and retrying the same model rarely clears the
                 # 429 because gpt-oss-120b (resolved first) is hammered by all

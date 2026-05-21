@@ -1232,7 +1232,7 @@ async def test_run_crawl4ai_sector_rotates_cerebras_on_429(monkeypatch):
 
 
 async def test_run_crawl4ai_sector_returns_default_when_chain_exhausted(monkeypatch):
-    """All Cerebras models 429 → returns spec.default (no infinite loop)."""
+    """All Cerebras AND OR models exhausted → returns spec.default."""
     import json
     import threading
     from datetime import date
@@ -1243,6 +1243,7 @@ async def test_run_crawl4ai_sector_returns_default_when_chain_exhausted(monkeypa
 
     rs._RESOLVED_CEREBRAS_MODEL = None
     rs._CEREBRAS_TRIED_MODELS = set()
+    rs._OPENROUTER_TRIED_MODELS = set()
 
     wrapped = json.dumps({
         "provider": "serper", "query": "q",
@@ -1274,9 +1275,22 @@ async def test_run_crawl4ai_sector_returns_default_when_chain_exhausted(monkeypa
             return None  # _resolve_cerebras_model returns None
         return _AllRateLimitedLLM(untried[0])
 
+    # 2026-05-21 round 6: _run_crawl4ai_sector now falls to OR after
+    # Cerebras exhausts. Stub OR to also 429 on every entry so the
+    # exhaustion path still bottoms out at spec.default.
+    def _fake_build_openrouter_llm(max_tokens=4096, model=None):
+        untried = [
+            m for m in rs._OPENROUTER_MODEL_CHAIN
+            if m not in rs._OPENROUTER_TRIED_MODELS
+        ]
+        if not untried:
+            return None
+        return _AllRateLimitedLLM(model or untried[0])
+
     monkeypatch.setattr("jeeves.tools.serper.make_serper_search", _fake_make_serper_search)
     monkeypatch.setattr("jeeves.tools.crawl4ai_extract.batch_extract", _fake_batch_extract)
     monkeypatch.setattr(rs, "_build_cerebras_llm", _fake_build_cerebras_llm)
+    monkeypatch.setattr(rs, "_build_openrouter_llm", _fake_build_openrouter_llm)
 
     cfg = Config(
         nvidia_api_key="", serper_api_key="k", tavily_api_key="", exa_api_key="",
@@ -1292,9 +1306,15 @@ async def test_run_crawl4ai_sector_returns_default_when_chain_exhausted(monkeypa
     result = await rs._run_crawl4ai_sector(cfg, spec, [], ledger)
 
     assert result == spec.default, "exhaustion must return spec.default"
-    # All chain models tried (or at least more than 1 — proves rotation ran).
+    # Cerebras chain iterated (proves Phase 1 rotation ran).
     assert len(rs._CEREBRAS_TRIED_MODELS) >= 2, (
-        f"rotation didn't iterate; TRIED: {rs._CEREBRAS_TRIED_MODELS!r}"
+        f"cerebras rotation didn't iterate; TRIED: "
+        f"{rs._CEREBRAS_TRIED_MODELS!r}"
+    )
+    # OR chain also iterated (proves Phase 2 rotation ran).
+    assert len(rs._OPENROUTER_TRIED_MODELS) >= 2, (
+        f"OR rotation didn't iterate; TRIED: "
+        f"{rs._OPENROUTER_TRIED_MODELS!r}"
     )
 
 
@@ -1370,3 +1390,218 @@ def test_build_openrouter_llm_skips_tried_models(monkeypatch):
         f"builder picked {captured.get('model')!r}; expected "
         f"{rs._OPENROUTER_MODEL_CHAIN[1]!r} (first untried)"
     )
+
+
+# ---------------------------------------------------------------------------
+# 2026-05-21 round 5 regression: _is_or_dead_endpoint detects OR 404 dead
+# routes (e.g., qwen-2.5-72b-instruct:free in May 2026). Production Run #48
+# confirmed every sector that fell through to OR hit the qwen 404 wall and
+# crashed silently because the catch-all `else` branch returned spec.default
+# instead of rotating to the next chain entry. Helper + wiring now treat
+# 404 "No endpoints found" as a rotation trigger, same as 429.
+# ---------------------------------------------------------------------------
+
+def test_is_or_dead_endpoint_detects_404_no_endpoints():
+    import jeeves.research_sectors as rs
+    exc = Exception(
+        "Error code: 404 - {'error': {'message': 'No endpoints found for "
+        "qwen/qwen-2.5-72b-instruct:free.', 'code': 404}, 'user_id': 'user_xxx'}"
+    )
+    assert rs._is_or_dead_endpoint(exc) is True
+
+
+def test_is_or_dead_endpoint_ignores_429():
+    import jeeves.research_sectors as rs
+    exc = Exception(
+        "Error code: 429 - {'error': {'message': 'Rate limit exceeded', "
+        "'code': 429}}"
+    )
+    assert rs._is_or_dead_endpoint(exc) is False
+
+
+def test_is_or_dead_endpoint_ignores_generic_404():
+    import jeeves.research_sectors as rs
+    # A 404 without the "No endpoints found" phrase is some other problem
+    # (e.g., model name typo) — don't trigger rotation on it.
+    exc = Exception("Error code: 404 - {'error': {'message': 'Not Found'}}")
+    assert rs._is_or_dead_endpoint(exc) is False
+
+
+def test_or_chain_no_longer_includes_dead_qwen_route():
+    """OR chain must not include qwen/qwen-2.5-72b-instruct:free (deprecated)."""
+    import jeeves.research_sectors as rs
+    assert "qwen/qwen-2.5-72b-instruct:free" not in rs._OPENROUTER_MODEL_CHAIN, (
+        "deprecated route — OR returns 404 'No endpoints found' as of 2026-05"
+    )
+
+
+def test_cerebras_chain_no_longer_includes_llama_8b():
+    """8b context window (8192) too small for deep sectors. Drop entirely."""
+    import jeeves.research_sectors as rs
+    assert "llama3.1-8b" not in rs._CEREBRAS_MODEL_CHAIN, (
+        "llama3.1-8b crashes deep sectors with context_length_exceeded — "
+        "keep out of chain"
+    )
+
+
+# ---------------------------------------------------------------------------
+# 2026-05-21 round 6: _run_crawl4ai_sector synthesis must fall through to
+# OpenRouter rotation when Cerebras chain is exhausted. Run #48 confirmed
+# Crawl4AI sectors were starved when deep sectors burnt the Cerebras chain
+# before they ran. Phase 1 (Cerebras) → Phase 2 (OR) cascade now covers it.
+# ---------------------------------------------------------------------------
+
+async def test_run_crawl4ai_sector_falls_to_or_when_cerebras_exhausted(monkeypatch):
+    """Cerebras chain returns None → OR rotation phase fires → success."""
+    import json
+    import threading
+    from datetime import date
+
+    import jeeves.research_sectors as rs
+    from jeeves.config import Config
+    from jeeves.tools.quota import QuotaLedger
+
+    rs._RESOLVED_CEREBRAS_MODEL = None
+    rs._CEREBRAS_TRIED_MODELS = set(rs._CEREBRAS_MODEL_CHAIN)  # pretend exhausted
+    rs._OPENROUTER_TRIED_MODELS = set()
+
+    wrapped = json.dumps({
+        "provider": "serper", "query": "q",
+        "results": [{"url": "https://example.com/a"}],
+    })
+
+    def _fake_make_serper_search(cfg, ledger):
+        return lambda query="", num=10, tbs=None: wrapped
+
+    async def _fake_batch_extract(urls, max_chars=6000):
+        return [(f"body for {u}", "trafilatura") for u in urls]
+
+    # Cerebras builder always returns None (chain exhausted).
+    monkeypatch.setattr(rs, "_build_cerebras_llm", lambda max_tokens=8192: None)
+
+    or_calls: list[str] = []
+
+    class _OrLLM:
+        def __init__(self, model):
+            self.model = model
+
+        async def achat(self, messages):
+            or_calls.append(self.model)
+            from llama_index.core.llms import (
+                ChatResponse, ChatMessage as _CM,
+            )
+            return ChatResponse(message=_CM(role="assistant", content='[]'))
+
+    def _fake_build_openrouter_llm(max_tokens=4096, model=None):
+        # Mimic _next_untried_openrouter_model logic.
+        for candidate in rs._OPENROUTER_MODEL_CHAIN:
+            if candidate not in rs._OPENROUTER_TRIED_MODELS:
+                return _OrLLM(model or candidate)
+        return None
+
+    monkeypatch.setattr("jeeves.tools.serper.make_serper_search", _fake_make_serper_search)
+    monkeypatch.setattr("jeeves.tools.crawl4ai_extract.batch_extract", _fake_batch_extract)
+    monkeypatch.setattr(rs, "_build_openrouter_llm", _fake_build_openrouter_llm)
+
+    cfg = Config(
+        nvidia_api_key="", serper_api_key="k", tavily_api_key="", exa_api_key="",
+        google_api_key="", groq_api_key="", gmail_app_password="",
+        gmail_oauth_token_json="", github_token="", github_repository="r/r",
+        run_date=date(2026, 5, 21),
+    )
+    ledger = QuotaLedger.__new__(QuotaLedger)
+    ledger._state = {"providers": {}}
+    ledger._lock = threading.Lock()
+
+    spec = next(s for s in rs.SECTOR_SPECS if s.name == "local_news")
+    result = await rs._run_crawl4ai_sector(cfg, spec, [], ledger)
+
+    # OR was reached + a call was made.
+    assert len(or_calls) >= 1, (
+        f"OR phase never fired; or_calls={or_calls!r}"
+    )
+    # Result is the parsed sector default for empty JSON — but the key
+    # assertion is that the function got TO synthesis instead of bailing
+    # at "Cerebras unavailable" in phase 1.
+
+
+async def test_run_crawl4ai_sector_rotates_or_on_dead_endpoint(monkeypatch):
+    """OR 404 'No endpoints found' must rotate to next OR model, not return default."""
+    import json
+    import threading
+    from datetime import date
+
+    import jeeves.research_sectors as rs
+    from jeeves.config import Config
+    from jeeves.tools.quota import QuotaLedger
+
+    rs._RESOLVED_CEREBRAS_MODEL = None
+    rs._CEREBRAS_TRIED_MODELS = set(rs._CEREBRAS_MODEL_CHAIN)
+    rs._OPENROUTER_TRIED_MODELS = set()
+
+    wrapped = json.dumps({
+        "provider": "serper", "query": "q",
+        "results": [{"url": "https://example.com/a"}],
+    })
+
+    def _fake_make_serper_search(cfg, ledger):
+        return lambda query="", num=10, tbs=None: wrapped
+
+    async def _fake_batch_extract(urls, max_chars=6000):
+        return [(f"body for {u}", "trafilatura") for u in urls]
+
+    monkeypatch.setattr(rs, "_build_cerebras_llm", lambda max_tokens=8192: None)
+
+    or_calls: list[str] = []
+    first_model = rs._OPENROUTER_MODEL_CHAIN[0]
+
+    class _OrLLM:
+        def __init__(self, model):
+            self.model = model
+
+        async def achat(self, messages):
+            or_calls.append(self.model)
+            if self.model == first_model:
+                # Simulate OR's deprecated-route response.
+                raise Exception(
+                    "Error code: 404 - {'error': {'message': 'No endpoints "
+                    f"found for {self.model}.', 'code': 404}}"
+                )
+            from llama_index.core.llms import (
+                ChatResponse, ChatMessage as _CM,
+            )
+            return ChatResponse(message=_CM(role="assistant", content='[]'))
+
+    def _fake_build_openrouter_llm(max_tokens=4096, model=None):
+        if model is None:
+            for candidate in rs._OPENROUTER_MODEL_CHAIN:
+                if candidate not in rs._OPENROUTER_TRIED_MODELS:
+                    model = candidate
+                    break
+        return _OrLLM(model) if model else None
+
+    monkeypatch.setattr("jeeves.tools.serper.make_serper_search", _fake_make_serper_search)
+    monkeypatch.setattr("jeeves.tools.crawl4ai_extract.batch_extract", _fake_batch_extract)
+    monkeypatch.setattr(rs, "_build_openrouter_llm", _fake_build_openrouter_llm)
+
+    cfg = Config(
+        nvidia_api_key="", serper_api_key="k", tavily_api_key="", exa_api_key="",
+        google_api_key="", groq_api_key="", gmail_app_password="",
+        gmail_oauth_token_json="", github_token="", github_repository="r/r",
+        run_date=date(2026, 5, 21),
+    )
+    ledger = QuotaLedger.__new__(QuotaLedger)
+    ledger._state = {"providers": {}}
+    ledger._lock = threading.Lock()
+
+    spec = next(s for s in rs.SECTOR_SPECS if s.name == "local_news")
+    await rs._run_crawl4ai_sector(cfg, spec, [], ledger)
+
+    # Both first (dead) and second model were called — rotation fired.
+    assert len(or_calls) >= 2, (
+        f"OR rotation didn't advance past 404; or_calls={or_calls!r}"
+    )
+    assert or_calls[0] == first_model
+    assert or_calls[1] != first_model
+    # And the first model is now in TRIED set (proves _rotate_openrouter_on_429 fired).
+    assert first_model in rs._OPENROUTER_TRIED_MODELS
