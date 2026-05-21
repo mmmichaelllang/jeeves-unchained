@@ -203,6 +203,14 @@ jobs:
           JEEVES_JINA_SEARCH_SHADOW: ${{ vars.JEEVES_JINA_SEARCH_SHADOW || '' }}
           JEEVES_TINYFISH_SEARCH_SHADOW: ${{ vars.JEEVES_TINYFISH_SEARCH_SHADOW || '' }}
           JEEVES_PLAYWRIGHT_SEARCH_SHADOW: ${{ vars.JEEVES_PLAYWRIGHT_SEARCH_SHADOW || '' }}
+          # ── M3-M5 Crawl4AI refactor (2026-05-21). GH Variables were set but
+          # daily.yml never plumbed them through, so the agent path kept running
+          # instead — repeating the FREE_TIER_CAPACITY_CEILING failure (#79, #80
+          # both died with GATE-B "all 13 agent sectors empty"). Same bug shape
+          # as the CEREBRAS_API_KEY oversight at commit cf8e558.
+          JEEVES_USE_CRAWL4AI_RESEARCH: ${{ vars.JEEVES_USE_CRAWL4AI_RESEARCH || '' }}
+          JEEVES_USE_CRAWL4AI_FETCH: ${{ vars.JEEVES_USE_CRAWL4AI_FETCH || '' }}
+          JEEVES_REFACTOR_KILL_SWITCH: ${{ vars.JEEVES_REFACTOR_KILL_SWITCH || '' }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
