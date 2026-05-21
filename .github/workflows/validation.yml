@@ -1,0 +1,53 @@
+name: Validation Sprint
+
+# Validation sprint (M6) — fires daily.yml every 30min while
+# JEEVES_VALIDATION_MODE=1 repo Variable is set.
+#
+# Steady state: set JEEVES_VALIDATION_MODE=0 (or unset). Cron still fires but
+# every invocation exits in <10s because the gate-check job no-ops.
+#
+# To enable validation sprint:
+#   gh variable set JEEVES_VALIDATION_MODE --body "1" -R mmmichaelllang/jeeves-unchained
+# To end validation sprint:
+#   gh variable set JEEVES_VALIDATION_MODE --body "0" -R mmmichaelllang/jeeves-unchained
+#
+# Created 2026-05-21 as part of M6 acceleration. See:
+#   decisions/m6-acceleration-2026-05-21.md
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # every 30 min UTC
+  workflow_dispatch:
+
+permissions:
+  actions: write   # to trigger daily.yml
+  contents: read
+
+jobs:
+  gate-and-trigger:
+    name: Gate + trigger daily.yml
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Check JEEVES_VALIDATION_MODE
+        id: gate
+        env:
+          MODE: ${{ vars.JEEVES_VALIDATION_MODE }}
+        run: |
+          echo "JEEVES_VALIDATION_MODE=$MODE"
+          if [ "$MODE" = "1" ]; then
+            echo "validation_active=true" >> $GITHUB_OUTPUT
+          else
+            echo "validation_active=false" >> $GITHUB_OUTPUT
+            echo "::notice::Validation mode off — exiting without triggering daily.yml"
+          fi
+
+      - name: Trigger daily.yml
+        if: steps.gate.outputs.validation_active == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Trigger daily.yml workflow_dispatch. Empty inputs = today UTC,
+          # no skip_send (send email if write phase succeeds).
+          gh workflow run daily.yml -R "${{ github.repository }}"
+          echo "::notice::daily.yml dispatched at $(date -u -Is)"
