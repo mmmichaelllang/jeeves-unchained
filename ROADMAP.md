@@ -45,14 +45,14 @@ Replace per-sector FunctionAgent loop with content-type-aware Crawl4AI extractio
   VERIFY: `python -c "from jeeves.tools.crawl4ai_extract import classify_host; print(classify_host('https://nytimes.com/foo'), classify_host('https://theguardian.com/article'), classify_host('https://github.com/foo'))"`
 
 ### M2 — Research synthesis: Crawl4AI for news_short sectors only (feature-flagged)
-- [ ] Add `JEEVES_USE_CRAWL4AI_RESEARCH=1` flag. New code path in `jeeves/research_sectors.py`:
+- [x] Add `JEEVES_USE_CRAWL4AI_RESEARCH=1` flag. New code path in `jeeves/research_sectors.py`:
   - Sectors where `classify_host` returns `news_short` for majority of fetched URLs → Crawl4AI extract top 5-8 URLs → ONE Cerebras synthesis call → findings JSON.
   - Sectors with `content_type` NOT news_short → keep FunctionAgent path unchanged (no deletion, flag guards new path only).
   - Deep sectors (triadic_ontology, ai_systems, uap) → ALWAYS keep FunctionAgent path regardless of flag.
   - `newyorker` → unchanged direct fetch.
   DONE WHEN: Flag plumbed through `scripts/research.py` + `research_sectors.py`. Both paths runnable. `pytest tests/test_research_sectors.py` exits 0.
   VERIFY: `grep -n "JEEVES_USE_CRAWL4AI_RESEARCH" scripts/research.py jeeves/research_sectors.py && uv run pytest tests/test_research_sectors.py -q | tail -5`
-- [ ] Sector routing table: `_CRAWL4AI_ELIGIBLE_SECTORS` = {local_news, global_news, weather, career, family, wearable_ai} (6 light sectors). literary_pick, enriched_articles, vault_insight → TBD per M2 testing.
+- [x] Sector routing table: `_CRAWL4AI_ELIGIBLE_SECTORS` = {local_news, global_news, weather, career, family, wearable_ai} (6 light sectors). literary_pick, enriched_articles, vault_insight → TBD per M2 testing.
   DONE WHEN: Routing table present in `research_sectors.py` + referenced in run_sector decision tree.
   VERIFY: `grep -n "_CRAWL4AI_ELIGIBLE_SECTORS" jeeves/research_sectors.py`
 - [ ] Production verification: one workflow_dispatch with flag=1 → ≥10/13 non-empty sectors.
@@ -60,29 +60,30 @@ Replace per-sector FunctionAgent loop with content-type-aware Crawl4AI extractio
   VERIFY: `python3 -c "import json; s=json.load(open('sessions/session-$(date -u +%Y-%m-%d).json')); print(sum(1 for k,v in s.items() if isinstance(v,(list,dict,str)) and (len(v) if isinstance(v,list) else any(v.values()) if isinstance(v,dict) else v)))"`
 
 ### M3 — Fetch-chain: Crawl4AI as TIER 2 for news_short hosts only (feature-flagged)
-- [ ] Add `JEEVES_USE_CRAWL4AI_FETCH=1` flag in `jeeves/enrichment.py` `fetch_article_text`.
+- [x] Add `JEEVES_USE_CRAWL4AI_FETCH=1` flag in `jeeves/enrichment.py` `fetch_article_text`.
   New cascade for news_short hosts: trafilatura → Crawl4AI (new TIER 2) → Jina → tinyfish → Playwright.
   Hosts NOT in news_short (long_form, paywalled, nav_heavy) → trafilatura → Jina → tinyfish → Playwright unchanged.
   `classify_host` from `crawl4ai_extract.py` drives the routing decision.
+  Shipped via PR #137 (commit 502f1be) with _run_crawl4ai_sync thread-dispatch helper to survive pytest-asyncio host loops.
   DONE WHEN: Flag plumbed. Both paths runnable. `pytest tests/test_enrichment.py` exits 0.
-  VERIFY: `grep -n "JEEVES_USE_CRAWL4AI_FETCH" jeeves/enrichment.py && uv run pytest tests/test_enrichment.py -q | tail -5`
+  VERIFY: `grep -n "JEEVES_USE_CRAWL4AI_FETCH" jeeves/tools/enrichment.py && uv run pytest tests/test_enrichment.py -q | tail -5`
 - [ ] Production verification: workflow_dispatch with both flags=1 → non-empty session.
   DONE WHEN: One manual run with both flags=1 produces ≥10/13 non-empty sectors.
   VERIFY: same as M2 production verify on next day's session JSON.
 
 ### M4 — Cerebras runtime model rotation
-- [ ] `_build_cerebras_llm` resolves model from live `/v1/models` response (not hardcoded chain). Per-call rotation on 429.
+- [x] `_build_cerebras_llm` resolves model from live `/v1/models` response (not hardcoded chain). Per-call rotation on 429.
   DONE WHEN: Model resolution dynamic. Rotation logic catches 429 and tries next available model in chain.
   VERIFY: `grep -nE "_resolve_cerebras_model|_rotate_on_429" jeeves/research_sectors.py`
-- [ ] Tests: `tests/test_cerebras_rotation.py` — 4 cases (resolution from live, 429 rotation, exhaustion → OR fallback, model cache invalidation).
+- [x] Tests: `tests/test_cerebras_rotation.py` — 4 cases (resolution from live, 429 rotation, exhaustion → OR fallback, model cache invalidation).
   DONE WHEN: `pytest tests/test_cerebras_rotation.py -v` 4/4 passed.
   VERIFY: `uv run pytest tests/test_cerebras_rotation.py -v 2>&1 | tail -10`
 
 ### M5 — Refactor kill switch
-- [ ] `JEEVES_REFACTOR_KILL_SWITCH=1` env var forces old paths regardless of feature flags. One-line emergency reversion.
+- [x] `JEEVES_REFACTOR_KILL_SWITCH=1` env var forces old paths regardless of feature flags. One-line emergency reversion.
   DONE WHEN: Both feature flags check kill switch first; if set, route to old code path.
-  VERIFY: `grep -nE "JEEVES_REFACTOR_KILL_SWITCH" scripts/research.py jeeves/research_sectors.py jeeves/enrichment.py`
-- [ ] Tests: `tests/test_kill_switch.py` — 3 cases (kill overrides research flag, fetch flag, both).
+  VERIFY: `grep -nE "JEEVES_REFACTOR_KILL_SWITCH" scripts/research.py jeeves/research_sectors.py jeeves/tools/enrichment.py`
+- [x] Tests: `tests/test_kill_switch.py` — 3 cases (kill overrides research flag, fetch flag, both).
   DONE WHEN: `pytest tests/test_kill_switch.py -v` 3/3.
   VERIFY: `uv run pytest tests/test_kill_switch.py -v 2>&1 | tail -10`
 
