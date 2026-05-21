@@ -2,13 +2,13 @@
 _Auto-managed. Do not edit during a run._
 
 ## Last Updated
-2026-05-21T19:15:00Z (iter 9 — PR #136 merged, validation.yml enabled, M6 sprint started)
+2026-05-21T21:15:00Z (iter 9 — cowork session: round 7 fixes, commit ff3e13e, awaiting user push)
 
 ## Iteration
 9 (M6 validation sprint — in progress)
 
 ## Last Milestone
-M6 STARTED (2026-05-21) — PR #136 merged to main (squash commit `6c73150`). Both GH Variables set. validation.yml cron enabled (active, fires every 30min). Sprint window: 12+ consecutive runs → ≥9/12 non-empty briefings required.
+M6 IN-PROGRESS — round 7 cowork fixes (commit `ff3e13e` on main, awaiting user push + research.yml trigger).
 
 ## Last Outcome
 IN_PROGRESS
@@ -23,10 +23,37 @@ validation.yml enabled:
   gh workflow list → "Validation Sprint  active  280839531"
   GH Variables: JEEVES_USE_CRAWL4AI_RESEARCH=1, JEEVES_USE_CRAWL4AI_FETCH=1 (both set)
   First run fires within 30min of enable
+
+round 7 cowork fixes (commit ff3e13e, 2026-05-21 ~21:00 UTC):
+  Diagnosed from research.py run log (2026-05-21 20:38-20:49 UTC):
+
+  BUG 1 (EXIT-1 BLOCKER): enriched_articles Pydantic crash.
+    OR :floor returned flat URL strings list instead of EnrichedArticle dicts.
+    _parse_sector_output enriched shape didn't filter non-dict entries.
+    save_session → SessionModel.model_validate() → 5 validation errors → exit 1.
+    FIX: filter bare strings in _parse_sector_output before text-cap loop.
+
+  BUG 2: triadic_ontology → spec.default (llama3.1-8b ctx crash, no OR fallback).
+    After gpt-oss-120b+qwen-3+zai-glm all 429d, _resolve_cerebras_model fallback
+    picked llama3.1-8b from remaining=sorted(available-TRIED) alphabetically.
+    llama3.1-8b: 400 ctx exceeded (9536 > 8192) → else branch → returning default.
+    Round 5 removed llama3.1-8b from _CEREBRAS_MODEL_CHAIN but not from remaining fallback.
+    FIX: added _CEREBRAS_CTX_BANNED=frozenset({"llama3.1-8b"}); filter in remaining fallback.
+
+  BUG 3: global_news → spec.default (Connection error not rotatable in crawl4ai OR phase).
+    _is_retryable_network_error didn't match "Connection error." (httpx.ConnectError).
+    rotatable=False → returned default instead of rotating to mistral-small:floor.
+    FIX: added "connection error" phrase; wired _is_retryable_network_error into
+         crawl4ai OR rotation condition.
+
+  4 new hermetic tests.
+  NOTE: tests NOT run locally (sandbox disk full).
+  VERIFY: uv run pytest tests/test_research_sectors.py -x -q
+  User action required: git pull --rebase && git push && gh workflow run research.yml
 ```
 
 ## Last Blocker
-None.
+Exit-1 Pydantic crash on enriched_articles (fixed in ff3e13e, awaiting push + verification).
 
 ## Same Blocker Count
 0
@@ -67,6 +94,7 @@ None.
 | 7 | M5 retry | FAILED→BLOCKED | root cause was Playwright sync-API loop leak in TOTT test contaminating test_research_sectors.py (false positives) |
 | 8 | M3 asyncio fix | SUCCESS | PR #137 merged (502f1be): _run_crawl4ai_sync + canary fixture + TOTT playwright mock; M5 confirmed non-regressing; feat/m6 rebased on main |
 | 9 | M6 validation sprint | IN_PROGRESS | PR #136 merged (6c73150); validation.yml enabled; GH Variables set; sprint running |
+| 9 | M6 round 7 cowork fix | IN_PROGRESS | 3 bugs fixed in commit ff3e13e: enriched_articles exit-1 Pydantic crash, llama3.1-8b ctx-banned from Cerebras fallback, Connection error now rotatable in crawl4ai OR phase. Tests unverified locally (disk full). Awaiting user push + next research.yml run. |
 
 ## Refactor Phase
 M6 (Validation sprint)

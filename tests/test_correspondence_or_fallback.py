@@ -77,9 +77,9 @@ def test_or_fallback_iterates_through_models(monkeypatch):
 
     out = _classify_batch_with_openrouter(cfg, [_FakeChatMessage("user", "hi")])
     assert out == "[]"
-    assert len(call_log) == 2  # llama failed, then qwen succeeded
+    assert len(call_log) == 2  # llama failed, then mistral succeeded
     assert "llama" in call_log[0]
-    assert "qwen" in call_log[1]
+    assert "mistral" in call_log[1]  # qwen removed 2026-05-21 (404s); mistral-small now pos 2
 
 
 def test_or_fallback_returns_empty_when_all_models_fail(monkeypatch):
