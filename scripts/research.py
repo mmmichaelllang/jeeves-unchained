@@ -186,7 +186,7 @@ async def _run_sector_loop(
     cfg: Config,
     ctx: ResearchContext,
     prior_urls_ordered: list[str],
-    prior_headlines: set[str],
+    prior_headlines: list[str],
     ledger: QuotaLedger,
     *,
     sector_whitelist: list[str],
@@ -303,8 +303,15 @@ async def _run_sector_loop(
     # Today's discoveries first so write-phase [:N] always captures fresh content;
     # prior-session headlines at the tail for cross-day context.
     today_hl = list(dict.fromkeys(discovered_headlines))  # dedupe, preserve order
-    prior_hl_list = sorted(prior_headlines - set(today_hl))
+    today_hl_set = set(today_hl)
+    # prior_headlines is recency-ordered (newest-first from load_prior_sessions).
+    # Filter out today's headlines, preserve recency order (do NOT sort —
+    # alphabetical sort destroys the cross-day signal the write phase needs).
+    prior_hl_list = [h for h in prior_headlines if h not in today_hl_set]
     session["dedup"]["covered_headlines"] = today_hl + prior_hl_list
+    # Boundary marker so write phase can apply a proportional cap
+    # (today_slots + prior_slots) without today crowding out prior history.
+    session["dedup"]["today_headline_count"] = len(today_hl)
 
     # Cross-sector URL collisions — same article landing in 2+ sectors.
     # Surfaced to the write phase so the same story isn't narrated multiple
@@ -423,17 +430,27 @@ def main(argv: list[str] | None = None) -> int:
     # Rolling 7-day window: merge covered URLs and headlines from all recent sessions.
     # Build prior_urls_ordered newest-first so the 150-URL cap in _run_sector_loop
     # always includes yesterday's URLs rather than an alphabetical mix of 7 days.
-    prior_sessions = load_prior_sessions(cfg, days=7)
+    # 14-day window (was 7): weekly recurring sources repeat every 5-7 days,
+    # so a 7-day window misses them on the 8th day. 14 days catches two full
+    # weekly cycles at negligible cost (headlines are capped later anyway).
+    prior_sessions = load_prior_sessions(cfg, days=14)
     prior_urls_ordered: list[str] = []
     prior_urls_seen: set[str] = set()
-    prior_hl: set[str] = set()
+    # Build prior_hl as a recency-ordered list (newest-first) rather than a
+    # set. Preserving order lets the write phase prioritise recent history
+    # when applying the proportional cap — oldest entries fall off the tail.
+    prior_hl: list[str] = []
+    prior_hl_set: set[str] = set()
     prior_sources_by_host: dict[str, list[str]] = {}
     for sess in prior_sessions:  # load_prior_sessions returns newest-first
         for u in covered_urls(sess):
             if u not in prior_urls_seen:
                 prior_urls_ordered.append(u)
                 prior_urls_seen.add(u)
-        prior_hl |= get_covered_headlines(sess)
+        for hl in get_covered_headlines(sess):
+            if hl not in prior_hl_set:
+                prior_hl.append(hl)
+                prior_hl_set.add(hl)
         # Source-rotation map: per-host list of titles cited yesterday.
         # Newer-first, dedup per host.
         for host, titles in covered_sources_by_host(sess).items():

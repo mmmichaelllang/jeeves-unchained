@@ -404,13 +404,26 @@ def _trim_session_for_prompt(session: SessionModel) -> dict[str, Any]:
     if isinstance(dedup, dict):
         dedup.pop("covered_urls", None)
         if isinstance(dedup.get("covered_headlines"), list):
+            # Proportional cap: reserve slots for BOTH today and prior history.
+            # Before this fix: today_hl (~200 entries) consumed the entire 150
+            # cap, leaving zero prior-session history — recurring stories from
+            # yesterday passed dedup unchallenged.
+            # today_headline_count is written by research.py as the boundary
+            # index between today's discoveries (HEAD) and prior days (TAIL).
+            _n_today = int(dedup.get("today_headline_count") or 0)
+            _PRIOR_SLOTS = 70   # always reserve for cross-day signal
+            _TODAY_SLOTS = DEDUP_PROMPT_HEADLINES_CAP - _PRIOR_SLOTS  # 80
+            all_hl = dedup["covered_headlines"]
+            if _n_today > 0:
+                raw_today = all_hl[:_n_today][:_TODAY_SLOTS]
+                raw_prior = all_hl[_n_today:][:_PRIOR_SLOTS]
+                raw = raw_today + raw_prior
+            else:
+                # Legacy sessions without the boundary marker: old behaviour.
+                raw = all_hl[:DEDUP_PROMPT_HEADLINES_CAP]
             # Truncate each headline to 80 chars — research phase pulls "first
-            # two sentences" of findings strings (research_sectors.py:1276) so
-            # individual entries can be 200-300 chars. The write phase only
-            # needs short prefixes to detect "have I covered this?" — verbose
-            # entries blow past the 12k Groq TPM ceiling and force every part
-            # to fall through to NIM. Sprint-17 hotfix 2026-05-04.
-            raw = dedup["covered_headlines"][:DEDUP_PROMPT_HEADLINES_CAP]
+            # two sentences" of findings strings so individual entries can be
+            # 200-300 chars. Sprint-17 hotfix 2026-05-04.
             dedup["covered_headlines"] = [
                 (h[:77] + "…") if isinstance(h, str) and len(h) > 80 else h
                 for h in raw
