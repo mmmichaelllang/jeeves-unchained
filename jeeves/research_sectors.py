@@ -1949,7 +1949,9 @@ async def run_sector(
     # multi-step tool calls and large context windows that the single-call
     # synthesis path cannot replicate. JEEVES_USE_CRAWL4AI_RESEARCH is the
     # feature flag; preserved for ≥30 days alongside the FunctionAgent path.
-    _kill_switch = os.environ.get("JEEVES_REFACTOR_KILL_SWITCH", "0") == "1"
+    import os as _os
+
+    _kill_switch = _os.environ.get("JEEVES_REFACTOR_KILL_SWITCH", "0") == "1"
     if (
         use_crawl4ai_research
         and not _kill_switch
