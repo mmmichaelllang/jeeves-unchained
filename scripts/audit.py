@@ -38,6 +38,7 @@ Exit code:
 from __future__ import annotations
 
 import argparse
+import asyncio
 import json
 import logging
 import os
@@ -124,6 +125,9 @@ class AuditReport:
     writing_quality_score: int | None = None
     dedup_score: int | None = None
     audit_model_used: str | None = None
+    # M7: Charlotte+Cerebras URL content verification.
+    charlotte_verified_count: int = 0
+    charlotte_flagged_count: int = 0
 
 
 # ---------------------------------------------------------------------------
@@ -963,11 +967,198 @@ def detect_writing_quality(
 
 
 # ---------------------------------------------------------------------------
+# M7 — Charlotte + Cerebras deep URL verification
+# ---------------------------------------------------------------------------
+
+# Regex to extract the HTML context around an anchor tag (±200 chars).
+_ANCHOR_CONTEXT_RE = re.compile(
+    r"<a[^>]*\bhref=[\"']([^\"']+)[\"'][^>]*>(.*?)</a>",
+    re.IGNORECASE | re.DOTALL,
+)
+
+_CHARLOTTE_URL_CAP = 20  # max URLs to verify per run (Cerebras free tier budget)
+
+# Skip these domains — archive fallbacks, not content claims.
+_CHARLOTTE_SKIP_HOSTS = frozenset({"web.archive.org", "archive.ph", "archive.org"})
+
+
+def _cerebras_verify_claim(claim: str, page_text: str) -> str:
+    """Ask Cerebras: does page_text support claim?
+
+    Returns 'YES', 'NO', or '' on failure (timeout / no key / error).
+    Caller treats '' as 'YES' (false negative preferred over false positive).
+    """
+    api_key = os.environ.get("CEREBRAS_API_KEY", "").strip()
+    if not api_key:
+        log.debug("charlotte: CEREBRAS_API_KEY not set — skipping Cerebras verify")
+        return ""
+    try:
+        import httpx
+    except ImportError:
+        log.warning("charlotte: httpx not installed — cannot call Cerebras")
+        return ""
+
+    prompt = (
+        "Does this page content support this claim from the briefing? "
+        f"Claim: '{claim[:300]}'. "
+        f"Page text (first 2000 chars): '{page_text[:2000]}'. "
+        "Answer YES or NO and one sentence why."
+    )
+    # Probe available models: prefer llama3.3-70b (largest free-tier model),
+    # fall back to llama3.1-70b.
+    model_chain = ["llama-3.3-70b", "llama3.1-70b"]
+    for model in model_chain:
+        try:
+            resp = httpx.post(
+                "https://api.cerebras.ai/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": model,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "max_tokens": 128,
+                    "temperature": 0.0,
+                },
+                timeout=30.0,
+            )
+            if resp.status_code == 429:
+                log.debug("charlotte: Cerebras 429 on %s, trying next model", model)
+                continue
+            if resp.status_code != 200:
+                log.warning("charlotte: Cerebras %d on %s", resp.status_code, model)
+                continue
+            text = (resp.json().get("choices") or [{}])[0].get("message", {}).get("content", "").strip().upper()
+            if "NO" in text[:20]:
+                return "NO"
+            if "YES" in text[:20]:
+                return "YES"
+            # Ambiguous response — treat as skip.
+            return ""
+        except Exception as exc:
+            log.warning("charlotte: Cerebras call failed (%s)", exc)
+            return ""
+    return ""
+
+
+def _extract_anchor_context(html: str, url: str) -> str:
+    """Return ±200 chars of surrounding text for the first anchor with href=url."""
+    for m in _ANCHOR_CONTEXT_RE.finditer(html):
+        if m.group(1).strip() == url:
+            start = max(0, m.start() - 200)
+            end = min(len(html), m.end() + 200)
+            snippet = html[start:end]
+            return _TAG_RE.sub(" ", snippet).strip()
+    return ""
+
+
+def verify_urls_with_charlotte(
+    html: str,
+    session: dict,
+    defects: list[Defect],
+    *,
+    already_flagged_urls: set[str] | None = None,
+) -> tuple[int, int]:
+    """M7 — Deep URL verification: fetch each cited URL with Charlotte and
+    check page content against briefing claim via Cerebras.
+
+    Returns (verified_count, flagged_count).
+
+    Skips:
+    - Non-http URLs
+    - archive.org / archive.ph
+    - URLs already high-severity-flagged by D1 (pass via already_flagged_urls)
+    - Capped at _CHARLOTTE_URL_CAP per run
+
+    False negatives (Charlotte fail / Cerebras fail / timeout) are skipped —
+    prefer false negative over false positive.
+    """
+    # Import here so the rest of audit.py has no hard dep on charlotte.py
+    # when M7 is not enabled.
+    try:
+        from jeeves.tools.charlotte import fetch_url_via_charlotte
+    except ImportError as exc:
+        log.warning("charlotte: cannot import charlotte module (%s) — skipping M7", exc)
+        return (0, 0)
+
+    hrefs: list[str] = []
+    seen: set[str] = set()
+    for m in _HREF_RE.finditer(html):
+        href = m.group(1).strip()
+        if not href.startswith(("http://", "https://")):
+            continue
+        try:
+            from urllib.parse import urlparse as _up
+            host = _up(href).netloc.lower()
+        except Exception:
+            host = ""
+        if any(skip in host for skip in _CHARLOTTE_SKIP_HOSTS):
+            continue
+        if already_flagged_urls and href in already_flagged_urls:
+            continue
+        if href in seen:
+            continue
+        seen.add(href)
+        hrefs.append(href)
+
+    # Cap.
+    hrefs = hrefs[:_CHARLOTTE_URL_CAP]
+
+    verified = 0
+    flagged = 0
+    for url in hrefs:
+        log.info("charlotte: verifying %s", url)
+        try:
+            page_text = asyncio.run(fetch_url_via_charlotte(url))
+        except Exception as exc:
+            log.warning("charlotte: asyncio.run failed for %s: %s", url, exc)
+            page_text = ""
+        if not page_text:
+            log.debug("charlotte: empty page text for %s — skipping", url)
+            continue
+        verified += 1
+
+        claim = _extract_anchor_context(html, url)
+        if not claim:
+            claim = f"URL {url} cited in briefing"
+
+        verdict = _cerebras_verify_claim(claim, page_text)
+        if verdict == "NO":
+            defects.append(Defect(
+                type="hallucinated_url",
+                severity="high",
+                section=None,
+                detail=(
+                    "Charlotte+Cerebras: page content does not support "
+                    f"briefing claim. URL: {url}"
+                ),
+                evidence={
+                    "url": url,
+                    "claim": claim[:200],
+                    "cerebras_verdict": "NO",
+                },
+            ))
+            flagged += 1
+            log.warning("charlotte: FLAGGED mismatch for %s", url)
+        else:
+            log.debug("charlotte: OK (verdict=%r) for %s", verdict, url)
+
+    return (verified, flagged)
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
 
-def run_audit(date: str, sessions_dir: Path, *, use_llm: bool = True) -> AuditReport:
+def run_audit(
+    date: str,
+    sessions_dir: Path,
+    *,
+    use_llm: bool = True,
+    use_charlotte: bool = False,
+) -> AuditReport:
     session = load_session(date, sessions_dir)
     if session is None:
         raise SystemExit(1)
@@ -1024,6 +1215,24 @@ def run_audit(date: str, sessions_dir: Path, *, use_llm: bool = True) -> AuditRe
     detect_recurring_opener(briefing, session, sessions_dir, defects)
     detectors_run.append("D10_recurring_opener")
 
+    # M7 — Charlotte + Cerebras deep URL verification (opt-in).
+    charlotte_verified = 0
+    charlotte_flagged = 0
+    if use_charlotte:
+        # Pass the set of already-D1-flagged URLs so we don't double-count
+        # the obvious hallucinations that D1 already caught.
+        d1_flagged = {
+            d.evidence.get("url", "")
+            for d in defects
+            if d.type == "hallucinated_url" and d.evidence.get("url")
+        }
+        charlotte_verified, charlotte_flagged = verify_urls_with_charlotte(
+            briefing, session, defects, already_flagged_urls=d1_flagged
+        )
+        detectors_run.append("D_charlotte_url_verify")
+    else:
+        detectors_skipped.append("D_charlotte_url_verify")
+
     return AuditReport(
         date=date,
         briefing_chars=len(briefing),
@@ -1038,6 +1247,8 @@ def run_audit(date: str, sessions_dir: Path, *, use_llm: bool = True) -> AuditRe
         narrative_flow_score=flow_score,
         writing_quality_score=quality_score,
         audit_model_used=model_used,
+        charlotte_verified_count=charlotte_verified,
+        charlotte_flagged_count=charlotte_flagged,
     )
 
 
@@ -1050,6 +1261,9 @@ def main() -> int:
                         help="don't write audit JSON")
     parser.add_argument("--no-llm", action="store_true",
                         help="skip LLM-judged detectors (D7, D9)")
+    parser.add_argument("--force-charlotte", action="store_true",
+                        help="run Charlotte+Cerebras URL content check (M7) "
+                             "regardless of JEEVES_USE_CHARLOTTE_AUDIT env var")
     parser.add_argument("--verbose", "-v", action="store_true")
     args = parser.parse_args()
 
@@ -1058,8 +1272,19 @@ def main() -> int:
         format="%(asctime)s %(name)s %(levelname)s %(message)s",
     )
 
+    # M7: Charlotte enabled if --force-charlotte OR env var set.
+    charlotte_enabled = (
+        args.force_charlotte
+        or os.environ.get("JEEVES_USE_CHARLOTTE_AUDIT", "").strip() == "1"
+    )
+
     sessions_dir = Path(args.sessions_dir).resolve()
-    report = run_audit(args.date, sessions_dir, use_llm=not args.no_llm)
+    report = run_audit(
+        args.date,
+        sessions_dir,
+        use_llm=not args.no_llm,
+        use_charlotte=charlotte_enabled,
+    )
 
     out_path = sessions_dir / f"audit-{args.date}.json"
     payload = asdict(report)
@@ -1080,6 +1305,9 @@ def main() -> int:
     print(f"  narrative flow score:   {report.narrative_flow_score}")
     print(f"  writing quality score:  {report.writing_quality_score}")
     print(f"  audit model used:       {report.audit_model_used or '(no LLM)'}")
+    if charlotte_enabled:
+        print(f"  charlotte verified:     {report.charlotte_verified_count}")
+        print(f"  charlotte flagged:      {report.charlotte_flagged_count}")
     if report.defects:
         print(f"\nTop defects:")
         for d in report.defects[:8]:
