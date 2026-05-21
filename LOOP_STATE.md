@@ -5,18 +5,18 @@ _Auto-managed. Do not edit during a run._
 2026-05-21T08:00:00Z
 
 ## Iteration
-6 (M5 build — JEEVES_REFACTOR_KILL_SWITCH)
+7 (M6 — Validation sprint setup)
 
 ## Last Milestone
-M4 DONE (2026-05-21) — _resolve_cerebras_model + _rotate_on_429 added to research_sectors.py. 4/4 tests passing in tests/test_cerebras_rotation.py.
+M5 DONE (2026-05-21) — JEEVES_REFACTOR_KILL_SWITCH=1 wired in scripts/research.py, jeeves/research_sectors.py, jeeves/tools/enrichment.py. 3/3 tests passing in tests/test_kill_switch.py.
 
 ## Last Outcome
 SUCCESS
 
 ## Evidence
 ```
-M4 verify: grep -nE "_resolve_cerebras_model|_rotate_on_429" jeeves/research_sectors.py → 4 matches
-M4 verify: uv run pytest tests/test_cerebras_rotation.py -v → 4 passed
+M5 verify: grep JEEVES_REFACTOR_KILL_SWITCH in all 3 files → 4 matches
+M5 verify: uv run pytest tests/test_kill_switch.py -v → 3 passed
 ```
 
 ## Last Blocker
@@ -26,17 +26,16 @@ None.
 0
 
 ## Refined DONE WHEN
-M5 complete: JEEVES_REFACTOR_KILL_SWITCH=1 overrides both JEEVES_USE_CRAWL4AI_RESEARCH and JEEVES_USE_CRAWL4AI_FETCH, routing to old code paths. grep matches in scripts/research.py, jeeves/research_sectors.py, jeeves/tools/enrichment.py. pytest tests/test_kill_switch.py 3/3.
+M6: Both GH Variables set (JEEVES_USE_CRAWL4AI_RESEARCH=1, JEEVES_USE_CRAWL4AI_FETCH=1). PR #136 merged. validation.yml enabled.
 
 ## Research Diagnosis
 FREE_TIER_CAPACITY_CEILING (Cerebras + OR cannot deliver 70-200 agent calls/run; structural refactor required, not retries)
 
 ## Next Priority
-1. Read ROADMAP.md M5 section.
-2. Build M5: JEEVES_REFACTOR_KILL_SWITCH=1 overrides all crawl4ai feature flags.
-3. Wire kill switch check at the top of each flag guard in enrichment.py, research_sectors.py, scripts/research.py.
-4. Tests: test_kill_switch.py (3 cases).
-5. After PR #136 merged: set JEEVES_USE_CRAWL4AI_FETCH=1 GH Variable.
+M6: USER ACTION REQUIRED — loop cannot auto-advance because M6 requires:
+1. Merge PR #136 (feat/m6-acceleration-and-monitors) on GitHub.
+2. Set GH Variable JEEVES_USE_CRAWL4AI_FETCH=1 (research was already set).
+3. Confirm user approval before enabling validation.yml workflow cron.
 
 ## Active Branch
 feat/m6-acceleration-and-monitors
@@ -55,6 +54,7 @@ feat/m6-acceleration-and-monitors
 | 3 | M2 | SUCCESS | JEEVES_USE_CRAWL4AI_RESEARCH=1 + _run_crawl4ai_sector; 82/82 tests passing |
 | 4 | M3 | SUCCESS | JEEVES_USE_CRAWL4AI_FETCH=1 + Crawl4AI TIER 2 in enrichment.py; 3/3 tests passing |
 | 5 | M4 | SUCCESS | _resolve_cerebras_model + _rotate_on_429 in research_sectors.py; 4/4 tests passing |
+| 6 | M5 | SUCCESS | JEEVES_REFACTOR_KILL_SWITCH=1 wired in 3 files; 3/3 tests passing |
 
 ## Refactor Phase
 M0 (Probe Crawl4AI on jeeves targets)

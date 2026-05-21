@@ -465,7 +465,10 @@ def main(argv: list[str] | None = None) -> int:
     # Default OFF. Deep sectors (triadic_ontology, ai_systems, uap) always use
     # FunctionAgent regardless of this flag. Old path preserved for ≥30 days.
     _use_crawl4ai_research = os.getenv("JEEVES_USE_CRAWL4AI_RESEARCH", "0") == "1"
-    if _use_crawl4ai_research:
+    if os.getenv("JEEVES_REFACTOR_KILL_SWITCH", "0") == "1":
+        _use_crawl4ai_research = False
+        log.warning("JEEVES_REFACTOR_KILL_SWITCH=1: all Crawl4AI research paths disabled.")
+    elif _use_crawl4ai_research:
         log.info("JEEVES_USE_CRAWL4AI_RESEARCH=1: crawl4ai path enabled for eligible sectors.")
 
     if cfg.dry_run:
