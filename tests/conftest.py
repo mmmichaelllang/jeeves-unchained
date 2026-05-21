@@ -9,9 +9,28 @@ client stays free of real HTTP egress.
 
 from __future__ import annotations
 
+import asyncio
 import os
 
 import pytest
+
+
+@pytest.fixture(autouse=True)
+def _no_leaked_running_loop():
+    """Defense-in-depth: any test that leaks a running loop (via Playwright
+    sync API or otherwise) fails ON THAT TEST instead of polluting downstream
+    tests. Added 2026-05-21 after the test_fetch_tott playwright leak that
+    caused 3 false-positive failures in test_research_sectors.py."""
+    yield
+    leaked = asyncio._get_running_loop()
+    if leaked is not None:
+        # Clean up so we don't cascade-fail the rest of the run
+        asyncio._set_running_loop(None)
+        pytest.fail(
+            f"Test leaked an asyncio running loop: {leaked!r}. "
+            f"Likely caused by an unpatched sync API of an async "
+            f"library (Playwright, Crawl4AI, etc)."
+        )
 
 
 @pytest.fixture(autouse=True)
