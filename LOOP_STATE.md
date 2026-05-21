@@ -5,18 +5,18 @@ _Auto-managed. Do not edit during a run._
 2026-05-21T08:00:00Z
 
 ## Iteration
-5 (M4 build — Cerebras model rotation on 429)
+6 (M5 build — JEEVES_REFACTOR_KILL_SWITCH)
 
 ## Last Milestone
-M3 DONE (2026-05-21) — JEEVES_USE_CRAWL4AI_FETCH=1 plumbed into jeeves/tools/enrichment.py. Crawl4AI inserted as TIER 2 for news_short hosts. 3/3 tests passing in tests/test_enrichment.py.
+M4 DONE (2026-05-21) — _resolve_cerebras_model + _rotate_on_429 added to research_sectors.py. 4/4 tests passing in tests/test_cerebras_rotation.py.
 
 ## Last Outcome
 SUCCESS
 
 ## Evidence
 ```
-M3 verify: grep -n "JEEVES_USE_CRAWL4AI_FETCH" jeeves/tools/enrichment.py → 2 matches
-M3 verify: uv run pytest tests/test_enrichment.py -q → 3 passed
+M4 verify: grep -nE "_resolve_cerebras_model|_rotate_on_429" jeeves/research_sectors.py → 4 matches
+M4 verify: uv run pytest tests/test_cerebras_rotation.py -v → 4 passed
 ```
 
 ## Last Blocker
@@ -26,16 +26,17 @@ None.
 0
 
 ## Refined DONE WHEN
-M4 complete: `_resolve_cerebras_model` + `_rotate_on_429` added to `jeeves/research_sectors.py`. On Cerebras 429, rotate to next model in list rather than bailing. Tests pass.
+M5 complete: JEEVES_REFACTOR_KILL_SWITCH=1 overrides both JEEVES_USE_CRAWL4AI_RESEARCH and JEEVES_USE_CRAWL4AI_FETCH, routing to old code paths. grep matches in scripts/research.py, jeeves/research_sectors.py, jeeves/tools/enrichment.py. pytest tests/test_kill_switch.py 3/3.
 
 ## Research Diagnosis
 FREE_TIER_CAPACITY_CEILING (Cerebras + OR cannot deliver 70-200 agent calls/run; structural refactor required, not retries)
 
 ## Next Priority
-1. Read ROADMAP.md M4 section.
-2. Build M4: Cerebras model rotation — `_resolve_cerebras_model` selects from list; `_rotate_on_429` advances index on 429.
-3. Tests in tests/test_research_sectors.py or new file.
-4. After M3 PR lands: set `JEEVES_USE_CRAWL4AI_FETCH=1` GH Variable.
+1. Read ROADMAP.md M5 section.
+2. Build M5: JEEVES_REFACTOR_KILL_SWITCH=1 overrides all crawl4ai feature flags.
+3. Wire kill switch check at the top of each flag guard in enrichment.py, research_sectors.py, scripts/research.py.
+4. Tests: test_kill_switch.py (3 cases).
+5. After PR #136 merged: set JEEVES_USE_CRAWL4AI_FETCH=1 GH Variable.
 
 ## Active Branch
 feat/m6-acceleration-and-monitors
@@ -53,6 +54,7 @@ feat/m6-acceleration-and-monitors
 | 2 | M1 + M1.5 | SUCCESS | crawl4ai_extract.py + classify_host + host sets; 11/11 tests passing |
 | 3 | M2 | SUCCESS | JEEVES_USE_CRAWL4AI_RESEARCH=1 + _run_crawl4ai_sector; 82/82 tests passing |
 | 4 | M3 | SUCCESS | JEEVES_USE_CRAWL4AI_FETCH=1 + Crawl4AI TIER 2 in enrichment.py; 3/3 tests passing |
+| 5 | M4 | SUCCESS | _resolve_cerebras_model + _rotate_on_429 in research_sectors.py; 4/4 tests passing |
 
 ## Refactor Phase
 M0 (Probe Crawl4AI on jeeves targets)

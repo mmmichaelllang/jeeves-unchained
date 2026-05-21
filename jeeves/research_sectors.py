@@ -1110,6 +1110,82 @@ _CEREBRAS_MODEL_CHAIN = [
     "llama3.1-8b",
 ]
 _RESOLVED_CEREBRAS_MODEL: str | None = None
+_CEREBRAS_TRIED_MODELS: set[str] = set()  # models that 429'd this session
+
+
+def _resolve_cerebras_model(api_key: str) -> str | None:
+    """Probe /v1/models and resolve the best available model from the chain.
+
+    Skips models already in _CEREBRAS_TRIED_MODELS (429'd this session).
+    Caches the result in _RESOLVED_CEREBRAS_MODEL for subsequent calls.
+    Soft-fails to the first untried chain entry when the probe request fails.
+
+    Returns None only when all chain entries are exhausted.
+    """
+    global _RESOLVED_CEREBRAS_MODEL
+
+    if _RESOLVED_CEREBRAS_MODEL is not None:
+        return _RESOLVED_CEREBRAS_MODEL
+
+    try:
+        import httpx
+
+        resp = httpx.get(
+            f"{_CEREBRAS_BASE}/models",
+            headers={"Authorization": f"Bearer {api_key}"},
+            timeout=10.0,
+        )
+        if resp.status_code == 200:
+            available = {m["id"] for m in resp.json().get("data", [])}
+            log.info("Cerebras models available: %s", sorted(available))
+            for candidate in _CEREBRAS_MODEL_CHAIN:
+                if candidate in available and candidate not in _CEREBRAS_TRIED_MODELS:
+                    _RESOLVED_CEREBRAS_MODEL = candidate
+                    log.info("Cerebras: resolved model → %s", candidate)
+                    return candidate
+            remaining = sorted(available - _CEREBRAS_TRIED_MODELS)
+            if remaining:
+                _RESOLVED_CEREBRAS_MODEL = remaining[0]
+                log.warning(
+                    "Cerebras: no preferred model found; using %s",
+                    _RESOLVED_CEREBRAS_MODEL,
+                )
+                return _RESOLVED_CEREBRAS_MODEL
+            log.warning("Cerebras: /v1/models listed no untried models")
+            return None
+        else:
+            log.warning("Cerebras /v1/models returned %d", resp.status_code)
+    except Exception as e:
+        log.warning("Cerebras model probe failed: %s", e)
+
+    # Probe failed or non-200 — blind fallback to first untried chain entry
+    for candidate in _CEREBRAS_MODEL_CHAIN:
+        if candidate not in _CEREBRAS_TRIED_MODELS:
+            _RESOLVED_CEREBRAS_MODEL = candidate
+            return candidate
+    return None
+
+
+def _rotate_on_429(failed_model: str) -> str | None:
+    """Mark failed_model as 429'd and return the next candidate from the chain.
+
+    Invalidates the cached model resolution so the next _build_cerebras_llm
+    call re-resolves from the updated _CEREBRAS_TRIED_MODELS set.
+
+    Returns the next untried model name, or None when all entries are exhausted.
+    """
+    global _RESOLVED_CEREBRAS_MODEL, _CEREBRAS_TRIED_MODELS
+
+    _CEREBRAS_TRIED_MODELS.add(failed_model)
+    _RESOLVED_CEREBRAS_MODEL = None  # force re-resolution next call
+
+    for candidate in _CEREBRAS_MODEL_CHAIN:
+        if candidate not in _CEREBRAS_TRIED_MODELS:
+            log.info("Cerebras 429 on %s → rotating to %s", failed_model, candidate)
+            return candidate
+
+    log.warning("Cerebras: all models in chain exhausted after 429 on %s", failed_model)
+    return None
 
 
 def _build_cerebras_llm(max_tokens: int = 8192):
@@ -1119,58 +1195,25 @@ def _build_cerebras_llm(max_tokens: int = 8192):
     with native tool-calling support. Used when NIM circuit breaker trips
     so remaining sectors can still produce data instead of returning empty.
 
-    Probes /v1/models on first call to find a valid model ID from the
-    fallback chain, then caches it for subsequent calls in the same process.
-
-    Returns None if CEREBRAS_API_KEY is not set or no model is available.
+    Calls _resolve_cerebras_model on first invocation (or after _rotate_on_429
+    invalidates the cache). Returns None when no key or model is available.
     """
-    global _RESOLVED_CEREBRAS_MODEL
-
     import os
+
     api_key = os.environ.get("CEREBRAS_API_KEY", "").strip()
     if not api_key:
         return None
 
-    # Resolve model ID on first call
-    if _RESOLVED_CEREBRAS_MODEL is None:
-        try:
-            import httpx
-            resp = httpx.get(
-                f"{_CEREBRAS_BASE}/models",
-                headers={"Authorization": f"Bearer {api_key}"},
-                timeout=10.0,
-            )
-            if resp.status_code == 200:
-                available = {m["id"] for m in resp.json().get("data", [])}
-                log.info("Cerebras models available: %s", sorted(available))
-                for candidate in _CEREBRAS_MODEL_CHAIN:
-                    if candidate in available:
-                        _RESOLVED_CEREBRAS_MODEL = candidate
-                        log.info("Cerebras: resolved model → %s", candidate)
-                        break
-                if _RESOLVED_CEREBRAS_MODEL is None:
-                    # None of our candidates matched — try first available
-                    if available:
-                        _RESOLVED_CEREBRAS_MODEL = sorted(available)[0]
-                        log.warning(
-                            "Cerebras: no preferred model found; using %s",
-                            _RESOLVED_CEREBRAS_MODEL,
-                        )
-                    else:
-                        log.warning("Cerebras: no models listed at /v1/models")
-                        return None
-            else:
-                log.warning("Cerebras /v1/models returned %d", resp.status_code)
-                # Try first candidate blindly
-                _RESOLVED_CEREBRAS_MODEL = _CEREBRAS_MODEL_CHAIN[0]
-        except Exception as e:
-            log.warning("Cerebras model probe failed: %s", e)
-            _RESOLVED_CEREBRAS_MODEL = _CEREBRAS_MODEL_CHAIN[0]
+    model = _resolve_cerebras_model(api_key)
+    if model is None:
+        log.warning("Cerebras unavailable (no key or model resolution failed)")
+        return None
 
     try:
         from llama_index.llms.openai_like import OpenAILike
+
         return OpenAILike(
-            model=_RESOLVED_CEREBRAS_MODEL,
+            model=model,
             api_base=_CEREBRAS_BASE,
             api_key=api_key,
             max_tokens=max_tokens,
@@ -1178,7 +1221,7 @@ def _build_cerebras_llm(max_tokens: int = 8192):
             timeout=60.0,
             is_chat_model=True,
             is_function_calling_model=True,
-            max_retries=0,  # 2026-05-21 hotfix: disable SDK auto-retry — jeeves owns retry/backoff logic
+            max_retries=0,  # jeeves owns retry/backoff; disable SDK auto-retry
         )
     except Exception as e:
         log.warning("Failed to build Cerebras LLM: %s", e)
