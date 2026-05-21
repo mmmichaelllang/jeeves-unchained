@@ -1837,10 +1837,15 @@ async def _run_crawl4ai_sector(
         search_raw = serper_fn(query=query, num=10)
         search_data = _json.loads(search_raw)
         prior_set = set(prior_urls_sample)
+        # NOTE: make_serper_search wraps Serper's raw response into
+        # {"provider":..., "query":..., "results":[{"title","url","snippet",...}, ...]}.
+        # Earlier code keyed off the raw API shape ("organic" / "link") and
+        # therefore returned 0 URLs for every sector — silent starve since
+        # M2 ship. 2026-05-21 fix uses the wrapper shape: "results" / "url".
         urls = [
-            r["link"]
-            for r in search_data.get("organic", [])
-            if r.get("link") and r["link"] not in prior_set
+            r["url"]
+            for r in search_data.get("results", [])
+            if r.get("url") and r["url"] not in prior_set
         ][:8]
     except Exception as exc:
         log.warning("sector %s: crawl4ai serper failed (%s); returning default.", spec.name, exc)

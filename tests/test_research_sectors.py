@@ -1012,3 +1012,126 @@ async def test_run_sector_skips_crawl4ai_when_flag_false(monkeypatch):
     await rs.run_sector(cfg, spec, [], ledger, use_crawl4ai_research=False)
 
     assert "local_news" not in crawl4ai_called
+
+
+# ---------------------------------------------------------------------------
+# 2026-05-21 regression: _run_crawl4ai_sector must consume the
+# make_serper_search WRAPPER shape (provider/query/results[].url), not the
+# raw Serper API shape (organic[].link). Prior tests stubbed
+# _run_crawl4ai_sector entirely and never exercised this contract — silent
+# 0-URL starve for ~7+ days post-M2 ship.
+# ---------------------------------------------------------------------------
+
+async def test_run_crawl4ai_sector_reads_wrapper_results_key(monkeypatch):
+    """The function must extract URLs from search_data['results'][i]['url'].
+
+    Regression for 2026-05-21 silent starve: the original implementation
+    keyed off 'organic'/'link' (raw API shape) but make_serper_search
+    returns wrapped shape 'results'/'url' — every sector returned []
+    fresh URLs and fell back to spec.default.
+    """
+    import json
+    import threading
+    from datetime import date
+
+    import jeeves.research_sectors as rs
+    from jeeves.config import Config
+    from jeeves.tools.quota import QuotaLedger
+
+    wrapped_serper_response = json.dumps({
+        "provider": "serper",
+        "query": "Edmonds WA news today",
+        "results": [
+            {"title": "MyEdmondsNews", "url": "https://example.com/a", "snippet": "", "provider": "serper"},
+            {"title": "EdmondsBeacon", "url": "https://example.com/b", "snippet": "", "provider": "serper"},
+            {"title": "KOMOnews",      "url": "https://example.com/c", "snippet": "", "provider": "serper"},
+        ],
+    })
+
+    def _fake_make_serper_search(cfg, ledger):
+        def _serper_search(query: str = "", num: int = 10, tbs=None):
+            return wrapped_serper_response
+        return _serper_search
+
+    extracted_urls: list[str] = []
+
+    async def _fake_batch_extract(urls, max_chars=6000):
+        extracted_urls.extend(urls)
+        return [(f"body text for {u}", "trafilatura") for u in urls]
+
+    monkeypatch.setattr("jeeves.tools.serper.make_serper_search", _fake_make_serper_search)
+    monkeypatch.setattr("jeeves.tools.crawl4ai_extract.batch_extract", _fake_batch_extract)
+    # Synthesis LLM call must short-circuit so test stays hermetic — fake
+    # Cerebras builder returning None forces the function to early-return
+    # via its own fallback. The test only cares that URLs reach batch_extract.
+    monkeypatch.setattr(rs, "_build_cerebras_llm", lambda max_tokens=8192: None)
+
+    cfg = Config(
+        nvidia_api_key="", serper_api_key="k", tavily_api_key="", exa_api_key="",
+        google_api_key="", groq_api_key="", gmail_app_password="",
+        gmail_oauth_token_json="", github_token="", github_repository="r/r",
+        run_date=date(2026, 5, 21),
+    )
+    ledger = QuotaLedger.__new__(QuotaLedger)
+    ledger._state = {"providers": {}}
+    ledger._lock = threading.Lock()
+
+    spec = next(s for s in rs.SECTOR_SPECS if s.name == "local_news")
+    await rs._run_crawl4ai_sector(cfg, spec, [], ledger)
+
+    # If the schema bug returns (organic/link), extracted_urls stays empty.
+    assert extracted_urls == [
+        "https://example.com/a",
+        "https://example.com/b",
+        "https://example.com/c",
+    ], f"crawl4ai schema regression: got {extracted_urls!r}"
+
+
+async def test_run_crawl4ai_sector_filters_prior_urls(monkeypatch):
+    """Wrapper-shape URLs must still be dedup-filtered against prior_urls_sample."""
+    import json
+    import threading
+    from datetime import date
+
+    import jeeves.research_sectors as rs
+    from jeeves.config import Config
+    from jeeves.tools.quota import QuotaLedger
+
+    wrapped = json.dumps({
+        "provider": "serper",
+        "query": "q",
+        "results": [
+            {"url": "https://example.com/keep"},
+            {"url": "https://example.com/drop"},
+        ],
+    })
+
+    def _fake_make_serper_search(cfg, ledger):
+        return lambda query="", num=10, tbs=None: wrapped
+
+    seen: list[str] = []
+
+    async def _fake_batch_extract(urls, max_chars=6000):
+        seen.extend(urls)
+        return [(f"body for {u}", "trafilatura") for u in urls]
+
+    monkeypatch.setattr("jeeves.tools.serper.make_serper_search", _fake_make_serper_search)
+    monkeypatch.setattr("jeeves.tools.crawl4ai_extract.batch_extract", _fake_batch_extract)
+    monkeypatch.setattr(rs, "_build_cerebras_llm", lambda max_tokens=8192: None)
+
+    cfg = Config(
+        nvidia_api_key="", serper_api_key="k", tavily_api_key="", exa_api_key="",
+        google_api_key="", groq_api_key="", gmail_app_password="",
+        gmail_oauth_token_json="", github_token="", github_repository="r/r",
+        run_date=date(2026, 5, 21),
+    )
+    ledger = QuotaLedger.__new__(QuotaLedger)
+    ledger._state = {"providers": {}}
+    ledger._lock = threading.Lock()
+
+    spec = next(s for s in rs.SECTOR_SPECS if s.name == "local_news")
+    await rs._run_crawl4ai_sector(
+        cfg, spec, ["https://example.com/drop"], ledger,
+    )
+
+    assert seen == ["https://example.com/keep"]
