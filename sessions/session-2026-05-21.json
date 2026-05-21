@@ -466,7 +466,8 @@
       "functions.tavily_extract:5{\"urls\": [\"https://www.",
       "functions.tavily_search:2",
       "global news May 8 2026 US Iran tensions Strait of Hormuz",
-      "‘The Music of What Happens’ | Nick Laird | The New York Review of Books"
+      "‘The Music of What Happens’ | Nick Laird | The New York Review of Books",
+      "email | Team at Sortd"
     ],
     "cross_sector_dupes": []
   },
@@ -519,6 +520,6 @@
   "correspondence": {
     "found": true,
     "fallback_used": false,
-    "text": "- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating a permanent failure due to 429 rate limiting with no auto-retry.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting a Sortd payment escalation as the most pressing matter.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary flagging the Jeeves pipeline alert as the most pressing matter.\n- [escalation] mmmichaelllang: GitHub notification that a CI workflow run for a pull request failed.\n- [escalation] mmmichaelllang: GitHub notification that a CI workflow run for a pull request failed.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating a permanent failure due to 429 rate limiting with no auto-retry.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting an email from Lady Cathy Lang regarding 'Cabin 2026'.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting an email from Cathy Lang regarding 'Cabin 2026'.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting an email from Cathy Lang about 'Cabin 2026' that requires attention."
+    "text": "- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating a permanent failure of the Daily Pipeline with no auto-retry due to 429 rate limiting.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating a permanent failure of the Daily Pipeline with no auto-retry due to 429 rate limiting.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting an email from Lady Cathy Lang about 'Cabin 2026' that requires attention.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting an email from Cathy Lang about 'Cabin 2026' that requires attention.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting an email from Cathy Lang about 'Cabin 2026' that requires his attention.\n- [escalation] Andy: Email from brother Andrew Lang with subject about staying caring in the midst of outrage.\n- [escalation] Lady Cathy: Family member Cathy Lang sends a message about cabin plans for 2026.\n- [decision required] Team at Sortd: Payment failure notice for Sortd subscription; account at risk of suspension unless payment information is updated.\n- [decision required] Team at Sortd: Sortd subscription payment of $22 failed; requires updating payment information to continue service."
   }
 }
