@@ -49,14 +49,34 @@ anthropic-usage-expiration
 
 ### Check 2: sprint mode self-pause (validation sprint = Cerebras quota dedicated to daily.yml)
 
-Run `gh variable get JEEVES_VALIDATION_MODE -R mmmichaelllang/jeeves-unchained 2>/dev/null` (1s timeout). If output equals `1`:
-1. Print: `pre_wake: VALIDATION SPRINT ACTIVE (JEEVES_VALIDATION_MODE=1). Tier 1 self-pausing. Validation.yml dispatching daily.yml every 30min — do not compete for Cerebras quota.`
+Detect M6 validation sprint via TWO independent signals (use OR — either alone is sufficient). Added 2026-05-21 after Tier 2 Cowork sandbox confirmed lacking gh CLI — relying solely on `gh` left detection broken in restricted environments.
+
+**Signal A: LOOP_STATE.md grep (primary, no gh dependency):**
+```bash
+SPRINT_LOOP_STATE=0
+if grep -qiE "M6.*validation.sprint|validation sprint.*in.progress|validation.yml enabled|M6 sprint" LOOP_STATE.md 2>/dev/null; then
+  if grep -A1 "## Last Outcome" LOOP_STATE.md | grep -qiE "IN_PROGRESS|in.progress"; then
+    SPRINT_LOOP_STATE=1
+  fi
+fi
+```
+
+**Signal B: gh variable get (secondary, may fail in restricted cron envs):**
+```bash
+SPRINT_GH=0
+if command -v gh >/dev/null 2>&1; then
+  if [ "$(gh variable get JEEVES_VALIDATION_MODE -R mmmichaelllang/jeeves-unchained 2>/dev/null)" = "1" ]; then
+    SPRINT_GH=1
+  fi
+fi
+```
+
+**If SPRINT_LOOP_STATE=1 OR SPRINT_GH=1:**
+1. Print: `pre_wake: VALIDATION SPRINT ACTIVE (signals: LOOP_STATE=$SPRINT_LOOP_STATE, gh=$SPRINT_GH). Tier 1 self-pausing. Validation.yml dispatching daily.yml every 30min — do not compete for Cerebras quota.`
 2. Append same line to `decisions/loop-audit-log.md`.
 3. Exit cleanly.
 
-If output equals `0` or empty: proceed normally (sprint not active, or sprint already concluded).
-
-If `gh` CLI fails or auth broken: proceed normally (treat as sprint inactive — don't block Tier 1 on diagnostic-CLI failures).
+If BOTH signals are 0: proceed normally (sprint not active, or sprint already concluded).
 
 ### Hook: post-wake error catch (added to STEP 4 too — duplicated here for visibility)
 
