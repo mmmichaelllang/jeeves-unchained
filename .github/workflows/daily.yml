@@ -340,12 +340,22 @@ jobs:
       - name: Sync dependencies
         run: uv sync --no-dev
 
+      - name: Install Charlotte MCP
+        # M7: headless browser for URL content verification.
+        # Only runs when JEEVES_USE_CHARLOTTE_AUDIT=1 is set in repo Variables.
+        if: ${{ vars.JEEVES_USE_CHARLOTTE_AUDIT == '1' }}
+        run: npm install -g @ticktockbent/charlotte
+
       - name: Run audit (detection)
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
           # Reasoning-first model picker overrides; both optional.
           JEEVES_AUDIT_MODEL: ${{ vars.JEEVES_AUDIT_MODEL || '' }}
           JEEVES_AUDIT_MODELS: ${{ vars.JEEVES_AUDIT_MODELS || '' }}
+          # M7: Charlotte+Cerebras URL content verification. Default off.
+          # Set JEEVES_USE_CHARLOTTE_AUDIT=1 in repo Variables to enable.
+          JEEVES_USE_CHARLOTTE_AUDIT: ${{ vars.JEEVES_USE_CHARLOTTE_AUDIT || '0' }}
         run: |
           DATE="${{ github.event.inputs.date || '' }}"
           if [ -z "$DATE" ]; then DATE=$(date -u +%Y-%m-%d); fi

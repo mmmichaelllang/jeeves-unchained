@@ -7,6 +7,7 @@ the jeeves-memory truncation table.
 
 from __future__ import annotations
 
+from dataclasses import dataclass, field as dc_field
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -160,6 +161,44 @@ FIELD_CAPS: dict[str, int] = {
     "enriched_articles.text": 1200,
     "literary_pick.summary": 600,
 }
+
+
+# ---------------------------------------------------------------------------
+# Audit schema (M7 — Charlotte+Cerebras URL verification)
+# ---------------------------------------------------------------------------
+
+# Known audit defect types emitted by scripts/audit.py.
+AUDIT_DEFECT_TYPES: frozenset[str] = frozenset({
+    "hallucinated_url",
+    "empty_with_data",
+    "missing_section",
+    "section_order",
+    "aside_repetition",
+    "aside_overuse",
+    "greeting_missing_weather",
+    "greeting_missing_correspondence",
+    "greeting_missing_date",
+    "narrative_flow_low",
+    "narrative_flow_issue",
+    "writing_quality_low",
+    "writing_quality_issue",
+    "dedup_url_cross_section",
+    "dedup_cross_day_overlap",
+    "recurring_opener",
+})
+
+
+@dataclass
+class AuditResult:
+    """Summary of a single audit run.  Mirrors AuditReport in scripts/audit.py
+    for downstream consumers (dashboards, tests) that import from jeeves.schema."""
+
+    date: str
+    defect_count: int = 0
+    hallucinated_url_count: int = 0
+    # M7: Charlotte+Cerebras URL content verification counts.
+    charlotte_verified: int = 0
+    charlotte_flagged: int = 0
 
 
 def _cap(text: str, limit: int) -> str:
