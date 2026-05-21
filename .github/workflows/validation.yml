@@ -27,19 +27,51 @@ jobs:
   gate-and-trigger:
     name: Gate + trigger daily.yml
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 3
     steps:
-      - name: Check JEEVES_VALIDATION_MODE
+      - uses: actions/checkout@v4
+
+      # Three-state gate:
+      #   JEEVES_VALIDATION_MODE=1     → force-enable (manual override)
+      #   JEEVES_VALIDATION_MODE=0     → force-disable (manual override / kill switch)
+      #   unset / empty / other        → auto-detect from ROADMAP M5 ship status
+      - name: Compute gate state
         id: gate
         env:
           MODE: ${{ vars.JEEVES_VALIDATION_MODE }}
         run: |
+          set +e
+          # Extract M5 section text and count checkboxes.
+          # Pattern: print M5 header line, set flag=1, then print until ANOTHER ### M-header appears.
+          M5_SECTION=$(awk '/^### M5 /{flag=1; print; next} flag && /^### M[0-9]/{flag=0} flag' ROADMAP.md)
+          UNCHECKED=$(echo "$M5_SECTION" | grep -c "^- \[ \]")
+          CHECKED=$(echo "$M5_SECTION" | grep -c "^- \[x\]")
+          set -e
           echo "JEEVES_VALIDATION_MODE=$MODE"
+          echo "M5 section: unchecked=$UNCHECKED checked=$CHECKED"
+
+          # Force-disable wins everything.
+          if [ "$MODE" = "0" ]; then
+            echo "validation_active=false" >> $GITHUB_OUTPUT
+            echo "::notice::JEEVES_VALIDATION_MODE=0 — sprint force-disabled, exiting"
+            exit 0
+          fi
+
+          # Force-enable wins over M5 gate (lets user start sprint early for testing).
           if [ "$MODE" = "1" ]; then
             echo "validation_active=true" >> $GITHUB_OUTPUT
+            echo "::notice::JEEVES_VALIDATION_MODE=1 — force-enabled"
+            exit 0
+          fi
+
+          # Default: auto-detect from ROADMAP M5 ship status.
+          # M5 is "shipped" when ALL its [ ] checkboxes have flipped to [x].
+          if [ "$UNCHECKED" -eq 0 ] && [ "$CHECKED" -ge 2 ]; then
+            echo "validation_active=true" >> $GITHUB_OUTPUT
+            echo "::notice::M5 fully shipped in ROADMAP — auto-enabling sprint"
           else
             echo "validation_active=false" >> $GITHUB_OUTPUT
-            echo "::notice::Validation mode off — exiting without triggering daily.yml"
+            echo "::notice::M5 not yet shipped (unchecked=$UNCHECKED checked=$CHECKED) — sprint dormant"
           fi
 
       - name: Trigger daily.yml

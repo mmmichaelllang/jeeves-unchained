@@ -194,6 +194,7 @@ async def _run_sector_loop(
     quota_summary: str = "",
     story_continuity: str = "",
     prior_sources_by_host: dict[str, list[str]] | None = None,
+    use_crawl4ai_research: bool = False,
 ) -> None:
     """Run SECTOR_SPECS sequentially, updating the dedup context after each sector.
 
@@ -239,6 +240,7 @@ async def _run_sector_loop(
                 quota_summary=quota_summary,
                 story_continuity=story_continuity,
                 prior_sources_by_host=prior_sources_by_host,
+                use_crawl4ai_research=use_crawl4ai_research,
             )
 
     def _update_prior(results):
@@ -458,6 +460,14 @@ def main(argv: list[str] | None = None) -> int:
 
     sector_whitelist = [s.strip() for s in args.sectors.split(",") if s.strip()]
 
+    # Feature flag: JEEVES_USE_CRAWL4AI_RESEARCH=1 routes news_short-eligible
+    # sectors through Crawl4AI+Cerebras synthesis instead of FunctionAgent.
+    # Default OFF. Deep sectors (triadic_ontology, ai_systems, uap) always use
+    # FunctionAgent regardless of this flag. Old path preserved for ≥30 days.
+    _use_crawl4ai_research = os.getenv("JEEVES_USE_CRAWL4AI_RESEARCH", "0") == "1"
+    if _use_crawl4ai_research:
+        log.info("JEEVES_USE_CRAWL4AI_RESEARCH=1: crawl4ai path enabled for eligible sectors.")
+
     if cfg.dry_run:
         log.info("DRY RUN — using fixture mock agent.")
         _run_dry_agent(cfg, ctx)
@@ -476,6 +486,7 @@ def main(argv: list[str] | None = None) -> int:
                 quota_summary=quota_sum,
                 story_continuity=story_ctx,
                 prior_sources_by_host=prior_sources_by_host,
+                use_crawl4ai_research=_use_crawl4ai_research,
             )
         )
 
