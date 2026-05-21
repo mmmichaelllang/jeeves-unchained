@@ -20,8 +20,25 @@ Read `/Users/frederickyudin/jeeves-unchained/.claude/loop-pause-until`. If file 
 If file timestamp ≤ now, delete the file (`rm -f .claude/loop-pause-until`) and proceed.
 
 How the sentinel gets written:
-- Automatically by THIS step if a previous iteration caught an Anthropic usage error (see STEP 4 hook below).
-- Manually by the user: `echo "$(date -u -v+5H -Iseconds)\nmanual-pause" > .claude/loop-pause-until`
+- Automatically by THIS step if a previous iteration caught an Anthropic usage error (see STEP 4 hook below — uses two-window rule: overnight→next 6:30 AM PT, daytime→+5h rolling).
+- Manually by the user (same two-window rule):
+  ```bash
+  python3 - <<'PYEOF' > .claude/loop-pause-until
+  from datetime import datetime, timedelta
+  from zoneinfo import ZoneInfo
+  la = ZoneInfo('America/Los_Angeles')
+  now = datetime.now(la)
+  today_630 = now.replace(hour=6, minute=30, second=0, microsecond=0)
+  if now.hour >= 21:
+      target = today_630 + timedelta(days=1)
+  elif now < today_630:
+      target = today_630
+  else:
+      target = now + timedelta(hours=5)
+  print(target.astimezone(ZoneInfo('UTC')).strftime('%Y-%m-%dT%H:%M:%SZ'))
+  PYEOF
+  echo "manual-pause" >> .claude/loop-pause-until
+  ```
 - Automatically by Tier 2 monitor (jeeves-loop-watch) if it detects a >2h gap with no Tier 1 progress.
 
 Sentinel format (2 lines):
@@ -43,12 +60,48 @@ If `gh` CLI fails or auth broken: proceed normally (treat as sprint inactive —
 
 ### Hook: post-wake error catch (added to STEP 4 too — duplicated here for visibility)
 
-If during this iteration's STEP 4 /goal invocation the model surfaces an Anthropic API error matching any of: `429 from Anthropic`, `rate_limit`, `usage limit`, `out of extra usage`, `resets at`, `daily message quota` — then BEFORE writing LOOP_STATE.md in STEP 5, write the pause sentinel:
+If during this iteration's STEP 4 /goal invocation the model surfaces an Anthropic API error matching any of: `429 from Anthropic`, `rate_limit`, `usage limit`, `out of extra usage`, `resets at`, `daily message quota` — then BEFORE writing LOOP_STATE.md in STEP 5, write the pause sentinel using the two-window rule (Claude Max daily reset + 5h rolling windows):
+
 ```bash
-date -u -v+5H -Iseconds > .claude/loop-pause-until
+python3 - <<'PYEOF' > .claude/loop-pause-until
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
+la = ZoneInfo('America/Los_Angeles')
+now_la = datetime.now(la)
+today_630 = now_la.replace(hour=6, minute=30, second=0, microsecond=0)
+
+# Two-window rule (user confirmed 2026-05-21):
+#   overnight (9 PM - 6:30 AM PT) → anchor on next 6:30 AM PT (full daily reset)
+#   daytime  (6:30 AM - 9 PM PT) → rolling +5h (Claude Max rolling window)
+# Result: first exhaustion (typically overnight when user is asleep) anchors on the
+# next daily reset. Subsequent same-day exhaustions roll forward by 5h, matching
+# Claude Max's rolling-window cadence. "Continuous loop of tests and improvements
+# until green" — cover every recovery window with minimal waste.
+
+if now_la.hour >= 21:
+    # 9 PM or later — anchor on tomorrow's 6:30 AM (overnight window crosses midnight)
+    target_la = today_630 + timedelta(days=1)
+elif now_la < today_630:
+    # Past midnight, before today's 6:30 AM — anchor on today's 6:30 AM
+    target_la = today_630
+else:
+    # Daytime (6:30 AM - 9 PM) — rolling 5h window
+    target_la = now_la + timedelta(hours=5)
+
+print(target_la.astimezone(ZoneInfo('UTC')).strftime('%Y-%m-%dT%H:%M:%SZ'))
+PYEOF
 echo "anthropic-usage-expiration" >> .claude/loop-pause-until
 ```
-Next wake will see the sentinel and skip. The 5h window matches Claude Max's typical reset cadence. After 5h, sentinel expires and normal wakes resume.
+
+Behavioral examples (PT clock):
+- Exhaustion at 4 AM (overnight) → wake at 6:30 AM today (2.5h pause, catches daily reset)
+- Exhaustion at 11 PM (overnight) → wake at 6:30 AM tomorrow (7.5h pause, anchored on reset)
+- Exhaustion at 9 AM (daytime) → wake at 2 PM (5h rolling)
+- Exhaustion at 3 PM (daytime) → wake at 8 PM (5h rolling)
+- Exhaustion at 7 PM (daytime, still <9 PM cutoff) → wake at midnight (5h rolling)
+
+`zoneinfo` handles DST automatically (PDT May-Nov, PST Nov-Mar). The 9 PM cutoff is the practical boundary where +5h rolling would land between 2 AM and 6:30 AM — close enough to the daily reset that anchoring on 6:30 AM is strictly better.
 
 ---
 
