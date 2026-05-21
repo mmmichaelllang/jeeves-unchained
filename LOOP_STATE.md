@@ -2,62 +2,55 @@
 _Auto-managed. Do not edit during a run._
 
 ## Last Updated
-2026-05-21T18:00:00Z (iter 8 — M3 asyncio fix + M5 retry both resolved; PR #137 merged)
+2026-05-21T19:15:00Z (iter 9 — PR #136 merged, validation.yml enabled, M6 sprint started)
 
 ## Iteration
-8 (M3 asyncio fix + full-suite green confirmed)
+9 (M6 validation sprint — in progress)
 
 ## Last Milestone
-M3 asyncio regression fix DONE (2026-05-21) — PR #137 `feat/m3-asyncio-and-tott-loop-fix` merged to main (squash commit `502f1be`).
-Root cause: Playwright sync-API `asyncio._set_running_loop(loop)` leak contaminated 3 test_research_sectors.py tests (false positives).
-Fix landed: `_run_crawl4ai_sync` thread-dispatch, `_no_leaked_running_loop` canary in conftest, TOTT playwright mock, eager crawl4ai_extract import in test_enrichment.py.
-M5 kill-switch confirmed non-regressing: full suite exits 0 with commit `5c9c567` (kill switch + `import os` fix) on feat/m6.
-feat/m6-acceleration-and-monitors rebased onto merged main. LOOP_STATE restored from stash.
+M6 STARTED (2026-05-21) — PR #136 merged to main (squash commit `6c73150`). Both GH Variables set. validation.yml cron enabled (active, fires every 30min). Sprint window: 12+ consecutive runs → ≥9/12 non-empty briefings required.
 
 ## Last Outcome
-SUCCESS
+IN_PROGRESS
 
 ## Evidence
 ```
-PR #137 merged (squash commit 502f1be):
-  Fix: _run_crawl4ai_sync thread dispatch + _no_leaked_running_loop canary + TOTT playwright mock + eager import
-  uv run pytest tests/test_enrichment.py tests/test_research_sectors.py -q → 124/124 passed (pre-merge confirmation)
-  Pre-existing failures confirmed on main independently (3 subprocess timeout tests + k26_vision)
+PR #136 merged (squash commit 6c73150):
+  M0-M5 code + validation.yml + loop_monitor.py on main
+  802/805 tests passed (3 pre-existing subprocess timeout failures, unrelated to M0-M5)
 
-feat/m6 post-rebase:
-  uv run pytest tests/test_research_sectors.py tests/test_enrichment.py tests/test_kill_switch.py -q → all passed
+validation.yml enabled:
+  gh workflow list → "Validation Sprint  active  280839531"
+  GH Variables: JEEVES_USE_CRAWL4AI_RESEARCH=1, JEEVES_USE_CRAWL4AI_FETCH=1 (both set)
+  First run fires within 30min of enable
 ```
 
 ## Last Blocker
-None — full suite green on target test files.
+None.
 
 ## Same Blocker Count
 0
 
 ## Refined DONE WHEN
 M6 done when:
-  1. GH Variable `JEEVES_USE_CRAWL4AI_FETCH=1` set.
-  2. `validation.yml` cron enabled; 30min cadence for 6-12h sprint.
-  3. ≥9/12 non-empty briefings in sprint window; zero KILL_SWITCH deployments; avg ≥10/13 sectors.
+  1. ≥9/12 validation.yml runs produce non-empty briefings.
+  2. Zero KILL_SWITCH deployments across the sprint window.
+  3. Average ≥10/13 populated sectors per non-empty briefing.
+  VERIFY: `python scripts/health_check.py --window 12 --source validation 2>&1 | grep -E "non_empty|KILL_SWITCH|avg_sectors"`
 
 ## Research Diagnosis
 FREE_TIER_CAPACITY_CEILING (Cerebras + OR cannot deliver 70-200 agent calls/run; structural refactor required, not retries)
 
 ## Next Priority
-M6 validation sprint.
-
-Prerequisites:
-  1. Set GH Variable `JEEVES_USE_CRAWL4AI_FETCH=1` (JEEVES_USE_CRAWL4AI_RESEARCH already set)
-  2. Confirm before enabling validation.yml cron (fires every 30min for 6-12h)
-  3. PR #136 body already updated to correct M3 test count (4/4, not 3/3)
-
-After enabling: monitor validation.yml runs for ≥9/12 non-empty briefings.
+Monitor validation.yml sprint. After 12 runs check health_check.py output.
+If ≥9/12 pass → mark M6 done, disable validation.yml cron, resume daily.yml as steady-state.
+If <9/12 → diagnose per-run failures, check KILL_SWITCH triggers.
 
 ## Active Branch
-feat/m6-acceleration-and-monitors (rebased on main post-PR #137 merge)
+main
 
 ## Open PRs
-PR #136 — feat/m6-acceleration-and-monitors — OPEN (batched M0+M1+M1.5+M2+M3+M4+M5+monitors; M3 test count corrected to 4/4 in body; M3 asyncio fix superseded by PR #137 which merged to main)
+None.
 
 ## History
 | Iter | Milestone | Outcome | Blocker summary |
@@ -73,9 +66,10 @@ PR #136 — feat/m6-acceleration-and-monitors — OPEN (batched M0+M1+M1.5+M2+M3
 | 6 | M5 | FALSE SUCCESS → FAILED | self-reported SUCCESS on tests/test_kill_switch.py 3/3; reverted by Tier 2 monitor 2026-05-21 — full suite has 3 test_research_sectors.py regressions; commit bb5520d shipped to feat/m6-acceleration-and-monitors before detection |
 | 7 | M5 retry | FAILED→BLOCKED | root cause was Playwright sync-API loop leak in TOTT test contaminating test_research_sectors.py (false positives) |
 | 8 | M3 asyncio fix | SUCCESS | PR #137 merged (502f1be): _run_crawl4ai_sync + canary fixture + TOTT playwright mock; M5 confirmed non-regressing; feat/m6 rebased on main |
+| 9 | M6 validation sprint | IN_PROGRESS | PR #136 merged (6c73150); validation.yml enabled; GH Variables set; sprint running |
 
 ## Refactor Phase
-M0 (Probe Crawl4AI on jeeves targets)
+M6 (Validation sprint)
 
 ## Hardening Constraints (from /challenge — MUST honor)
 - All old code paths preserved behind feature flags for ≥30 days
