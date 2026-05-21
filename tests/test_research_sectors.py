@@ -1135,3 +1135,164 @@ async def test_run_crawl4ai_sector_filters_prior_urls(monkeypatch):
     )
 
     assert seen == ["https://example.com/keep"]
+
+
+# ---------------------------------------------------------------------------
+# 2026-05-21 regression: _run_crawl4ai_sector and run_sector must call
+# _rotate_on_429 when Cerebras returns a 429, NOT sleep-retry the same model.
+# M4 unit tests covered _rotate_on_429 in isolation but the WIRING was never
+# exercised — production confirmed 7 consecutive 429s on gpt-oss-120b before
+# falling to OR. These tests pin the wiring.
+# ---------------------------------------------------------------------------
+
+
+async def test_run_crawl4ai_sector_rotates_cerebras_on_429(monkeypatch):
+    """Synthesis call 429 on first Cerebras model → rotate to next → succeed."""
+    import json
+    import threading
+    from datetime import date
+
+    import jeeves.research_sectors as rs
+    from jeeves.config import Config
+    from jeeves.tools.quota import QuotaLedger
+
+    # Reset module-level Cerebras state so prior tests don't bleed.
+    rs._RESOLVED_CEREBRAS_MODEL = None
+    rs._CEREBRAS_TRIED_MODELS = set()
+
+    wrapped = json.dumps({
+        "provider": "serper",
+        "query": "q",
+        "results": [{"url": "https://example.com/a"}],
+    })
+
+    def _fake_make_serper_search(cfg, ledger):
+        return lambda query="", num=10, tbs=None: wrapped
+
+    async def _fake_batch_extract(urls, max_chars=6000):
+        return [(f"body for {u}", "trafilatura") for u in urls]
+
+    # Cerebras "model" registry: first model 429s, second succeeds.
+    builds: list[str] = []  # models requested via _build_cerebras_llm
+
+    class _FakeLLM:
+        def __init__(self, model):
+            self.model = model
+
+        async def achat(self, messages):
+            if self.model == "gpt-oss-120b":
+                # Mimic the openai SDK shape used by _is_nim_rate_limit.
+                raise Exception(
+                    "Error code: 429 - {'error': {'code': 'rate_limit_exceeded'}}"
+                )
+            from llama_index.core.llms import ChatResponse, ChatMessage as _CM
+            return ChatResponse(message=_CM(role="assistant", content='[]'))
+
+    def _fake_build_cerebras_llm(max_tokens=8192):
+        # Simulate _resolve_cerebras_model walking the chain. First call
+        # returns gpt-oss-120b; after _rotate_on_429 marks it TRIED, the
+        # second call returns the next chain member that's "available".
+        if "gpt-oss-120b" not in rs._CEREBRAS_TRIED_MODELS:
+            model = "gpt-oss-120b"
+        else:
+            # Whatever the chain picks next is fine for this test.
+            model = next(
+                m for m in rs._CEREBRAS_MODEL_CHAIN
+                if m not in rs._CEREBRAS_TRIED_MODELS
+            )
+        builds.append(model)
+        return _FakeLLM(model)
+
+    monkeypatch.setattr("jeeves.tools.serper.make_serper_search", _fake_make_serper_search)
+    monkeypatch.setattr("jeeves.tools.crawl4ai_extract.batch_extract", _fake_batch_extract)
+    monkeypatch.setattr(rs, "_build_cerebras_llm", _fake_build_cerebras_llm)
+
+    cfg = Config(
+        nvidia_api_key="", serper_api_key="k", tavily_api_key="", exa_api_key="",
+        google_api_key="", groq_api_key="", gmail_app_password="",
+        gmail_oauth_token_json="", github_token="", github_repository="r/r",
+        run_date=date(2026, 5, 21),
+    )
+    ledger = QuotaLedger.__new__(QuotaLedger)
+    ledger._state = {"providers": {}}
+    ledger._lock = threading.Lock()
+
+    spec = next(s for s in rs.SECTOR_SPECS if s.name == "local_news")
+    await rs._run_crawl4ai_sector(cfg, spec, [], ledger)
+
+    # Wiring assertions:
+    # 1. The 429'd model is in TRIED set (proves _rotate_on_429 fired).
+    assert "gpt-oss-120b" in rs._CEREBRAS_TRIED_MODELS, (
+        f"rotation never fired; TRIED set: {rs._CEREBRAS_TRIED_MODELS!r}"
+    )
+    # 2. At least two distinct models were built (rotation actually rebuilt).
+    assert len(builds) >= 2, f"only built {len(builds)} model(s): {builds!r}"
+    assert builds[0] == "gpt-oss-120b"
+    assert builds[1] != "gpt-oss-120b", f"rotation didn't advance: {builds!r}"
+
+
+async def test_run_crawl4ai_sector_returns_default_when_chain_exhausted(monkeypatch):
+    """All Cerebras models 429 → returns spec.default (no infinite loop)."""
+    import json
+    import threading
+    from datetime import date
+
+    import jeeves.research_sectors as rs
+    from jeeves.config import Config
+    from jeeves.tools.quota import QuotaLedger
+
+    rs._RESOLVED_CEREBRAS_MODEL = None
+    rs._CEREBRAS_TRIED_MODELS = set()
+
+    wrapped = json.dumps({
+        "provider": "serper", "query": "q",
+        "results": [{"url": "https://example.com/a"}],
+    })
+
+    def _fake_make_serper_search(cfg, ledger):
+        return lambda query="", num=10, tbs=None: wrapped
+
+    async def _fake_batch_extract(urls, max_chars=6000):
+        return [(f"body for {u}", "trafilatura") for u in urls]
+
+    # Every model 429s; rotation should bottom out and the function returns default.
+    class _AllRateLimitedLLM:
+        def __init__(self, model):
+            self.model = model
+
+        async def achat(self, messages):
+            raise Exception(
+                "Error code: 429 - {'error': {'code': 'rate_limit_exceeded'}}"
+            )
+
+    def _fake_build_cerebras_llm(max_tokens=8192):
+        untried = [
+            m for m in rs._CEREBRAS_MODEL_CHAIN
+            if m not in rs._CEREBRAS_TRIED_MODELS
+        ]
+        if not untried:
+            return None  # _resolve_cerebras_model returns None
+        return _AllRateLimitedLLM(untried[0])
+
+    monkeypatch.setattr("jeeves.tools.serper.make_serper_search", _fake_make_serper_search)
+    monkeypatch.setattr("jeeves.tools.crawl4ai_extract.batch_extract", _fake_batch_extract)
+    monkeypatch.setattr(rs, "_build_cerebras_llm", _fake_build_cerebras_llm)
+
+    cfg = Config(
+        nvidia_api_key="", serper_api_key="k", tavily_api_key="", exa_api_key="",
+        google_api_key="", groq_api_key="", gmail_app_password="",
+        gmail_oauth_token_json="", github_token="", github_repository="r/r",
+        run_date=date(2026, 5, 21),
+    )
+    ledger = QuotaLedger.__new__(QuotaLedger)
+    ledger._state = {"providers": {}}
+    ledger._lock = threading.Lock()
+
+    spec = next(s for s in rs.SECTOR_SPECS if s.name == "local_news")
+    result = await rs._run_crawl4ai_sector(cfg, spec, [], ledger)
+
+    assert result == spec.default, "exhaustion must return spec.default"
+    # All chain models tried (or at least more than 1 — proves rotation ran).
+    assert len(rs._CEREBRAS_TRIED_MODELS) >= 2, (
+        f"rotation didn't iterate; TRIED: {rs._CEREBRAS_TRIED_MODELS!r}"
+    )

@@ -1871,30 +1871,64 @@ async def _run_crawl4ai_sector(
         log.warning("sector %s: crawl4ai no content extracted; returning default.", spec.name)
         return spec.default
 
-    # 3. ONE Cerebras synthesis call.
-    llm = _build_cerebras_llm(max_tokens=8192)
-    if llm is None:
-        log.warning("sector %s: crawl4ai Cerebras unavailable; returning default.", spec.name)
-        return spec.default
+    # 3. Cerebras synthesis call with model rotation on 429.
+    # 2026-05-21: Same model-rotation pattern as the FunctionAgent path
+    # (see _is_nim_rate_limit handler). On 429 from gpt-oss-120b we rotate
+    # to the next entry of _CEREBRAS_MODEL_CHAIN instead of returning default.
+    # Caps total attempts at the number of available Cerebras models so a
+    # totally-down provider can't loop forever.
+    from llama_index.core.llms import ChatMessage
 
-    try:
-        from llama_index.core.llms import ChatMessage
+    content_block = "\n\n".join(content_parts)
+    synthesis_prompt = (
+        f"Sector instruction: {spec.instruction}\n\n"
+        f"Extracted content from {len(content_parts)} URLs:\n"
+        f"{content_block[:20000]}\n\n"
+        f"Return ONLY valid JSON matching the instruction format. "
+        f"Use only facts from the extracted content above. "
+        f"Include real URLs from the extracted content."
+    )
+    messages = [ChatMessage(role="user", content=synthesis_prompt)]
 
-        content_block = "\n\n".join(content_parts)
-        synthesis_prompt = (
-            f"Sector instruction: {spec.instruction}\n\n"
-            f"Extracted content from {len(content_parts)} URLs:\n"
-            f"{content_block[:20000]}\n\n"
-            f"Return ONLY valid JSON matching the instruction format. "
-            f"Use only facts from the extracted content above. "
-            f"Include real URLs from the extracted content."
+    raw: str = ""
+    for _rotation_attempt in range(len(_CEREBRAS_MODEL_CHAIN) + 1):
+        llm = _build_cerebras_llm(max_tokens=8192)
+        if llm is None:
+            log.warning(
+                "sector %s: crawl4ai Cerebras unavailable (all models tried?); "
+                "returning default.",
+                spec.name,
+            )
+            return spec.default
+        current_model = getattr(llm, "model", None)
+        try:
+            resp = await llm.achat(messages)
+            raw = (resp.message.content or "").strip()
+            log.info(
+                "sector %s: crawl4ai synthesis done on %s (%d chars).",
+                spec.name, current_model, len(raw),
+            )
+            break  # success
+        except Exception as exc:
+            if _is_nim_rate_limit(exc) and current_model:
+                next_model = _rotate_on_429(current_model)
+                if next_model is not None:
+                    log.info(
+                        "sector %s: crawl4ai cerebras 429 on %s → rotating to %s.",
+                        spec.name, current_model, next_model,
+                    )
+                    continue  # rebuild LLM with rotated model on next iter
+            log.warning(
+                "sector %s: crawl4ai synthesis failed on %s (%s); returning default.",
+                spec.name, current_model, exc,
+            )
+            return spec.default
+    else:
+        log.warning(
+            "sector %s: crawl4ai synthesis exhausted Cerebras chain; "
+            "returning default.",
+            spec.name,
         )
-        messages = [ChatMessage(role="user", content=synthesis_prompt)]
-        resp = await llm.achat(messages)
-        raw = (resp.message.content or "").strip()
-        log.info("sector %s: crawl4ai synthesis done (%d chars).", spec.name, len(raw))
-    except Exception as exc:
-        log.warning("sector %s: crawl4ai synthesis failed (%s); returning default.", spec.name, exc)
         return spec.default
 
     parsed = _parse_sector_output(raw, spec)
@@ -2111,6 +2145,89 @@ async def run_sector(
         except Exception as e:
             last_exc = e
             if _is_nim_rate_limit(e):
+                # 2026-05-21: Cerebras free-tier RPM is per-model, not per-key.
+                # Sleeping 10s and retrying the same model rarely clears the
+                # 429 because gpt-oss-120b (resolved first) is hammered by all
+                # users on the free tier. _rotate_on_429 (defined module-level)
+                # marks the failed model as TRIED and picks the next available
+                # model from _CEREBRAS_MODEL_CHAIN. The TRIED set is cumulative
+                # across sectors within the same process so subsequent sectors
+                # skip already-hot models without re-probing.
+                if _provider_label == "cerebras":
+                    current_model = getattr(llm, "model", None)
+                    next_model = (
+                        _rotate_on_429(current_model) if current_model else None
+                    )
+                    if next_model is not None:
+                        rotated_llm = _build_cerebras_llm(
+                            max_tokens=sector_max_tokens,
+                        )
+                        if rotated_llm is not None:
+                            log.info(
+                                "sector %s: cerebras 429 on %s → rotating to %s.",
+                                spec.name,
+                                current_model,
+                                getattr(rotated_llm, "model", "?"),
+                            )
+                            llm = rotated_llm
+                            rl_attempts = 0  # fresh budget per rotated model
+                            net_attempts = 0
+                            timeout_attempts = 0
+                            last_exc = None
+                            tools = all_search_tools(
+                                cfg, ledger, set(prior_urls_sample),
+                            )
+                            agent = FunctionAgent(
+                                tools=tools, llm=llm,
+                                system_prompt=_system_prompt,
+                                verbose=cfg.verbose,
+                            )
+                            continue  # retry immediately with rotated model
+                    # No more Cerebras models — fall to OpenRouter directly.
+                    emit_llm_call(
+                        provider=_provider_label,
+                        model=getattr(llm, "model", "unknown"),
+                        label="research_sector",
+                        sector=spec.name,
+                        latency_ms=(_t.monotonic() - _sector_t0) * 1000,
+                        ok=False,
+                        error="cerebras_chain_exhausted",
+                    )
+                    if _use_openrouter_fallback is None:
+                        _use_openrouter_fallback = _build_openrouter_llm(
+                            max_tokens=4096 if spec.shape != "enriched" else 2048
+                        )
+                    if _use_openrouter_fallback is not None:
+                        log.warning(
+                            "sector %s: all Cerebras models 429'd; "
+                            "falling through to OpenRouter.",
+                            spec.name,
+                        )
+                        llm = _use_openrouter_fallback
+                        _provider_label = "openrouter"
+                        rl_attempts = 0
+                        net_attempts = 0
+                        timeout_attempts = 0
+                        last_exc = None
+                        tools = all_search_tools(
+                            cfg, ledger, set(prior_urls_sample),
+                        )
+                        agent = FunctionAgent(
+                            tools=tools, llm=llm,
+                            system_prompt=_system_prompt, verbose=cfg.verbose,
+                        )
+                        continue
+                    log.warning(
+                        "sector %s: all Cerebras models exhausted and no "
+                        "OpenRouter fallback; returning default.",
+                        spec.name,
+                    )
+                    return spec.default
+
+                # OpenRouter (or any non-Cerebras) 429 path — same-model
+                # retry with sleep, then give up. OR free tier RPM is also
+                # per-model but the chain length is shorter and rotation
+                # would just hop between models that share rate caps.
                 if rl_attempts >= len(_ratelimit_delays):
                     emit_llm_call(
                         provider=_provider_label,
@@ -2121,29 +2238,6 @@ async def run_sector(
                         ok=False,
                         error="rate_limit_exhausted",
                     )
-                    # Cerebras exhausted — try OpenRouter as last resort.
-                    if _provider_label == "cerebras" and _use_openrouter_fallback is None:
-                        _use_openrouter_fallback = _build_openrouter_llm(
-                            max_tokens=4096 if spec.shape != "enriched" else 2048
-                        )
-                    if _use_openrouter_fallback is not None and _provider_label != "openrouter":
-                        log.warning(
-                            "sector %s: Cerebras rate-limit exhausted; falling through to OpenRouter.",
-                            spec.name,
-                        )
-                        llm = _use_openrouter_fallback
-                        _provider_label = "openrouter"
-                        rl_attempts = 0
-                        net_attempts = 0
-                        timeout_attempts = 0
-                        last_exc = None
-                        tools = all_search_tools(cfg, ledger, set(prior_urls_sample))
-                        agent = FunctionAgent(
-                            tools=tools, llm=llm,
-                            system_prompt=_system_prompt, verbose=cfg.verbose,
-                        )
-                        continue  # Re-enter the loop with OpenRouter
-                    # Both providers exhausted — give up.
                     log.warning(
                         "sector %s: %s 429 on all %d rate-limit retries (%s); "
                         "returning default.",
