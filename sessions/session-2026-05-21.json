@@ -3,86 +3,47 @@
   "status": "complete",
   "dedup": {
     "covered_urls": [
+      "https://aeon.co/essays/institutions-are-how-we-scale-up-cooperation-among-millions",
       "https://aeon.co/essays/sure-ai-can-do-writing-but-memoir-not-so-much",
       "https://arxiv.org/pdf/2603.08127v1",
       "https://arxiv.org/pdf/2603.28986",
       "https://arxiv.org/pdf/2604.01007v2",
       "https://arxiv.org/pdf/2604.18897",
-      "https://clutch.co/resources/wearable-technology-trends",
       "https://coherent-intelligence.uk/papers/trinitarian-standard-model.html",
-      "https://defensescoop.com/2026/05/14/uap-trump-first-pursue-ufo-file-drop/",
-      "https://jewishcurrents.org/the-limits-of-diasporism",
-      "https://knilt.arcc.albany.edu/Lesson_1:_Designing_an_Effective_Token_Economy_System",
-      "https://komonews.com/news/local/safety-drill-planned-for-possible-collapse-avalanche-of-big-four-ice-caves-snohomish-county-sheriffs-office-previous-deaths-collapse-instablity-remote-location",
-      "https://komonews.com/news/local/seattle-detectives-ask-public-to-help-find-2-missing-young-adults-not-seen-in-months-20-livvy-fletcher-march-2026-19-vanessa-nessa-albert-november-2025",
-      "https://newlinesmag.com/argument/ufos-are-going-mainstream/",
-      "https://news.google.com/read/CBMijgFBVV95cUxPRkM3ZEdtVzkwdW9yckZnVXpyUHlVRURZNnlQandlQklvbWRyY1JGYVhUZ3A2c1d3ZWZQajE0OUQ4MjltRC1ENWNEX0VieE9kTHIwNnpTZkpfY0JWSDJBWjNCUV9HbUZRS2hQQUh2Q3NQMUpEanA2ZnhJdUZ6UjBZZlFxUng1Z3NJN3d5c0R3",
-      "https://news.google.com/read/CBMijwFBVV95cUxPX1FWeUc0alVDNzBDRThiZ2kyUW9oYzVBS25VUjRyZzJRcElLU1RNMXdZcThMSnltckMtWEdvVTM4RXRsYV9HT1dSOXAyeWVycGJoT0JYeGhzeHBwR3lHRjZDcEVDX1c1NTZHeW5XdlUzcXRNd3dpS0ZQU1dlb1VUdkhsSndVTXZVVnV6MUkwVQ",
-      "https://news.google.com/read/CBMilgFBVV95cUxOam03OWlVSGpVYklPMW9Fcnp0YVBhWmwxOWUtcXNwdVhLMkZPWUQ5S0tpNW1jNG1uMmFjZzE3bGp3Z3JiZ2w2ek1EdU5Lc0ptNHNDdERzek5XQ00yaDgzRGh3bktnbUtLZWZLWTIzTnlSLWJCYnhCdUZwM1NmS3BITVh2MFVJWXBZUGFRdFNRU2M0WXNVbUE",
-      "https://news.google.com/read/CBMiswFBVV95cUxPeDZBMmFDQnZUX1pKUFNua1ZZWHFMdGFfcEVuaC1TYXVvamFoOEw3SFJZMEZ1OXhYMmdVN21tcFJkMC13aXB2NjN4NGYxT1p6NnlVbmlPT1JScXFrOWxaTzdiT2hidG5hSUl3Y1otdWpBTVpMVm1rUUVRcmNmWFF3Mm9FWkdOQ3pFbWRBa2taMERBQldoZWNYTUlmMzFjQVZRaTM2ZGhHa3czT1NTSW5ibnBYWQ",
-      "https://northsound.macaronikid.com/",
       "https://openreview.net/pdf?id=YSkby14i2v",
       "https://philarchive.org/archive/ISATRO-4",
       "https://thebookerprizes.com/the-booker-library/books/orbital",
       "https://thebrokencopier.substack.com/p/a-really-good-90-minute-lesson",
-      "https://uk.finance.yahoo.com/news/wearable-ai-devices-market-insights-093200955.html",
-      "https://www.artforum.com/columns/daniel-wenger-rachel-wetzler-may-2026-editors-letter-1234747369/",
-      "https://www.bbc.com/news/articles/clype0x7pkgo",
-      "https://www.edmondsbeacon.com/",
-      "https://www.edmondswa.gov/government/departments",
-      "https://www.exploreedmonds.com/events",
-      "https://www.facebook.com/groups/170726826406843/",
-      "https://www.glassdoor.com/job-listing/esl-teacher-mandarin-english-ai-trainer-dataannotation-JV_IC1150455_KO0,39_KE40,54.htm?jl=1010108144131",
-      "https://www.glassdoor.com/job-listing/ms-english-secondary-classroom-teacher-04-fte-international-community-school-lake-washington-school-district-JV_IC1150499_KO0,76_KE77,108.htm?jl=1010136380786",
-      "https://www.groupon.com/local/edmonds-wa/kids-activities",
-      "https://www.linkedin.com/jobs/view/substitute-teacher-2025-26-school-year-at-edmonds-school-district-4378704547?position=6&pageNum=0&",
       "https://www.newyorker.com/magazine/2026/06/01/singing-the-knicks-praises-with-a-dash-of-metal",
       "https://www.nicolettelesniak.com/blog/tokenboards",
-      "https://www.nybooks.com/articles/2026/05/28/irans-new-winter-christopher-de-bellaigue/",
-      "https://www.parentmap.com/calendar",
-      "https://www.pbs.org/newshour/tag/uap",
+      "https://www.nybooks.com/online/2026/05/16/between-devil-deep-blue-sea-christopher-de-bellaigue/",
       "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
       "https://www.tandfonline.com/doi/abs/10.1080/14746700600758838",
       "https://www.themarginalian.org/2026/05/03/hannah-arendt-men-in-dark-times/",
       "https://www.themarginalian.org/2026/05/14/bertrand-russell-useless-knowledge/",
       "https://www.whyliveschool.com/blog/token-economy-lesson-plan",
-      "https://www.youtube.com/watch?v=cB3d1n4Cg3Y"
+      "https://www.youtube.com/watch?v=54TA6fyC5Pw",
+      "https://www.youtube.com/watch?v=RYNQteF6gvQ"
     ],
     "covered_headlines": [
-      "The concept of triadic ontology has been explored in various papers, including \"Triadic Relational Ontology\" by Christopher Isabelle, which develops a relational ontology and a metaphysics grounded in the doctrine of the Trinity.",
-      "Recent research in AI systems has focused on developing multi-agent systems for scientific research. The OMNI-SIMPLEMEM framework, for example, is a unified multimodal memory framework for lifelong AI agents that can discover and optimize its own architecture and hyperparameters.",
-      "Recent developments in UAP disclosure and congressional hearings have been gaining momentum, with the Department of Defense releasing UFO files and nonpartisan pressure from elected U.S.",
-      "Seattle detectives are asking for the public's help in finding two missing young adults, Livvy Fletcher and Vanessa 'Nessa' Albert, who have not been seen in months.",
-      "The City of Edmonds has various departments, including the Mayor's Office, Cultural Services, Finance, and Planning and Development.",
-      "A safety drill is planned for a possible collapse at the Big Four Ice Caves in Snohomish County.",
-      "Lake Washington School District",
-      "MS English - Secondary Classroom Teacher (0.4 FTE) -International Community School",
-      "DataAnnotation",
-      "ESL Teacher (Mandarin/English) - AI Trainer",
-      "Edmonds School District",
-      "Substitute Teacher - 2025-26 School Year",
+      "The concept of triadic ontology has been explored in various papers and articles, including \"Triadic Relational Ontology\" by Christopher Isabelle, which develops a relational ontology and a metaphysics grounded in the doctrine of the Trinity.",
+      "Recent research has focused on developing multi-agent systems for scientific research, such as the Mimosa framework, which can automatically synthesize task-specific multi-agent workflows and refine them through experimental feedback.",
+      "Recent developments in UAP disclosure and congressional hearings have been marked by a significant increase in transparency, with the Trump administration releasing new declassified UFO files and mandating the release of UAP files.",
       "A Really Good 90-minute Lesson",
-      "Lesson 1: Designing an Effective Token Economy System",
       "Starting Your Own Token Economy - Lesson Plan Included",
       "Token Boards in the High School Classroom",
-      "No specific choir auditions found in the extracted content.",
-      "Activities for toddlers can be found at https://www.parentmap.",
-      "Russia and China condemn US over indictment of former Cuban leader",
-      "Trump's IRS settlement agreement, annotated",
-      "Trump’s Government Moves to Spare an Unhappy Taxpayer Named Trump",
-      "Greedy MAGA Rep Backs $1.",
-      "Trump’s allies are already lining up to apply to his $1.",
-      "Hannah Arendt on the Power of Being an Outsider. The sole purpose of human existence is to kindle a light in the darkness of mere being.",
-      "In Praise of the Useless: Bertrand Russell’s Salve for Hard Times. Along the way of life, I have discovered three things you can almost always do in your darkest hour that almost never fail to recover the light: Learn something.",
+      "The Benefits of a Token Economy",
+      "Why Use a Token Board in High School?",
+      "Hannah Arendt on the Power of Being an Outsider",
+      "In Praise of the Useless: Bertrand Russell’s Salve for Hard Times",
       "Sure, AI can ‘do’ writing. But memoir?",
-      "Iran’s New Winter. In 1953 Iran’s prime minister, Mohammad Mossadegh, was toppled in a coup planned by MI6 and the CIA and carried out by Iranian army units and hoodlums supportive of Shah Mohammad Reza Pahlavi.",
-      "Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny. Over the past 10 months, President Donald Trump’s administration has made much of its success in sweeping through U.",
-      "The Limits of Diasporism. Despite effectively displacing Israel as the center of left Jewish identity, diasporism might sap substance from our anti-Zionism.",
-      "Editor’s Letter: Daniel Wenger and Rachel Wetzler on Criticism.",
-      "Wearable technology trends in 2026 include health insights, AI and smarter features, notifications, GPS, and utility features. Examples of wearable devices include the Oura ring, Ray-Ban Meta glasses, and the Omi pendant.",
+      "Institutions are how we scale up cooperation among millions",
+      "Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny",
+      "Between the Devil and the Deep Blue Sea",
       "Singing the Knicks’ Praises, with a Dash of Metal",
       "Orbital",
-      "UAP | PBS News",
+      "Latest news from around the world | The Guardian",
+      "Latest International News Today | Top World News Updates | Business Standard",
       "\"The Illusion of Control\" draws parallels between the Soviet Union's collapse and current AI governance frameworks.",
       "'Make up their own minds': Pentagon releases first tranche of UFO files",
       "**Friend AI Pendant** (MyTabAI, Inc): $99 wearable voice companion with 15-hour battery life, always-listening mic for conversations, and $7.",
@@ -173,6 +134,7 @@
       "Edmonds Police Chief Loi Dawkins reported the department must complete six policy updates by June 30 to access $210,000 in public safety sales tax revenue collected since February.",
       "Edmonds Police Department reports it is on track to meet state-mandated de-escalation and mental-health training deadlines despite a statewide audit showing many agencies lag.",
       "Edmonds Police are investigating the theft of a South County Fire Ford F-150 pickup truck that was stolen from the scene of a residential fire investigation on Friday. The vehicle was taken while firefighters were responding to an emergency call.",
+      "Edmonds School District",
       "Edmonds approved a $415,000 contract with Jacobs Engineering to operate the gasification system at its wastewater treatment plant, marking a potential",
       "Edmonds officials are bracing for a new statewide housing law (HB 2266) that takes effect June 11, forcing cities to allow transitional and supportive housing, plus indoor emergency shelters, in more zones.",
       "Edmonds police blotter for the week ending April 19 included a theft arrest of an adult female at Highway 99, a warrant arrest, and various other mino",
@@ -269,6 +231,7 @@
       "Labour Party divisions have intensified as senior figures position themselves for potential leadership challenges against Keir Starmer. Health Secretary Wes Streeting, Deputy Leader Angela Rayner, and Greater Manchester Mayor Andy Burnham are among those being discussed as possible successors.",
       "Lake Stevens School District",
       "Lake Washington",
+      "Lake Washington School District",
       "Late-night highway shutdowns are coming near Alderwood",
       "Late-night highway shutdowns are coming near Alderwood - Edmonds Beacon",
       "Legend Memory AI Pendant launched as a premium $499 voice-first wearable designed specifically for ADHD minds, featuring automatic task extraction from conversations and executive-grade meeting summaries.",
@@ -293,7 +256,6 @@
       "Maria Popova's essay on Fanny Wright reveals the forgotten Scottish-American radical who pioneered scientific thinking and free love in early 19th-cen",
       "Maria Popova’s long essay on Frances “Fanny” Wright recovers the forgotten 19th-century Scottish-American radical who fused scientific empiricism with",
       "Marysville",
-      "Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny",
       "May Day: An Answer to Rampant Individualism",
       "Medallions, Movement, and Mamdani at MOMA PS1",
       "Mercer Island School District",
@@ -541,13 +503,12 @@
       "functions.tavily_extract:5{\"urls\": [\"https://www.",
       "functions.tavily_search:2",
       "global news May 8 2026 US Iran tensions Strait of Hormuz",
-      "‘The Music of What Happens’ | Nick Laird | The New York Review of Books",
-      "email | Team at Sortd"
+      "‘The Music of What Happens’ | Nick Laird | The New York Review of Books"
     ],
     "cross_sector_dupes": []
   },
   "triadic_ontology": {
-    "findings": "The concept of triadic ontology has been explored in various papers, including \"Triadic Relational Ontology\" by Christopher Isabelle, which develops a relational ontology and a metaphysics grounded in the doctrine of the Trinity. Another paper, \"Quantum perichoresis: Quantum field theory and the Trinity\" by an unknown author, interprets the Trinitarian theological doctrine of perichoresis as a form of Divine phase entanglement with the world. Additionally, \"The Trinitarian Standard Model: An Isomorphism Between Gauge Theory and the Divine Perichoresis\" by Coherent Intelligence Inc. presents a formal isomorphism between the mathematical structure of the Standard Model's gauge groups and the theological doctrine of the Christian Trinity. These papers demonstrate the ongoing exploration of triadic ontology and its connections to quantum theory and the Trinity.",
+    "findings": "The concept of triadic ontology has been explored in various papers and articles, including \"Triadic Relational Ontology\" by Christopher Isabelle, which develops a relational ontology and a metaphysics grounded in the doctrine of the Trinity. Another paper, \"Quantum perichoresis: Quantum field theory and the Trinity\" by an unknown author, metaphorically interprets the Trinitarian theological doctrine of perichoresis as a form of Divine phase entanglement with the world. Additionally, \"The Trinitarian Standard Model: An Isomorphism Between Gauge Theory and the Divine Perichoresis\" by Coherent Intelligence presents a formal isomorphism between the mathematical structure of the Standard Model's gauge groups and the theological doctrine of the Christian Trinity. These papers demonstrate the ongoing interest and research in the area of triadic ontology and its relation to quantum perichoresis and trinitarian philosophy.",
     "urls": [
       "https://philarchive.org/archive/ISATRO-4",
       "https://www.tandfonline.com/doi/abs/10.1080/14746700600758838",
@@ -555,7 +516,7 @@
     ]
   },
   "ai_systems": {
-    "findings": "Recent research in AI systems has focused on developing multi-agent systems for scientific research. The OMNI-SIMPLEMEM framework, for example, is a unified multimodal memory framework for lifelong AI agents that can discover and optimize its own architecture and hyperparameters. Another approach is the EvoScientist framework, which is an evolving multi-agent AI scientist framework that continuously improves its research strategies through persistent memory and self-evolution. Additionally, there have been advances in prompt engineering, such as the MR.PEA framework, which is a self-supervised prompt optimization framework that operates with minimal input and leverages meta-reasoning to iteratively build task-specific knowledge. These developments have the potential to automate a broad range of computationally accessible scientific tasks across disciplines.",
+    "findings": "Recent research has focused on developing multi-agent systems for scientific research, such as the Mimosa framework, which can automatically synthesize task-specific multi-agent workflows and refine them through experimental feedback. Another area of research is the development of autonomous research pipelines, such as OMNI-SIMPLEMEM, which can discover effective lifelong memory frameworks for AI agents. Additionally, there have been advances in prompt engineering, such as the Meta-Reasoning Prompt Engineering Agent (MR.PEA), which can optimize prompts for large language models with minimal input. Furthermore, researchers have explored the use of evolving multi-agent AI scientist frameworks, such as EvoScientist, which can continuously improve research strategies through persistent memory and self-evolution. These developments have the potential to automate a broad range of computationally accessible scientific tasks across disciplines and improve the performance of AI systems.",
     "urls": [
       "https://arxiv.org/pdf/2604.01007v2",
       "https://arxiv.org/pdf/2603.28986",
@@ -565,207 +526,105 @@
     ]
   },
   "uap": {
-    "findings": "Recent developments in UAP disclosure and congressional hearings have been gaining momentum, with the Department of Defense releasing UFO files and nonpartisan pressure from elected U.S. officials for full government disclosure. The UAP research community has reacted to Trump's first PURSUE file drop, stating that 'data alone is not disclosure' and that concerns remain. Experts believe this moves the issue out of the fringe and into mainstream national security discourse.",
+    "findings": "Recent developments in UAP disclosure and congressional hearings have been marked by a significant increase in transparency, with the Trump administration releasing new declassified UFO files and mandating the release of UAP files. The CIA has been accused of lying to Congress, and there have been calls for a modern-day Church Commission to investigate non-human intelligence and UAPs. While some have expressed skepticism about the existence of extraterrestrial life, others have pointed to evidence of non-human intelligence and the need for further research and disclosure. The issue remains a topic of debate and speculation, with many questions still unanswered.",
     "urls": [
-      "https://newlinesmag.com/argument/ufos-are-going-mainstream/",
-      "https://defensescoop.com/2026/05/14/uap-trump-first-pursue-ufo-file-drop/"
+      "https://www.youtube.com/watch?v=54TA6fyC5Pw",
+      "https://www.youtube.com/watch?v=RYNQteF6gvQ"
     ]
   },
-  "weather": "{\n  \"conditions\": \"Sunny\",\n  \"temperature\": \"68°F\",\n  \"precipitation\": \"0%\",\n  \"wind\": \"NNW 5 mph\",\n  \"evening\": \"Mostly clear, with a low around 52°F\",\n  \"comfort\": \"RealFeel 75°\",\n  \"urls\": [\n    \"https://www.wunderground.com/hourly/us/wa/edmonds\",\n    \"https://www.accuweather.com/en/us/edmonds/98020/weather-forecast/336397\",\n    \"https://forecast.weather.gov/zipcity.php?inputstring=Edmonds,WA&Go2=Go\"\n  ]\n}",
-  "local_news": [
-    {
-      "category": "public_safety",
-      "source": "KOMO News",
-      "findings": "Seattle detectives are asking for the public's help in finding two missing young adults, Livvy Fletcher and Vanessa 'Nessa' Albert, who have not been seen in months.",
-      "urls": [
-        "https://komonews.com/news/local/seattle-detectives-ask-public-to-help-find-2-missing-young-adults-not-seen-in-months-20-livvy-fletcher-march-2026-19-vanessa-nessa-albert-november-2025"
-      ]
-    },
-    {
-      "category": "municipal",
-      "source": "Edmonds Beacon",
-      "findings": "The City of Edmonds has various departments, including the Mayor's Office, Cultural Services, Finance, and Planning and Development.",
-      "urls": [
-        "https://www.edmondsbeacon.com/",
-        "https://www.edmondswa.gov/government/departments"
-      ]
-    },
-    {
-      "category": "public_safety",
-      "source": "KOMO News",
-      "findings": "A safety drill is planned for a possible collapse at the Big Four Ice Caves in Snohomish County.",
-      "urls": [
-        "https://komonews.com/news/local/safety-drill-planned-for-possible-collapse-avalanche-of-big-four-ice-caves-snohomish-county-sheriffs-office-previous-deaths-collapse-instablity-remote-location"
-      ]
-    }
-  ],
-  "career": {
-    "openings": [
-      {
-        "district": "Lake Washington School District",
-        "role": "MS English - Secondary Classroom Teacher (0.4 FTE) -International Community School",
-        "url": "https://www.glassdoor.com/job-listing/ms-english-secondary-classroom-teacher-04-fte-international-community-school-lake-washington-school-district-JV_IC1150499_KO0,76_KE77,108.htm?jl=1010136380786",
-        "summary": "Teach English at International Community School",
-        "deadline": null,
-        "salary_range": "$66K - $93K"
-      },
-      {
-        "district": "DataAnnotation",
-        "role": "ESL Teacher (Mandarin/English) - AI Trainer",
-        "url": "https://www.glassdoor.com/job-listing/esl-teacher-mandarin-english-ai-trainer-dataannotation-JV_IC1150455_KO0,39_KE40,54.htm?jl=1010108144131",
-        "summary": "Teach ESL with Mandarin and English skills",
-        "deadline": null,
-        "salary_range": "$25.00 Per Hour"
-      },
-      {
-        "district": "Edmonds School District",
-        "role": "Substitute Teacher - 2025-26 School Year",
-        "url": "https://www.linkedin.com/jobs/view/substitute-teacher-2025-26-school-year-at-edmonds-school-district-4378704547?position=6&pageNum=0&",
-        "summary": "Substitute teaching position for the 2025-26 school year",
-        "deadline": null,
-        "salary_range": null
-      }
-    ],
-    "notes": "Extracted from Glassdoor and LinkedIn job listings"
-  },
+  "weather": "",
+  "local_news": [],
+  "career": {},
   "english_lesson_plans": {
     "classroom_ready": [
       {
         "title": "A Really Good 90-minute Lesson",
-        "source": "thebrokencopier.substack.com",
+        "source": "The Broken Copier",
         "url": "https://thebrokencopier.substack.com/p/a-really-good-90-minute-lesson",
-        "grade_band": "9-12",
-        "topic": "English Language Arts",
-        "summary": "A 90-minute lesson plan for English 10 students, including a check-in survey, peer nominations, and a review of an early scene in Shakespeare's Macbeth."
-      },
-      {
-        "title": "Lesson 1: Designing an Effective Token Economy System",
-        "source": "knilt.arcc.albany.edu",
-        "url": "https://knilt.arcc.albany.edu/Lesson_1:_Designing_an_Effective_Token_Economy_System",
-        "grade_band": "9-12",
-        "topic": "Classroom Management",
-        "summary": "A lesson plan for designing a token economy system, including a checklist for implementation and a needs assessment."
+        "grade_band": "9-10",
+        "topic": "Lesson planning",
+        "summary": "A step-by-step breakdown of a 90-minute lesson in a high school English classroom, including a check-in survey, exit ticket debrief, and anticipation work for reading."
       },
       {
         "title": "Starting Your Own Token Economy - Lesson Plan Included",
-        "source": "www.whyliveschool.com",
+        "source": "LiveSchool",
         "url": "https://www.whyliveschool.com/blog/token-economy-lesson-plan",
         "grade_band": "9-12",
-        "topic": "Classroom Management",
-        "summary": "A guide to starting a token economy system, including a lesson plan and tips for implementation."
+        "topic": "Token economy",
+        "summary": "A guide to setting up a token economy system in the classroom, including a free lesson plan and examples of how to use tokens to reinforce positive behavior."
+      },
+      {
+        "title": "Token Boards in the High School Classroom",
+        "source": "Nicolette Lesniak",
+        "url": "https://www.nicolettelesniak.com/blog/tokenboards",
+        "grade_band": "9-12",
+        "topic": "Token boards",
+        "summary": "A guide to using token boards in a high school classroom, including how to personalize the reinforcement system and encourage self-monitoring and goal-setting."
       }
     ],
     "pedagogy_pieces": [
       {
-        "title": "Token Boards in the High School Classroom",
-        "source": "www.nicolettelesniak.com",
+        "title": "The Benefits of a Token Economy",
+        "source": "LiveSchool",
+        "url": "https://www.whyliveschool.com/blog/token-economy-lesson-plan",
+        "summary": "An explanation of the benefits of using a token economy system in the classroom, including how it can help target specific behaviors and promote independence."
+      },
+      {
+        "title": "Why Use a Token Board in High School?",
+        "source": "Nicolette Lesniak",
         "url": "https://www.nicolettelesniak.com/blog/tokenboards",
-        "summary": "A blog post about using token boards in the high school classroom to promote self-regulation and motivation."
+        "summary": "An explanation of why token boards can be effective in high school classrooms, including how they can help students stay on task and encourage self-monitoring."
       }
     ],
-    "notes": "The search results provided a range of resources for high school English language arts lesson plans and classroom management strategies, including token economy systems and token boards. The results included lesson plans, guides, and blog posts from various sources, including Substack, KNILT, and Why LiveSchool. The resources provided tips and strategies for implementing token economy systems, designing effective lessons, and promoting student motivation and self-regulation."
+    "notes": "These resources provide a range of ideas and strategies for implementing token economy systems and token boards in the high school classroom, including lesson plans and examples of how to use these tools to promote positive behavior and independence."
   },
-  "family": {
-    "choir": "No specific choir auditions found in the extracted content.",
-    "toddler": "Activities for toddlers can be found at https://www.parentmap.com/calendar and https://www.exploreedmonds.com/events. Additionally, Macaroni KID North Sound WA provides a calendar of events for kids in Edmonds, Lynnwood, and Mountlake Terrace at https://northsound.macaronikid.com/. Groupon also offers deals on kids' activities in Edmonds, WA at https://www.groupon.com/local/edmonds-wa/kids-activities.",
-    "urls": [
-      "https://www.parentmap.com/calendar",
-      "https://www.exploreedmonds.com/events",
-      "https://northsound.macaronikid.com/",
-      "https://www.groupon.com/local/edmonds-wa/kids-activities",
-      "https://www.facebook.com/groups/170726826406843/"
-    ]
-  },
-  "global_news": [
-    {
-      "category": "World",
-      "source": "BBC",
-      "findings": "Russia and China condemn US over indictment of former Cuban leader",
-      "urls": [
-        "https://www.bbc.com/news/articles/clype0x7pkgo"
-      ]
-    },
-    {
-      "category": "US",
-      "source": "CNN",
-      "findings": "Trump's IRS settlement agreement, annotated",
-      "urls": [
-        "https://news.google.com/read/CBMilgFBVV95cUxOam03OWlVSGpVYklPMW9Fcnp0YVBhWmwxOWUtcXNwdVhLMkZPWUQ5S0tpNW1jNG1uMmFjZzE3bGp3Z3JiZ2w2ek1EdU5Lc0ptNHNDdERzek5XQ00yaDgzRGh3bktnbUtLZWZLWTIzTnlSLWJCYnhCdUZwM1NmS3BITVh2MFVJWXBZUGFRdFNRU2M0WXNVbUE"
-      ]
-    },
-    {
-      "category": "World",
-      "source": "The New York Times",
-      "findings": "Trump’s Government Moves to Spare an Unhappy Taxpayer Named Trump",
-      "urls": [
-        "https://news.google.com/read/CBMijwFBVV95cUxPX1FWeUc0alVDNzBDRThiZ2kyUW9oYzVBS25VUjRyZzJRcElLU1RNMXdZcThMSnltckMtWEdvVTM4RXRsYV9HT1dSOXAyeWVycGJoT0JYeGhzeHBwR3lHRjZDcEVDX1c1NTZHeW5XdlUzcXRNd3dpS0ZQU1dlb1VUdkhsSndVTXZVVnV6MUkwVQ"
-      ]
-    },
-    {
-      "category": "World",
-      "source": "The Daily Beast",
-      "findings": "Greedy MAGA Rep Backs $1.8B Slush Fund—Then Demands a Cut",
-      "urls": [
-        "https://news.google.com/read/CBMijgFBVV95cUxPRkM3ZEdtVzkwdW9yckZnVXpyUHlVRURZNnlQandlQklvbWRyY1JGYVhUZ3A2c1d3ZWZQajE0OUQ4MjltRC1ENWNEX0VieE9kTHIwNnpTZkpfY0JWSDJBWjNCUV9HbUZRS2hQQUh2Q3NQMUpEanA2ZnhJdUZ6UjBZZlFxUng1Z3NJN3d5c0R3"
-      ]
-    },
-    {
-      "category": "World",
-      "source": "The Washington Post",
-      "findings": "Trump’s allies are already lining up to apply to his $1.8 billion fund",
-      "urls": [
-        "https://news.google.com/read/CBMiswFBVV95cUxPeDZBMmFDQnZUX1pKUFNua1ZZWHFMdGFfcEVuaC1TYXVvamFoOEw3SFJZMEZ1OXhYMmdVN21tcFJkMC13aXB2NjN4NGYxT1p6NnlVbmlPT1JScXFrOWxaTzdiT2hidG5hSUl3Y1otdWpBTVpMVm1rUUVRcmNmWFF3Mm9FWkdOQ3pFbWRBa2taMERBQldoZWNYTUlmMzFjQVZRaTM2ZGhHa3czT1NTSW5ibnBYWQ"
-      ]
-    }
-  ],
+  "family": {},
+  "global_news": [],
   "intellectual_journals": [
     {
       "source": "The Marginalian",
-      "findings": "Hannah Arendt on the Power of Being an Outsider. The sole purpose of human existence is to kindle a light in the darkness of mere being. We need our sciences to learn how the universe works, to know what we don’t yet know and to comprehend it. We need our arts to learn how the heart works, to feel what we are unwilling or unable to feel and hold it without apprehension.",
-      "url": "https://www.themarginalian.org/2026/05/03/hannah-arendt-men-in-dark-times/"
+      "findings": "Hannah Arendt on the Power of Being an Outsider",
+      "urls": [
+        "https://www.themarginalian.org/2026/05/03/hannah-arendt-men-in-dark-times/"
+      ]
     },
     {
       "source": "The Marginalian",
-      "findings": "In Praise of the Useless: Bertrand Russell’s Salve for Hard Times. Along the way of life, I have discovered three things you can almost always do in your darkest hour that almost never fail to recover the light: Learn something. Help someone. Feel it all.",
-      "url": "https://www.themarginalian.org/2026/05/14/bertrand-russell-useless-knowledge/"
+      "findings": "In Praise of the Useless: Bertrand Russell’s Salve for Hard Times",
+      "urls": [
+        "https://www.themarginalian.org/2026/05/14/bertrand-russell-useless-knowledge/"
+      ]
     },
     {
       "source": "Aeon",
-      "findings": "Sure, AI can ‘do’ writing. But memoir? Not so much. Creative writing used to be a human prerogative: do it well, do it badly, but either way endorse the consensus that to write about human experience was worth the candle and the coffee.",
-      "url": "https://aeon.co/essays/sure-ai-can-do-writing-but-memoir-not-so-much"
+      "findings": "Sure, AI can ‘do’ writing. But memoir? Not so much",
+      "urls": [
+        "https://aeon.co/essays/sure-ai-can-do-writing-but-memoir-not-so-much"
+      ]
     },
     {
-      "source": "The New York Review of Books",
-      "findings": "Iran’s New Winter. In 1953 Iran’s prime minister, Mohammad Mossadegh, was toppled in a coup planned by MI6 and the CIA and carried out by Iranian army units and hoodlums supportive of Shah Mohammad Reza Pahlavi.",
-      "url": "https://www.nybooks.com/articles/2026/05/28/irans-new-winter-christopher-de-bellaigue/"
+      "source": "Aeon",
+      "findings": "Institutions are how we scale up cooperation among millions",
+      "urls": [
+        "https://aeon.co/essays/institutions-are-how-we-scale-up-cooperation-among-millions"
+      ]
     },
     {
       "source": "ProPublica",
-      "findings": "Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny. Over the past 10 months, President Donald Trump’s administration has made much of its success in sweeping through U.S. cities, capturing unauthorized immigrants and arresting people who publicly oppose the operations, routinely accusing dissenters of being domestic terrorists or extremists.",
-      "url": "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions"
-    },
-    {
-      "source": "Jewish Currents",
-      "findings": "The Limits of Diasporism. Despite effectively displacing Israel as the center of left Jewish identity, diasporism might sap substance from our anti-Zionism.",
-      "url": "https://jewishcurrents.org/the-limits-of-diasporism"
-    },
-    {
-      "source": "Artforum",
-      "findings": "Editor’s Letter: Daniel Wenger and Rachel Wetzler on Criticism. Artforum’s new co-editors address the enduring stakes of art writing",
-      "url": "https://www.artforum.com/columns/daniel-wenger-rachel-wetzler-may-2026-editors-letter-1234747369/"
-    }
-  ],
-  "wearable_ai": [
-    {
-      "category": "wearable_devices",
-      "findings": "Wearable technology trends in 2026 include health insights, AI and smarter features, notifications, GPS, and utility features. Examples of wearable devices include the Oura ring, Ray-Ban Meta glasses, and the Omi pendant.",
+      "findings": "Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny",
       "urls": [
-        "https://www.youtube.com/watch?v=cB3d1n4Cg3Y",
-        "https://clutch.co/resources/wearable-technology-trends",
-        "https://uk.finance.yahoo.com/news/wearable-ai-devices-market-insights-093200955.html"
+        "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions"
+      ]
+    },
+    {
+      "source": "The New York Review of Books",
+      "findings": "Between the Devil and the Deep Blue Sea",
+      "urls": [
+        "https://www.nybooks.com/online/2026/05/16/between-devil-deep-blue-sea-christopher-de-bellaigue/"
       ]
     }
   ],
+  "wearable_ai": [],
   "newyorker": {
     "available": true,
     "title": "Singing the Knicks’ Praises, with a Dash of Metal",
@@ -784,21 +643,28 @@
     "title": "Orbital",
     "author": "Samantha Harvey",
     "year": 2024,
-    "summary": "Orbital is a novel about six astronauts on the International Space Station, exploring themes of life, Earth, and humanity. The book is a love letter to our planet, written in a unique and experimental style.",
+    "summary": "Orbital is a novel about six astronauts on the International Space Station, exploring themes of life, Earth, and humanity. The book is a winner of the Booker Prize 2024 and has received critical acclaim for its unique narrative and lyrical prose.",
     "url": "https://thebookerprizes.com/the-booker-library/books/orbital"
   },
   "enriched_articles": [
     {
-      "url": "https://www.pbs.org/newshour/tag/uap",
-      "source": "PBS News",
-      "title": "UAP | PBS News",
-      "fetch_failed": false,
-      "text": "![](https://d3i6fh83elv35t.cloudfront.net/static/assets/images/placeholder.jpg)\n![Politics](https://d3i6fh83elv35t.cloudfront.net/static/assets/images/placeholder.jpg)\n![Arts](https://d3i6fh83elv35t.cloudfront.net/static/assets/images/placeholder.jpg)\n![Nation](https://d3i6fh83elv35t.cloudfront.net/static/assets/images/placeholder.jpg)\n![World](https://d3i6fh83elv35t.cloudfront.net/static/assets/images/placeholder.jpg)\n![Economy](https://d3i6fh83elv35t.cloudfront.net/static/assets/images/placeho"
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH8TXxE7EDUeHrQC4LRLOT2gNEj8cE5tytnoMJcio0_I7Q015CRL_LKVuvHbrc6tBD_3S472XFPaCEVEv2gz-RytPGws_6EzoUsiETaraVSo3dxcS424-OluI31mA==",
+      "source": "vertexaisearch.cloud.google.com",
+      "title": "Latest news from around the world | The Guardian",
+      "text": "![](https://sb.scorecardresearch.com/p?c1=2&c2=6035250&cv=2.0&cj=1&cs_ucfr=0&comscorekw=world)\n\n## Africa\n\n![Red Cross workers in full protective equipment including head coverings, visors, face masks and long bright red rubber gloves stand outside a low-rise white building with a green stripe of paint around the bottom. ](https://i.guim.co.uk/img/media/49583dee91b5a91b99d9699dfd099e58da815fbb/0_0_4193_3355/master/4193.jpg?width=465&dpr=1&s=none&crop=5%3A4)\n\n### Ebola: US ban on travellers from ",
+      "fetch_failed": false
+    },
+    {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHrZZ7mcEVKBlOwRFTbx6DEPrMGgm-ktgWN53xmg0nr03vE8gSazwtiRSsQ_P3hgxp5FWGTWcEmGKelCUduRUZgzO7oJLYw5CHCuDgLlvcT5jg1a_0IJw0xcS6__-9GBjfzf08647LG",
+      "source": "vertexaisearch.cloud.google.com",
+      "title": "Latest International News Today | Top World News Updates | Business Standard",
+      "text": "Friday, May 22, 2026 | 02:46 AM IST[हिईदी में पढें](https://hindi.business-standard.com/)\n\n[Home](https://www.business-standard.com/) / World News\n\n# World News\n\n## [Ukraine can be EU 'associate' member: German Chancellor Friedrich Merz](https://www.business-standard.com/world-news/nvidia-s-profit-increases-211-as-ai-boom-powers-chipmaker-s-growth-126052101923_1.html)\n\nFriedrich Merz has proposed an \"associate member\" status for Ukraine as an interim pathway towards full EU membership\n\nUpdated O",
+      "fetch_failed": false
     }
   ],
   "correspondence": {
     "found": true,
     "fallback_used": false,
-    "text": "- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating a permanent failure of the Daily Pipeline with no auto-retry due to 429 rate limiting.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating a permanent failure of the Daily Pipeline with no auto-retry due to 429 rate limiting.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting an email from Lady Cathy Lang about 'Cabin 2026' that requires attention.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting an email from Cathy Lang about 'Cabin 2026' that requires attention.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting an email from Cathy Lang about 'Cabin 2026' that requires his attention.\n- [escalation] Andy: Email from brother Andrew Lang with subject about staying caring in the midst of outrage.\n- [escalation] Lady Cathy: Family member Cathy Lang sends a message about cabin plans for 2026.\n- [decision required] Team at Sortd: Payment failure notice for Sortd subscription; account at risk of suspension unless payment information is updated.\n- [decision required] Team at Sortd: Sortd subscription payment of $22 failed; requires updating payment information to continue service."
+    "text": "- [escalation] Mrs. Lang: Daily correspondence summary from Jeeves highlighting a pressing matter from Lady Cathy Lang about 'Cabin 2026'.\n- [escalation] Mrs. Lang: Daily correspondence summary from Jeeves noting a Jeeves Daily Pipeline failure.\n- [escalation] Mrs. Lang: Jeeves pipeline alert about a permanent failure in the Daily Pipeline with a 429 transient failure marker.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting a payment escalation notice from Sortd regarding a second unsuccessful payment notice.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary referencing a Jeeves pipeline alert email.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure with transient 429 error in the Daily Pipeline workflow.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting an email from mother Lady Cathy Lang about 'Cabin 2026'.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting an email from mother Cathy Lang about 'Cabin 2026'.\n- [escalation] Lady Cathy: Daily correspondence summary indicating an email from Cathy Lang about 'Cabin 2026' requires attention.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting a GitHub notification about a failed workflow run in jeeves-unchained."
   }
 }
