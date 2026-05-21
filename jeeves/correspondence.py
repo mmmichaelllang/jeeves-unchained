@@ -76,9 +76,16 @@ CLASSIFY_BATCH_SIZE = 15
 # happens on bad network days for one provider AND TPD exhaustion for the
 # other), OR is the last line of defense before the entire daily briefing
 # loses the correspondence section. Drop gemma — known paraphrase offender.
+#
+# 2026-05-21 maintenance: qwen/qwen-2.5-72b-instruct:free returns 404 ("No
+# endpoints found") — OR deprecated the route. Replaced with the write.py
+# fallback chain (mistral-small + deepseek) which is already battle-tested
+# under TPM/TPD load. Order: cheapest-first, most-reliable-first.
 _OPENROUTER_CLASSIFY_MODELS = (
     "meta-llama/llama-3.3-70b-instruct:free",
-    "qwen/qwen-2.5-72b-instruct:free",
+    "mistralai/mistral-small-3.1-24b-instruct:free",
+    "deepseek/deepseek-chat-v3:free",
+    "meta-llama/llama-3.1-8b-instruct:free",
 )
 
 

@@ -53,6 +53,13 @@ jobs:
           JINA_API_KEY: ${{ secrets.JINA_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
+          # 2026-05-21 — M3-M5 Crawl4AI refactor. Manual research dispatches
+          # must read the same GH Variables daily.yml does, otherwise the
+          # Crawl4AI path silently stays off when validating fixes in isolation.
+          # Mirrors the daily.yml fix landed in commit f427ec3.
+          JEEVES_USE_CRAWL4AI_RESEARCH: ${{ vars.JEEVES_USE_CRAWL4AI_RESEARCH || '' }}
+          JEEVES_USE_CRAWL4AI_FETCH: ${{ vars.JEEVES_USE_CRAWL4AI_FETCH || '' }}
+          JEEVES_REFACTOR_KILL_SWITCH: ${{ vars.JEEVES_REFACTOR_KILL_SWITCH || '' }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
