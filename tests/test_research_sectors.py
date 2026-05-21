@@ -1605,3 +1605,57 @@ async def test_run_crawl4ai_sector_rotates_or_on_dead_endpoint(monkeypatch):
     assert or_calls[1] != first_model
     # And the first model is now in TRIED set (proves _rotate_openrouter_on_429 fired).
     assert first_model in rs._OPENROUTER_TRIED_MODELS
+
+
+# ---------------------------------------------------------------------------
+# 2026-05-21 round 7 fixes
+# ---------------------------------------------------------------------------
+
+def test_parse_sector_output_drops_bare_url_strings_from_enriched():
+    """OR models sometimes return a flat list of URL strings instead of
+    EnrichedArticle dicts.  _parse_sector_output must filter them out so
+    save_session doesn't crash on Pydantic validation.
+    """
+    raw = (
+        '["https://arxiv.org/pdf/2603.28986",'
+        ' "https://arxiv.org/pdf/2604.01007v2",'
+        ' "https://github.com/Human-Agent-Society/CORAL"]'
+    )
+    spec = next(s for s in SECTOR_SPECS if s.name == "enriched_articles")
+    out = _parse_sector_output(raw, spec)
+    assert isinstance(out, list)
+    assert out == [], (
+        "bare URL strings must be filtered — result should be empty list, "
+        f"got {out!r}"
+    )
+
+
+def test_parse_sector_output_keeps_valid_enriched_dicts():
+    """Valid EnrichedArticle dicts are preserved; bare strings mixed in are dropped."""
+    raw = (
+        '["https://arxiv.org/pdf/discard",'
+        ' {"url": "https://arxiv.org/abs/2603.28986",'
+        '  "title": "Some Paper", "text": "Abstract here."}]'
+    )
+    spec = next(s for s in SECTOR_SPECS if s.name == "enriched_articles")
+    out = _parse_sector_output(raw, spec)
+    assert len(out) == 1
+    assert out[0]["title"] == "Some Paper"
+
+
+def test_is_retryable_network_error_matches_connection_error():
+    """'Connection error.' (httpx.ConnectError) must be retryable."""
+    import jeeves.research_sectors as rs
+    exc = Exception("Connection error.")
+    assert rs._is_retryable_network_error(exc), (
+        "'Connection error.' should be retryable so crawl4ai OR rotation fires"
+    )
+
+
+def test_cerebras_ctx_banned_excludes_llama_8b():
+    """llama3.1-8b must be in _CEREBRAS_CTX_BANNED to prevent fallback picks."""
+    import jeeves.research_sectors as rs
+    assert "llama3.1-8b" in rs._CEREBRAS_CTX_BANNED, (
+        "llama3.1-8b has 8192-ctx — too small for deep sectors; "
+        "must be banned from _resolve_cerebras_model fallback"
+    )

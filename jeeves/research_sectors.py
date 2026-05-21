@@ -882,10 +882,21 @@ def _parse_sector_output(raw: str, spec: SectorSpec) -> Any:
     # For enriched sectors, enforce the 500-char text cap regardless of model
     # compliance — avoids bloated session JSON and downstream NIM context issues.
     if spec.shape == "enriched" and isinstance(parsed, list):
+        # 2026-05-21 round 7: OR models (especially :floor) sometimes return a
+        # flat list of URL strings instead of EnrichedArticle dicts.  Filter
+        # them out before schema validation so save_session doesn't crash.
+        before_str_filter = len(parsed)
+        parsed = [e for e in parsed if isinstance(e, dict)]
+        dropped_strs = before_str_filter - len(parsed)
+        if dropped_strs:
+            log.warning(
+                "sector %s: dropped %d bare-string entries from enriched output "
+                "(model returned flat URL list instead of EnrichedArticle dicts).",
+                spec.name, dropped_strs,
+            )
         for entry in parsed:
-            if isinstance(entry, dict) and isinstance(entry.get("text"), str):
-                if len(entry["text"]) > 500:
-                    entry["text"] = entry["text"][:500]
+            if isinstance(entry.get("text"), str) and len(entry["text"]) > 500:
+                entry["text"] = entry["text"][:500]
 
     # Sprint-19: sanitise NIM tool-call markup leaking into prose. When NIM's
     # streaming output is truncated mid tool-call (e.g. ``functions.tavily_extract:5
@@ -1043,12 +1054,19 @@ def _quota_increased(before: dict[str, int], ledger) -> bool:
 
 
 def _is_retryable_network_error(exc: Exception) -> bool:
-    """True for transient NIM streaming errors (peer drop, timeout, reset)."""
+    """True for transient streaming/network errors (peer drop, timeout, reset).
+
+    2026-05-21 round 7: added "connection error" to catch httpx.ConnectError
+    surfaces as ``Connection error.`` — observed on OR :floor endpoint for
+    global_news crawl4ai synthesis.  Rotatable in the crawl4ai OR phase; also
+    bubbles up to the main run_sector network-retry branch.
+    """
     msg = str(exc).lower()
     return any(phrase in msg for phrase in (
         "peer closed connection",
         "incomplete chunked read",
         "connection reset",
+        "connection error",
         "read timeout",
         "server disconnected",
     ))
@@ -1128,6 +1146,14 @@ _CEREBRAS_MODEL_CHAIN = [
     # rotation falls straight to OpenRouter once the 3 usable Cerebras models
     # (gpt-oss-120b, qwen-3-235b-a22b-instruct-2507, zai-glm-4.7) all 429.
 ]
+# 2026-05-21 round 7: Models too small for our deep sectors (ctx < ~10k tokens).
+# Blocked from BOTH _CEREBRAS_MODEL_CHAIN and the _resolve_cerebras_model
+# `remaining` fallback — the fallback picks ANY available model alphabetically,
+# which previously allowed llama3.1-8b to slip back in after the chain was
+# exhausted.  Banning it here ensures the "no untried models" path fires and
+# falls through to OpenRouter instead.
+_CEREBRAS_CTX_BANNED: frozenset[str] = frozenset({"llama3.1-8b"})
+
 _RESOLVED_CEREBRAS_MODEL: str | None = None
 _CEREBRAS_TRIED_MODELS: set[str] = set()  # models that 429'd this session
 
@@ -1162,7 +1188,7 @@ def _resolve_cerebras_model(api_key: str) -> str | None:
                     _RESOLVED_CEREBRAS_MODEL = candidate
                     log.info("Cerebras: resolved model → %s", candidate)
                     return candidate
-            remaining = sorted(available - _CEREBRAS_TRIED_MODELS)
+            remaining = sorted(available - _CEREBRAS_TRIED_MODELS - _CEREBRAS_CTX_BANNED)
             if remaining:
                 _RESOLVED_CEREBRAS_MODEL = remaining[0]
                 log.warning(
@@ -2052,11 +2078,14 @@ async def _run_crawl4ai_sector(
                 )
                 break  # success
             except Exception as exc:
-                # OR rotates on 429 AND on dead-endpoint 404. Anything else
-                # is treated as terminal — don't burn budget hopping models
-                # for non-rate-limit failures (e.g., auth, network).
+                # OR rotates on 429, dead-endpoint 404, AND transient network
+                # errors (Connection error., peer closed, etc.) — 2026-05-21
+                # round 7: global_news lost to Connection error on :floor endpoint;
+                # rotating to next OR model is the right recovery.
                 rotatable = (
-                    _is_nim_rate_limit(exc) or _is_or_dead_endpoint(exc)
+                    _is_nim_rate_limit(exc)
+                    or _is_or_dead_endpoint(exc)
+                    or _is_retryable_network_error(exc)
                 )
                 if rotatable and or_model:
                     next_or = _rotate_openrouter_on_429(or_model)
