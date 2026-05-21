@@ -1,0 +1,50 @@
+name: Loop Monitor
+
+# Tier 1 monitor for jeeves-unchained adaptive-loop progress.
+# Runs every 30 minutes. Reads LOOP_STATE.md + git history. Deterministic checks.
+# On anomaly: opens GitHub issue + sends email via GMAIL_APP_PASSWORD.
+#
+# Tier 2 (Opus reasoning) runs separately as a Cowork scheduled task and
+# escalates fuzzy issues this script can't catch.
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # every 30 min UTC
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Print alerts without sending'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  monitor:
+    name: Tier 1 monitor
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 100  # need commit history for stall checks
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run loop monitor
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          JEEVES_RECIPIENT_EMAIL: ${{ vars.JEEVES_RECIPIENT_EMAIL || 'lang.mc@gmail.com' }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python3 scripts/loop_monitor.py --dry-run
+          else
+            python3 scripts/loop_monitor.py
+          fi

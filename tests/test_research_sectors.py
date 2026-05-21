@@ -882,3 +882,133 @@ def test_dedup_schema_has_cross_sector_dupes_field():
     assert d.cross_sector_dupes == ["https://example.com/a"]
     # Default is empty list
     assert Dedup().cross_sector_dupes == []
+
+
+# ---------------------------------------------------------------------------
+# M2: JEEVES_USE_CRAWL4AI_RESEARCH flag + _CRAWL4AI_ELIGIBLE_SECTORS
+# ---------------------------------------------------------------------------
+
+def test_crawl4ai_eligible_sectors_defined():
+    from jeeves.research_sectors import _CRAWL4AI_ELIGIBLE_SECTORS
+    assert _CRAWL4AI_ELIGIBLE_SECTORS == frozenset({
+        "local_news", "global_news", "weather", "career", "family", "wearable_ai"
+    })
+
+
+def test_crawl4ai_eligible_sectors_excludes_deep():
+    from jeeves.research_sectors import _CRAWL4AI_ELIGIBLE_SECTORS
+    deep = {"triadic_ontology", "ai_systems", "uap"}
+    assert not (deep & _CRAWL4AI_ELIGIBLE_SECTORS)
+
+
+def test_crawl4ai_eligible_sectors_excludes_newyorker():
+    from jeeves.research_sectors import _CRAWL4AI_ELIGIBLE_SECTORS
+    assert "newyorker" not in _CRAWL4AI_ELIGIBLE_SECTORS
+
+
+def test_sector_search_queries_covers_eligible_sectors():
+    from jeeves.research_sectors import _CRAWL4AI_ELIGIBLE_SECTORS, _SECTOR_SEARCH_QUERIES
+    for sector in _CRAWL4AI_ELIGIBLE_SECTORS:
+        assert sector in _SECTOR_SEARCH_QUERIES, f"missing query for {sector}"
+        assert _SECTOR_SEARCH_QUERIES[sector].strip(), f"empty query for {sector}"
+
+
+async def test_run_sector_uses_crawl4ai_when_flag_set(monkeypatch):
+    """flag=True + eligible sector → _run_crawl4ai_sector called instead of FunctionAgent."""
+    import jeeves.research_sectors as rs
+    from datetime import date
+    from jeeves.config import Config
+    from jeeves.tools.quota import QuotaLedger
+    import threading
+
+    crawl4ai_called: list[str] = []
+
+    async def _fake_crawl4ai(cfg, spec, prior, ledger):
+        crawl4ai_called.append(spec.name)
+        return spec.default
+
+    monkeypatch.setattr(rs, "_run_crawl4ai_sector", _fake_crawl4ai)
+
+    cfg = Config(
+        nvidia_api_key="", serper_api_key="k", tavily_api_key="", exa_api_key="",
+        google_api_key="", groq_api_key="", gmail_app_password="",
+        gmail_oauth_token_json="", github_token="", github_repository="r/r",
+        run_date=date(2026, 5, 21),
+    )
+    ledger = QuotaLedger.__new__(QuotaLedger)
+    ledger._state = {"providers": {}}
+    ledger._lock = threading.Lock()
+
+    spec = next(s for s in rs.SECTOR_SPECS if s.name == "local_news")
+    await rs.run_sector(cfg, spec, [], ledger, use_crawl4ai_research=True)
+
+    assert crawl4ai_called == ["local_news"]
+
+
+async def test_run_sector_skips_crawl4ai_for_deep_sectors(monkeypatch):
+    """Deep sectors always use FunctionAgent regardless of flag."""
+    import jeeves.research_sectors as rs
+    from datetime import date
+    from jeeves.config import Config
+    from jeeves.tools.quota import QuotaLedger
+    import threading
+
+    crawl4ai_called: list[str] = []
+
+    async def _fake_crawl4ai(cfg, spec, prior, ledger):
+        crawl4ai_called.append(spec.name)
+        return spec.default
+
+    # No LLM keys → both builders return None → run_sector returns spec.default early.
+    monkeypatch.setattr(rs, "_run_crawl4ai_sector", _fake_crawl4ai)
+    monkeypatch.setattr(rs, "_build_cerebras_llm", lambda max_tokens=8192: None)
+    monkeypatch.setattr(rs, "_build_openrouter_llm", lambda max_tokens=8192, model=None: None)
+
+    cfg = Config(
+        nvidia_api_key="", serper_api_key="", tavily_api_key="", exa_api_key="",
+        google_api_key="", groq_api_key="", gmail_app_password="",
+        gmail_oauth_token_json="", github_token="", github_repository="r/r",
+        run_date=date(2026, 5, 21),
+    )
+    ledger = QuotaLedger.__new__(QuotaLedger)
+    ledger._state = {"providers": {}}
+    ledger._lock = threading.Lock()
+
+    spec = next(s for s in rs.SECTOR_SPECS if s.name == "triadic_ontology")
+    await rs.run_sector(cfg, spec, [], ledger, use_crawl4ai_research=True)
+
+    assert "triadic_ontology" not in crawl4ai_called
+
+
+async def test_run_sector_skips_crawl4ai_when_flag_false(monkeypatch):
+    """flag=False → crawl4ai path not taken even for eligible sectors."""
+    import jeeves.research_sectors as rs
+    from datetime import date
+    from jeeves.config import Config
+    from jeeves.tools.quota import QuotaLedger
+    import threading
+
+    crawl4ai_called: list[str] = []
+
+    async def _fake_crawl4ai(cfg, spec, prior, ledger):
+        crawl4ai_called.append(spec.name)
+        return spec.default
+
+    monkeypatch.setattr(rs, "_run_crawl4ai_sector", _fake_crawl4ai)
+    monkeypatch.setattr(rs, "_build_cerebras_llm", lambda max_tokens=8192: None)
+    monkeypatch.setattr(rs, "_build_openrouter_llm", lambda max_tokens=8192, model=None: None)
+
+    cfg = Config(
+        nvidia_api_key="", serper_api_key="", tavily_api_key="", exa_api_key="",
+        google_api_key="", groq_api_key="", gmail_app_password="",
+        gmail_oauth_token_json="", github_token="", github_repository="r/r",
+        run_date=date(2026, 5, 21),
+    )
+    ledger = QuotaLedger.__new__(QuotaLedger)
+    ledger._state = {"providers": {}}
+    ledger._lock = threading.Lock()
+
+    spec = next(s for s in rs.SECTOR_SPECS if s.name == "local_news")
+    await rs.run_sector(cfg, spec, [], ledger, use_crawl4ai_research=False)
+
+    assert "local_news" not in crawl4ai_called

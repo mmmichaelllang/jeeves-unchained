@@ -1,0 +1,85 @@
+name: Validation Sprint
+
+# Validation sprint (M6) — fires daily.yml every 30min while
+# JEEVES_VALIDATION_MODE=1 repo Variable is set.
+#
+# Steady state: set JEEVES_VALIDATION_MODE=0 (or unset). Cron still fires but
+# every invocation exits in <10s because the gate-check job no-ops.
+#
+# To enable validation sprint:
+#   gh variable set JEEVES_VALIDATION_MODE --body "1" -R mmmichaelllang/jeeves-unchained
+# To end validation sprint:
+#   gh variable set JEEVES_VALIDATION_MODE --body "0" -R mmmichaelllang/jeeves-unchained
+#
+# Created 2026-05-21 as part of M6 acceleration. See:
+#   decisions/m6-acceleration-2026-05-21.md
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # every 30 min UTC
+  workflow_dispatch:
+
+permissions:
+  actions: write   # to trigger daily.yml
+  contents: read
+
+jobs:
+  gate-and-trigger:
+    name: Gate + trigger daily.yml
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+
+      # Three-state gate:
+      #   JEEVES_VALIDATION_MODE=1     → force-enable (manual override)
+      #   JEEVES_VALIDATION_MODE=0     → force-disable (manual override / kill switch)
+      #   unset / empty / other        → auto-detect from ROADMAP M5 ship status
+      - name: Compute gate state
+        id: gate
+        env:
+          MODE: ${{ vars.JEEVES_VALIDATION_MODE }}
+        run: |
+          set +e
+          # Extract M5 section text and count checkboxes.
+          # Pattern: print M5 header line, set flag=1, then print until ANOTHER ### M-header appears.
+          M5_SECTION=$(awk '/^### M5 /{flag=1; print; next} flag && /^### M[0-9]/{flag=0} flag' ROADMAP.md)
+          UNCHECKED=$(echo "$M5_SECTION" | grep -c "^- \[ \]")
+          CHECKED=$(echo "$M5_SECTION" | grep -c "^- \[x\]")
+          set -e
+          echo "JEEVES_VALIDATION_MODE=$MODE"
+          echo "M5 section: unchecked=$UNCHECKED checked=$CHECKED"
+
+          # Force-disable wins everything.
+          if [ "$MODE" = "0" ]; then
+            echo "validation_active=false" >> $GITHUB_OUTPUT
+            echo "::notice::JEEVES_VALIDATION_MODE=0 — sprint force-disabled, exiting"
+            exit 0
+          fi
+
+          # Force-enable wins over M5 gate (lets user start sprint early for testing).
+          if [ "$MODE" = "1" ]; then
+            echo "validation_active=true" >> $GITHUB_OUTPUT
+            echo "::notice::JEEVES_VALIDATION_MODE=1 — force-enabled"
+            exit 0
+          fi
+
+          # Default: auto-detect from ROADMAP M5 ship status.
+          # M5 is "shipped" when ALL its [ ] checkboxes have flipped to [x].
+          if [ "$UNCHECKED" -eq 0 ] && [ "$CHECKED" -ge 2 ]; then
+            echo "validation_active=true" >> $GITHUB_OUTPUT
+            echo "::notice::M5 fully shipped in ROADMAP — auto-enabling sprint"
+          else
+            echo "validation_active=false" >> $GITHUB_OUTPUT
+            echo "::notice::M5 not yet shipped (unchecked=$UNCHECKED checked=$CHECKED) — sprint dormant"
+          fi
+
+      - name: Trigger daily.yml
+        if: steps.gate.outputs.validation_active == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Trigger daily.yml workflow_dispatch. Empty inputs = today UTC,
+          # no skip_send (send email if write phase succeeds).
+          gh workflow run daily.yml -R "${{ github.repository }}"
+          echo "::notice::daily.yml dispatched at $(date -u -Is)"

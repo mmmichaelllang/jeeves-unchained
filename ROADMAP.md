@@ -1,115 +1,148 @@
-# JEEVES-UNCHAINED — Adaptive Loop ROADMAP
+# Jeeves-Unchained Refactor — Crawl4AI + Cerebras + Charlotte (2026-05-21)
 # Place at: /Users/frederickyudin/jeeves-unchained/ROADMAP.md
 # Driven by: .claude/loop.md (adaptive goal loop)
 # Each milestone: verifiable via command or file check
+# Previous ROADMAP (NIM circuit-breaker era) archived → ROADMAP.superseded-2026-05-21.md
+
+## Goal
+Replace per-sector FunctionAgent loop with content-type-aware Crawl4AI extraction + Cerebras synthesis for news_short sectors. Long-form, paywalled, and deep sectors keep existing paths. Reduce LLM calls from 70-200 → ~20-25/run. Add audit-time URL verification via Charlotte MCP. All changes feature-flagged for 30-day validation. Robust, reliable, resilient.
+
+**M0 outcome (2026-05-21):** Probe score 0.71 combined → REVISE. Crawl4AI NOT a wholesale replacement. Content-type routing required: news_short sectors benefit; long-form paywalled + nav-heavy + deep sectors do not. See `decisions/m0-followup-design-revision-2026-05-21.md`.
+
+## Status
+- Refactor design: `/Users/frederickyudin/jeeves-unchained/refactor-design-2026-05-21.md`
+- Brainstorm + /challenge applied 2026-05-21. All hardening recommendations adopted.
+- NIM fully removed from research (PR #133). Cerebras+OR rebuild landed but failed (PR #134, #135).
+- Run #79: GATE-B caught 13/14 empty sectors. Diagnosed: free-tier RPM ceiling on Cerebras + OR cannot serve 70-200 agent calls.
 
 ---
 
 ## Milestones
 
-### TIER 0 — Diagnosis (must complete before any code changes)
+### M0 — Probe Crawl4AI on jeeves-target URLs (DONE — design revision)
+- [x] Build `scripts/diagnostics/probe_crawl4ai.py`. Ran on 8 URLs across 4 sector types.
+  Result: strict_fit=0.4, combined=0.71. DECISION: REVISE M1-M3.
+  Evidence: `decisions/crawl4ai-probe-2026-05-20.md`
+- [x] Design revision documented in `decisions/m0-followup-design-revision-2026-05-21.md`.
+  Outcome: content-type-aware cascade adopted. M1-M3 narrowed as below.
+  VERIFY: `grep -E "OVERALL SCORE|DECISION:" decisions/crawl4ai-probe-*.md | tail -2`
 
-- [x] M0-A: Pull run #70 research log and identify failure pattern
-  DONE WHEN: `/tmp/run70-research.log` exists AND grep output shows one of: `circuit_breaker_trip`, `429` cascade pattern, or zero `[telemetry] tool_call` lines
-  VERIFY: `wc -l /tmp/run70-research.log && grep -c "429\|circuit_breaker\|tool_call\|spec.default" /tmp/run70-research.log`
+### M1 — Crawl4AI extract tool with host classifier
+- [x] Build `jeeves/tools/crawl4ai_extract.py` with:
+  - `crawl4ai_extract(url, max_chars=8000) → (text, mode_used)` — no BM25 default; caller decides strategy
+  - `classify_host(url) → Literal["news_short", "long_form", "paywalled", "nav_heavy"]`
+  - `HOSTS_LONG_FORM`, `HOSTS_PAYWALLED`, `HOSTS_NAV_HEAVY` sets (everything else → news_short)
+  - `batch_extract(urls, ...) → list[(text, mode_used)]`
+  DONE WHEN: File exists with 4 public symbols (`crawl4ai_extract`, `batch_extract`, `classify_host`, host sets importable). Import succeeds.
+  VERIFY: `python -c "from jeeves.tools.crawl4ai_extract import crawl4ai_extract, classify_host; print('ok')"`
+- [x] Tests: `tests/test_crawl4ai_extract.py` — 6 cases (host classification, news_short extracts, long_form skips crawl4ai, paywalled skips crawl4ai, exception handling, max_chars cap).
+  Result: 6/6 passed.
+  VERIFY: `uv run pytest tests/test_crawl4ai_extract.py -v 2>&1 | tail -10`
 
-- [x] M0-B: Inspect .quota-state.json daily section after run #70
-  DONE WHEN: quota state retrieved AND dominant hypothesis documented in LOOP_STATE.md under "Research Diagnosis"
-  VERIFY: `cat /Users/frederickyudin/jeeves-unchained/.quota-state.json | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('daily',{}))"` — serper/tavily/exa counts inspected
+### M1.5 — Host classifier populated + verified
+- [x] Populate `HOSTS_LONG_FORM`, `HOSTS_PAYWALLED`, `HOSTS_NAV_HEAVY` with full jeeves target lists (see design doc).
+  Result: all sets populated. classify_host verified: nytimes→paywalled, guardian→news_short, github→news_short.
+  VERIFY: `python -c "from jeeves.tools.crawl4ai_extract import classify_host; print(classify_host('https://nytimes.com/foo'), classify_host('https://theguardian.com/article'), classify_host('https://github.com/foo'))"`
 
----
+### M2 — Research synthesis: Crawl4AI for news_short sectors only (feature-flagged)
+- [x] Add `JEEVES_USE_CRAWL4AI_RESEARCH=1` flag. New code path in `jeeves/research_sectors.py`:
+  - Sectors where `classify_host` returns `news_short` for majority of fetched URLs → Crawl4AI extract top 5-8 URLs → ONE Cerebras synthesis call → findings JSON.
+  - Sectors with `content_type` NOT news_short → keep FunctionAgent path unchanged (no deletion, flag guards new path only).
+  - Deep sectors (triadic_ontology, ai_systems, uap) → ALWAYS keep FunctionAgent path regardless of flag.
+  - `newyorker` → unchanged direct fetch.
+  DONE WHEN: Flag plumbed through `scripts/research.py` + `research_sectors.py`. Both paths runnable. `pytest tests/test_research_sectors.py` exits 0.
+  VERIFY: `grep -n "JEEVES_USE_CRAWL4AI_RESEARCH" scripts/research.py jeeves/research_sectors.py && uv run pytest tests/test_research_sectors.py -q | tail -5`
+- [x] Sector routing table: `_CRAWL4AI_ELIGIBLE_SECTORS` = {local_news, global_news, weather, career, family, wearable_ai} (6 light sectors). literary_pick, enriched_articles, vault_insight → TBD per M2 testing.
+  DONE WHEN: Routing table present in `research_sectors.py` + referenced in run_sector decision tree.
+  VERIFY: `grep -n "_CRAWL4AI_ELIGIBLE_SECTORS" jeeves/research_sectors.py`
+- [ ] Production verification: one workflow_dispatch with flag=1 → ≥10/13 non-empty sectors.
+  DONE WHEN: `sessions/session-$(date -u +%Y-%m-%d).json` shows ≥10 non-empty sectors after manual trigger.
+  VERIFY: `python3 -c "import json; s=json.load(open('sessions/session-$(date -u +%Y-%m-%d).json')); print(sum(1 for k,v in s.items() if isinstance(v,(list,dict,str)) and (len(v) if isinstance(v,list) else any(v.values()) if isinstance(v,dict) else v)))"`
 
-### TIER 1 — Empty-Research Fix (blocked on M0 diagnosis)
+### M3 — Fetch-chain: Crawl4AI as TIER 2 for news_short hosts only (feature-flagged)
+- [x] Add `JEEVES_USE_CRAWL4AI_FETCH=1` flag in `jeeves/enrichment.py` `fetch_article_text`.
+  New cascade for news_short hosts: trafilatura → Crawl4AI (new TIER 2) → Jina → tinyfish → Playwright.
+  Hosts NOT in news_short (long_form, paywalled, nav_heavy) → trafilatura → Jina → tinyfish → Playwright unchanged.
+  `classify_host` from `crawl4ai_extract.py` drives the routing decision.
+  Shipped via PR #137 (commit 502f1be) with _run_crawl4ai_sync thread-dispatch helper to survive pytest-asyncio host loops.
+  DONE WHEN: Flag plumbed. Both paths runnable. `pytest tests/test_enrichment.py` exits 0.
+  VERIFY: `grep -n "JEEVES_USE_CRAWL4AI_FETCH" jeeves/tools/enrichment.py && uv run pytest tests/test_enrichment.py -q | tail -5`
+- [ ] Production verification: workflow_dispatch with both flags=1 → non-empty session.
+  DONE WHEN: One manual run with both flags=1 produces ≥10/13 non-empty sectors.
+  VERIFY: same as M2 production verify on next day's session JSON.
 
-- [x] M1-A [PATH A]: Lower NIM circuit breaker threshold + add pre-flight health probe
-  PREREQUISITE: M0 diagnosis points to NIM 429 cascade (hypothesis #1)
-  DONE WHEN: `pytest tests/test_research_circuit_breakers.py` exits 0 AND `scripts/research.py` has pre-flight probe at top of main() AND breaker threshold lowered to 1
-  VERIFY: `cd /Users/frederickyudin/jeeves-unchained && python -m pytest tests/test_research_circuit_breakers.py -v 2>&1 | tail -20`
+### M4 — Cerebras runtime model rotation
+- [x] `_build_cerebras_llm` resolves model from live `/v1/models` response (not hardcoded chain). Per-call rotation on 429.
+  DONE WHEN: Model resolution dynamic. Rotation logic catches 429 and tries next available model in chain.
+  VERIFY: `grep -nE "_resolve_cerebras_model|_rotate_on_429" jeeves/research_sectors.py`
+- [x] Tests: `tests/test_cerebras_rotation.py` — 4 cases (resolution from live, 429 rotation, exhaustion → OR fallback, model cache invalidation).
+  DONE WHEN: `pytest tests/test_cerebras_rotation.py -v` 4/4 passed.
+  VERIFY: `uv run pytest tests/test_cerebras_rotation.py -v 2>&1 | tail -10`
 
-- [ ] M1-B [PATH B]: Cerebras-as-researcher eval harness
-  PREREQUISITE: M0 diagnosis points to tool-dispatch failure (hypothesis #2)
-  DONE WHEN: `scripts/eval_tool_dispatch.py` exists AND runs against CEREBRAS_API_KEY AND produces pass/fail table comparing tool-dispatch rate vs K2.6
-  VERIFY: `cd /Users/frederickyudin/jeeves-unchained && python scripts/eval_tool_dispatch.py --dry-run 2>&1 | tail -20`
+### M5 — Refactor kill switch
+- [x] `JEEVES_REFACTOR_KILL_SWITCH=1` env var forces old paths regardless of feature flags. One-line emergency reversion.
+  DONE WHEN: Both feature flags check kill switch first; if set, route to old code path.
+  VERIFY: `grep -nE "JEEVES_REFACTOR_KILL_SWITCH" scripts/research.py jeeves/research_sectors.py jeeves/tools/enrichment.py`
+- [x] Tests: `tests/test_kill_switch.py` — 3 cases (kill overrides research flag, fetch flag, both).
+  DONE WHEN: `pytest tests/test_kill_switch.py -v` 3/3.
+  VERIFY: `uv run pytest tests/test_kill_switch.py -v 2>&1 | tail -10`
 
-- [ ] M1-C: Verify fix — trigger manual research run and confirm non-empty session
-  DONE WHEN: `gh run view --json status,conclusion -R mmmichaelllang/jeeves-unchained` shows research job `conclusion=success` AND `sessions/session-$(date +%Y-%m-%d).json` has ≥1 non-empty sector
-  VERIFY: `cat /Users/frederickyudin/jeeves-unchained/sessions/session-$(date +%Y-%m-%d).json | python3 -c "import json,sys; d=json.load(sys.stdin); print({k:len(v) for k,v in d.items() if isinstance(v,list) and v})"`
+### M6 — Validation sprint (6-12 hour high-cadence validation, NOT 30 days)
+**Revised 2026-05-21:** original 30-day wait compressed to a high-cadence sprint. User on Claude Max, willing to burn GHA minutes for fast validation. Decision: `decisions/m6-acceleration-2026-05-21.md`.
 
----
+- [ ] Set `JEEVES_USE_CRAWL4AI_RESEARCH=1` AND `JEEVES_USE_CRAWL4AI_FETCH=1` in repo Variables. Enable `.github/workflows/validation.yml` (fires every 30 min during validation window).
+  DONE WHEN: Both Variables set AND validation.yml enabled AND first validation run completes.
+  VERIFY: `gh workflow list -R mmmichaelllang/jeeves-unchained | grep -i validation`
 
-### TIER 2 — Write Quality (quality-sprint.md items)
+- [ ] Run validation sprint: 12+ consecutive validation.yml runs (≈ 6 hours at 30min cadence).
+  DONE WHEN: `scripts/health_check.py --window 12 --source validation` reports ≥9/12 non-empty briefings AND zero KILL_SWITCH deployments AND average ≥10/13 populated sectors per non-empty briefing.
+  VERIFY: `python scripts/health_check.py --window 12 --source validation 2>&1 | grep -E "non_empty|KILL_SWITCH|avg_sectors"`
 
-- [ ] M2-A: Raise DEDUP_PROMPT_HEADLINES_CAP 150→250 and add within-run topic tracking
-  DONE WHEN: `grep "DEDUP_PROMPT_HEADLINES_CAP = 250" jeeves/write.py` exits 0 AND `_extract_written_topics` function exists in write.py AND `used_topics_this_run` passed to `_system_prompt_for_parts`
-  VERIFY: `cd /Users/frederickyudin/jeeves-unchained && grep -n "DEDUP_PROMPT_HEADLINES_CAP\|used_topics_this_run\|_extract_written_topics" jeeves/write.py | head -20`
+- [ ] After 12 successful runs: disable validation.yml cron (set workflow inactive). daily.yml at 12:00 UTC resumes as steady-state cadence.
+  DONE WHEN: validation.yml disabled AND next daily.yml scheduled run also produces ≥10/13 non-empty sectors.
+  VERIFY: `gh workflow disable validation.yml -R mmmichaelllang/jeeves-unchained && gh run list --workflow daily.yml -R mmmichaelllang/jeeves-unchained --limit 1`
 
-- [ ] M2-B: Cross-sector URL dedup pass in research_sectors.py + schema field
-  DONE WHEN: `_find_cross_sector_dupes()` exists in research_sectors.py AND `cross_sector_dupes` field in DeduplicateModel in schema.py AND `pytest tests/test_research_sectors.py` exits 0
-  VERIFY: `cd /Users/frederickyudin/jeeves-unchained && grep -n "cross_sector_dupes\|_find_cross_sector_dupes" jeeves/research_sectors.py jeeves/schema.py`
+### M7 — Charlotte MCP audit-time URL verification (after M6 success)
+- [ ] Add `JEEVES_USE_CHARLOTTE_AUDIT=1` flag in `scripts/audit.py`. Charlotte MCP subprocess + Cerebras drives URL verification on cited URLs in briefing HTML.
+  DONE WHEN: Charlotte subprocess wired, Cerebras prompts page-content vs briefing-claim comparison, new defect type `hallucinated_url` in audit-{date}.json schema.
+  VERIFY: `grep -nE "JEEVES_USE_CHARLOTTE_AUDIT|hallucinated_url" scripts/audit.py jeeves/schema.py`
+- [ ] Manual smoke test on known-bad briefing (2026-05-13 fabricated URLs).
+  DONE WHEN: `python scripts/audit.py --date 2026-05-13 --force-charlotte` flags ≥1 URL as hallucinated.
+  VERIFY: `python scripts/audit.py --date 2026-05-13 --force-charlotte 2>&1 | grep -E "hallucinated_url|defect_type"`
 
-- [ ] M2-C: Harden PART8 Library Stacks + add 12 banned filler phrases to _REFINE_SYSTEM
-  DONE WHEN: `grep -c "treasure trove\|FORBIDDEN OUTPUTS" jeeves/write.py` returns ≥2 (both the banned phrase and the FORBIDDEN block) AND `pytest tests/test_write_postprocess.py` exits 0
-  VERIFY: `cd /Users/frederickyudin/jeeves-unchained && grep -n "FORBIDDEN OUTPUTS\|treasure trove\|commitment to providing" jeeves/write.py | head -10`
+### M8 — Old-code retirement (after M6 + M7 validated)
+- [ ] Remove FunctionAgent loop and trafilatura→Jina→tinyfish cascade. Keep Playwright as Crawl4AI's only fallback.
+  DONE WHEN: `git diff` shows ≥-500 lines net AND `pytest tests/` exits 0 AND one workflow_dispatch produces non-empty briefing.
+  VERIFY: `git diff --stat origin/main | tail -1 && uv run pytest tests/ -q | tail -3`
 
-- [ ] M2-D: Deterministic banner injection + TOTT field cap fix (schema.py 4000→40000)
-  DONE WHEN: `_inject_banner()` function exists in write.py AND `grep "newyorker.text.*40000\|40000.*newyorker" jeeves/schema.py` returns a match AND `pytest tests/` exits 0
-  VERIFY: `cd /Users/frederickyudin/jeeves-unchained && grep -n "_inject_banner\|FIELD_CAPS\[.newyorker" jeeves/write.py jeeves/schema.py | head -10`
-
-- [ ] M2-E: All quality tests pass + write 6 new tests from handoff-quality-sprint.md
-  DONE WHEN: `pytest tests/ -v 2>&1 | grep -E "passed|failed"` shows 0 failures AND test count ≥40 total
-  VERIFY: `cd /Users/frederickyudin/jeeves-unchained && python -m pytest tests/ --tb=short 2>&1 | tail -5`
-
----
-
-### TIER 3 — GHA Infrastructure
-
-- [ ] M3-A: Per-job timeouts in daily.yml (correspondence=10m, research=120m, write=30m)
-  DONE WHEN: `grep "timeout-minutes" .github/workflows/daily.yml | wc -l` ≥3 AND values match spec
-  VERIFY: `grep -A2 "timeout-minutes" /Users/frederickyudin/jeeves-unchained/.github/workflows/daily.yml`
-
-- [ ] M3-B: Downgrade mid-stream "None/empty arguments" warnings to DEBUG in llm.py
-  DONE WHEN: `grep -n "None/empty arguments\|coercing to {}" jeeves/llm.py` shows log.debug not log.warning
-  VERIFY: `grep -n "warning.*empty arguments\|debug.*empty arguments" /Users/frederickyudin/jeeves-unchained/jeeves/llm.py`
-
----
-
-### TIER 4 — Skill Sprint T1 (reliability)
-
-- [ ] M4-A: Apply tool-use-guardian patterns to _try_normalize_json + NIM 429 backoff
-  DONE WHEN: `pytest tests/ -k "json_repair or nim or groq" -v` exits 0 AND structured retry wrapper exists
-  VERIFY: `cd /Users/frederickyudin/jeeves-unchained && python -m pytest tests/ -k "json_repair or nim or groq" -v 2>&1 | tail -20`
-
-- [ ] M4-B: Apply async-python-patterns — replace threading.Thread+sleep with asyncio in write.py
-  DONE WHEN: `grep "asyncio.TaskGroup\|asyncio.gather" jeeves/write.py` returns matches AND `_SECTOR_SEMAPHORE=1` preserved AND `pytest tests/` exits 0
-  VERIFY: `cd /Users/frederickyudin/jeeves-unchained && grep -n "asyncio.TaskGroup\|_SECTOR_SEMAPHORE" jeeves/write.py jeeves/research_sectors.py | head -10`
-
----
-
-### TIER 5 — Skill Sprint T2 (quality + eval)
-
-- [ ] M5-A: eval_briefing.py — scores last 3 briefings for anti-patterns
-  DONE WHEN: `python scripts/eval_briefing.py` runs end-to-end without error AND outputs pass/fail table for ≥3 briefing files
-  VERIFY: `cd /Users/frederickyudin/jeeves-unchained && python scripts/eval_briefing.py 2>&1 | tail -20`
-
-- [ ] M5-B: Context optimization — reduce Part 4+ system prompt by ≥800 tokens
-  DONE WHEN: dry write run logs show Part 4 input_tokens reduced ≥800 vs baseline
-  VERIFY: `cd /Users/frederickyudin/jeeves-unchained && JEEVES_DRY_RUN=1 python scripts/write.py 2>&1 | grep "input_tokens" | head -10`
-
----
-
-### TIER 6 — End-to-End Verification
-
-- [ ] M6: Full pipeline confirmed — research → write → email delivered
-  DONE WHEN: A GHA run (scheduled or manual) shows all three jobs (correspondence,
-  research, write) conclusion=success on the same run AND lang.mc@gmail.com receives
-  a non-empty briefing with ≥3 populated sectors.
-  VERIFY: `gh run list -R mmmichaelllang/jeeves-unchained --limit 3 --json databaseId,conclusion,status --jq '.[]'`
-  NOTE: Email confirmation requires human check. If GHA jobs are all green but email
-  unverified, set next_priority to "M6 pending — user must confirm email received at
-  lang.mc@gmail.com. Check inbox then clear this next_priority to declare SUCCESS."
+### M9 — FINAL VERIFICATION (always last per plan skill)
+- [ ] 90-day stability check.
+  DONE WHEN: `scripts/health_check.py --window 90` reports ≥85/90 non-empty briefings AND no GATE-A/GATE-B regression AND audit log shows zero `hallucinated_url` defects in last 30 days.
+  VERIFY: `python scripts/health_check.py --window 90 2>&1 | tail -10`
 
 ---
 
 ## Project Complete When
-All milestones show `- [x]` AND daily.yml scheduled run at 12:00 UTC produces
-a non-empty briefing emailed to lang.mc@gmail.com with ≥3 populated sectors.
+All milestones show `- [x]` AND daily.yml scheduled run at 12:00 UTC produces a non-empty briefing emailed to lang.mc@gmail.com on 60+ consecutive days with average ≥10/13 populated sectors AND zero hallucinated URLs caught by auditor.
+
+## Kill Switches (from /challenge hardening)
+- `JEEVES_REFACTOR_KILL_SWITCH=1` — instant reversion to old paths.
+- 3 consecutive days <6/13 sectors → revert PR + investigate.
+- Cerebras free tier removes gpt-oss-120b → fallback to runtime model resolution.
+- Crawl4AI introduces >5 sector-blocking exceptions/week → flag off.
+- Charlotte MCP audit produces >20% false positives → disable audit flag.
+
+## Critical Path (REVISED 2026-05-21 — accelerated)
+M0 → M1 → M1.5 → M2 → M3 → M4 → M5 → M6 (6-12h sprint) → M7 → M8 → M9.
+All milestones complete within 24-48 hours if loop runs continuously.
+M3/M4/M5 can interleave with M2.
+
+## Notes (REVISED 2026-05-21)
+- Total timeline: 24-72 hours end-to-end (was 90-120 days).
+- M6 validation compressed from 30 days → 6-12 hour high-cadence sprint via `validation.yml` workflow firing every 30min.
+- User on Claude Max + accepts GHA minute burn for fast validation.
+- ALL old code paths still preserved behind feature flags. Feature flag default OFF.
+- M8 (deletion) requires 30 consecutive non-empty briefings after M6 success — NOT 30 days. Could complete within 15 days at daily cadence.
+- Tests required at every M-level (no untested code into main).
+- Each milestone is PR-sized.
+- Production verification: M2/M3 single workflow_dispatch each. M6 = 12+ validation.yml runs.

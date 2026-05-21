@@ -1110,6 +1110,82 @@ _CEREBRAS_MODEL_CHAIN = [
     "llama3.1-8b",
 ]
 _RESOLVED_CEREBRAS_MODEL: str | None = None
+_CEREBRAS_TRIED_MODELS: set[str] = set()  # models that 429'd this session
+
+
+def _resolve_cerebras_model(api_key: str) -> str | None:
+    """Probe /v1/models and resolve the best available model from the chain.
+
+    Skips models already in _CEREBRAS_TRIED_MODELS (429'd this session).
+    Caches the result in _RESOLVED_CEREBRAS_MODEL for subsequent calls.
+    Soft-fails to the first untried chain entry when the probe request fails.
+
+    Returns None only when all chain entries are exhausted.
+    """
+    global _RESOLVED_CEREBRAS_MODEL
+
+    if _RESOLVED_CEREBRAS_MODEL is not None:
+        return _RESOLVED_CEREBRAS_MODEL
+
+    try:
+        import httpx
+
+        resp = httpx.get(
+            f"{_CEREBRAS_BASE}/models",
+            headers={"Authorization": f"Bearer {api_key}"},
+            timeout=10.0,
+        )
+        if resp.status_code == 200:
+            available = {m["id"] for m in resp.json().get("data", [])}
+            log.info("Cerebras models available: %s", sorted(available))
+            for candidate in _CEREBRAS_MODEL_CHAIN:
+                if candidate in available and candidate not in _CEREBRAS_TRIED_MODELS:
+                    _RESOLVED_CEREBRAS_MODEL = candidate
+                    log.info("Cerebras: resolved model → %s", candidate)
+                    return candidate
+            remaining = sorted(available - _CEREBRAS_TRIED_MODELS)
+            if remaining:
+                _RESOLVED_CEREBRAS_MODEL = remaining[0]
+                log.warning(
+                    "Cerebras: no preferred model found; using %s",
+                    _RESOLVED_CEREBRAS_MODEL,
+                )
+                return _RESOLVED_CEREBRAS_MODEL
+            log.warning("Cerebras: /v1/models listed no untried models")
+            return None
+        else:
+            log.warning("Cerebras /v1/models returned %d", resp.status_code)
+    except Exception as e:
+        log.warning("Cerebras model probe failed: %s", e)
+
+    # Probe failed or non-200 — blind fallback to first untried chain entry
+    for candidate in _CEREBRAS_MODEL_CHAIN:
+        if candidate not in _CEREBRAS_TRIED_MODELS:
+            _RESOLVED_CEREBRAS_MODEL = candidate
+            return candidate
+    return None
+
+
+def _rotate_on_429(failed_model: str) -> str | None:
+    """Mark failed_model as 429'd and return the next candidate from the chain.
+
+    Invalidates the cached model resolution so the next _build_cerebras_llm
+    call re-resolves from the updated _CEREBRAS_TRIED_MODELS set.
+
+    Returns the next untried model name, or None when all entries are exhausted.
+    """
+    global _RESOLVED_CEREBRAS_MODEL, _CEREBRAS_TRIED_MODELS
+
+    _CEREBRAS_TRIED_MODELS.add(failed_model)
+    _RESOLVED_CEREBRAS_MODEL = None  # force re-resolution next call
+
+    for candidate in _CEREBRAS_MODEL_CHAIN:
+        if candidate not in _CEREBRAS_TRIED_MODELS:
+            log.info("Cerebras 429 on %s → rotating to %s", failed_model, candidate)
+            return candidate
+
+    log.warning("Cerebras: all models in chain exhausted after 429 on %s", failed_model)
+    return None
 
 
 def _build_cerebras_llm(max_tokens: int = 8192):
@@ -1119,58 +1195,25 @@ def _build_cerebras_llm(max_tokens: int = 8192):
     with native tool-calling support. Used when NIM circuit breaker trips
     so remaining sectors can still produce data instead of returning empty.
 
-    Probes /v1/models on first call to find a valid model ID from the
-    fallback chain, then caches it for subsequent calls in the same process.
-
-    Returns None if CEREBRAS_API_KEY is not set or no model is available.
+    Calls _resolve_cerebras_model on first invocation (or after _rotate_on_429
+    invalidates the cache). Returns None when no key or model is available.
     """
-    global _RESOLVED_CEREBRAS_MODEL
-
     import os
+
     api_key = os.environ.get("CEREBRAS_API_KEY", "").strip()
     if not api_key:
         return None
 
-    # Resolve model ID on first call
-    if _RESOLVED_CEREBRAS_MODEL is None:
-        try:
-            import httpx
-            resp = httpx.get(
-                f"{_CEREBRAS_BASE}/models",
-                headers={"Authorization": f"Bearer {api_key}"},
-                timeout=10.0,
-            )
-            if resp.status_code == 200:
-                available = {m["id"] for m in resp.json().get("data", [])}
-                log.info("Cerebras models available: %s", sorted(available))
-                for candidate in _CEREBRAS_MODEL_CHAIN:
-                    if candidate in available:
-                        _RESOLVED_CEREBRAS_MODEL = candidate
-                        log.info("Cerebras: resolved model → %s", candidate)
-                        break
-                if _RESOLVED_CEREBRAS_MODEL is None:
-                    # None of our candidates matched — try first available
-                    if available:
-                        _RESOLVED_CEREBRAS_MODEL = sorted(available)[0]
-                        log.warning(
-                            "Cerebras: no preferred model found; using %s",
-                            _RESOLVED_CEREBRAS_MODEL,
-                        )
-                    else:
-                        log.warning("Cerebras: no models listed at /v1/models")
-                        return None
-            else:
-                log.warning("Cerebras /v1/models returned %d", resp.status_code)
-                # Try first candidate blindly
-                _RESOLVED_CEREBRAS_MODEL = _CEREBRAS_MODEL_CHAIN[0]
-        except Exception as e:
-            log.warning("Cerebras model probe failed: %s", e)
-            _RESOLVED_CEREBRAS_MODEL = _CEREBRAS_MODEL_CHAIN[0]
+    model = _resolve_cerebras_model(api_key)
+    if model is None:
+        log.warning("Cerebras unavailable (no key or model resolution failed)")
+        return None
 
     try:
         from llama_index.llms.openai_like import OpenAILike
+
         return OpenAILike(
-            model=_RESOLVED_CEREBRAS_MODEL,
+            model=model,
             api_base=_CEREBRAS_BASE,
             api_key=api_key,
             max_tokens=max_tokens,
@@ -1178,7 +1221,7 @@ def _build_cerebras_llm(max_tokens: int = 8192):
             timeout=60.0,
             is_chat_model=True,
             is_function_calling_model=True,
-            max_retries=0,  # 2026-05-21 hotfix: disable SDK auto-retry — jeeves owns retry/backoff logic
+            max_retries=0,  # jeeves owns retry/backoff; disable SDK auto-retry
         )
     except Exception as e:
         log.warning("Failed to build Cerebras LLM: %s", e)
@@ -1251,6 +1294,29 @@ _FORCE_RETRY_ON_OVERLAP: frozenset[str] = frozenset({"intellectual_journals"})
 # Threshold — when this fraction or more of the parsed URLs are in prior_urls,
 # treat as a sticky-URL failure and force-retry.
 _OVERLAP_RETRY_THRESHOLD = 0.5
+
+# ---------------------------------------------------------------------------
+# M2 — Crawl4AI research path (JEEVES_USE_CRAWL4AI_RESEARCH=1)
+# ---------------------------------------------------------------------------
+
+# Sectors eligible for the Crawl4AI+Cerebras synthesis path.
+# Deep sectors (triadic_ontology, ai_systems, uap) are always excluded —
+# they require FunctionAgent's multi-step tool calls and large context windows.
+# newyorker uses a direct Python fetch, not an agent, so also excluded.
+_CRAWL4AI_ELIGIBLE_SECTORS: frozenset[str] = frozenset({
+    "local_news", "global_news", "weather", "career", "family", "wearable_ai",
+})
+
+# Simple search queries used by _run_crawl4ai_sector to seed URL discovery.
+# These are intentionally short — Crawl4AI does the deep extraction, not the agent.
+_SECTOR_SEARCH_QUERIES: dict[str, str] = {
+    "local_news": "Edmonds WA news today",
+    "global_news": "world news today",
+    "weather": "Edmonds WA weather forecast today",
+    "career": "high school English teacher jobs Edmonds Washington",
+    "family": "family events kids activities Edmonds Seattle this week",
+    "wearable_ai": "wearable AI technology news 2026",
+}
 
 
 # 2026-05-10 (PR #113 follow-up). Host-authority table for the
@@ -1741,6 +1807,99 @@ async def _json_repair_retry(
     return result_r
 
 
+async def _run_crawl4ai_sector(
+    cfg: Config,
+    spec: SectorSpec,
+    prior_urls_sample: list[str],
+    ledger,
+) -> Any:
+    """Crawl4AI+Cerebras research path for news_short-eligible sectors.
+
+    Replaces the FunctionAgent loop for eligible sectors when
+    JEEVES_USE_CRAWL4AI_RESEARCH=1. Flow:
+      1. Direct serper search → top URLs (no agent overhead).
+      2. batch_extract those URLs via Crawl4AI.
+      3. ONE Cerebras synthesis call → sector JSON.
+
+    Falls back to spec.default on any failure.
+    """
+    import json as _json
+
+    from .tools.serper import make_serper_search
+    from .tools.crawl4ai_extract import batch_extract
+
+    query = _SECTOR_SEARCH_QUERIES.get(spec.name, f"{spec.name} news today")
+    log.info("sector %s: crawl4ai path — query=%r", spec.name, query)
+
+    # 1. Search for candidate URLs.
+    serper_fn = make_serper_search(cfg, ledger)
+    try:
+        search_raw = serper_fn(query=query, num=10)
+        search_data = _json.loads(search_raw)
+        prior_set = set(prior_urls_sample)
+        urls = [
+            r["link"]
+            for r in search_data.get("organic", [])
+            if r.get("link") and r["link"] not in prior_set
+        ][:8]
+    except Exception as exc:
+        log.warning("sector %s: crawl4ai serper failed (%s); returning default.", spec.name, exc)
+        return spec.default
+
+    if not urls:
+        log.warning("sector %s: crawl4ai no fresh URLs from search; returning default.", spec.name)
+        return spec.default
+
+    # 2. Extract content via Crawl4AI.
+    try:
+        extractions = await batch_extract(urls, max_chars=6000)
+    except Exception as exc:
+        log.warning("sector %s: crawl4ai batch_extract failed (%s); returning default.", spec.name, exc)
+        return spec.default
+
+    content_parts = [
+        f"=== {url} (mode: {mode}) ===\n{text}"
+        for url, (text, mode) in zip(urls, extractions)
+        if text
+    ]
+    if not content_parts:
+        log.warning("sector %s: crawl4ai no content extracted; returning default.", spec.name)
+        return spec.default
+
+    # 3. ONE Cerebras synthesis call.
+    llm = _build_cerebras_llm(max_tokens=8192)
+    if llm is None:
+        log.warning("sector %s: crawl4ai Cerebras unavailable; returning default.", spec.name)
+        return spec.default
+
+    try:
+        from llama_index.core.llms import ChatMessage
+
+        content_block = "\n\n".join(content_parts)
+        synthesis_prompt = (
+            f"Sector instruction: {spec.instruction}\n\n"
+            f"Extracted content from {len(content_parts)} URLs:\n"
+            f"{content_block[:20000]}\n\n"
+            f"Return ONLY valid JSON matching the instruction format. "
+            f"Use only facts from the extracted content above. "
+            f"Include real URLs from the extracted content."
+        )
+        messages = [ChatMessage(role="user", content=synthesis_prompt)]
+        resp = await llm.achat(messages)
+        raw = (resp.message.content or "").strip()
+        log.info("sector %s: crawl4ai synthesis done (%d chars).", spec.name, len(raw))
+    except Exception as exc:
+        log.warning("sector %s: crawl4ai synthesis failed (%s); returning default.", spec.name, exc)
+        return spec.default
+
+    parsed = _parse_sector_output(raw, spec)
+    if isinstance(parsed, _ParseFailed):
+        log.warning("sector %s: crawl4ai parse failed; returning default.", spec.name)
+        return spec.default
+
+    return parsed
+
+
 async def run_sector(
     cfg: Config,
     spec: SectorSpec,
@@ -1751,6 +1910,7 @@ async def run_sector(
     quota_summary: str = "",
     story_continuity: str = "",
     prior_sources_by_host: dict[str, list[str]] | None = None,
+    use_crawl4ai_research: bool = False,
 ) -> Any:
     """Run one sector's agent and return the parsed sector-shape value."""
 
@@ -1783,6 +1943,22 @@ async def run_sector(
             parsed.get("available") if isinstance(parsed, dict) else "?",
         )
         return parsed
+
+    # Crawl4AI path: flag=1 AND sector in eligible set AND not a deep sector.
+    # Deep sectors (shape=="deep") always use FunctionAgent — they require
+    # multi-step tool calls and large context windows that the single-call
+    # synthesis path cannot replicate. JEEVES_USE_CRAWL4AI_RESEARCH is the
+    # feature flag; preserved for ≥30 days alongside the FunctionAgent path.
+    import os as _os
+
+    _kill_switch = _os.environ.get("JEEVES_REFACTOR_KILL_SWITCH", "0") == "1"
+    if (
+        use_crawl4ai_research
+        and not _kill_switch
+        and spec.name in _CRAWL4AI_ELIGIBLE_SECTORS
+        and spec.shape != "deep"
+    ):
+        return await _run_crawl4ai_sector(cfg, spec, prior_urls_sample, ledger)
 
     # Research now uses Cerebras as primary, OpenRouter as fallback.
     # NIM Kimi removed from research path (broken streaming protocol since 2026-05-13).
