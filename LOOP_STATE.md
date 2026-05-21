@@ -2,45 +2,45 @@
 _Auto-managed. Do not edit during a run._
 
 ## Last Updated
-2026-05-21T05:30:00Z
+2026-05-21T06:30:00Z
 
 ## Iteration
-3 (M2 build — research synthesis for news_short sectors)
+4 (M3 build — Crawl4AI TIER 2 fetch chain in enrichment.py)
 
 ## Last Milestone
-M1 + M1.5 DONE (2026-05-21) — crawl4ai_extract.py + host classifier, 11/11 tests passing
+M2 DONE (2026-05-21) — JEEVES_USE_CRAWL4AI_RESEARCH=1 plumbed, _CRAWL4AI_ELIGIBLE_SECTORS defined, _run_crawl4ai_sector built, 82/82 tests passing
 
 ## Last Outcome
 SUCCESS
 
 ## Evidence
 ```
-M0 probe: decisions/crawl4ai-probe-2026-05-20.md — combined=0.71 → REVISE M1-M3
-Design revision: decisions/m0-followup-design-revision-2026-05-21.md
-ROADMAP.md updated: M1 narrowed (host classifier), M1.5 added, M2/M3 narrowed to news_short sectors
-User accepted design 2026-05-21 with content-type-aware cascade.
+M2 verify: grep -n "JEEVES_USE_CRAWL4AI_RESEARCH" scripts/research.py jeeves/research_sectors.py → 6 matches (3 each)
+M2 verify: uv run pytest tests/test_research_sectors.py -q → 82 passed
+PR #136 open: feat/m6-acceleration-and-monitors (M0+M1+M1.5+M2+monitors)
+GH Variable: JEEVES_USE_CRAWL4AI_RESEARCH=1 set
 ```
 
 ## Last Blocker
-None — design revision accepted, advancing to M1.
+None.
 
 ## Same Blocker Count
 0
 
 ## Refined DONE WHEN
-M2 complete: `JEEVES_USE_CRAWL4AI_RESEARCH=1` plumbed through `scripts/research.py` + `research_sectors.py`. `_CRAWL4AI_ELIGIBLE_SECTORS` defined. `pytest tests/test_research_sectors.py` exits 0. FunctionAgent path preserved (no deletions).
+M3 complete: `JEEVES_USE_CRAWL4AI_FETCH=1` flag plumbed into `jeeves/enrichment.py` `fetch_article_text`. New cascade for news_short hosts: trafilatura → Crawl4AI (TIER 2) → Jina → tinyfish → Playwright. Non-news_short hosts: trafilatura → Jina → tinyfish → Playwright unchanged. `pytest tests/test_enrichment.py` exits 0.
 
 ## Research Diagnosis
 FREE_TIER_CAPACITY_CEILING (Cerebras + OR cannot deliver 70-200 agent calls/run; structural refactor required, not retries)
 
 ## Next Priority
-1. Build M2: add `JEEVES_USE_CRAWL4AI_RESEARCH=1` flag in `scripts/research.py` + `jeeves/research_sectors.py`.
-2. Define `_CRAWL4AI_ELIGIBLE_SECTORS = {local_news, global_news, weather, career, family, wearable_ai}`.
-3. New code path: when flag=1 AND sector in eligible set → `crawl4ai_extract` each URL → Cerebras synthesis.
-4. Deep sectors (triadic_ontology, ai_systems, uap) → keep FunctionAgent unconditionally.
-5. Write/update `tests/test_research_sectors.py` to cover flag=0 (existing path) and flag=1 (new path).
-6. `uv run pytest tests/test_research_sectors.py -q` → 0 failures.
-7. VERIFY: `grep -n "JEEVES_USE_CRAWL4AI_RESEARCH" scripts/research.py jeeves/research_sectors.py`
+1. Build M3: add `JEEVES_USE_CRAWL4AI_FETCH=1` flag in `jeeves/enrichment.py`.
+2. New cascade for news_short hosts (classified via `classify_host`): trafilatura → Crawl4AI (TIER 2, async via `asyncio.run(crawl4ai_extract(...))`) → Jina → tinyfish → Playwright.
+3. Non-news_short hosts: trafilatura → Jina → tinyfish → Playwright (unchanged).
+4. Set `JEEVES_USE_CRAWL4AI_FETCH=1` GH Variable after M3 lands.
+5. Write/update `tests/test_enrichment.py` to cover both paths.
+6. `uv run pytest tests/test_enrichment.py -q` → 0 failures.
+7. VERIFY: `grep -n "JEEVES_USE_CRAWL4AI_FETCH" jeeves/enrichment.py && uv run pytest tests/test_enrichment.py -q | tail -5`
 
 ## Active Branch
 main (loop creates feat/M{N}-* branches per milestone)
@@ -56,6 +56,7 @@ main (loop creates feat/M{N}-* branches per milestone)
 | 1a | M0 probe (attempt 1) | HALTED BY USER | stop rule violated: replaced paywalled URLs, score 0.36 |
 | 1b | M0 probe (attempt 2) | STOP → DESIGN REVISION | combined=0.71; user accepted content-type-aware cascade; ROADMAP narrowed |
 | 2 | M1 + M1.5 | SUCCESS | crawl4ai_extract.py + classify_host + host sets; 11/11 tests passing |
+| 3 | M2 | SUCCESS | JEEVES_USE_CRAWL4AI_RESEARCH=1 + _run_crawl4ai_sector; 82/82 tests passing |
 
 ## Refactor Phase
 M0 (Probe Crawl4AI on jeeves targets)
