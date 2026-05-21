@@ -5,6 +5,53 @@
 
 ---
 
+## STEP -1 — Pre-wake checks (mandatory; added 2026-05-21 after Anthropic usage-expiration incident + M6 validation sprint launch)
+
+Two cheap checks that exit the wake before any expensive work. Both run BEFORE STEP 0. Cost: <2s.
+
+### Check 1: pause sentinel (5h auto-recover from usage expiration)
+
+Read `/Users/frederickyudin/jeeves-unchained/.claude/loop-pause-until`. If file exists AND contains an ISO timestamp greater than now (UTC):
+1. Read the file's second line (reason, optional).
+2. Print one line: `pre_wake: PAUSED until <iso> (reason: <reason or "manual">). Skipping iteration.`
+3. Append the same line to `/Users/frederickyudin/jeeves-unchained/decisions/loop-audit-log.md` (create if missing).
+4. Exit cleanly. Do not proceed to STEP 0.
+
+If file timestamp ≤ now, delete the file (`rm -f .claude/loop-pause-until`) and proceed.
+
+How the sentinel gets written:
+- Automatically by THIS step if a previous iteration caught an Anthropic usage error (see STEP 4 hook below).
+- Manually by the user: `echo "$(date -u -v+5H -Iseconds)\nmanual-pause" > .claude/loop-pause-until`
+- Automatically by Tier 2 monitor (jeeves-loop-watch) if it detects a >2h gap with no Tier 1 progress.
+
+Sentinel format (2 lines):
+```
+2026-05-21T15:00:00Z
+anthropic-usage-expiration
+```
+
+### Check 2: sprint mode self-pause (validation sprint = Cerebras quota dedicated to daily.yml)
+
+Run `gh variable get JEEVES_VALIDATION_MODE -R mmmichaelllang/jeeves-unchained 2>/dev/null` (1s timeout). If output equals `1`:
+1. Print: `pre_wake: VALIDATION SPRINT ACTIVE (JEEVES_VALIDATION_MODE=1). Tier 1 self-pausing. Validation.yml dispatching daily.yml every 30min — do not compete for Cerebras quota.`
+2. Append same line to `decisions/loop-audit-log.md`.
+3. Exit cleanly.
+
+If output equals `0` or empty: proceed normally (sprint not active, or sprint already concluded).
+
+If `gh` CLI fails or auth broken: proceed normally (treat as sprint inactive — don't block Tier 1 on diagnostic-CLI failures).
+
+### Hook: post-wake error catch (added to STEP 4 too — duplicated here for visibility)
+
+If during this iteration's STEP 4 /goal invocation the model surfaces an Anthropic API error matching any of: `429 from Anthropic`, `rate_limit`, `usage limit`, `out of extra usage`, `resets at`, `daily message quota` — then BEFORE writing LOOP_STATE.md in STEP 5, write the pause sentinel:
+```bash
+date -u -v+5H -Iseconds > .claude/loop-pause-until
+echo "anthropic-usage-expiration" >> .claude/loop-pause-until
+```
+Next wake will see the sentinel and skip. The 5h window matches Claude Max's typical reset cadence. After 5h, sentinel expires and normal wakes resume.
+
+---
+
 ## STEP 0 — Wake-gate (mandatory; added 2026-05-21 after M5 false-SUCCESS incident)
 
 Defense against driver bypass. STEP 4.5 (post-goal verification gate) catches false SUCCESS within a single iteration, but only fires when /goal runs from /loop. If a milestone is completed manually (terminal session, /goal invoked outside /loop, ad-hoc edits) OR if a prior iteration's verification was skipped, LOOP_STATE.md can encode a false SUCCESS that the next wake would otherwise propagate. STEP 0 re-checks at every wake.
