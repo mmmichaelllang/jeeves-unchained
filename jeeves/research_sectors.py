@@ -1229,31 +1229,95 @@ def _build_cerebras_llm(max_tokens: int = 8192):
 
 
 # 2026-05-21 hotfix: OpenRouter free tier model rotation. The base llama-3.3-70b:free
-# daily cap is ~50 req/day per model; one full sector run can exhaust it in retries.
-# When the first model 429s, callers should iterate through these in order.
-_OPENROUTER_FREE_MODEL_CHAIN = [
+# daily cap is ~50 req/day per model AND each free model is capped at 8 RPM
+# (provider-side, shared across all OR users). One sector burst trips both.
+# When the first model 429s, callers iterate through this list.
+#
+# 2026-05-21 round 4: appended PAID backstop entries with :floor suffix
+# (sort providers by price). Spend ~$0.002 per sector when free is hot
+# instead of returning empty. User has $10+ credit and a $5 OR account
+# spending cap so the worst case is bounded.
+_OPENROUTER_MODEL_CHAIN = [
+    # Free tier — try first; 8 RPM per model, daily cap shared across users.
     "meta-llama/llama-3.3-70b-instruct:free",
     "qwen/qwen-2.5-72b-instruct:free",
     "google/gemma-2-27b-it:free",
     "deepseek/deepseek-chat-v3:free",
+    # PAID backstop — :floor picks cheapest healthy provider for each.
+    # ~$0.13/M input + ~$0.40/M output for llama-3.3-70b on paid endpoints.
+    # 13-sector run if EVERY sector falls to paid = ~$0.03. $5 cap = ~165 runs.
+    "meta-llama/llama-3.3-70b-instruct:floor",
+    "mistralai/mistral-small-3.1-24b-instruct:floor",
 ]
+
+# Back-compat alias — internal name renamed 2026-05-21 round 4 from
+# _OPENROUTER_FREE_MODEL_CHAIN. Keep the old name working until any
+# downstream consumers (tests, scripts) finish migrating.
+_OPENROUTER_FREE_MODEL_CHAIN = _OPENROUTER_MODEL_CHAIN
+
+
+# Module-level cumulative tried set for OpenRouter, mirroring the Cerebras
+# rotation pattern. Once an OR model 429s in this process, subsequent sector
+# calls skip it. Reset between processes (each GHA fire is a fresh process).
+_OPENROUTER_TRIED_MODELS: set[str] = set()
+
+
+def _rotate_openrouter_on_429(failed_model: str) -> str | None:
+    """Mark failed_model as 429'd and return the next candidate from the OR chain.
+
+    Symmetric with _rotate_on_429 for Cerebras. Returns the next untried
+    model name from _OPENROUTER_MODEL_CHAIN, or None when all entries
+    are exhausted.
+    """
+    global _OPENROUTER_TRIED_MODELS
+    _OPENROUTER_TRIED_MODELS.add(failed_model)
+    for candidate in _OPENROUTER_MODEL_CHAIN:
+        if candidate not in _OPENROUTER_TRIED_MODELS:
+            log.info(
+                "OpenRouter 429 on %s → rotating to %s", failed_model, candidate,
+            )
+            return candidate
+    log.warning(
+        "OpenRouter: all models in chain exhausted after 429 on %s",
+        failed_model,
+    )
+    return None
+
+
+def _next_untried_openrouter_model() -> str | None:
+    """First untried entry from _OPENROUTER_MODEL_CHAIN, or None if exhausted."""
+    for candidate in _OPENROUTER_MODEL_CHAIN:
+        if candidate not in _OPENROUTER_TRIED_MODELS:
+            return candidate
+    return None
 
 
 def _build_openrouter_llm(max_tokens: int = 8192, model: str | None = None):
-    """OpenRouter free-tier model as Cerebras fallback for research sectors.
+    """OpenRouter model as Cerebras fallback for research sectors.
 
     2026-05-21 hotfix: pass model explicitly to enable per-sector rotation when
     the default daily cap is hit. max_retries=0 disables SDK auto-retry so a 429
     cascade doesn't compound (SDK retried 3× with 19-30s backoff on top of jeeves
     own retry, costing ~5 min per sector before exhausting).
+
+    2026-05-21 round 4: when no model is passed, pick the first UNTRIED entry
+    instead of always defaulting to chain[0]. This makes the LLM builder
+    aware of the cumulative TRIED set so a fresh sector after rotation
+    starts from the right place.
     """
     from llama_index.llms.openai_like import OpenAILike
     import os as _os
     api_key = _os.environ.get("OPENROUTER_API_KEY", "").strip()
     if not api_key:
         return None
+    resolved_model = model or _next_untried_openrouter_model()
+    if resolved_model is None:
+        log.warning(
+            "OpenRouter: all chain models 429'd in this process — no LLM built.",
+        )
+        return None
     return OpenAILike(
-        model=model or _OPENROUTER_FREE_MODEL_CHAIN[0],
+        model=resolved_model,
         api_base="https://openrouter.ai/api/v1",
         api_key=api_key,
         is_chat_model=True,
@@ -2224,10 +2288,60 @@ async def run_sector(
                     )
                     return spec.default
 
-                # OpenRouter (or any non-Cerebras) 429 path — same-model
-                # retry with sleep, then give up. OR free tier RPM is also
-                # per-model but the chain length is shorter and rotation
-                # would just hop between models that share rate caps.
+                # OpenRouter 429 path — rotate through _OPENROUTER_MODEL_CHAIN
+                # before giving up. Free models share an 8-RPM cap per model
+                # but the chain ends with :floor paid backstops which have
+                # provider-native limits (~3000 RPM) and use account credit.
+                if _provider_label == "openrouter":
+                    current_model = getattr(llm, "model", None)
+                    next_model = (
+                        _rotate_openrouter_on_429(current_model)
+                        if current_model else None
+                    )
+                    if next_model is not None:
+                        rotated = _build_openrouter_llm(
+                            max_tokens=4096 if spec.shape != "enriched" else 2048,
+                            model=next_model,
+                        )
+                        if rotated is not None:
+                            log.info(
+                                "sector %s: openrouter 429 on %s → rotating to %s.",
+                                spec.name, current_model, next_model,
+                            )
+                            llm = rotated
+                            rl_attempts = 0
+                            net_attempts = 0
+                            timeout_attempts = 0
+                            last_exc = None
+                            tools = all_search_tools(
+                                cfg, ledger, set(prior_urls_sample),
+                            )
+                            agent = FunctionAgent(
+                                tools=tools, llm=llm,
+                                system_prompt=_system_prompt,
+                                verbose=cfg.verbose,
+                            )
+                            continue  # retry with rotated OR model
+                    # OR chain fully exhausted — bail.
+                    emit_llm_call(
+                        provider=_provider_label,
+                        model=getattr(llm, "model", "unknown"),
+                        label="research_sector",
+                        sector=spec.name,
+                        latency_ms=(_t.monotonic() - _sector_t0) * 1000,
+                        ok=False,
+                        error="openrouter_chain_exhausted",
+                    )
+                    log.warning(
+                        "sector %s: openrouter chain exhausted (%s); "
+                        "returning default.",
+                        spec.name, e,
+                    )
+                    return spec.default
+
+                # Unknown provider 429 (shouldn't happen — _provider_label is
+                # set to "cerebras" or "openrouter" elsewhere). Conservative
+                # same-model retry with sleep.
                 if rl_attempts >= len(_ratelimit_delays):
                     emit_llm_call(
                         provider=_provider_label,

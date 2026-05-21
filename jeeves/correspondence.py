@@ -81,11 +81,21 @@ CLASSIFY_BATCH_SIZE = 15
 # endpoints found") — OR deprecated the route. Replaced with the write.py
 # fallback chain (mistral-small + deepseek) which is already battle-tested
 # under TPM/TPD load. Order: cheapest-first, most-reliable-first.
+#
+# 2026-05-21 round 4: appended PAID backstops with :floor suffix (sort
+# providers by price). Burns ~$0.001 of OR credit per classify batch when
+# free tier is exhausted. With a $5 account spending cap, the worst case
+# is bounded. Gives the daily briefing a real shot at correspondence
+# completion even on hot-rate-limit days.
 _OPENROUTER_CLASSIFY_MODELS = (
+    # Free tier — try first
     "meta-llama/llama-3.3-70b-instruct:free",
     "mistralai/mistral-small-3.1-24b-instruct:free",
     "deepseek/deepseek-chat-v3:free",
     "meta-llama/llama-3.1-8b-instruct:free",
+    # PAID backstop — :floor picks cheapest healthy provider
+    "meta-llama/llama-3.3-70b-instruct:floor",
+    "mistralai/mistral-small-3.1-24b-instruct:floor",
 )
 
 

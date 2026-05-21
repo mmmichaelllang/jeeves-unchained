@@ -1296,3 +1296,77 @@ async def test_run_crawl4ai_sector_returns_default_when_chain_exhausted(monkeypa
     assert len(rs._CEREBRAS_TRIED_MODELS) >= 2, (
         f"rotation didn't iterate; TRIED: {rs._CEREBRAS_TRIED_MODELS!r}"
     )
+
+
+# ---------------------------------------------------------------------------
+# 2026-05-21 round 4: OpenRouter model rotation primitives + paid backstop.
+# Mirror of the Cerebras rotation tests but for the OR chain. Verifies
+# _rotate_openrouter_on_429 advances the chain, that :floor paid entries
+# are present, and that exhaustion returns None.
+# ---------------------------------------------------------------------------
+
+def test_openrouter_chain_includes_paid_backstop():
+    import jeeves.research_sectors as rs
+    paid_entries = [m for m in rs._OPENROUTER_MODEL_CHAIN if m.endswith(":floor")]
+    assert len(paid_entries) >= 1, (
+        f"chain must include at least one :floor (paid) entry; got "
+        f"{rs._OPENROUTER_MODEL_CHAIN!r}"
+    )
+    # And free entries must precede paid entries — try free first.
+    first_paid_idx = next(
+        i for i, m in enumerate(rs._OPENROUTER_MODEL_CHAIN) if m.endswith(":floor")
+    )
+    free_before_paid = all(
+        m.endswith(":free") for m in rs._OPENROUTER_MODEL_CHAIN[:first_paid_idx]
+    )
+    assert free_before_paid, (
+        f"all entries before first :floor must be :free; got "
+        f"{rs._OPENROUTER_MODEL_CHAIN[:first_paid_idx]!r}"
+    )
+
+
+def test_rotate_openrouter_on_429_advances_chain():
+    import jeeves.research_sectors as rs
+    rs._OPENROUTER_TRIED_MODELS = set()
+
+    first = rs._OPENROUTER_MODEL_CHAIN[0]
+    next_model = rs._rotate_openrouter_on_429(first)
+
+    assert next_model is not None, "rotation should return next chain entry"
+    assert next_model != first, "rotation must not return the failed model"
+    assert next_model in rs._OPENROUTER_MODEL_CHAIN
+    assert first in rs._OPENROUTER_TRIED_MODELS
+
+
+def test_rotate_openrouter_on_429_exhaustion_returns_none():
+    import jeeves.research_sectors as rs
+    rs._OPENROUTER_TRIED_MODELS = set(rs._OPENROUTER_MODEL_CHAIN)
+
+    result = rs._rotate_openrouter_on_429(rs._OPENROUTER_MODEL_CHAIN[0])
+
+    assert result is None, "exhausted chain must return None"
+
+
+def test_build_openrouter_llm_skips_tried_models(monkeypatch):
+    """Default-model resolution must pick the first UNTRIED entry, not chain[0]."""
+    import jeeves.research_sectors as rs
+
+    rs._OPENROUTER_TRIED_MODELS = set()
+    # Mark the first entry as tried so the builder must pick the second.
+    rs._OPENROUTER_TRIED_MODELS.add(rs._OPENROUTER_MODEL_CHAIN[0])
+
+    captured: dict = {}
+
+    class _Fake:
+        def __init__(self, **kwargs):
+            captured.update(kwargs)
+
+    monkeypatch.setattr("llama_index.llms.openai_like.OpenAILike", _Fake)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "fake-key")
+
+    rs._build_openrouter_llm(max_tokens=4096)
+
+    assert captured.get("model") == rs._OPENROUTER_MODEL_CHAIN[1], (
+        f"builder picked {captured.get('model')!r}; expected "
+        f"{rs._OPENROUTER_MODEL_CHAIN[1]!r} (first untried)"
+    )
