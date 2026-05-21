@@ -467,7 +467,7 @@
       "functions.tavily_search:2",
       "global news May 8 2026 US Iran tensions Strait of Hormuz",
       "‘The Music of What Happens’ | Nick Laird | The New York Review of Books",
-      "email | \"Rob Collins & Esther Wakeman\""
+      "email | Team at Sortd"
     ],
     "cross_sector_dupes": []
   },
@@ -520,6 +520,6 @@
   "correspondence": {
     "found": true,
     "fallback_used": false,
-    "text": "- [escalation] Lady Cathy: Daily correspondence digest highlighting an email from mother Cathy Lang about 'Cabin 2026' that requires attention.\n- [escalation] Lady Cathy: Daily correspondence digest highlighting an email from Cathy Lang about 'Cabin 2026' that requires attention.\n- [escalation] Andy: Daily correspondence digest highlighting an email from brother Andrew Lang.\n- [escalation] Andy: Newsletter-style message from brother Andrew Lang about anger, outrage, and care.\n- [escalation] Lady Cathy: Mother Cathy Lang shares information about a potential cabin trip for 2026.\n- [escalation] lang.mc@gmail.com: Critical alert that Jeeves Daily Pipeline has permanently failed with no auto-retry.\n- [escalation] lang.mc@gmail.com: Critical alert that Jeeves Daily Pipeline has permanently failed with no auto-retry.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating a permanent failure with no auto-retry for the Daily Pipeline.\n- [reply needed] Greg Gorsuch: Greg Gorsuch follows up on research and proposes meeting Thursday or Friday.\n- [scheduling] \"Rob Collins & Esther Wakeman\": Rob and Esther confirm either day works for a visit and note family availability."
+    "text": "- [escalation] lang.mc@gmail.com: Automated alert about permanent failure in Jeeves daily pipeline with 429 transient failure.\n- [escalation] Team at Sortd: Sortd subscription payment failed again, asking Michael to update payment info.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure with no auto-retry.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure with no auto-retry.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating a permanent failure with no auto-retry for the Daily Pipeline workflow.\n- [reply needed] Andy: Rob Collins and Esther Wakeman inviting Michael to visit, noting Morgan will be gone this weekend and family will be away next weekend.\n- [reply needed] Mrs. Lang: Cathy Lang confirming either day works for a visit and expressing eagerness to see Michael.\n- [no action] \"Anthropic, PBC\": Receipt for Anthropic services.\n- [no action] \"Anthropic, PBC\": Receipt for Anthropic services.\n- [no action] \"Anthropic, PBC\": Receipt for Anthropic services.\n- [no action] mmmichaelllang: GitHub notification about failed CI workflow for jeeves-unchained repository.\n- [no action] mmmichaelllang: GitHub notification about failed CI workflow for jeeves-unchained repository."
   }
 }
