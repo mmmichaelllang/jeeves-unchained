@@ -1088,13 +1088,21 @@ def _is_stream_timeout(exc: Exception) -> bool:
 
 _CEREBRAS_BASE = "https://api.cerebras.ai/v1"
 _CEREBRAS_MODEL_CHAIN = [
-    # Prefer larger context models — research prompts are 8-12k tokens.
-    # llama3.1-8b (8192 ctx) is too small; gpt-oss-120b and qwen-3-235b
-    # have 128k+ context windows.
+    # 2026-05-21 hotfix: reordered to put known-free-tier models first.
+    # gpt-oss-120b and qwen-3-235b require preview/waitlist access on
+    # Cerebras Cloud free tier — production runs failed with "Cerebras
+    # unavailable (no key or model resolution failed)" because the probe
+    # would pick gpt-oss-120b first and the build would 401/404.
+    # llama-3.3-70b is guaranteed-available on Cerebras free tier.
+    "llama-3.3-70b",
+    "llama-4-maverick-17b-128e-instruct",
+    "llama-4-scout-17b-16e-instruct",
+    "qwen-3-32b",
+    # Preview / waitlist models — keep as later fallbacks
     "gpt-oss-120b",
     "qwen-3-235b-a22b-instruct-2507",
     "zai-glm-4.7",
-    "llama-3.3-70b",
+    # Older variants / spelling differences
     "llama3.3-70b",
     "llama-3.1-70b",
     "llama3.1-70b",
@@ -1170,21 +1178,39 @@ def _build_cerebras_llm(max_tokens: int = 8192):
             timeout=60.0,
             is_chat_model=True,
             is_function_calling_model=True,
+            max_retries=0,  # 2026-05-21 hotfix: disable SDK auto-retry — jeeves owns retry/backoff logic
         )
     except Exception as e:
         log.warning("Failed to build Cerebras LLM: %s", e)
         return None
 
 
-def _build_openrouter_llm(max_tokens: int = 8192):
-    """OpenRouter Llama 3.3 70B free as Cerebras fallback for research sectors."""
+# 2026-05-21 hotfix: OpenRouter free tier model rotation. The base llama-3.3-70b:free
+# daily cap is ~50 req/day per model; one full sector run can exhaust it in retries.
+# When the first model 429s, callers should iterate through these in order.
+_OPENROUTER_FREE_MODEL_CHAIN = [
+    "meta-llama/llama-3.3-70b-instruct:free",
+    "qwen/qwen-2.5-72b-instruct:free",
+    "google/gemma-2-27b-it:free",
+    "deepseek/deepseek-chat-v3:free",
+]
+
+
+def _build_openrouter_llm(max_tokens: int = 8192, model: str | None = None):
+    """OpenRouter free-tier model as Cerebras fallback for research sectors.
+
+    2026-05-21 hotfix: pass model explicitly to enable per-sector rotation when
+    the default daily cap is hit. max_retries=0 disables SDK auto-retry so a 429
+    cascade doesn't compound (SDK retried 3× with 19-30s backoff on top of jeeves
+    own retry, costing ~5 min per sector before exhausting).
+    """
     from llama_index.llms.openai_like import OpenAILike
     import os as _os
     api_key = _os.environ.get("OPENROUTER_API_KEY", "").strip()
     if not api_key:
         return None
     return OpenAILike(
-        model="meta-llama/llama-3.3-70b-instruct:free",
+        model=model or _OPENROUTER_FREE_MODEL_CHAIN[0],
         api_base="https://openrouter.ai/api/v1",
         api_key=api_key,
         is_chat_model=True,
@@ -1192,6 +1218,7 @@ def _build_openrouter_llm(max_tokens: int = 8192):
         max_tokens=max_tokens,
         temperature=0.3,
         timeout=120.0,
+        max_retries=0,  # hotfix: jeeves owns retry logic; prevent SDK retry amplification
     )
 
 
