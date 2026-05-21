@@ -5,6 +5,36 @@
 
 ---
 
+## STEP 0 — Wake-gate (mandatory; added 2026-05-21 after M5 false-SUCCESS incident)
+
+Defense against driver bypass. STEP 4.5 (post-goal verification gate) catches false SUCCESS within a single iteration, but only fires when /goal runs from /loop. If a milestone is completed manually (terminal session, /goal invoked outside /loop, ad-hoc edits) OR if a prior iteration's verification was skipped, LOOP_STATE.md can encode a false SUCCESS that the next wake would otherwise propagate. STEP 0 re-checks at every wake.
+
+Run `timeout 300 uv run pytest tests/ --tb=short` from project root (`/Users/frederickyudin/jeeves-unchained`). Capture exit code and the last 25 lines of output.
+
+**Hard-cap rationale (added 2026-05-21):** `timeout 300` is a bash-level safety net because the suite has a history of wedging indefinitely (one >10min hang during M5 regression bisect, root cause: a single test in test_write_* that never returns). pyproject.toml now installs `pytest-timeout` with `timeout=60` per-test, which is the proper fix — but until `uv sync` re-installs dev deps, the bash timeout is the last line of defense. 300s is generous: full suite ran in <90s when healthy, and 953 tests × 60s/test caps individual tests well before bash steps in.
+
+**Exit code 124 (timeout fired) → treat as exit non-zero with Last Blocker = "Wake-gate suite-level timeout (>300s). Likely a single hanging test. Run with `--timeout=10 -x` to surface the first non-terminating test."**
+
+**Wake-gate outcome rules:**
+
+1. pytest exit 0 → state is consistent. Proceed to STEP 1 unchanged.
+2. pytest exit non-zero → state-vs-reality drift. Before STEP 1 reads, REWRITE LOOP_STATE.md fields:
+   - Read current LOOP_STATE.md.
+   - If `Last Outcome == SUCCESS`: this is a false-SUCCESS to reverse. Set `Last Outcome = FAILED`. Set `Last Blocker = "Wake-gate detected stale-state regression. Failing tests: " + first 3 failing test names parsed from pytest output`. Increment `Same Blocker Count` by 1 (or set to 1 if this is the first occurrence). Override `Next Priority` verbatim: "Bisect last commit(s). Identify which milestone's commit introduced the failing tests. Fix on new branch `feat/m{N}-regression-fix` off main. Run `uv run pytest tests/ --tb=short` and confirm exit 0 BEFORE re-declaring SUCCESS." Append History row: "| <next iter> | wake-gate reversal | OVERRIDE: stale SUCCESS reverted | <failing tests summary> |". If the prior iteration's milestone was checked `- [x]` in ROADMAP.md, **UNCHECK** it back to `- [ ]`.
+   - If `Last Outcome != SUCCESS`: state already encodes failure. Don't double-revert. Append failing test names to `Last Blocker` if not already present.
+3. pytest collection error (exit 2) → treat as exit non-zero. `Last Blocker = "Wake-gate collection error: " + first error line`.
+
+**Skip condition: NONE.** Runs every wake. Cost: ~30-60s per iteration (negligible at 30min cadence — ~2% overhead). The cost buys back trust in LOOP_STATE.md as a monitoring source.
+
+**Print one line before STEP 1:**
+```
+wake_gate: pytest_exit=<code> last_outcome_before=<X> last_outcome_after=<Y> failures=<comma-sep test names or "none">
+```
+
+If wake-gate rewrote LOOP_STATE.md, STEP 1's read will see the corrected state and the rest of the iteration proceeds from the FAILED outcome (retry-with-alternative-approach logic in STEP 3).
+
+---
+
 ## STEP 1 — Read prior state
 
 Read `LOOP_STATE.md` in `/Users/frederickyudin/jeeves-unchained/`.
@@ -137,11 +167,97 @@ ADJUSTED GOAL [iteration N]:
 Turn cap fixed at 15. Diagnostic milestones (M0) typically finish in 3-5 turns.
 Code milestones (M1-M5) may use the full 15.
 
+The DONE WHEN passed to /goal MUST include "AND `uv run pytest tests/ --tb=short` exits 0 in project root" per OVERRIDE-2 for any code-change milestone. Even so, /goal's self-reported SUCCESS is NOT final — STEP 4.5 (post-goal verification gate) is the source of truth for outcome. /goal may return SUCCESS after running target-file pytest only; the gate will reverse it if the full suite fails.
+
 ---
 
-## STEP 5 — Write LOOP_STATE.md
+## STEP 4.5 — Post-Goal Verification Gate (mandatory; added 2026-05-21 after M5 false-SUCCESS incident)
 
-After /goal completes, write `/Users/frederickyudin/jeeves-unchained/LOOP_STATE.md`:
+History: M3 (iter 4), M4 (iter 5), M5 (iter 6) all declared SUCCESS via /goal self-report after running target-file pytest only (e.g. `tests/test_kill_switch.py -v` → 3/3). M5 commit `bb5520d` shipped 3 `test_research_sectors.py` regressions because the full suite was never run. OVERRIDE-2 mandated full-suite pytest but /goal ignored it under turn-cap pressure. This step removes the choice — verification happens here, outside /goal's control.
+
+Run `timeout 300 uv run pytest tests/ --tb=short` from project root (`/Users/frederickyudin/jeeves-unchained`). Capture exit code and the last 25 lines of output. Bash-level `timeout 300` is the safety net (same rationale as STEP 0); per-test `--timeout=60` from pyproject.toml is the proper bound. Exit code 124 = suite-level timeout fired → treat as FAILED with Last Blocker = "Post-goal verification suite-level timeout (>300s). Single hanging test likely. Diagnose with `uv run pytest tests/ --timeout=10 -x --tb=short`."
+
+**Outcome derivation rules (override /goal's self-report):**
+
+- pytest exit 0 → outcome stands as /goal reported (SUCCESS / PARTIAL / FAILED).
+- pytest exit non-zero AND /goal reported SUCCESS → **FORCE outcome = FAILED**. Set Last Blocker = "Full-suite regression. Failing tests: " + first 3 failing test names parsed from output. Note in LOOP_STATE History row: "M{N} false SUCCESS reverted by verification gate (commit <hash>)".
+- pytest exit non-zero AND /goal reported PARTIAL/FAILED → outcome stays whatever /goal said, but APPEND "+ full-suite failures: " + failing test names to Last Blocker.
+- pytest collection error (exit 2) → outcome = FAILED. Last Blocker = "pytest collection error: " + first error line.
+
+**If outcome was overridden from SUCCESS → FAILED, additional cleanup before STEP 5:**
+
+1. Override Next Priority verbatim: "Bisect M{N} commit <hash>. If M{N} is the cause, fix on new branch `feat/m{N}-regression-fix` off main (NOT on the batched branch). Run `uv run pytest tests/ --tb=short` and confirm exit 0 BEFORE re-declaring SUCCESS for M{N}."
+2. If /goal already checked the ROADMAP milestone `- [x]`, **UNCHECK** it back to `- [ ]`. The milestone is not done.
+3. If /goal already pushed a commit, DO NOT revert here — record the commit hash in Last Blocker. Bisect happens in the next iteration's M{N} retry.
+4. If /goal already updated an open PR body to claim M{N} done, the next iteration's retry is responsible for correcting the PR body — note in Next Priority: "Also correct PR #<num> body to remove false SUCCESS claim for M{N}."
+
+**Skip condition: NONE.** This gate runs every iteration. Diagnostic milestones (M0-A, M0-B) without code changes pass instantly (~30-60s) — that is the cost of invariant enforcement and it is non-negotiable. The loop has lied about SUCCESS three iterations running; one wasted minute per iteration buys back trust in LOOP_STATE.md as a monitoring source.
+
+**Print one line before STEP 4.6:**
+```
+verification: pytest_exit=<code> outcome_from_goal=<X> outcome_after_gate=<Y> failures=<comma-sep test names or "none">
+```
+
+---
+
+## STEP 4.6 — Apply Cadence Hint (enforced, added 2026-05-21; revised 2026-05-21 → uniform 30min)
+
+Read `## Cadence Hint` section from LOOP_STATE.md. If section absent → skip this step (legacy compat).
+
+**Target cron: `*/30 * * * *` (every 30 minutes) for ALL milestones M0-M9.**
+
+Rationale (user decision 2026-05-21): no-op wake-ups during long milestones are nearly free. Faster wake-after-completion on short milestones is worth more than the cosmetic cost of mid-iteration wakes during long ones. Uniform cadence simplifies reasoning.
+
+Skip cadence change if:
+- LOOP_STATE.md `next_priority` is non-empty (intervention overrides cadence)
+- Last outcome was FAILED with same_blocker_count > 0 (don't churn cadence during retry)
+- All ROADMAP milestones are `- [x]` (project complete, no further iterations needed)
+
+Apply target cadence:
+
+1. Call `CronList` to find the loop's task ID. The loop task is the one whose prompt mentions `LOOP_STATE.md` or `.claude/loop.md`. There should be exactly one match.
+2. Inspect that task's current `cronExpression`. If it already equals `*/30 * * * *`, no action — proceed to STEP 5.
+3. If mismatch, call `CronUpdate` (preferred) OR `CronDelete` followed by `CronCreate` with the same prompt and the new cron `*/30 * * * *`. Preserve the task's prompt verbatim.
+4. Print one line: `cadence_changed: prior=<old> target=*/30 * * * * milestone_next=<id>`.
+
+If `CronUpdate` is unavailable in your tool set:
+- `CronDelete` the existing task (capture its prompt + ID first).
+- `CronCreate` a new task with the same prompt, cron `*/30 * * * *`.
+- Print: `cadence_changed_via_recreate: prior=<old> target=*/30 * * * * new_id=<id>`.
+
+Hard safety: if CronList returns more than one matching task, do NOT change cadence — print warning and skip. Manual cleanup required.
+
+---
+
+## STEP 5 — Write LOOP_STATE.md (and flip ROADMAP on gate-derived SUCCESS)
+
+After STEP 4.5 verification gate completes, write `/Users/frederickyudin/jeeves-unchained/LOOP_STATE.md` using the **gate-derived outcome**, NOT /goal's self-report. If the gate forced SUCCESS → FAILED, every downstream field (Last Outcome, Last Blocker, Same Blocker Count, Refined DONE WHEN, Next Priority, History row) must reflect the FAILED state. Do not paper over the reversal — the History row should explicitly say "false SUCCESS reverted by verification gate" so the trail is auditable.
+
+**STEP 5a — ROADMAP checkbox flip (mandatory on gate-derived SUCCESS):**
+
+Do NOT trust /goal to have edited ROADMAP.md. STEP 3 says "If last_outcome = SUCCESS: Mark the completed milestone `- [x]` in ROADMAP.md" but observation shows /goal has skipped this consistently (every milestone from M2 onward stayed `- [ ]` in ROADMAP.md despite LOOP_STATE.md History claiming SUCCESS through M5). STEP 5a closes that gap.
+
+On gate-derived SUCCESS (pytest exit 0 AND /goal returned SUCCESS), perform the ROADMAP flip explicitly:
+
+1. Read `ROADMAP.md` from project root.
+2. Locate the `### M<N>` header matching the milestone just completed (e.g. `### M5 — Refactor kill switch`).
+3. Within that section (between the matched header and the next `### M` header), find the first line matching `^- \[ \]` and flip the `[ ]` to `[x]`. Do NOT flip every unchecked line — only the first one. The remaining `- [ ]` lines under that milestone represent sub-tasks that are part of the same milestone work and were verified together by the gate; flip them too IF AND ONLY IF the milestone's full DONE WHEN list was demonstrably satisfied by the gate run. Default behavior: flip ALL `- [ ]` lines within the milestone's section.
+4. Edit `ROADMAP.md` with the flipped state.
+5. If the milestone's section has no `- [ ]` lines (already fully checked), do nothing — the work was a no-op completion verification.
+6. Print one line: `roadmap_flipped: M<N> section, <count> checkboxes set to [x]`.
+
+On gate-derived FAILED, perform the reverse on any erroneous prior checkmarks:
+
+1. If LOOP_STATE.md History shows the prior iteration as the SAME milestone with outcome SUCCESS, and the ROADMAP section for that milestone has any `- [x]` lines, the gate has just reversed a false SUCCESS — those checkmarks must come back to `- [ ]`. Edit ROADMAP.md accordingly.
+2. Print one line: `roadmap_reverted: M<N> section, <count> checkboxes reset to [ ]`.
+
+**STEP 5b — Audit log line:**
+
+After STEP 5a, append one line to `/Users/frederickyudin/jeeves-unchained/decisions/loop-audit-log.md` (create if missing):
+```
+<ISO timestamp> | iter <N> | <milestone> | <outcome_after_gate> | roadmap_action=<flipped|reverted|none> | pytest_exit=<code>
+```
+This file is append-only — never edit past entries. It is the auditable trail of every milestone outcome the loop has produced, independent of LOOP_STATE.md (which is mutable).
 
 ```markdown
 # JEEVES LOOP STATE

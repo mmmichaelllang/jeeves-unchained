@@ -473,7 +473,16 @@ def test_fetch_tott_canonical_url_is_newyorker_not_archive():
         return _html_ctx("<html><body><p>short</p></body></html>")
 
     fn = fetch_talk_of_the_town(covered_urls=set())
-    with mock.patch("urllib.request.urlopen", side_effect=fake_urlopen):
+    # Patch playwright so it never fires: this test exercises the wayback
+    # fallback path. The real playwright call leaves asyncio._get_running_loop()
+    # non-None in the main thread (playwright sync API side-effect), which
+    # corrupts subsequent pytest-asyncio async tests.
+    with mock.patch("urllib.request.urlopen", side_effect=fake_urlopen), \
+         mock.patch(
+             "jeeves.tools.playwright_extractor.extract_article",
+             return_value={"success": False, "text": "", "url": "", "title": "",
+                           "extracted_via": "playwright", "quality_score": 0.0},
+         ):
         result = json.loads(fn())
 
     assert result["url"] == article_url

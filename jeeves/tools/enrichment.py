@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import asyncio
 import atexit
+import concurrent.futures
 import json
 import logging
 from urllib.parse import urlparse
@@ -24,6 +26,63 @@ _HTTP_CLIENT = httpx.Client(
     follow_redirects=True,
 )
 atexit.register(_HTTP_CLIENT.close)
+
+
+# Module-level executor reused across all Crawl4AI fetches.
+# max_workers=1 because:
+#   (a) Crawl4AI's internal browser context may not be reentrant
+#   (b) jeeves runs sectors sequentially (_SECTOR_SEMAPHORE=1) so no concurrency benefit
+#   (c) one persistent thread avoids per-call thread spawn cost
+# Lazy-initialized on first use to avoid spinning up a thread when crawl4ai
+# is never called (e.g. JEEVES_USE_CRAWL4AI_FETCH unset, or kill switch on).
+_CRAWL4AI_EXECUTOR: concurrent.futures.ThreadPoolExecutor | None = None
+
+
+def _get_crawl4ai_executor() -> concurrent.futures.ThreadPoolExecutor:
+    global _CRAWL4AI_EXECUTOR
+    if _CRAWL4AI_EXECUTOR is None:
+        _CRAWL4AI_EXECUTOR = concurrent.futures.ThreadPoolExecutor(
+            max_workers=1, thread_name_prefix="crawl4ai"
+        )
+        atexit.register(_CRAWL4AI_EXECUTOR.shutdown, wait=False)
+    return _CRAWL4AI_EXECUTOR
+
+
+def _run_crawl4ai_sync(url: str, max_chars: int = 3000) -> tuple[str, str]:
+    """Sync wrapper for crawl4ai_extract that survives nested-loop contexts.
+
+    M3 (commit bb5520d, 2026-05-21) originally used bare ``asyncio.run()`` here.
+    That works in production (sync code path, no running loop) but crashes
+    with ``RuntimeError: Cannot run the event loop while another loop is
+    running`` whenever fetch_article_text is invoked from inside an active
+    event loop — which pytest-asyncio (``asyncio_mode = "auto"``) creates for
+    every async test in the suite. The crash propagated across test files
+    and manifested as 3 test_research_sectors.py regressions in the iter 6
+    bisect.
+
+    This wrapper detects an active loop via ``asyncio.get_running_loop()``
+    and dispatches the async call to a dedicated module-level thread where a
+    fresh ``asyncio.run()`` is safe. When no loop is active (production
+    path), it uses ``asyncio.run()`` directly with no thread hop.
+
+    30s per-call timeout matches the existing _HTTP_CLIENT 25s + a small
+    buffer for Crawl4AI's own internal startup.
+    """
+    from .crawl4ai_extract import crawl4ai_extract as _crawl4ai_extract
+
+    async def _coro() -> tuple[str, str]:
+        return await _crawl4ai_extract(url, max_chars=max_chars)
+
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        # No running loop — production path, use asyncio.run directly
+        return asyncio.run(_coro())
+
+    # Running inside an event loop — dispatch to thread where asyncio.run is safe.
+    # Only fires under pytest-asyncio (or any other host-loop scenario).
+    future = _get_crawl4ai_executor().submit(lambda: asyncio.run(_coro()))
+    return future.result(timeout=30)
 
 
 def fetch_article_text(url: str) -> str:
@@ -81,6 +140,36 @@ def fetch_article_text(url: str) -> str:
         title = _extract_title(html)
         base.update({"title": title, "text": text[:3000], "fetch_failed": False})
         return json.dumps(base)
+
+    # Crawl4AI TIER 2 (M3, opt-in) — inserted between trafilatura and TinyFish
+    # for news_short hosts only when JEEVES_USE_CRAWL4AI_FETCH=1.  Dispatches
+    # via _run_crawl4ai_sync (module-level helper) which handles the nested-
+    # event-loop case under pytest-asyncio without crashing.
+    # Soft-fails on every error so the existing cascade continues unaffected.
+    import os as _os
+
+    if (
+        _os.environ.get("JEEVES_USE_CRAWL4AI_FETCH", "0") == "1"
+        and _os.environ.get("JEEVES_REFACTOR_KILL_SWITCH", "0") != "1"
+    ):
+        try:
+            from .crawl4ai_extract import classify_host as _classify_host
+
+            if _classify_host(url) == "news_short":
+                try:
+                    c4ai_text, _mode = _run_crawl4ai_sync(url, max_chars=3000)
+                    if c4ai_text and len(c4ai_text) >= 300:
+                        base.update({
+                            "title": _extract_title(html) if html else "",
+                            "text": c4ai_text[:3000],
+                            "fetch_failed": False,
+                            "extracted_via": "crawl4ai",
+                        })
+                        return json.dumps(base)
+                except Exception as e:
+                    log.debug("crawl4ai fetch failed for %s: %s", url, e)
+        except Exception as e:
+            log.debug("crawl4ai import/classify failed: %s", e)
 
     # TinyFish fallback (sprint-18, opt-in) — managed extractor sits between
     # trafilatura and playwright when JEEVES_USE_TINYFISH=1 AND TINYFISH_API_KEY
