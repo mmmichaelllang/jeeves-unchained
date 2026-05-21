@@ -1,0 +1,69 @@
+{
+  "date": "2026-05-21",
+  "briefing_chars": 20292,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete",
+    "D10_recurring_opener"
+  ],
+  "detectors_skipped": [
+    "D7_narrative_flow",
+    "D9_writing_quality"
+  ],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "18 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 18,
+        "samples": [
+          "https://arxiv.org/pdf/2603.28986",
+          "https://aeon.co/essays/institutions-are-how-we-scale-up-cooperation-among-millions",
+          "https://www.newyorker.com/magazine/2026/06/01/singing-the-knicks-praises-with-a-dash-of-metal",
+          "https://thebrokencopier.substack.com/p/a-really-good-90-minute-lesson",
+          "https://www.tandfonline.com/doi/abs/10.1080/14746700600758838"
+        ]
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Commercial Ledger",
+      "detail": "section under 30 words (22) but sectors ['wearable_ai', 'ai_systems'] have available data",
+      "evidence": {
+        "word_count": 22,
+        "data_signals": [
+          "ai_systems=populated"
+        ]
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "section under 30 words (10) but sectors ['literary_pick'] have available data",
+      "evidence": {
+        "word_count": 10,
+        "data_signals": [
+          "literary_pick=populated"
+        ]
+      }
+    }
+  ],
+  "section_count": 7,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 2,
+  "aside_template_count": 0,
+  "narrative_flow_score": null,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": null
+}

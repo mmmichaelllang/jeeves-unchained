@@ -1,0 +1,187 @@
+{
+  "date": "2026-05-21",
+  "briefing_chars": 20406,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D7_narrative_flow",
+    "D9_writing_quality",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete",
+    "D10_recurring_opener"
+  ],
+  "detectors_skipped": [],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "18 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 18,
+        "samples": [
+          "https://www.newyorker.com/magazine/2026/06/01/singing-the-knicks-praises-with-a-dash-of-metal",
+          "https://www.themarginalian.org/2026/05/03/hannah-arendt-men-in-dark-times",
+          "https://www.youtube.com/watch",
+          "https://aeon.co/essays/institutions-are-how-we-scale-up-cooperation-among-millions",
+          "https://openreview.net/pdf"
+        ]
+      }
+    },
+    {
+      "type": "narrative_flow_low",
+      "severity": "high",
+      "section": null,
+      "detail": "narrative flow score 3/10",
+      "evidence": {
+        "score": 3,
+        "issues": [
+          {
+            "section": "CSS block",
+            "issue": "Opening CSS code disrupts narrative flow and is unrelated to briefing content."
+          },
+          {
+            "section": "Greeting",
+            "issue": "Abrupt shift from CSS to greeting without transition."
+          },
+          {
+            "section": "Domestic Sphere",
+            "issue": "Rapid succession of unrelated municipal updates lacking logical progression."
+          },
+          {
+            "section": "Lesson plans",
+            "issue": "Insertion of informal profanity ('A collection of absolute, grade-A thundercunts.') breaks tone and flow."
+          },
+          {
+            "section": "Toddler activities",
+            "issue": "Sudden jump from classroom resources to child activities without connective tissue."
+          },
+          {
+            "section": "The Wider World",
+            "issue": "Disjointed list of external articles with no synthesis or guiding thread."
+          },
+          {
+            "section": "Specific Enquiries",
+            "issue": "Technical AI research dump presented as bullet\u2011like list, harming narrative cohesion."
+          },
+          {
+            "section": "UAP disclosure",
+            "issue": "Profanity\u2011laden commentary ('clusterfuck of biblical proportions') undermines register and flow."
+          },
+          {
+            "section": "Talk of the Town",
+            "issue": "Embedded lengthy New Yorker article inserted without clear demarcation, causing structural confusion."
+          },
+          {
+            "section": "Signoff",
+            "issue": "Closing signature mixes multiple attributions and informal asides, breaking formal closure."
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "writing_quality_low",
+      "severity": "high",
+      "section": null,
+      "detail": "writing quality score 3/10",
+      "evidence": {
+        "score": 3,
+        "issues": [
+          {
+            "type": "repetition",
+            "evidence": "The Domestic Sphere Edmonds City Council has unanimously approved the city's first-ever Comprehensive Plan."
+          },
+          {
+            "type": "vague",
+            "evidence": "A collection of absolute, grade-A thundercunts."
+          },
+          {
+            "type": "voice_break",
+            "evidence": "It is, a collection of high-functioning fuck-wits."
+          },
+          {
+            "type": "aside_overuse",
+            "evidence": "These have been noted previously; more pressing matters will be addressed."
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://www.seattlepromusica.org/auditions' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.seattlepromusica.org/auditions",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://www.edmondswa.gov/library.html' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.edmondswa.gov/library.html",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://www.pacificsciencecenter.org/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.pacificsciencecenter.org/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Wider World",
+      "detail": "href 'https://www.newyorker.com/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.newyorker.com/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Commercial Ledger",
+      "detail": "section under 30 words (22) but sectors ['wearable_ai', 'ai_systems'] have available data",
+      "evidence": {
+        "word_count": 22,
+        "data_signals": [
+          "ai_systems=populated"
+        ]
+      }
+    },
+    {
+      "type": "missing_section",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "h3 'The Library Stacks' absent but sectors ['literary_pick'] have data",
+      "evidence": {
+        "sectors": [
+          "literary_pick"
+        ]
+      }
+    }
+  ],
+  "section_count": 6,
+  "hallucinated_url_count": 4,
+  "empty_section_count": 1,
+  "aside_template_count": 0,
+  "narrative_flow_score": 3,
+  "writing_quality_score": 3,
+  "dedup_score": null,
+  "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free"
+}

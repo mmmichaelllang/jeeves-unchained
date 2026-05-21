@@ -1,0 +1,72 @@
+{
+  "date": "2026-05-21",
+  "pre_fix_chars": 20406,
+  "post_fix_chars": 20292,
+  "actions": [
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.seattlepromusica.org/auditions'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.seattlepromusica.org/auditions"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.edmondswa.gov/library.html'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.edmondswa.gov/library.html"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.pacificsciencecenter.org/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.pacificsciencecenter.org/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.newyorker.com/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.newyorker.com/"
+      }
+    },
+    {
+      "type": "rerender_missing_section",
+      "section": "The Library Stacks",
+      "detail": "validator rejected: non-html prefix: 'We need to output one or two HTML <p> paragraphs, 60-180 wor'",
+      "status": "failed",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to output one or two HTML <p> paragraphs, 60-180 words total. Must be a single paragraph or two if data demands "
+      }
+    },
+    {
+      "type": "inject_missing_section",
+      "section": "The Library Stacks",
+      "detail": "injected empty-feed for The Library Stacks",
+      "status": "applied",
+      "evidence": {
+        "anchor": "The Commercial Ledger"
+      }
+    },
+    {
+      "type": "rerender_empty_with_data",
+      "section": "The Commercial Ledger",
+      "detail": "skipped \u2014 no usable data extracted from session",
+      "status": "skipped",
+      "evidence": {}
+    }
+  ],
+  "pre_fix_defect_count": 9,
+  "post_fix_defect_count": null,
+  "audit_model_used": null
+}
