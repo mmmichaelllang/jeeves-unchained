@@ -2,23 +2,21 @@
 _Auto-managed. Do not edit during a run._
 
 ## Last Updated
-2026-05-21T06:30:00Z
+2026-05-21T08:00:00Z
 
 ## Iteration
-4 (M3 build — Crawl4AI TIER 2 fetch chain in enrichment.py)
+5 (M4 build — Cerebras model rotation on 429)
 
 ## Last Milestone
-M2 DONE (2026-05-21) — JEEVES_USE_CRAWL4AI_RESEARCH=1 plumbed, _CRAWL4AI_ELIGIBLE_SECTORS defined, _run_crawl4ai_sector built, 82/82 tests passing
+M3 DONE (2026-05-21) — JEEVES_USE_CRAWL4AI_FETCH=1 plumbed into jeeves/tools/enrichment.py. Crawl4AI inserted as TIER 2 for news_short hosts. 3/3 tests passing in tests/test_enrichment.py.
 
 ## Last Outcome
 SUCCESS
 
 ## Evidence
 ```
-M2 verify: grep -n "JEEVES_USE_CRAWL4AI_RESEARCH" scripts/research.py jeeves/research_sectors.py → 6 matches (3 each)
-M2 verify: uv run pytest tests/test_research_sectors.py -q → 82 passed
-PR #136 open: feat/m6-acceleration-and-monitors (M0+M1+M1.5+M2+monitors)
-GH Variable: JEEVES_USE_CRAWL4AI_RESEARCH=1 set
+M3 verify: grep -n "JEEVES_USE_CRAWL4AI_FETCH" jeeves/tools/enrichment.py → 2 matches
+M3 verify: uv run pytest tests/test_enrichment.py -q → 3 passed
 ```
 
 ## Last Blocker
@@ -28,22 +26,19 @@ None.
 0
 
 ## Refined DONE WHEN
-M3 complete: `JEEVES_USE_CRAWL4AI_FETCH=1` flag plumbed into `jeeves/enrichment.py` `fetch_article_text`. New cascade for news_short hosts: trafilatura → Crawl4AI (TIER 2) → Jina → tinyfish → Playwright. Non-news_short hosts: trafilatura → Jina → tinyfish → Playwright unchanged. `pytest tests/test_enrichment.py` exits 0.
+M4 complete: `_resolve_cerebras_model` + `_rotate_on_429` added to `jeeves/research_sectors.py`. On Cerebras 429, rotate to next model in list rather than bailing. Tests pass.
 
 ## Research Diagnosis
 FREE_TIER_CAPACITY_CEILING (Cerebras + OR cannot deliver 70-200 agent calls/run; structural refactor required, not retries)
 
 ## Next Priority
-1. Build M3: add `JEEVES_USE_CRAWL4AI_FETCH=1` flag in `jeeves/enrichment.py`.
-2. New cascade for news_short hosts (classified via `classify_host`): trafilatura → Crawl4AI (TIER 2, async via `asyncio.run(crawl4ai_extract(...))`) → Jina → tinyfish → Playwright.
-3. Non-news_short hosts: trafilatura → Jina → tinyfish → Playwright (unchanged).
-4. Set `JEEVES_USE_CRAWL4AI_FETCH=1` GH Variable after M3 lands.
-5. Write/update `tests/test_enrichment.py` to cover both paths.
-6. `uv run pytest tests/test_enrichment.py -q` → 0 failures.
-7. VERIFY: `grep -n "JEEVES_USE_CRAWL4AI_FETCH" jeeves/enrichment.py && uv run pytest tests/test_enrichment.py -q | tail -5`
+1. Read ROADMAP.md M4 section.
+2. Build M4: Cerebras model rotation — `_resolve_cerebras_model` selects from list; `_rotate_on_429` advances index on 429.
+3. Tests in tests/test_research_sectors.py or new file.
+4. After M3 PR lands: set `JEEVES_USE_CRAWL4AI_FETCH=1` GH Variable.
 
 ## Active Branch
-main (loop creates feat/M{N}-* branches per milestone)
+feat/m6-acceleration-and-monitors
 
 ## Open PRs
 [none — PR #133, #134, #135 all merged today]
@@ -57,6 +52,7 @@ main (loop creates feat/M{N}-* branches per milestone)
 | 1b | M0 probe (attempt 2) | STOP → DESIGN REVISION | combined=0.71; user accepted content-type-aware cascade; ROADMAP narrowed |
 | 2 | M1 + M1.5 | SUCCESS | crawl4ai_extract.py + classify_host + host sets; 11/11 tests passing |
 | 3 | M2 | SUCCESS | JEEVES_USE_CRAWL4AI_RESEARCH=1 + _run_crawl4ai_sector; 82/82 tests passing |
+| 4 | M3 | SUCCESS | JEEVES_USE_CRAWL4AI_FETCH=1 + Crawl4AI TIER 2 in enrichment.py; 3/3 tests passing |
 
 ## Refactor Phase
 M0 (Probe Crawl4AI on jeeves targets)
