@@ -14,7 +14,8 @@
   ],
   "detectors_skipped": [
     "D7_narrative_flow",
-    "D9_writing_quality"
+    "D9_writing_quality",
+    "D_charlotte_url_verify"
   ],
   "defects": [
     {
@@ -25,11 +26,11 @@
       "evidence": {
         "overlap_count": 18,
         "samples": [
-          "https://arxiv.org/pdf/2603.28986",
-          "https://aeon.co/essays/institutions-are-how-we-scale-up-cooperation-among-millions",
           "https://www.newyorker.com/magazine/2026/06/01/singing-the-knicks-praises-with-a-dash-of-metal",
+          "https://aeon.co/essays/sure-ai-can-do-writing-but-memoir-not-so-much",
+          "https://www.themarginalian.org/2026/05/14/bertrand-russell-useless-knowledge",
           "https://thebrokencopier.substack.com/p/a-really-good-90-minute-lesson",
-          "https://www.tandfonline.com/doi/abs/10.1080/14746700600758838"
+          "https://www.nybooks.com/online/2026/05/16/between-devil-deep-blue-sea-christopher-de-bellaigue"
         ]
       }
     },
@@ -65,5 +66,7 @@
   "narrative_flow_score": null,
   "writing_quality_score": null,
   "dedup_score": null,
-  "audit_model_used": null
+  "audit_model_used": null,
+  "charlotte_verified_count": 0,
+  "charlotte_flagged_count": 0
 }

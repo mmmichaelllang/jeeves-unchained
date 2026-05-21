@@ -1,6 +1,6 @@
 {
   "date": "2026-05-21",
-  "briefing_chars": 20406,
+  "briefing_chars": 20292,
   "session_status": "complete",
   "detectors_run": [
     "D8_dedup",
@@ -14,7 +14,9 @@
     "D6_greeting_incomplete",
     "D10_recurring_opener"
   ],
-  "detectors_skipped": [],
+  "detectors_skipped": [
+    "D_charlotte_url_verify"
+  ],
   "defects": [
     {
       "type": "dedup_cross_day_overlap",
@@ -24,11 +26,11 @@
       "evidence": {
         "overlap_count": 18,
         "samples": [
-          "https://www.newyorker.com/magazine/2026/06/01/singing-the-knicks-praises-with-a-dash-of-metal",
-          "https://www.themarginalian.org/2026/05/03/hannah-arendt-men-in-dark-times",
-          "https://www.youtube.com/watch",
+          "https://www.nybooks.com/online/2026/05/16/between-devil-deep-blue-sea-christopher-de-bellaigue",
+          "https://coherent-intelligence.uk/papers/trinitarian-standard-model.html",
+          "https://www.themarginalian.org/2026/05/14/bertrand-russell-useless-knowledge",
           "https://aeon.co/essays/institutions-are-how-we-scale-up-cooperation-among-millions",
-          "https://openreview.net/pdf"
+          "https://arxiv.org/pdf/2604.01007v2"
         ]
       }
     },
@@ -41,115 +43,47 @@
         "score": 3,
         "issues": [
           {
-            "section": "CSS block",
-            "issue": "Opening CSS code disrupts narrative flow and is unrelated to briefing content."
+            "section": "Opening CSS",
+            "issue": "Intrusive styling code disrupts the narrative onset."
           },
           {
-            "section": "Greeting",
-            "issue": "Abrupt shift from CSS to greeting without transition."
+            "section": "Date & Greeting",
+            "issue": "Abrupt shift from code to salutation without a segue."
           },
           {
-            "section": "Domestic Sphere",
-            "issue": "Rapid succession of unrelated municipal updates lacking logical progression."
+            "section": "Local News",
+            "issue": "Jumps from council approval to police training to theft without logical linkage."
           },
           {
-            "section": "Lesson plans",
-            "issue": "Insertion of informal profanity ('A collection of absolute, grade-A thundercunts.') breaks tone and flow."
+            "section": "Teaching Job Boards",
+            "issue": "Sudden pivot from quiet feed to lesson plans with no transition."
           },
           {
-            "section": "Toddler activities",
-            "issue": "Sudden jump from classroom resources to child activities without connective tissue."
+            "section": "Lesson Plans",
+            "issue": "Profanity\u2011laden description breaks the formal register."
           },
           {
-            "section": "The Wider World",
-            "issue": "Disjointed list of external articles with no synthesis or guiding thread."
+            "section": "Choral Auditions",
+            "issue": "Isolated note inserted mid\u2011paragraph, disrupting flow."
+          },
+          {
+            "section": "Toddler Activities",
+            "issue": "Abrupt change to childcare after unrelated educational content."
+          },
+          {
+            "section": "Wider World",
+            "issue": "Vague segue followed by unrelated media items lacking thematic cohesion."
           },
           {
             "section": "Specific Enquiries",
-            "issue": "Technical AI research dump presented as bullet\u2011like list, harming narrative cohesion."
+            "issue": "Dense academic list with no synthesis, causing reader disorientation."
           },
           {
-            "section": "UAP disclosure",
-            "issue": "Profanity\u2011laden commentary ('clusterfuck of biblical proportions') undermines register and flow."
-          },
-          {
-            "section": "Talk of the Town",
-            "issue": "Embedded lengthy New Yorker article inserted without clear demarcation, causing structural confusion."
-          },
-          {
-            "section": "Signoff",
-            "issue": "Closing signature mixes multiple attributions and informal asides, breaking formal closure."
+            "section": "UAP Disclosure",
+            "issue": "Profanity\u2011filled appraisal undermines the tone."
           }
         ],
         "model": "nvidia/nemotron-3-super-120b-a12b:free"
-      }
-    },
-    {
-      "type": "writing_quality_low",
-      "severity": "high",
-      "section": null,
-      "detail": "writing quality score 3/10",
-      "evidence": {
-        "score": 3,
-        "issues": [
-          {
-            "type": "repetition",
-            "evidence": "The Domestic Sphere Edmonds City Council has unanimously approved the city's first-ever Comprehensive Plan."
-          },
-          {
-            "type": "vague",
-            "evidence": "A collection of absolute, grade-A thundercunts."
-          },
-          {
-            "type": "voice_break",
-            "evidence": "It is, a collection of high-functioning fuck-wits."
-          },
-          {
-            "type": "aside_overuse",
-            "evidence": "These have been noted previously; more pressing matters will be addressed."
-          }
-        ],
-        "model": "nvidia/nemotron-3-super-120b-a12b:free"
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "medium",
-      "section": "The Domestic Sphere",
-      "detail": "href 'https://www.seattlepromusica.org/auditions' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://www.seattlepromusica.org/auditions",
-        "is_homepage": false
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "medium",
-      "section": "The Domestic Sphere",
-      "detail": "href 'https://www.edmondswa.gov/library.html' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://www.edmondswa.gov/library.html",
-        "is_homepage": false
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Domestic Sphere",
-      "detail": "href 'https://www.pacificsciencecenter.org/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://www.pacificsciencecenter.org/",
-        "is_homepage": true
-      }
-    },
-    {
-      "type": "hallucinated_url",
-      "severity": "high",
-      "section": "The Wider World",
-      "detail": "href 'https://www.newyorker.com/' not present in any session JSON sector",
-      "evidence": {
-        "url": "https://www.newyorker.com/",
-        "is_homepage": true
       }
     },
     {
@@ -165,23 +99,26 @@
       }
     },
     {
-      "type": "missing_section",
+      "type": "empty_with_data",
       "severity": "high",
       "section": "The Library Stacks",
-      "detail": "h3 'The Library Stacks' absent but sectors ['literary_pick'] have data",
+      "detail": "section under 30 words (10) but sectors ['literary_pick'] have available data",
       "evidence": {
-        "sectors": [
-          "literary_pick"
+        "word_count": 10,
+        "data_signals": [
+          "literary_pick=populated"
         ]
       }
     }
   ],
-  "section_count": 6,
-  "hallucinated_url_count": 4,
-  "empty_section_count": 1,
+  "section_count": 7,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 2,
   "aside_template_count": 0,
   "narrative_flow_score": 3,
-  "writing_quality_score": 3,
+  "writing_quality_score": null,
   "dedup_score": null,
-  "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free"
+  "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free",
+  "charlotte_verified_count": 0,
+  "charlotte_flagged_count": 0
 }
