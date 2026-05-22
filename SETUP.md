@@ -41,8 +41,8 @@ Verify the next day: `sessions/telemetry-<date>.jsonl` should show `provider=jin
 
 | Variable | Value | Why |
 |---|---|---|
-| `JEEVES_USE_QUOTA_AWARE_EXCLUSION` | `1` | Drops tools whose provider is >=85% of monthly cap from the agent toolbox. Stops tavily/exa from getting called once they're over budget. |
-| `JEEVES_QUOTA_EXCLUSION_THRESHOLD` | `0.85` | Optional override. Lower = exclude sooner. |
+| `JEEVES_USE_QUOTA_AWARE_EXCLUSION` | `1` | Drops tools whose provider is >=95% of monthly cap from the agent toolbox. Stops tavily/exa from getting called once they're about to breach. |
+| `JEEVES_QUOTA_EXCLUSION_THRESHOLD` | `0.95` | Optional override. Lower = exclude sooner. |
 
 ### Day 5 — Activate Charlotte audit
 
@@ -92,8 +92,9 @@ Also needed (probably already set as a Secret):
 
 | Variable | Default | Effect |
 |---|---|---|
-| `JEEVES_GATE_C_THRESHOLD` | `0.5` | Sector emptiness fraction at which GATE-C exits 7 |
-| `JEEVES_QUOTA_EXCLUSION_THRESHOLD` | `0.85` | Quota fraction at which tool is dropped from toolbox |
+| `JEEVES_GATE_C_THRESHOLD` | `0.5` | Sector thinness fraction at which GATE-C exits 7 |
+| `JEEVES_GATE_C_MIN_CHARS` | `200` | Minimum substantive chars per sector before it counts as thin |
+| `JEEVES_QUOTA_EXCLUSION_THRESHOLD` | `0.95` | Quota fraction at which tool is dropped from toolbox |
 | `JEEVES_RL_<PROVIDER>` | varies | Per-provider rate-limit override (e.g. `JEEVES_RL_SERPER=16`) |
 
 ### Bypass flags (use to force a run through normally-blocking gates)
