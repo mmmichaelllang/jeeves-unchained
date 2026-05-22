@@ -9,9 +9,11 @@ def test_covered_urls_collects_from_all_sectors():
     model = SessionModel.model_validate(payload)
     urls = covered_urls(model)
     # From dedup.covered_urls + local_news + global_news + newyorker + enriched.
-    assert "https://www.example.com/story-1" in urls
+    # 2026-05-21 — covered_urls now canonicalises (strips www./m./amp.,
+    # tracking params, fragments). Expected forms are bare-host canonical.
+    assert "https://example.com/story-1" in urls
     assert "https://myedmondsnews.com/council-parking" in urls
-    assert "https://www.newyorker.com/magazine/mock" in urls
+    assert "https://newyorker.com/magazine/mock" in urls
 
 
 def test_covered_headlines_reads_from_dedup_only():

@@ -749,15 +749,15 @@ def detect_dedup_violations(
     covered = set(dedup.get("covered_urls") or [])
     if covered:
         all_briefing_urls = set(extract_hrefs(html))
-        # Strip query strings / fragments for a softer compare.
-        def _norm(u: str) -> str:
-            try:
-                p = urlparse(u)
-                return f"{p.scheme}://{p.netloc}{p.path}".rstrip("/")
-            except Exception:
-                return u
-        norm_briefing = {_norm(u) for u in all_briefing_urls}
-        norm_covered = {_norm(u) for u in covered}
+        # Use the project-wide canonical_url so this audit compares against
+        # the SAME keys the research/write phases use. The previous local
+        # `_norm` only stripped scheme/host/path/trailing-slash and didn't
+        # touch utm params or m./amp. host prefixes — so the auditor missed
+        # half the cross-day overlaps that the now-unified canonicalizer
+        # catches.
+        from jeeves.dedup import canonical_url as _canon
+        norm_briefing = {_canon(u) for u in all_briefing_urls}
+        norm_covered = {_canon(u) for u in covered}
         overlap = norm_briefing & norm_covered
         if overlap:
             defects.append(Defect(

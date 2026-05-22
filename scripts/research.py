@@ -29,6 +29,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from jeeves.config import Config, MissingSecret  # noqa: E402
+from jeeves.dedup import canonical_headline, canonical_url  # noqa: E402
 from jeeves.dedup import covered_headlines as get_covered_headlines  # noqa: E402
 from jeeves.dedup import covered_sources_by_host  # noqa: E402
 from jeeves.dedup import covered_urls  # noqa: E402
@@ -128,7 +129,11 @@ def _story_continuity_block(sessions: list) -> str:
             seen.add(sentence)
             lines.append(f"  [{label}] {sentence}.")
 
-    for sess in sessions[:3]:  # cap at 3 days of history to stay concise
+    # 14 days of history (was 3). Existing 20-line output cap below still
+    # bounds the block size — wider window just lets weekly-recurring
+    # stories (Atlantic-monthly, Economist-bi-weekly, lab papers) surface
+    # in the continuity block rather than reading as net-new every cycle.
+    for sess in sessions[:14]:
         date_str = getattr(sess, "date", "?")
         for finding in (sess.global_news or []):
             _add(f"global {date_str}", getattr(finding, "findings", "") or "")
@@ -299,15 +304,24 @@ async def _run_sector_loop(
     for spec in SECTOR_SPECS:
         session.setdefault(spec.name, spec.default)
 
-    session["dedup"]["covered_urls"] = sorted(set(discovered_urls))
+    session["dedup"]["covered_urls"] = sorted({canonical_url(u) for u in discovered_urls if u})
     # Today's discoveries first so write-phase [:N] always captures fresh content;
     # prior-session headlines at the tail for cross-day context.
-    today_hl = list(dict.fromkeys(discovered_headlines))  # dedupe, preserve order
-    today_hl_set = set(today_hl)
+    #
+    # Within-today dedup keys off canonical_headline so "Trump tariffs",
+    # "Trump tariffs.", and "TRUMP TARIFFS" don't all consume separate cap
+    # slots — the most common silent cap-burner before this fix.
+    today_hl: list[str] = []
+    today_hl_keys: set[str] = set()
+    for hl in discovered_headlines:
+        key = canonical_headline(hl)
+        if key and key not in today_hl_keys:
+            today_hl.append(hl)
+            today_hl_keys.add(key)
     # prior_headlines is recency-ordered (newest-first from load_prior_sessions).
-    # Filter out today's headlines, preserve recency order (do NOT sort —
-    # alphabetical sort destroys the cross-day signal the write phase needs).
-    prior_hl_list = [h for h in prior_headlines if h not in today_hl_set]
+    # Filter out today's headlines using canonical keys so a punctuation
+    # variant of today's story doesn't sneak into the prior portion.
+    prior_hl_list = [h for h in prior_headlines if canonical_headline(h) not in today_hl_keys]
     session["dedup"]["covered_headlines"] = today_hl + prior_hl_list
     # Boundary marker so write phase can apply a proportional cap
     # (today_slots + prior_slots) without today crowding out prior history.
@@ -319,9 +333,103 @@ async def _run_sector_loop(
     cross_dupes = _find_cross_sector_dupes(session)
     if cross_dupes:
         log.info("cross-sector duplicate URLs found: %d", len(cross_dupes))
+        # PRUNE — not just flag. Previously cross_sector_dupes was a soft
+        # signal in the write prompt that the model often ignored. Now we
+        # physically remove the duplicate URLs from all sectors except the
+        # FIRST one to surface them, so the model sees each story exactly
+        # once. The first-sector preference is set by SECTOR_SPECS order
+        # in research_sectors.py.
+        _prune_cross_sector_dupes(session, cross_dupes)
     session["dedup"]["cross_sector_dupes"] = cross_dupes
 
     ctx.session = session
+
+
+# Sectors scanned for cross-sector pruning. Must mirror _CROSS_SECTOR_FIELDS
+# in jeeves/research_sectors.py — kept local so this file doesn't import a
+# private constant. Order matters: the FIRST sector in this list that
+# carries a dupe URL keeps the article; later sectors drop it.
+_PRUNE_SECTOR_ORDER: tuple[str, ...] = (
+    "local_news",
+    "global_news",
+    "intellectual_journals",
+    "wearable_ai",
+    "enriched_articles",
+)
+
+
+def _prune_cross_sector_dupes(session: dict, cross_dupes: list[str]) -> None:
+    """Remove cross-sector duplicate URLs from all sectors except the FIRST.
+
+    Mutates ``session`` in place. ``cross_dupes`` is the list of canonical
+    URLs returned by ``_find_cross_sector_dupes`` (canonical form so we
+    match through utm/host-variant decorations).
+
+    For each sector after the first to carry a dupe:
+      - drop the URL from each item's ``urls`` list (canonical-compare)
+      - if an item's ``urls`` becomes empty AND it has no other
+        identifying content, drop the whole item
+
+    Logs one summary line so daily-run forensics can see what got pruned.
+    Defensive: never raises — pruning is opportunistic.
+    """
+    from jeeves.dedup import canonical_url
+
+    if not cross_dupes:
+        return
+
+    dupe_set = {canonical_url(u) for u in cross_dupes if u}
+    if not dupe_set:
+        return
+
+    # Track which URL has already been "claimed" by a sector so subsequent
+    # sectors drop it. First sector in _PRUNE_SECTOR_ORDER wins.
+    claimed: set[str] = set()
+    dropped_per_sector: dict[str, int] = {}
+
+    for field in _PRUNE_SECTOR_ORDER:
+        items = session.get(field)
+        if not isinstance(items, list):
+            continue
+        new_items: list = []
+        for item in items:
+            if not isinstance(item, dict):
+                new_items.append(item)
+                continue
+            urls = item.get("urls") or []
+            if not isinstance(urls, list):
+                new_items.append(item)
+                continue
+            kept_urls: list[str] = []
+            for u in urls:
+                if not isinstance(u, str):
+                    kept_urls.append(u)
+                    continue
+                canon = canonical_url(u)
+                if canon in dupe_set:
+                    if canon in claimed:
+                        # Already claimed by an earlier sector — drop.
+                        dropped_per_sector[field] = dropped_per_sector.get(field, 0) + 1
+                        continue
+                    # First time seen — this sector wins the article.
+                    claimed.add(canon)
+                kept_urls.append(u)
+            item["urls"] = kept_urls
+            # Only drop the item entirely if URL list is now empty AND the
+            # item has no standalone identifying content. A Finding with a
+            # populated `findings` string still belongs even URL-less.
+            findings_text = (item.get("findings") or item.get("summary") or "").strip()
+            if not kept_urls and not findings_text:
+                dropped_per_sector[field] = dropped_per_sector.get(field, 0) + 1
+                continue
+            new_items.append(item)
+        session[field] = new_items
+
+    if dropped_per_sector:
+        log.info(
+            "cross-sector pruning: %s",
+            ", ".join(f"{k}={v}" for k, v in dropped_per_sector.items()),
+        )
 
 
 def _filter_specs(specs, whitelist: list[str], limit: int):
@@ -439,18 +547,28 @@ def main(argv: list[str] | None = None) -> int:
     # Build prior_hl as a recency-ordered list (newest-first) rather than a
     # set. Preserving order lets the write phase prioritise recent history
     # when applying the proportional cap — oldest entries fall off the tail.
+    #
+    # Dedup membership keys off `canonical_headline(hl)` rather than raw
+    # strings — case, punctuation, articles, and trailing-period variants
+    # all collapse to the same key so a story doesn't consume 3 cap slots
+    # under cosmetic variation. We KEEP the original-cased text in
+    # prior_hl (the model needs readable strings) but bucket by canonical.
     prior_hl: list[str] = []
-    prior_hl_set: set[str] = set()
+    prior_hl_keys: set[str] = set()
     prior_sources_by_host: dict[str, list[str]] = {}
     for sess in prior_sessions:  # load_prior_sessions returns newest-first
         for u in covered_urls(sess):
-            if u not in prior_urls_seen:
-                prior_urls_ordered.append(u)
-                prior_urls_seen.add(u)
+            # covered_urls() already canonicalizes, but call again as
+            # defense-in-depth against future changes to that function.
+            canon = canonical_url(u)
+            if canon not in prior_urls_seen:
+                prior_urls_ordered.append(canon)
+                prior_urls_seen.add(canon)
         for hl in get_covered_headlines(sess):
-            if hl not in prior_hl_set:
+            key = canonical_headline(hl)
+            if key and key not in prior_hl_keys:
                 prior_hl.append(hl)
-                prior_hl_set.add(hl)
+                prior_hl_keys.add(key)
         # Source-rotation map: per-host list of titles cited yesterday.
         # Newer-first, dedup per host.
         for host, titles in covered_sources_by_host(sess).items():
@@ -460,11 +578,14 @@ def main(argv: list[str] | None = None) -> int:
                     bucket.append(t)
 
     # COVERAGE_LOG feedback: URLs Jeeves actually cited in prose go first —
-    # they are the highest-confidence already-covered signal.
+    # they are the highest-confidence already-covered signal. Canonicalize
+    # before merging so utm-decorated coverage URLs collide with the bare
+    # forms research already collected.
     for u in _load_prior_coverage_urls(cfg):
-        if u not in prior_urls_seen:
-            prior_urls_ordered.insert(0, u)
-            prior_urls_seen.add(u)
+        canon = canonical_url(u)
+        if canon not in prior_urls_seen:
+            prior_urls_ordered.insert(0, canon)
+            prior_urls_seen.add(canon)
 
     log.info(
         "%d prior sessions loaded: %d URLs (ordered), %d headlines, %d hosts in rolling dedup set.",
@@ -474,6 +595,15 @@ def main(argv: list[str] | None = None) -> int:
 
     ledger = QuotaLedger(cfg.quota_state_path)
     ctx = ResearchContext()
+
+    # Flaw 10 — per-run seen-URL cache: drop any stale entries from a
+    # previous run in this process (long-running test contexts) so the
+    # first sector's fetches always do real work.
+    try:
+        from jeeves.tools.enrichment import reset_seen_url_cache as _reset_cache
+        _reset_cache()
+    except Exception:
+        pass
 
     sector_whitelist = [s.strip() for s in args.sectors.split(",") if s.strip()]
 

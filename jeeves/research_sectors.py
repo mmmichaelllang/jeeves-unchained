@@ -2788,12 +2788,71 @@ def _first_two_sentences(text: str, max_chars: int = 300) -> str:
     return text[: second_end + 1].strip()
 
 
+# Proper-noun cluster extractor — used to build distinguishing dedup labels
+# from findings strings whose first sentence is a generic topic header
+# ("AI policy update.") and whose distinguishing detail lives in sentence 2+.
+# Captures sequences of 2-5 Title-Case tokens (people, places, orgs, paper
+# titles) plus uppercase acronyms ≥2 chars (UN, NATO, OFAC).
+_PROPER_NOUN_RE = re.compile(
+    r"\b(?:[A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+){1,4}|[A-Z]{2,6})\b"
+)
+
+
+def _distinguishing_label(text: str, fallback_max_chars: int = 250) -> str:
+    """Return a dedup label that captures the *distinguishing* portion of a
+    findings string, not just its left prefix.
+
+    Strategy:
+      1. If the text has 1+ proper-noun cluster (length ≥2 tokens OR
+         acronym ≥2 chars), join the FIRST TWO clusters with " | ". This
+         catches "Trump tariffs | Asia" vs "Trump tariffs | Europe" which
+         a left-prefix scheme misses when both stories start "Trump tariffs
+         continue to..."
+      2. Otherwise fall back to ``_first_two_sentences`` (the previous
+         behaviour) — preserves dedup signal for stories without
+         identifiable proper nouns (rare in news but common in vague
+         summaries).
+
+    The result is intentionally ≤80 chars in the common case so the write
+    phase's 80-char prompt-truncation doesn't lop off the second cluster.
+    """
+    text = (text or "").strip()
+    if not text:
+        return ""
+    clusters = _PROPER_NOUN_RE.findall(text)
+    # Drop near-duplicates (case-insensitive) preserving order.
+    seen: set[str] = set()
+    unique: list[str] = []
+    for c in clusters:
+        key = c.lower()
+        if key not in seen:
+            seen.add(key)
+            unique.append(c)
+    if len(unique) >= 2:
+        label = f"{unique[0]} | {unique[1]}"
+        return label[:77] + "…" if len(label) > 80 else label
+    if len(unique) == 1:
+        # One cluster — combine with first 40 chars of surrounding text for
+        # context (avoids two unrelated "OpenAI" stories collapsing to one
+        # dedup key).
+        cluster = unique[0]
+        # Find the cluster's position; take ~40 chars after it as context.
+        pos = text.find(cluster)
+        if pos != -1:
+            tail = text[pos + len(cluster) : pos + len(cluster) + 50].strip()
+            label = f"{cluster}: {tail}" if tail else cluster
+            return label[:77] + "…" if len(label) > 80 else label
+        return cluster
+    return _first_two_sentences(text, max_chars=fallback_max_chars)
+
+
 def collect_headlines_from_sector(value: Any) -> list[str]:
     """Pull human-facing labels out of a sector's parsed JSON for day-over-day dedup.
 
     Extracts both explicit headline-keyed fields (title, headline, role, etc.)
-    AND the first sentence of any ``findings`` string — the latter is critical
-    for news/deep sectors whose Finding objects carry no title field.
+    AND a distinguishing label from any ``findings`` string. The fallback
+    label generation prefers proper-noun clusters over a generic left-prefix
+    truncation — see ``_distinguishing_label`` rationale.
     """
 
     out: list[str] = []
@@ -2809,12 +2868,12 @@ def collect_headlines_from_sector(value: Any) -> list[str]:
             if k in _HEADLINE_KEYS and isinstance(v, str) and v.strip():
                 out.append(v.strip())
             elif k in _FINDINGS_LIKE_KEYS and isinstance(v, str) and v.strip():
-                # Two sentences: first often a topic header ("AI policy update."),
-                # second carries the distinguishing title/place/author needed for
-                # cross-day dedup matching.
-                sentence = _first_two_sentences(v)
-                if sentence:
-                    out.append(sentence)
+                # Proper-noun-anchored label (was: _first_two_sentences which
+                # lost distinguishing detail to write-phase 80-char prefix
+                # truncation when sentence 1 was a generic topic header).
+                label = _distinguishing_label(v)
+                if label:
+                    out.append(label)
             elif isinstance(v, (dict, list)):
                 out.extend(collect_headlines_from_sector(v))
     return out
@@ -2840,9 +2899,17 @@ def _find_cross_sector_dupes(session: dict) -> list[str]:
     The write phase reads ``session.dedup.cross_sector_dupes`` and treats
     those URLs as already-covered after their first appearance — preventing
     the same story from being narrated three times under different headers.
-    Order is the order in which dupes were discovered (stable-ish; based on
-    the iteration order of sector → item → urls).
+
+    Comparison runs on `canonical_url` (lowercase host, www/m/amp stripped,
+    utm-family query params dropped, fragment dropped) so the same article
+    landing in three sectors with three different decorations
+    (`?utm_source=email`, `m.foo.com`, trailing `#section`) collapses to one
+    dupe entry instead of three distinct ones the write phase ignores.
+
+    Returns canonical URLs (the write phase compares against canonical-form
+    URLs computed identically downstream).
     """
+    from .dedup import canonical_url
 
     url_to_sectors: dict[str, list[str]] = {}
     for field in _CROSS_SECTOR_FIELDS:
@@ -2858,7 +2925,10 @@ def _find_cross_sector_dupes(session: dict) -> list[str]:
             for url in urls:
                 if not url or not isinstance(url, str):
                     continue
-                url_to_sectors.setdefault(url, []).append(field)
+                key = canonical_url(url)
+                if not key:
+                    continue
+                url_to_sectors.setdefault(key, []).append(field)
 
     dupes: list[str] = []
     seen: set[str] = set()
