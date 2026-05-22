@@ -32,9 +32,13 @@ def test_crawl4ai_fetch_disabled_when_flag_off(monkeypatch):
 
     classify_called: list[str] = []
 
+    # 2026-05-21 cascade tightening: trafilatura output must be >=600 chars
+    # AND look like prose (terminators, alpha ratio >=0.55, no boilerplate).
+    # Use a realistic-looking sentence repeated.
+    _PROSE = "This is a sentence about the Federal Reserve raising rates today. " * 12
     with patch("jeeves.tools.enrichment._HTTP_CLIENT") as mock_client:
         mock_client.get.return_value = _FakeResponse()
-        with patch("trafilatura.extract", return_value="x" * 400):
+        with patch("trafilatura.extract", return_value=_PROSE):
             with patch(
                 "jeeves.tools.crawl4ai_extract.classify_host",
                 side_effect=lambda u: classify_called.append(u) or "news_short",

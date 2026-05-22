@@ -222,7 +222,18 @@ def _fetch_article_text_impl(url: str) -> str:
             log.info("trafilatura failed %s: %s", url, e)
             text = ""
 
-    if len(text) >= 300:
+    # Cascade-aggressiveness fix (2026-05-21): the 300-char threshold was
+    # too generous — trafilatura would return 350 chars of cookie banner +
+    # nav + footer and the function returned fetch_failed=False, denying
+    # the next tier (playwright/tinyfish) any chance to fetch the real
+    # article. Two extra checks:
+    #   1. Raise the byte threshold from 300 to 600 — typical paywall
+    #      stub pages return 300-500 chars of "subscribe to read more"
+    #      boilerplate that passes the old gate.
+    #   2. Reject extractions whose alphabetic-content ratio is too low
+    #      (signals a list of menu items or button labels rather than
+    #      prose). Caps at 0.55 — real news articles average 0.75+.
+    if len(text) >= 600 and _looks_like_prose(text):
         title = _extract_title(html)
         base.update({"title": title, "text": text[:3000], "fetch_failed": False})
         return json.dumps(base)
@@ -309,6 +320,57 @@ def _host(url: str) -> str:
         return urlparse(url).netloc
     except Exception:
         return ""
+
+
+# Common nav/cookie-banner phrases that indicate trafilatura captured
+# chrome instead of article text. Hits → treat as failed extraction so
+# the next tier (playwright/tinyfish) gets a turn.
+_BOILERPLATE_PATTERNS = (
+    "subscribe to continue",
+    "create a free account",
+    "we use cookies",
+    "this site uses cookies",
+    "accept all cookies",
+    "you have reached your limit",
+    "for more, sign up",
+    "log in to continue",
+    "javascript is disabled",
+    "please enable javascript",
+    "you have been blocked",
+    "access denied",
+    "checking your browser",
+)
+
+
+def _looks_like_prose(text: str) -> bool:
+    """Heuristic: does this extracted text look like article prose vs.
+    navigation/cookie-banner chrome?
+
+    Returns False (caller treats as fetch_failed) if:
+      - the text contains any known boilerplate phrase
+      - alphabetic-character ratio is below 0.55 (signals
+        list-of-menu-items rather than sentences)
+      - sentence terminator density is below 1 per 200 chars
+
+    Returns True (caller treats as success) otherwise.
+
+    Designed to be conservative: false negatives (real prose flagged as
+    failed) just trigger the next tier, which is cheap. False positives
+    (boilerplate flagged as prose) are what we are TRYING to eliminate.
+    """
+    if not text:
+        return False
+    low = text.lower()
+    for pat in _BOILERPLATE_PATTERNS:
+        if pat in low:
+            return False
+    alpha = sum(1 for c in text if c.isalpha())
+    if len(text) > 0 and alpha / len(text) < 0.55:
+        return False
+    terminators = text.count(".") + text.count("!") + text.count("?")
+    if terminators == 0 or len(text) / terminators > 200:
+        return False
+    return True
 
 
 def _extract_title(html: str) -> str:
