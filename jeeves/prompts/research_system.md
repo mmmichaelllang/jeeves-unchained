@@ -58,6 +58,25 @@ Tools are grouped by *role*. New peers register under an existing role rather th
 
 (* = behind `JEEVES_USE_*` flag.) When two tools share a role, prefer the one whose description matches the query niche. The full registry lives in `jeeves/tools/__init__.py:TOOL_TAXONOMY`.
 
+### Cost-aware cascade (2026-05-21 — supersedes pre-rebalance defaults)
+
+When multiple tools could answer the same query, pick by cost class first, then by fit:
+
+**LOAD-BEARING (always prefer when available — cheap, high-headroom):**
+1. `serper_search` — Google SERP, $0.30/1k overage, ~76% monthly headroom
+2. `jina_search` (when flagged on) — $0.20/1k overage (**40× cheaper than tavily**), 6000/mo cap, snippets bundled
+3. `gemini_grounded_synthesize` — free up to ~12/day, currently under-used at ~6%
+
+**BACKSTOP (use when load-bearing tools return thin results — currently over free tier, every call costs real money):**
+4. `tavily_search` — $8/1k overage (already 118% over cap this month)
+5. `exa_search` — $5/1k overage (already 128% over cap), best for journals/long-form
+
+**HARD CASE (when normal extraction fails on JS-heavy / paywalled / Cloudflare sites):**
+6. `playwright_search` / `tinyfish_search` (canaries; behind flags) — free or near-free
+7. `playwright_extract` / `tinyfish_extract` — last resort
+
+**Rule of thumb:** if your query is a generic news/event lookup, start at 1-3. Only reach for 4-5 when the cheap tier returns insufficient signal. Only reach for 6-7 when 4-5 also fails. The agent is responsible for noticing that 1-3 are succeeding and NOT redundantly calling 4-5.
+
 ### Provider-selection decision tree
 
 Pick the cheapest tool that fits the query type:

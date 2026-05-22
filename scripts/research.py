@@ -699,6 +699,35 @@ def main(argv: list[str] | None = None) -> int:
             )
             return 6
 
+        # GATE-C — majority-empty degraded run (added 2026-05-21).
+        # GATE-B catches total failures, but recent production telemetry
+        # showed 12-of-13 empty sectors shipping as "success" because
+        # GATE-B's threshold is 100%. GATE-C catches the more-common
+        # silent-degradation mode where most sectors empty but one or two
+        # (often newyorker via the direct-fetch fast path) populate.
+        #
+        # Default threshold: >=50% empty → exit 7 (degraded).
+        # Tunable via JEEVES_GATE_C_THRESHOLD (float between 0 and 1).
+        # Skip-override: JEEVES_FORCE_DEGRADED=1.
+        _gate_c_threshold = float(os.environ.get("JEEVES_GATE_C_THRESHOLD", "0.5"))
+        _empty_fraction = (
+            len(empty_agent_sectors) / len(_AGENT_SECTOR_NAMES)
+            if _AGENT_SECTOR_NAMES else 0.0
+        )
+        if (
+            _empty_fraction >= _gate_c_threshold
+            and os.environ.get("JEEVES_FORCE_DEGRADED") != "1"
+        ):
+            log.error(
+                "GATE-C: %d/%d agent sectors empty (%.0f%% >= %.0f%% threshold) — "
+                "degraded research run. Empty sectors: %s. "
+                "Set JEEVES_FORCE_DEGRADED=1 or raise JEEVES_GATE_C_THRESHOLD to bypass.",
+                len(empty_agent_sectors), len(_AGENT_SECTOR_NAMES),
+                _empty_fraction * 100, _gate_c_threshold * 100,
+                ", ".join(sorted(empty_agent_sectors)),
+            )
+            return 7
+
     return 0
 
 
