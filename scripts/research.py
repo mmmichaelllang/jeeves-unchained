@@ -686,6 +686,56 @@ def main(argv: list[str] | None = None) -> int:
             return value == ""
         return False
 
+    def _sector_total_chars(value) -> int:
+        """Count characters of substantive content across any sector shape.
+
+        Used by GATE-C's richness check (2026-05-21) — pure emptiness is
+        rare; the real degraded mode is "agent returned 1 thin item with
+        a half-sentence finding string." This helper counts the bytes of
+        actual narrative content, ignoring structural keys (urls, source).
+        """
+        if value is None:
+            return 0
+        if isinstance(value, str):
+            return len(value.strip())
+        if isinstance(value, list):
+            total = 0
+            for item in value:
+                if isinstance(item, dict):
+                    # Pull the prose fields explicitly; do NOT count url
+                    # lists or category labels.
+                    for k in ("findings", "summary", "text", "dek", "insight"):
+                        v = item.get(k)
+                        if isinstance(v, str):
+                            total += len(v.strip())
+                elif isinstance(item, str):
+                    total += len(item.strip())
+            return total
+        if isinstance(value, dict):
+            total = 0
+            for k in (
+                "findings", "summary", "text", "dek", "insight",
+                "choir", "toddler", "notes",
+            ):
+                v = value.get(k)
+                if isinstance(v, str):
+                    total += len(v.strip())
+            # nested lists (e.g. career.openings, english_lesson_plans.classroom_ready)
+            for k in ("openings", "classroom_ready", "pedagogy_pieces"):
+                v = value.get(k)
+                if isinstance(v, list):
+                    total += _sector_total_chars(v)
+            return total
+        return 0
+
+    def _sector_is_thin(value, min_chars: int) -> bool:
+        """A sector is 'thin' if it's empty OR carries less than min_chars
+        of substantive content. Distinct from _sector_is_empty in that a
+        list with one half-sentence finding still counts as thin."""
+        if _sector_is_empty(value):
+            return True
+        return _sector_total_chars(value) < min_chars
+
     if os.environ.get("JEEVES_FORCE_RESEARCH_EMPTY") != "1":
         empty_agent_sectors = [
             name for name in _AGENT_SECTOR_NAMES
@@ -699,32 +749,51 @@ def main(argv: list[str] | None = None) -> int:
             )
             return 6
 
-        # GATE-C — majority-empty degraded run (added 2026-05-21).
+        # GATE-C — majority-thin degraded run (richness check, 2026-05-21).
         # GATE-B catches total failures, but recent production telemetry
         # showed 12-of-13 empty sectors shipping as "success" because
         # GATE-B's threshold is 100%. GATE-C catches the more-common
-        # silent-degradation mode where most sectors empty but one or two
-        # (often newyorker via the direct-fetch fast path) populate.
+        # silent-degradation modes:
+        #   1. Most sectors empty but newyorker direct-fetch saves run from
+        #      GATE-B (the May 19/20 failure pattern).
+        #   2. Most sectors return ONE thin item with a half-sentence
+        #      finding — passes _sector_is_empty but represents broken
+        #      research equivalent to the empty case.
         #
-        # Default threshold: >=50% empty → exit 7 (degraded).
-        # Tunable via JEEVES_GATE_C_THRESHOLD (float between 0 and 1).
-        # Skip-override: JEEVES_FORCE_DEGRADED=1.
+        # Default thresholds:
+        #   - Sector emptiness fraction >=50% → exit 7 (degraded)
+        #   - Per-sector min substantive chars: 200
+        # Tunable via JEEVES_GATE_C_THRESHOLD (float 0..1) and
+        # JEEVES_GATE_C_MIN_CHARS (int). Override with JEEVES_FORCE_DEGRADED=1.
         _gate_c_threshold = float(os.environ.get("JEEVES_GATE_C_THRESHOLD", "0.5"))
-        _empty_fraction = (
-            len(empty_agent_sectors) / len(_AGENT_SECTOR_NAMES)
+        _gate_c_min_chars = int(os.environ.get("JEEVES_GATE_C_MIN_CHARS", "200"))
+        thin_agent_sectors = [
+            name for name in _AGENT_SECTOR_NAMES
+            if _sector_is_thin(session.get(name, _spec_default_for(name)), _gate_c_min_chars)
+        ]
+        _thin_fraction = (
+            len(thin_agent_sectors) / len(_AGENT_SECTOR_NAMES)
             if _AGENT_SECTOR_NAMES else 0.0
         )
         if (
-            _empty_fraction >= _gate_c_threshold
+            _thin_fraction >= _gate_c_threshold
             and os.environ.get("JEEVES_FORCE_DEGRADED") != "1"
         ):
+            # Per-sector char counts for forensic visibility.
+            thin_report = []
+            for name in sorted(thin_agent_sectors):
+                chars = _sector_total_chars(session.get(name, _spec_default_for(name)))
+                thin_report.append(f"{name}({chars}c)")
             log.error(
-                "GATE-C: %d/%d agent sectors empty (%.0f%% >= %.0f%% threshold) — "
-                "degraded research run. Empty sectors: %s. "
-                "Set JEEVES_FORCE_DEGRADED=1 or raise JEEVES_GATE_C_THRESHOLD to bypass.",
-                len(empty_agent_sectors), len(_AGENT_SECTOR_NAMES),
-                _empty_fraction * 100, _gate_c_threshold * 100,
-                ", ".join(sorted(empty_agent_sectors)),
+                "GATE-C: %d/%d agent sectors thin (%.0f%% >= %.0f%% threshold, "
+                "min %d chars/sector) — degraded research run. "
+                "Thin sectors: %s. "
+                "Set JEEVES_FORCE_DEGRADED=1, raise JEEVES_GATE_C_THRESHOLD, or "
+                "lower JEEVES_GATE_C_MIN_CHARS to bypass.",
+                len(thin_agent_sectors), len(_AGENT_SECTOR_NAMES),
+                _thin_fraction * 100, _gate_c_threshold * 100,
+                _gate_c_min_chars,
+                ", ".join(thin_report),
             )
             return 7
 
