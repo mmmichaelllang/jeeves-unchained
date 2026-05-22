@@ -200,7 +200,9 @@ If last_outcome = NONE (iteration 1):
 - Use milestone text + VERIFY command as the goal.
 
 If last_outcome = SUCCESS:
-- Mark the completed milestone `- [x]` in ROADMAP.md.
+- **M6 SUCCESS GATE (added 2026-05-22).** If the completed milestone is M6 (any sub-task), do NOT trust `last_outcome=SUCCESS` blindly. Before flipping the `[x]` and advancing, run `python scripts/health_check.py --window 12; echo "exit=$?"` and require `exit=0`. If exit != 0, override outcome to FAILED, set Last Blocker to `health_check exit ${code} despite SUCCESS claim`, do NOT flip checkbox, do NOT advance. Prior false-success bug: dispatcher count exit-0 was being misread as briefing richness; M8 nearly auto-advanced on a still-broken pipeline.
+- **M8 PRECONDITION GATE (added 2026-05-22).** If the next eligible milestone (about to be promoted) is M8, refuse to start it until `python scripts/health_check.py --window 12` exits 0 in the same iter. If non-zero, override Next Priority to: "M8 BLOCKED — M6 health_check exit ${code}. Loop must re-attempt M6 work (Bug A crawl4ai_extract.py:144, Bug B research_sectors.py:1042 generalisation per round-8 patches) instead of advancing." No exception. No env-only skip.
+- Mark the completed milestone `- [x]` in ROADMAP.md (only if no gate fired above).
 - Move to next eligible milestone. Reset same_blocker_count = 0.
 
 If last_outcome = PARTIAL:
