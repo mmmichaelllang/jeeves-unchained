@@ -29,6 +29,74 @@ from .config import Config
 log = logging.getLogger(__name__)
 
 
+# Map FunctionTool.name -> the QuotaLedger provider key it bills against.
+# Tools missing from this map are never excluded by quota guard (e.g. local
+# functions like fetch_article_text don't bill against an external quota).
+_TOOL_TO_QUOTA_PROVIDER: dict[str, str] = {
+    "serper_search": "serper",
+    "tavily_search": "tavily",
+    "tavily_extract": "tavily",
+    "exa_search": "exa",
+    "gemini_grounded_synthesize": "gemini",
+    "vertex_grounded_search": "gemini",
+    "jina_search": "jina_search",
+    "jina_deepsearch": "jina_deepsearch",
+    "jina_rerank": "jina_rerank",
+    "tinyfish_extract": "tinyfish",
+    "tinyfish_search": "tinyfish_search",
+    "playwright_search": "playwright_search",
+    "playwright_extract": "playwright",
+    "stealth_extract": "stealth",
+}
+
+
+def _apply_quota_aware_exclusion(tools, ledger):
+    """Drop tools whose provider is at >=85% of monthly cap.
+
+    Gated by JEEVES_USE_QUOTA_AWARE_EXCLUSION=1 — default off so existing
+    behaviour is unchanged until the user opts in.
+
+    Returns the (possibly filtered) tool list. Never empties the list —
+    if every tool would be excluded, returns the original list and logs
+    a warning (better an over-budget agent than no agent).
+    """
+    import os as _os
+
+    if _os.environ.get("JEEVES_USE_QUOTA_AWARE_EXCLUSION", "").strip() != "1":
+        return tools
+
+    threshold = float(_os.environ.get("JEEVES_QUOTA_EXCLUSION_THRESHOLD", "0.85"))
+    kept = []
+    dropped = []
+    for t in tools:
+        name = getattr(t.metadata, "name", "")
+        provider = _TOOL_TO_QUOTA_PROVIDER.get(name)
+        if provider is None:
+            kept.append(t)
+            continue
+        try:
+            state = ledger._state["providers"].get(provider, {})
+            cap = state.get("free_cap", 0) or 0
+            used = state.get("used", 0) or 0
+            if cap > 0 and (used / cap) >= threshold:
+                dropped.append(f"{name}({provider}:{used}/{cap})")
+                continue
+        except Exception:
+            pass
+        kept.append(t)
+
+    if not kept:
+        log.warning(
+            "quota-aware exclusion dropped ALL tools — falling back to full list. "
+            "Dropped: %s", dropped,
+        )
+        return tools
+
+    if dropped:
+        log.info("quota-aware exclusion dropped %d tools: %s", len(dropped), dropped)
+    return kept
+
+
 def _classify_api_error(exc: Exception) -> str:
     """Return 'rate_limit', 'auth', 'timeout', 'server', or 'unknown'."""
     msg = str(exc).lower()
@@ -49,6 +117,13 @@ class SectorSpec:
     shape: str  # one of: "string", "list", "dict", "deep", "newyorker", "enriched"
     instruction: str
     default: Any
+    # Optional per-sector tool allowlist. When set AND
+    # JEEVES_PER_SECTOR_TOOLS=1, the agent is given only these tools,
+    # saving ~1k tokens per sector by dropping unused tool descriptions.
+    # When unset OR the env flag is off, the full toolbox is provided
+    # (back-compat). Each entry is the registered FunctionTool name
+    # (e.g. "serper_search", "tavily_extract").
+    tools: tuple[str, ...] | None = None
 
 
 SECTOR_SPECS: list[SectorSpec] = [
@@ -2140,6 +2215,37 @@ async def run_sector(
 ) -> Any:
     """Run one sector's agent and return the parsed sector-shape value."""
 
+    # Tag every telemetry event fired during this sector's execution with
+    # the sector name. Fixes the sector="?" gap observed in production
+    # telemetry where all 37 tool_call events on 2026-05-20 were unattributed.
+    # contextvar propagates through asyncio await boundaries automatically.
+    from .tools.telemetry import sector_context
+
+    with sector_context(spec.name):
+        return await _run_sector_inner(
+            cfg, spec, prior_urls_sample, ledger,
+            extra_user=extra_user,
+            quota_summary=quota_summary,
+            story_continuity=story_continuity,
+            prior_sources_by_host=prior_sources_by_host,
+            use_crawl4ai_research=use_crawl4ai_research,
+        )
+
+
+async def _run_sector_inner(
+    cfg: Config,
+    spec: SectorSpec,
+    prior_urls_sample: list[str],
+    ledger,
+    *,
+    extra_user: str = "",
+    quota_summary: str = "",
+    story_continuity: str = "",
+    prior_sources_by_host: dict[str, list[str]] | None = None,
+    use_crawl4ai_research: bool = False,
+) -> Any:
+    """Original run_sector body, now wrapped by the sector_context manager."""
+
     # Fast path: newyorker bypasses the LLM agent entirely.
     # fetch_talk_of_the_town is pure Python — no LLM needed or wanted.
     # Routing it through Kimi introduces three hallucination vectors:
@@ -2239,7 +2345,17 @@ async def run_sector(
         else 8192
     )
 
-    tools = all_search_tools(cfg, ledger, set(prior_urls_sample))
+    # Per-sector tool subset (sprint-2026-05-21).
+    # When JEEVES_PER_SECTOR_TOOLS=1 AND spec.tools is set, the agent
+    # receives only the tools the sector actually needs — saves ~1k
+    # tokens per sector by dropping unused tool descriptions. Default
+    # behaviour: full toolbox (back-compat). See jeeves.tools.tools_for_sector.
+    # Quota-aware exclusion layered on: tools whose provider is at >=85%
+    # of monthly cap are dropped from the toolbox when
+    # JEEVES_USE_QUOTA_AWARE_EXCLUSION=1.
+    from .tools import tools_for_sector as _tfs
+    tools = _tfs(cfg, ledger, set(prior_urls_sample), allowlist=spec.tools)
+    tools = _apply_quota_aware_exclusion(tools, ledger)
     if _use_cerebras_fallback is not None:
         llm = _use_cerebras_fallback
         _provider_label = "cerebras"
