@@ -16,6 +16,25 @@ import pytest
 
 
 @pytest.fixture(autouse=True)
+def _reset_seen_url_cache():
+    """Per-test reset of the enrichment seen_url_cache.
+
+    The cache is intentionally module-level + per-RUN in production (the
+    research script calls reset_seen_url_cache() once at startup). In tests
+    we get many "runs" in one process, so test N would see test N-1's
+    cached fetches and serve stale data. Reset before AND after so neither
+    leaks in either direction.
+    """
+    try:
+        from jeeves.tools.enrichment import reset_seen_url_cache as _r
+        _r()
+        yield
+        _r()
+    except Exception:
+        yield
+
+
+@pytest.fixture(autouse=True)
 def _no_leaked_running_loop():
     """Defense-in-depth: any test that leaks a running loop (via Playwright
     sync API or otherwise) fails ON THAT TEST instead of polluting downstream

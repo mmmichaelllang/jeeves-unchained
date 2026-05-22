@@ -85,6 +85,56 @@ def _run_crawl4ai_sync(url: str, max_chars: int = 3000) -> tuple[str, str]:
     return future.result(timeout=30)
 
 
+# ---------------------------------------------------------------------------
+# Per-run seen-URL cache (Flaw 10).
+#
+# Same article surfaces in multiple sectors during a single research run
+# (e.g. a ProPublica feature lands in global_news, intellectual_journals,
+# AND enriched_articles). Previously each sector fetched + extracted the
+# article independently — 3× the playwright cost, 3× the API budget, 3×
+# the rate-limit risk. Now the first sector to fetch caches by
+# canonical_url; subsequent sectors get the cached JSON without a network
+# call. Per-RUN, not per-day: reset via ``reset_seen_url_cache()`` from
+# research.main() before the first sector runs. Module-level (not threaded
+# through ResearchContext) because fetch_article_text is invoked deep in
+# the FunctionAgent tool dispatch tree where threading new args through
+# every call site is invasive.
+# ---------------------------------------------------------------------------
+
+_SEEN_URL_CACHE: dict[str, str] = {}
+_SEEN_URL_CACHE_LOCK = __import__("threading").Lock()
+
+
+def reset_seen_url_cache() -> None:
+    """Drop the per-run cache. Call once at the start of a research run."""
+    with _SEEN_URL_CACHE_LOCK:
+        n = len(_SEEN_URL_CACHE)
+        _SEEN_URL_CACHE.clear()
+    if n:
+        log.info("seen_url_cache reset (dropped %d entries)", n)
+
+
+def seen_url_cache_stats() -> dict[str, int]:
+    """Return current cache size — used by daily-run telemetry."""
+    with _SEEN_URL_CACHE_LOCK:
+        return {"size": len(_SEEN_URL_CACHE)}
+
+
+def _canonical_cache_key(url: str) -> str:
+    """Canonical URL key used by the seen-URL cache.
+
+    Imports `canonical_url` lazily to avoid a circular import at module
+    load (jeeves.dedup imports from jeeves.schema which is imported widely).
+    """
+    if not url:
+        return ""
+    try:
+        from jeeves.dedup import canonical_url as _canon
+        return _canon(url)
+    except Exception:
+        return url
+
+
 def fetch_article_text(url: str) -> str:
     """Fetch a URL and extract clean article text via trafilatura.
 
@@ -95,11 +145,47 @@ def fetch_article_text(url: str) -> str:
     JSON shape: {url, title, text, fetch_failed, source}
 
     Fallback chain:
-      1. httpx + trafilatura (this function's primary path)
-      2. headless Playwright + OpenRouter crystallizer (when both 1 yields
+      1. **Per-run seen-URL cache check** (Flaw 10) — if a prior sector in
+         this run already fetched the canonical URL, return its cached
+         JSON unchanged. Saves duplicate playwright/trafilatura/network
+         spend on cross-sector duplicates.
+      2. httpx + trafilatura (primary path)
+      3. headless Playwright + OpenRouter crystallizer (when 2 yields
          <300 chars text AND playwright is installed). Soft-fails to the
          empty primary result if Playwright is unavailable.
     """
+    # Cache check — earliest possible return.
+    cache_key = _canonical_cache_key(url)
+    if cache_key:
+        with _SEEN_URL_CACHE_LOCK:
+            cached = _SEEN_URL_CACHE.get(cache_key)
+        if cached is not None:
+            log.info("seen_url_cache HIT for %s", cache_key)
+            return cached
+
+    result = _fetch_article_text_impl(url)
+
+    # Cache MISS path — store the result only when the fetch succeeded
+    # (fetch_failed == False). Storing failure cases would pollute the
+    # cache with errors for the rest of the run, blocking retries via a
+    # different sector's extractor chain.
+    if cache_key:
+        try:
+            parsed = json.loads(result)
+            if isinstance(parsed, dict) and not parsed.get("fetch_failed", True):
+                with _SEEN_URL_CACHE_LOCK:
+                    _SEEN_URL_CACHE[cache_key] = result
+                log.debug("seen_url_cache STORE for %s", cache_key)
+        except Exception:
+            pass
+    return result
+
+
+def _fetch_article_text_impl(url: str) -> str:
+    """The original fetch implementation. Kept as a separate function so the
+    public ``fetch_article_text`` can wrap it with the per-run seen-URL
+    cache without entangling the cache logic with the trafilatura/playwright
+    chain control flow."""
     base = {
         "url": url,
         "title": "",
