@@ -51,10 +51,17 @@ _TOOL_TO_QUOTA_PROVIDER: dict[str, str] = {
 
 
 def _apply_quota_aware_exclusion(tools, ledger):
-    """Drop tools whose provider is at >=85% of monthly cap.
+    """Drop tools whose provider is at >=95% of monthly cap.
 
     Gated by JEEVES_USE_QUOTA_AWARE_EXCLUSION=1 — default off so existing
     behaviour is unchanged until the user opts in.
+
+    Threshold bumped 0.85 → 0.95 on 2026-05-21: at 85% we were dropping
+    providers with ~150 calls of headroom left, sometimes mid-day, which
+    forced the sector through more-expensive fallbacks before the cap was
+    actually breached. 95% leaves only ~50 calls of headroom (per 1000-cap
+    tavily) — close enough to imminent overage to matter, far enough to
+    not over-fire on normal daily fluctuation.
 
     Returns the (possibly filtered) tool list. Never empties the list —
     if every tool would be excluded, returns the original list and logs
@@ -65,7 +72,7 @@ def _apply_quota_aware_exclusion(tools, ledger):
     if _os.environ.get("JEEVES_USE_QUOTA_AWARE_EXCLUSION", "").strip() != "1":
         return tools
 
-    threshold = float(_os.environ.get("JEEVES_QUOTA_EXCLUSION_THRESHOLD", "0.85"))
+    threshold = float(_os.environ.get("JEEVES_QUOTA_EXCLUSION_THRESHOLD", "0.95"))
     kept = []
     dropped = []
     for t in tools:
@@ -126,6 +133,41 @@ class SectorSpec:
     tools: tuple[str, ...] | None = None
 
 
+# ---------------------------------------------------------------------------
+# Tool-allowlist bundles (2026-05-21) — composed into per-sector tools tuples.
+#
+# Tools not currently registered (canaries behind unset env flags) are
+# silently skipped by tools_for_sector — listing them here is safe and
+# means the sector's toolbox automatically picks them up the moment their
+# flag is flipped, with no code change required.
+# ---------------------------------------------------------------------------
+
+# Generic web search — every news/topic sector wants these.
+_TOOLS_WEB_SEARCH = (
+    "serper_search",
+    "tavily_search",
+    "exa_search",
+    "jina_search",          # canary; picked up when JEEVES_USE_JINA_SEARCH=1
+    "tinyfish_search",      # canary
+    "playwright_search",    # canary
+)
+
+# Grounded synthesis — narrative "state of X" answers.
+_TOOLS_GROUNDED = (
+    "gemini_grounded_synthesize",
+    "vertex_grounded_search",
+    "jina_deepsearch",      # canary; deep multi-hop
+)
+
+# Full-text extraction tier — the article-body fetchers.
+_TOOLS_EXTRACT = (
+    "tavily_extract",
+    "fetch_article_text",
+    "playwright_extract",
+    "tinyfish_extract",     # canary
+)
+
+
 SECTOR_SPECS: list[SectorSpec] = [
     SectorSpec(
         name="weather",
@@ -156,6 +198,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Note it clearly as an estimate."
         ),
         default="",
+        # weather: 3-tier parallel + 3-tier fallback all web-search shape.
+        # No body-extraction needed — synthesized answer is the deliverable.
+        tools=_TOOLS_WEB_SEARCH + ("gemini_grounded_synthesize",),
     ),
     SectorSpec(
         name="local_news",
@@ -194,6 +239,8 @@ SECTOR_SPECS: list[SectorSpec] = [
             "     deserve one honest line, not an empty array that breaks the briefing."
         ),
         default=[],
+        # local_news: heavy use of search + extract; needs grounded synthesis too.
+        tools=_TOOLS_WEB_SEARCH + _TOOLS_GROUNDED + _TOOLS_EXTRACT,
     ),
     SectorSpec(
         name="career",
@@ -212,6 +259,8 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Use null for deadline or salary_range if not found in the posting."
         ),
         default={},
+        # career: district HR pages + extraction. No grounded synth needed.
+        tools=_TOOLS_WEB_SEARCH + _TOOLS_EXTRACT,
     ),
     SectorSpec(
         name="english_lesson_plans",
@@ -290,6 +339,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "subkey rather than padding with off-topic results."
         ),
         default={"classroom_ready": [], "pedagogy_pieces": [], "notes": ""},
+        # english_lesson_plans: site-scoped searches + heavy extract (Reddit
+        # threads, GitHub READMEs). No grounded synth.
+        tools=_TOOLS_WEB_SEARCH + _TOOLS_EXTRACT,
     ),
     SectorSpec(
         name="family",
@@ -311,6 +363,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Return {choir: 'findings string', toddler: 'findings string', urls: [...]}."
         ),
         default={},
+        # family: search-only — no extract needed for events / auditions
+        # (the search snippet usually carries the audition date + venue).
+        tools=_TOOLS_WEB_SEARCH + ("tavily_extract", "fetch_article_text"),
     ),
     SectorSpec(
         name="global_news",
@@ -368,6 +423,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "does not."
         ),
         default=[],
+        # global_news: full toolbox — search, grounded synth, extract,
+        # vertex_grounded fallback all explicitly invoked.
+        tools=_TOOLS_WEB_SEARCH + _TOOLS_GROUNDED + _TOOLS_EXTRACT,
     ),
     SectorSpec(
         name="intellectual_journals",
@@ -420,6 +478,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Return a JSON array of {source, findings, urls}."
         ),
         default=[],
+        # intellectual_journals: exa-heavy (returns full text), serper fallback,
+        # tavily_extract for non-exa results.
+        tools=_TOOLS_WEB_SEARCH + _TOOLS_EXTRACT,
     ),
     SectorSpec(
         name="wearable_ai",
@@ -446,6 +507,8 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Return a JSON array of {category, findings, urls}, one entry per subsection."
         ),
         default=[],
+        # wearable_ai: product pages + EdTech blogs. Exa + serper + extract.
+        tools=_TOOLS_WEB_SEARCH + _TOOLS_EXTRACT,
     ),
     SectorSpec(
         name="triadic_ontology",
@@ -479,6 +542,10 @@ SECTOR_SPECS: list[SectorSpec] = [
             "array or list. Return exactly: {\"findings\": \"<prose>\", \"urls\": [...]}."
         ),
         default={"findings": "", "urls": []},
+        # triadic_ontology: deep-research, exa-driven (returns full text).
+        # Allow grounded peers for narrative synthesis attempts.
+        tools=("serper_search", "exa_search", "jina_search", "jina_deepsearch",
+               "tavily_extract", "fetch_article_text"),
     ),
     SectorSpec(
         name="ai_systems",
@@ -510,6 +577,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Do not put an array in the findings field."
         ),
         default={"findings": "", "urls": []},
+        # ai_systems: deep-research, exa-driven. Same shape as triadic_ontology.
+        tools=("serper_search", "exa_search", "jina_search", "jina_deepsearch",
+               "tavily_extract", "fetch_article_text"),
     ),
     SectorSpec(
         name="uap",
@@ -521,6 +591,10 @@ SECTOR_SPECS: list[SectorSpec] = [
             "or list. Return exactly: {\"findings\": \"<prose string>\", \"urls\": [...]}."
         ),
         default={"findings": "", "urls": []},
+        # uap: deep-research, fewer ongoing sources; same toolbox as the other
+        # two deep sectors.
+        tools=("serper_search", "exa_search", "jina_search", "jina_deepsearch",
+               "tavily_extract", "fetch_article_text"),
     ),
     SectorSpec(
         name="newyorker",
@@ -533,6 +607,9 @@ SECTOR_SPECS: list[SectorSpec] = [
         default={"available": False, "title": "", "section": "", "dek": "",
                  "byline": "", "date": "",
                  "text": "", "url": "", "source": "The New Yorker"},
+        # newyorker: bypassed by run_sector's direct-fetch fast path. Allowlist
+        # documents intent. The single TOTT fetcher is the only legitimate tool.
+        tools=("fetch_new_yorker_talk_of_the_town",),
     ),
     SectorSpec(
         name="enriched_articles",
@@ -559,6 +636,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "of extracted content — do not paste full article text into the JSON."
         ),
         default=[],
+        # enriched_articles: pure extraction. No search — input is the seed URL
+        # list from earlier sectors. Allow the full extract chain.
+        tools=_TOOLS_EXTRACT,
     ),
     SectorSpec(
         name="literary_pick",
@@ -576,6 +656,9 @@ SECTOR_SPECS: list[SectorSpec] = [
         ),
         default={"available": False, "title": "", "author": "", "year": None,
                  "summary": "", "url": ""},
+        # literary_pick: single exa query for one book. Allow tavily_extract +
+        # fetch_article_text in case agent wants to read a review page.
+        tools=("exa_search", "tavily_extract", "fetch_article_text"),
     ),
 ]
 
