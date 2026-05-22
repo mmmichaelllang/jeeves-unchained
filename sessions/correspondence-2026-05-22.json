@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] lang.mc@gmail.com: Daily correspondence digest reporting a permanent failure in the Jeeves Daily Pipeline.\n- [escalation] Lady Cathy: Daily correspondence digest highlighting an email from Lady Cathy Lang as pressing.\n- [escalation] Lady Cathy: Daily correspondence digest emphasizing the pressing need to address Lady Cathy Lang's email.\n- [escalation] Lady Cathy: Daily correspondence digest highlighting an urgent email from Lady Cathy Lang.\n- [escalation] Lady Cathy: Daily correspondence digest highlighting an email from Lady Cathy Lang as the most pressing matter.\n- [escalation] Lady Cathy: Daily correspondence digest highlighting an email from Lady Cathy Lang about 'Cabin 2026'.\n- [escalation] mmmichaelllang: GitHub notification that the CI workflow run failed for jeeves-unchained repository.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Research Phase workflow run failed for jeeves-unchained repository.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting urgent email from Lady Cathy Lang about 'Cabin 2026' requiring attention.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary mentioning Jeeves Daily Pipeline failure alert.",
+  "text": "- [escalation] Mrs. Lang: Daily correspondence summary highlighting a pressing matter from Lady Cathy Lang regarding 'Cabin 2026'.\n- [escalation] Mrs. Lang: Daily correspondence summary noting a Jeeves Daily Pipeline failure and other morning items.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for a permanent failure in the Daily Pipeline with no auto-retry.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting a payment escalation notice from Sortd about a second unsuccessful payment notice.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary flagging a Jeeves pipeline alert about a failed daily pipeline run.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure with a 429 transient failure marker in the Daily Pipeline workflow.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting an email from Lady Cathy Lang about 'Cabin 2026' requiring attention.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting an email from Cathy Lang about 'Cabin 2026' requiring attention.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting an email from Cathy Lang about 'Cabin 2026' that requires a decision.",
   "counts": {
-    "reply_needed": 1,
+    "reply_needed": 5,
     "decision_required": 1,
-    "scheduling": 2,
+    "scheduling": 1,
     "follow_up": 0,
-    "escalation": 16,
-    "no_action": 30
+    "escalation": 11,
+    "no_action": 25
   }
 }
