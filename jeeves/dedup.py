@@ -1,10 +1,135 @@
-"""Extract covered-URL sets from prior sessions for the dedup prompt context."""
+"""Extract covered-URL sets from prior sessions for the dedup prompt context.
+
+Also home to the canonical normalization helpers (`canonical_url`,
+`canonical_headline`) used across the research + audit + write phases.
+Keeping both in one module so the three phases dedup against the *same*
+keys — drift between phases was the root cause of cross-day overlap defects
+the auditor kept reporting after research dedup said "no dupes here".
+"""
 
 from __future__ import annotations
 
-from urllib.parse import urlparse
+import re
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 from .schema import SessionModel
+
+
+# ---------------------------------------------------------------------------
+# Normalization helpers (audit ↔ research ↔ write share these — DO NOT
+# reimplement locally anywhere else)
+# ---------------------------------------------------------------------------
+
+# Query parameters routinely added by share/email/ad infrastructure that
+# carry no article identity. Stripped before comparison so the same URL
+# decorated for Twitter, RSS, and email all bucket together.
+_TRACKING_PARAM_PREFIXES: tuple[str, ...] = (
+    "utm_",
+    "fb",
+    "gc",
+    "ref",
+    "share",
+    "igshid",
+    "mc_",
+    "_hsenc",
+    "_hsmi",
+    "wt_",
+    "cmpid",
+    "spm",
+    "yclid",
+    "msclkid",
+)
+
+# Host prefixes treated as canonical of the bare host. m.guardian.com,
+# amp.cnn.com, mobile.reuters.com all collapse to the bare host.
+_MOBILE_HOST_PREFIXES: tuple[str, ...] = ("m.", "amp.", "mobile.", "www.")
+
+
+def _strip_tracking_params(query: str) -> str:
+    """Drop common tracking params, preserve the rest in stable order."""
+    if not query:
+        return ""
+    pairs = parse_qsl(query, keep_blank_values=True)
+    kept = [(k, v) for k, v in pairs if not k.lower().startswith(_TRACKING_PARAM_PREFIXES)]
+    return urlencode(kept, doseq=True)
+
+
+def canonical_url(url: str) -> str:
+    """Normalize a URL for dedup comparison.
+
+    Rules (every rule deliberate — change here ripples through every dedup
+    path):
+      - lowercase host
+      - strip ``www.``, ``m.``, ``amp.``, ``mobile.`` host prefixes
+      - drop fragment
+      - drop tracking query params (utm_*, fb*, gc*, ref*, share*, igshid, etc.)
+      - strip trailing slash from path
+      - keep scheme as-is (http/https treated distinct so a misconfigured
+        sector that emits http://foo doesn't accidentally clobber https://foo
+        — this is rare in practice)
+
+    Returns the original string on any urlparse failure; never raises.
+    """
+    if not url or not isinstance(url, str):
+        return url or ""
+    try:
+        p = urlparse(url.strip())
+    except Exception:
+        return url
+    host = (p.netloc or "").lower()
+    for prefix in _MOBILE_HOST_PREFIXES:
+        if host.startswith(prefix):
+            host = host[len(prefix):]
+            break
+    path = (p.path or "").rstrip("/")
+    query = _strip_tracking_params(p.query)
+    # Fragment dropped unconditionally — #section3 / #comments are never article
+    # identity.
+    return urlunparse((p.scheme, host, path, "", query, ""))
+
+
+# Apostrophes and quote-marks are DELETED (not space-substituted) so
+# "Trump's tariffs" → "trumps tariffs", bucketing with "Trumps tariffs".
+# Includes straight + curly + prime variants the wild emits.
+_APOSTROPHE_RE = re.compile(r"['’‘ʼ]+")
+# All other punctuation is space-substituted so "U.S. policy" tokenizes as
+# two words ("u", "s") rather than collapsing into "uspolicy" (which would
+# accidentally match unrelated headlines).
+_PUNCT_RE = re.compile(r"[^\w\s]+", flags=re.UNICODE)
+_WS_RE = re.compile(r"\s+")
+
+# Short stopwords removed before compare. Conservative — only words whose
+# presence/absence shouldn't separate the same story into different keys.
+# Verbs, prepositions, and rare-but-meaningful words are NOT in this list.
+_STOPWORDS = frozenset({
+    "a", "an", "the",
+    "and", "or", "but",
+    "of", "in", "on", "at", "to", "for", "with", "by",
+    "is", "are", "was", "were", "be", "been",
+})
+
+
+def canonical_headline(s: str) -> str:
+    """Normalize a headline string for substring/equality dedup compares.
+
+    Rules:
+      - lowercase
+      - strip punctuation (including apostrophes — "Trump's" → "trumps")
+      - collapse whitespace
+      - drop English articles and a handful of stopwords
+
+    Returns "" on empty/None input. Designed to be cheap (no allocations of
+    intermediate lists) — called O(headlines × sectors) per research run.
+    """
+    if not s or not isinstance(s, str):
+        return ""
+    lowered = s.lower()
+    # Delete apostrophes FIRST so "trump's" → "trumps".
+    no_apos = _APOSTROPHE_RE.sub("", lowered)
+    # Then replace remaining punctuation with space so "u.s." → "u s".
+    cleaned = _PUNCT_RE.sub(" ", no_apos)
+    tokens = [t for t in _WS_RE.split(cleaned) if t and t not in _STOPWORDS]
+    return " ".join(tokens)
 
 
 def _host_of(url: str) -> str:
@@ -97,7 +222,11 @@ def covered_urls(session: SessionModel | None) -> set[str]:
     for art in session.enriched_articles:
         if art.url:
             out.add(art.url)
-    return {u.rstrip("/") for u in out if u}
+    # canonical_url handles tracking-param/host/fragment normalization so the
+    # rolling dedup set buckets cleanly across schemes/hosts/utm decorations.
+    # Previously a bare `u.rstrip("/")` left m.guardian.com and www.guardian.com
+    # as distinct entries — half-baked dedup.
+    return {canonical_url(u) for u in out if u}
 
 
 def covered_headlines(session: SessionModel | None) -> set[str]:

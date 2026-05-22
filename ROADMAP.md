@@ -95,8 +95,8 @@ Replace per-sector FunctionAgent loop with content-type-aware Crawl4AI extractio
   VERIFY: `gh workflow list -R mmmichaelllang/jeeves-unchained | grep -i validation`
 
 - [ ] Run validation sprint: 12+ consecutive validation.yml runs (≈ 6 hours at 30min cadence).
-  DONE WHEN: `scripts/health_check.py --window 12 --source validation` reports ≥9/12 non-empty briefings AND zero KILL_SWITCH deployments AND average ≥10/13 populated sectors per non-empty briefing.
-  VERIFY: `python scripts/health_check.py --window 12 --source validation 2>&1 | grep -E "non_empty|KILL_SWITCH|avg_sectors"`
+  DONE WHEN: `python scripts/health_check.py --window 12 --source validation` **exits with code 0** (script's own pass/fail logic enforces all three criteria: non_empty≥9, KILL_SWITCH=0, avg_sectors≥10). Dispatcher-count success (validation.yml exit-0) is NOT sufficient — that only proves daily.yml was triggered, not that briefings were rich.
+  VERIFY: `python scripts/health_check.py --window 12 --source validation; echo "exit=$?"` — must print `exit=0`. Or read the most recent validation.yml run's `M6 status` log notice; `m6_pass=True` corresponds to exit 0.
 
 - [ ] After 12 successful runs: disable validation.yml cron (set workflow inactive). daily.yml at 12:00 UTC resumes as steady-state cadence.
   DONE WHEN: validation.yml disabled AND next daily.yml scheduled run also produces ≥10/13 non-empty sectors.
@@ -111,9 +111,13 @@ Replace per-sector FunctionAgent loop with content-type-aware Crawl4AI extractio
   VERIFY: `python scripts/audit.py --date 2026-05-13 --force-charlotte 2>&1 | grep -E "hallucinated_url|defect_type"`
 
 ### M8 — Old-code retirement (after M6 + M7 validated)
-- [ ] Remove FunctionAgent loop and trafilatura→Jina→tinyfish cascade. Keep Playwright as Crawl4AI's only fallback.
-  DONE WHEN: `git diff` shows ≥-500 lines net AND `pytest tests/` exits 0 AND one workflow_dispatch produces non-empty briefing.
-  VERIFY: `git diff --stat origin/main | tail -1 && uv run pytest tests/ -q | tail -3`
+
+**🛑 HARD HOLD — added 2026-05-22.** M8 is blocked until M6 truly passes via `scripts/health_check.py` exit 0. Background: prior loop iterations counted `gh workflow run` dispatch exit codes as M6 success and were within one iter of auto-advancing to M8 — which would have started ripping out FunctionAgent + Jina cascade ON TOP OF a still-broken pipeline (last 30 days: 2/30 success on daily.yml; latest health_check `non_empty=3/11 avg=9.67 m6_pass=False`). Until the pipeline produces ≥9/12 rich briefings under the new richness check, M8 stays untouched. **Loop drivers (Tier 1 + Tier 2) MUST run `python scripts/health_check.py --window 12` and read exit code 0 before flipping M8's first checkbox.** Do not infer M6 pass from any other signal (validation.yml dispatcher exit, M5 checkbox state, iter count, "vibes").
+
+- [ ] **BLOCKED-BY-M6.** Remove FunctionAgent loop and trafilatura→Jina→tinyfish cascade. Keep Playwright as Crawl4AI's only fallback.
+  PRECONDITION: `python scripts/health_check.py --window 12` exits 0 — verified by running the command, not by reading any other status file.
+  DONE WHEN: PRECONDITION still holds AND `git diff` shows ≥-500 lines net AND `pytest tests/` exits 0 AND one workflow_dispatch produces non-empty briefing.
+  VERIFY: `python scripts/health_check.py --window 12; echo "m6=$?" && git diff --stat origin/main | tail -1 && uv run pytest tests/ -q | tail -3`
 
 ### M9 — FINAL VERIFICATION (always last per plan skill)
 - [ ] 90-day stability check.

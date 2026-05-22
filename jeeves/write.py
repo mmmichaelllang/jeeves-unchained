@@ -404,13 +404,26 @@ def _trim_session_for_prompt(session: SessionModel) -> dict[str, Any]:
     if isinstance(dedup, dict):
         dedup.pop("covered_urls", None)
         if isinstance(dedup.get("covered_headlines"), list):
+            # Proportional cap: reserve slots for BOTH today and prior history.
+            # Before this fix: today_hl (~200 entries) consumed the entire 150
+            # cap, leaving zero prior-session history — recurring stories from
+            # yesterday passed dedup unchallenged.
+            # today_headline_count is written by research.py as the boundary
+            # index between today's discoveries (HEAD) and prior days (TAIL).
+            _n_today = int(dedup.get("today_headline_count") or 0)
+            _PRIOR_SLOTS = 70   # always reserve for cross-day signal
+            _TODAY_SLOTS = DEDUP_PROMPT_HEADLINES_CAP - _PRIOR_SLOTS  # 80
+            all_hl = dedup["covered_headlines"]
+            if _n_today > 0:
+                raw_today = all_hl[:_n_today][:_TODAY_SLOTS]
+                raw_prior = all_hl[_n_today:][:_PRIOR_SLOTS]
+                raw = raw_today + raw_prior
+            else:
+                # Legacy sessions without the boundary marker: old behaviour.
+                raw = all_hl[:DEDUP_PROMPT_HEADLINES_CAP]
             # Truncate each headline to 80 chars — research phase pulls "first
-            # two sentences" of findings strings (research_sectors.py:1276) so
-            # individual entries can be 200-300 chars. The write phase only
-            # needs short prefixes to detect "have I covered this?" — verbose
-            # entries blow past the 12k Groq TPM ceiling and force every part
-            # to fall through to NIM. Sprint-17 hotfix 2026-05-04.
-            raw = dedup["covered_headlines"][:DEDUP_PROMPT_HEADLINES_CAP]
+            # two sentences" of findings strings so individual entries can be
+            # 200-300 chars. Sprint-17 hotfix 2026-05-04.
             dedup["covered_headlines"] = [
                 (h[:77] + "…") if isinstance(h, str) and len(h) > 80 else h
                 for h in raw
@@ -5471,7 +5484,7 @@ def _invoke_cerebras_narrative_edit(
         return html
 
 
-ASIDES_RECENT_WINDOW_DAYS = 4
+ASIDES_RECENT_WINDOW_DAYS = 14  # bumped 4→14 2026-05-21 — aligned with prior-headline window so weekly-cycling phrases don't recur after 5 days
 
 
 _ALL_ASIDES_CACHE: list[str] | None = None
@@ -5867,7 +5880,12 @@ async def generate_briefing(
     payload = _trim_session_for_prompt(session)
     aside_pool = _parse_all_asides()
     used_this_run: list[str] = []
-    used_topics_this_run: list[str] = []
+    # Seed used_topics_this_run from the prior N days' covered_topics so
+    # cross-day topic dominance (e.g. "Trump tariffs" recurring 5 days
+    # straight) is suppressed from day 2 onward. Within-run extraction below
+    # still tops this up. Previously the counter reset to [] each morning,
+    # which made every recurring topic look fresh.
+    used_topics_this_run: list[str] = list(_load_prior_covered_topics(cfg))
 
     raw_drafts: dict[str, str] = {}
     refined: dict[str, str] = {}
@@ -6158,10 +6176,178 @@ async def generate_briefing(
     # unique citation is lost. Sprint-17 finding F2.a.
     stitched = _dedup_urls_across_blocks(stitched)
 
+    # Persist within-run covered_topics for tomorrow's seeding. Writes a
+    # sidecar file (sessions/covered_topics-<date>.json) rather than
+    # round-tripping the session JSON — keeps the session's GitHub-commit
+    # invariants intact and means failure here can't corrupt the session.
+    try:
+        _save_covered_topics_sidecar(cfg, used_topics_this_run)
+    except Exception as exc:
+        log.warning("covered_topics sidecar write failed: %s", exc)
+
     # Return structured context so callers can forward quality metadata.
     # Scripts call postprocess_html(html, session, quality_warnings=warnings)
     # then _write_run_manifest(cfg, result, groq_part_count, nim_fallback_part_count).
     return stitched, quality_warnings, groq_part_count, nim_fallback_part_count
+
+
+# ---------------------------------------------------------------------------
+# Cross-day covered_topics sidecar (Flaw 3 — cross-day topic dedup)
+# ---------------------------------------------------------------------------
+
+def _covered_topics_path(cfg, run_date=None):
+    """Path to sessions/covered_topics-<date>.json sidecar."""
+    d = run_date or cfg.run_date
+    return cfg.sessions_dir / f"covered_topics-{d.isoformat()}.json"
+
+
+# ---------------------------------------------------------------------------
+# Audit-driven cross-day overlap rewrite (Flaw 8 — option B "corrective")
+#
+# The auditor already detects when the briefing cites URLs from prior
+# briefings (`dedup_cross_day_overlap`). Previously this was advisory only —
+# the briefing shipped anyway. This pass takes the same detection and
+# REWRITES offending paragraphs to the canonical "Static repeat" 2-sentence
+# shape before the briefing leaves write.py.
+# ---------------------------------------------------------------------------
+
+
+# Match a paragraph block. Capture its inner HTML so we can extract hrefs +
+# text content without re-parsing.
+_PARAGRAPH_BLOCK_RE = re.compile(r"<p\b[^>]*>(.*?)</p>", re.IGNORECASE | re.DOTALL)
+_HREF_RE = re.compile(r'<a\s+[^>]*href=["\']([^"\']+)["\']', re.IGNORECASE)
+
+
+def rewrite_cross_day_overlap_paragraphs(
+    html: str,
+    session: "SessionModel",
+    quality_warnings: list[str] | None = None,
+) -> str:
+    """Rewrite any paragraph that cites a prior-covered URL into a single-
+    sentence acknowledgement.
+
+    Hard constraints:
+      - Only paragraphs containing AT LEAST ONE `<a href>` to a canonical
+        URL present in session.dedup.covered_urls are touched.
+      - Original ordering preserved (paragraph rewritten in place).
+      - Anchor + href preserved so the reader still has the source link.
+      - Original NEW URLs (those NOT in covered_urls) are left untouched —
+        a paragraph citing both old and new urls is left alone (would lose
+        the new citation otherwise).
+      - quality_warnings (if supplied) records each rewrite as
+        ``cross_day_overlap_rewritten:<canonical_url>``.
+
+    Defensive: returns html unchanged on any exception.
+    """
+    if not html or session is None:
+        return html
+
+    try:
+        from .dedup import canonical_url
+        covered_canon = {canonical_url(u) for u in (session.dedup.covered_urls or [])}
+        covered_canon.discard("")
+        if not covered_canon:
+            return html
+
+        def _rewrite(match: "re.Match[str]") -> str:
+            inner = match.group(1)
+            hrefs_in_block = _HREF_RE.findall(inner)
+            if not hrefs_in_block:
+                return match.group(0)
+            canon_hrefs = [canonical_url(h) for h in hrefs_in_block]
+            covered_hits = [
+                (h, c) for h, c in zip(hrefs_in_block, canon_hrefs) if c in covered_canon
+            ]
+            if not covered_hits:
+                return match.group(0)
+            new_hits = [c for c in canon_hrefs if c not in covered_canon]
+            if new_hits:
+                # Mixed paragraph — cites both prior-covered AND a new URL.
+                # Don't rewrite; would lose the new citation. Flag for
+                # human attention but leave content intact.
+                if quality_warnings is not None:
+                    quality_warnings.append(
+                        f"cross_day_overlap_mixed_paragraph:{covered_hits[0][1]}"
+                    )
+                return match.group(0)
+            # Pure repeat. Replace block with canonical 2-sentence shape.
+            # First sentence: backward-reference. Second: kept brief and
+            # generic since we can't synthesize a thoughtful connection
+            # mechanically — better one honest acknowledgement than a
+            # fabricated "interesting" coda.
+            first_href, first_canon = covered_hits[0]
+            # Pull anchor text from the original `<a href>...</a>` block —
+            # use it verbatim so source attribution stays human-readable.
+            anchor_match = re.search(
+                rf'<a[^>]*href=["\']{re.escape(first_href)}["\'][^>]*>(.*?)</a>',
+                inner,
+                re.IGNORECASE | re.DOTALL,
+            )
+            anchor_text = anchor_match.group(1).strip() if anchor_match else "the source"
+            anchor_text = re.sub(r"<[^>]+>", "", anchor_text).strip() or "the source"
+            replacement = (
+                f'<p>The matter at <a href="{first_href}">{anchor_text}</a> stands '
+                f"as we left it, Sir, with nothing materially advanced since our prior review.</p>"
+            )
+            if quality_warnings is not None:
+                quality_warnings.append(f"cross_day_overlap_rewritten:{first_canon}")
+            return replacement
+
+        return _PARAGRAPH_BLOCK_RE.sub(_rewrite, html)
+    except Exception as exc:
+        log.warning("cross_day_overlap rewriter raised: %s — returning original", exc)
+        return html
+
+
+def _save_covered_topics_sidecar(cfg, topics: list[str]) -> None:
+    """Write today's used_topics_this_run as a sidecar for tomorrow's seed.
+
+    Caps at 300 entries — far more than any single briefing produces, but
+    bounds the file size if used_topics_this_run gets unexpectedly large.
+    """
+    import json as _json
+    path = _covered_topics_path(cfg)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "date": cfg.run_date.isoformat(),
+        "topics": list(topics)[:300],
+    }
+    path.write_text(_json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+# Window of past days scanned for topic-seeding. 7 days catches weekly
+# recurrence patterns (the Trump-tariff failure mode the user named) without
+# inflating the prompt with a month of stale topics.
+_COVERED_TOPICS_SEED_WINDOW_DAYS = 7
+
+
+def _load_prior_covered_topics(cfg) -> list[str]:
+    """Union of last N days' covered_topics sidecars, newest-first, deduped.
+
+    Returns [] if cfg is None, no sidecars exist, or anything fails — this
+    helper is opportunistic; missing seed just degrades to old behaviour.
+    """
+    if cfg is None:
+        return []
+    import json as _json
+    from datetime import timedelta as _td
+
+    seen: set[str] = set()
+    out: list[str] = []
+    for delta in range(1, _COVERED_TOPICS_SEED_WINDOW_DAYS + 1):
+        d = cfg.run_date - _td(days=delta)
+        path = _covered_topics_path(cfg, d)
+        if not path.exists():
+            continue
+        try:
+            data = _json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        for t in (data.get("topics") or []):
+            if isinstance(t, str) and t and t not in seen:
+                seen.add(t)
+                out.append(t)
+    return out
 
 
 _FIRST_BODY_P_RE = re.compile(

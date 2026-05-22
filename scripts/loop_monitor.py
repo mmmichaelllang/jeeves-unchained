@@ -63,6 +63,7 @@ def parse_loop_state() -> dict:
         "refined_done_when": grab("Refined DONE WHEN", multiline=True),
         "active_branch": grab("Active Branch"),
         "last_blocker": grab("Last Blocker", multiline=True),
+        "next_priority": grab("Next Priority", multiline=True),
     }
 
 
@@ -192,6 +193,47 @@ def check_branch_field_match(state: dict) -> Optional[str]:
     current = run_git(["branch", "--show-current"])
     if current.startswith("feat/") and current != expected:
         return f"LOOP_STATE active_branch={expected} but git HEAD={current}"
+    return None
+
+
+def check_m6_false_success(state: dict) -> Optional[str]:
+    """Added 2026-05-22 — defense against M6 false-pass.
+
+    If LOOP_STATE claims M6 SUCCESS or M8 is the next milestone, run the
+    real richness check (scripts/health_check.py) and require exit 0.
+    Catches the failure mode where validation.yml dispatcher exit codes
+    were misread as M6 pass (production: 2/30 daily.yml success window).
+    """
+    milestone = (state.get("last_milestone") or "")
+    outcome = (state.get("last_outcome") or "").upper()
+    next_prio = (state.get("next_priority") or "")
+
+    # Trigger only when M6 success is claimed OR M8 is teed up
+    m6_success = "M6" in milestone and outcome == "SUCCESS"
+    m8_imminent = "M8" in next_prio and ("BLOCKED" not in next_prio.upper()
+                                          and "HOLD" not in next_prio.upper())
+    if not (m6_success or m8_imminent):
+        return None
+
+    hc = ROOT / "scripts" / "health_check.py"
+    if not hc.exists():
+        return "M6 success claimed but scripts/health_check.py missing — cannot verify"
+
+    try:
+        result = subprocess.run(
+            ["python", str(hc), "--window", "12"],
+            cwd=ROOT, capture_output=True, text=True, timeout=30,
+        )
+    except Exception as exc:
+        return f"M6 verify run crashed: {exc}"
+
+    if result.returncode != 0:
+        tail = (result.stdout or "").strip().splitlines()[-1:] or ["(no stdout)"]
+        return (
+            f"M6 false-success: LOOP_STATE shows {outcome!r} on {milestone!r} "
+            f"(or M8 imminent) but health_check exit={result.returncode}. "
+            f"Last line: {tail[0]}"
+        )
     return None
 
 
@@ -410,6 +452,7 @@ def main() -> int:
         check_branch_field_match,
         check_repeated_milestone,
         check_recent_commit_activity,
+        check_m6_false_success,
     ]
 
     alerts: list[str] = []

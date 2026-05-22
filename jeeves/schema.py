@@ -17,10 +17,22 @@ class Dedup(BaseModel):
     model_config = ConfigDict(extra="allow")
     covered_urls: list[str] = Field(default_factory=list)
     covered_headlines: list[str] = Field(default_factory=list)
+    # Boundary marker: how many entries at the HEAD of covered_headlines belong
+    # to today's fresh discoveries (vs prior-session history in the tail).
+    # Write phase uses this to apply a proportional cap (today_slots + prior_slots)
+    # so prior history is never crowded out when today has many headlines.
+    today_headline_count: int = 0
     # URLs that surfaced in 2+ research sectors (e.g. a ProPublica piece in
     # both global_news and enriched_articles). Write phase uses these to
     # synthesise once rather than narrate the same story across 3 sections.
     cross_sector_dupes: list[str] = Field(default_factory=list)
+    # Topic slugs (proper nouns, named acts, capitalized acronyms) actually
+    # written into the briefing prose by the write phase. Persisted across
+    # runs so subsequent days can seed used_topics_this_run and avoid
+    # narrating the same topic five days in a row (the "Trump tariffs"
+    # dominance failure mode). Newest-first; capped by write phase before
+    # persistence.
+    covered_topics: list[str] = Field(default_factory=list)
 
 
 class Correspondence(BaseModel):

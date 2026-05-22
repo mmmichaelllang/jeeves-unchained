@@ -64,6 +64,48 @@ def tools_for_role(role: str) -> list[str]:
     return [name for name, meta in TOOL_TAXONOMY.items() if meta.get("role") == role]
 
 
+def tools_for_sector(
+    cfg: "Config",
+    ledger: "QuotaLedger",
+    prior_urls: set[str],
+    allowlist: tuple[str, ...] | None = None,
+) -> list["FunctionTool"]:
+    """Build the toolbox for one sector, optionally filtered to ``allowlist``.
+
+    Wraps ``all_search_tools`` so existing callers stay back-compat.
+    When ``allowlist`` is None OR ``JEEVES_PER_SECTOR_TOOLS`` is unset,
+    returns the full toolbox unchanged. When both are set, returns only
+    tools whose name is in the allowlist — Kimi/Cerebras then sees a
+    smaller tool taxonomy (~1k tokens saved per sector that defines
+    its allowlist tightly).
+
+    A tool name in the allowlist that's not actually registered (e.g.
+    listing 'jina_search' when JEEVES_USE_JINA_SEARCH=0) is silently
+    skipped — the sector falls back to whatever IS registered. This
+    keeps the allowlist declarative without requiring it to mirror
+    flag state.
+    """
+    import os as _os
+
+    full = all_search_tools(cfg, ledger, prior_urls)
+    if allowlist is None or _os.environ.get("JEEVES_PER_SECTOR_TOOLS", "").strip() != "1":
+        return full
+    allow = set(allowlist)
+    filtered = [t for t in full if getattr(t.metadata, "name", "") in allow]
+    if not filtered:
+        # Pathological: allowlist matched zero registered tools. Don't
+        # leave the agent with no tools — that's worse than too many.
+        # Log and fall back to the full set.
+        import logging
+        logging.getLogger(__name__).warning(
+            "tools_for_sector: allowlist %r matched zero registered tools; "
+            "falling back to full toolbox.",
+            allowlist,
+        )
+        return full
+    return filtered
+
+
 def all_search_tools(
     cfg: "Config",
     ledger: "QuotaLedger",

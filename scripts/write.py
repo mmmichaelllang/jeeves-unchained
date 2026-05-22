@@ -557,6 +557,21 @@ def main(argv: list[str] | None = None) -> int:
 
         result = postprocess_html(raw_html, session, quality_warnings=_quality_warnings)
 
+        # Flaw 8 — audit-driven cross-day overlap rewrite (option B).
+        # If the briefing cites a URL that already appeared in prior briefings,
+        # rewrite the offending paragraph to a single acknowledgement sentence
+        # rather than letting the model re-narrate the story. Quality warnings
+        # capture each rewrite so the audit dashboard can track signal.
+        from jeeves.write import rewrite_cross_day_overlap_paragraphs as _cdr
+        _rewrite_warnings: list[str] = []
+        result.html = _cdr(result.html, session, _rewrite_warnings)
+        if _rewrite_warnings:
+            result.quality_warnings.extend(_rewrite_warnings)
+            log.info(
+                "cross-day overlap rewrites: %d paragraphs collapsed to canonical repeat",
+                sum(1 for w in _rewrite_warnings if w.startswith("cross_day_overlap_rewritten:")),
+            )
+
         log.info(
             "briefing: %d words, %d profane asides, %d coverage entries",
             result.word_count, result.profane_aside_count, len(result.coverage_log),

@@ -35,6 +35,7 @@ Why JSONL not structured logging?
 from __future__ import annotations
 
 import atexit
+import contextvars
 import json
 import logging
 import os
@@ -44,6 +45,70 @@ from pathlib import Path
 from typing import Any, Optional, TextIO
 
 log = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Current-sector context (fixes the telemetry sector="?" gap).
+#
+# Tool wrappers (serper, tavily, exa, gemini, etc.) call emit() from deep
+# inside the agent's tool-dispatch loop where no sector argument is in
+# scope. Threading a sector kwarg through every call site would touch ~30
+# functions. Instead, the sector loop sets a contextvar around each
+# sector's execution and the telemetry emitters read it.
+#
+# Async-safe: contextvars copy correctly across asyncio task boundaries.
+# Thread-safe: each thread gets its own context. The shadow-search
+# ThreadPoolExecutor still sees the parent thread's value at submit time
+# because copy_context is the default behaviour.
+# ---------------------------------------------------------------------------
+_CURRENT_SECTOR: contextvars.ContextVar[str] = contextvars.ContextVar(
+    "jeeves_current_sector", default="",
+)
+
+
+def set_current_sector(sector: str) -> contextvars.Token:
+    """Mark the active sector for telemetry emission.
+
+    Returns a token that can be passed to ``reset_current_sector`` to
+    restore the prior value. Typical use is a context manager wrapper —
+    see ``sector_context`` below.
+    """
+    return _CURRENT_SECTOR.set(sector or "")
+
+
+def reset_current_sector(token: contextvars.Token) -> None:
+    """Restore the prior sector value."""
+    try:
+        _CURRENT_SECTOR.reset(token)
+    except (LookupError, ValueError):
+        # Token from a different context — non-fatal; treat as clear.
+        pass
+
+
+def current_sector() -> str:
+    """Return the currently-set sector or '' if none."""
+    return _CURRENT_SECTOR.get()
+
+
+class sector_context:
+    """Context manager wrapping set_current_sector + reset_current_sector.
+
+    Usage:
+        with sector_context("global_news"):
+            await run_sector(...)
+    """
+    def __init__(self, sector: str):
+        self._sector = sector
+        self._token: contextvars.Token | None = None
+
+    def __enter__(self):
+        self._token = set_current_sector(self._sector)
+        return self
+
+    def __exit__(self, *exc):
+        if self._token is not None:
+            reset_current_sector(self._token)
+        return False
 
 _LOCK = threading.Lock()
 _FH: Optional[TextIO] = None
@@ -123,6 +188,14 @@ def emit(event: str, **fields: Any) -> None:
         "ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "event": str(event),
     }
+    # Auto-attach the current sector from the contextvar UNLESS the caller
+    # explicitly supplied one. This fixes the sector="?" gap observed in
+    # telemetry-2026-05-20.jsonl where 37/37 tool_call events had no sector
+    # attribution.
+    if "sector" not in fields:
+        ctx_sector = current_sector()
+        if ctx_sector:
+            record["sector"] = ctx_sector
     for k, v in fields.items():
         if k in ("ts", "event"):
             continue

@@ -29,6 +29,81 @@ from .config import Config
 log = logging.getLogger(__name__)
 
 
+# Map FunctionTool.name -> the QuotaLedger provider key it bills against.
+# Tools missing from this map are never excluded by quota guard (e.g. local
+# functions like fetch_article_text don't bill against an external quota).
+_TOOL_TO_QUOTA_PROVIDER: dict[str, str] = {
+    "serper_search": "serper",
+    "tavily_search": "tavily",
+    "tavily_extract": "tavily",
+    "exa_search": "exa",
+    "gemini_grounded_synthesize": "gemini",
+    "vertex_grounded_search": "gemini",
+    "jina_search": "jina_search",
+    "jina_deepsearch": "jina_deepsearch",
+    "jina_rerank": "jina_rerank",
+    "tinyfish_extract": "tinyfish",
+    "tinyfish_search": "tinyfish_search",
+    "playwright_search": "playwright_search",
+    "playwright_extract": "playwright",
+    "stealth_extract": "stealth",
+}
+
+
+def _apply_quota_aware_exclusion(tools, ledger):
+    """Drop tools whose provider is at >=95% of monthly cap.
+
+    Gated by JEEVES_USE_QUOTA_AWARE_EXCLUSION=1 — default off so existing
+    behaviour is unchanged until the user opts in.
+
+    Threshold bumped 0.85 → 0.95 on 2026-05-21: at 85% we were dropping
+    providers with ~150 calls of headroom left, sometimes mid-day, which
+    forced the sector through more-expensive fallbacks before the cap was
+    actually breached. 95% leaves only ~50 calls of headroom (per 1000-cap
+    tavily) — close enough to imminent overage to matter, far enough to
+    not over-fire on normal daily fluctuation.
+
+    Returns the (possibly filtered) tool list. Never empties the list —
+    if every tool would be excluded, returns the original list and logs
+    a warning (better an over-budget agent than no agent).
+    """
+    import os as _os
+
+    if _os.environ.get("JEEVES_USE_QUOTA_AWARE_EXCLUSION", "").strip() != "1":
+        return tools
+
+    threshold = float(_os.environ.get("JEEVES_QUOTA_EXCLUSION_THRESHOLD", "0.95"))
+    kept = []
+    dropped = []
+    for t in tools:
+        name = getattr(t.metadata, "name", "")
+        provider = _TOOL_TO_QUOTA_PROVIDER.get(name)
+        if provider is None:
+            kept.append(t)
+            continue
+        try:
+            state = ledger._state["providers"].get(provider, {})
+            cap = state.get("free_cap", 0) or 0
+            used = state.get("used", 0) or 0
+            if cap > 0 and (used / cap) >= threshold:
+                dropped.append(f"{name}({provider}:{used}/{cap})")
+                continue
+        except Exception:
+            pass
+        kept.append(t)
+
+    if not kept:
+        log.warning(
+            "quota-aware exclusion dropped ALL tools — falling back to full list. "
+            "Dropped: %s", dropped,
+        )
+        return tools
+
+    if dropped:
+        log.info("quota-aware exclusion dropped %d tools: %s", len(dropped), dropped)
+    return kept
+
+
 def _classify_api_error(exc: Exception) -> str:
     """Return 'rate_limit', 'auth', 'timeout', 'server', or 'unknown'."""
     msg = str(exc).lower()
@@ -49,6 +124,48 @@ class SectorSpec:
     shape: str  # one of: "string", "list", "dict", "deep", "newyorker", "enriched"
     instruction: str
     default: Any
+    # Optional per-sector tool allowlist. When set AND
+    # JEEVES_PER_SECTOR_TOOLS=1, the agent is given only these tools,
+    # saving ~1k tokens per sector by dropping unused tool descriptions.
+    # When unset OR the env flag is off, the full toolbox is provided
+    # (back-compat). Each entry is the registered FunctionTool name
+    # (e.g. "serper_search", "tavily_extract").
+    tools: tuple[str, ...] | None = None
+
+
+# ---------------------------------------------------------------------------
+# Tool-allowlist bundles (2026-05-21) — composed into per-sector tools tuples.
+#
+# Tools not currently registered (canaries behind unset env flags) are
+# silently skipped by tools_for_sector — listing them here is safe and
+# means the sector's toolbox automatically picks them up the moment their
+# flag is flipped, with no code change required.
+# ---------------------------------------------------------------------------
+
+# Generic web search — every news/topic sector wants these.
+_TOOLS_WEB_SEARCH = (
+    "serper_search",
+    "tavily_search",
+    "exa_search",
+    "jina_search",          # canary; picked up when JEEVES_USE_JINA_SEARCH=1
+    "tinyfish_search",      # canary
+    "playwright_search",    # canary
+)
+
+# Grounded synthesis — narrative "state of X" answers.
+_TOOLS_GROUNDED = (
+    "gemini_grounded_synthesize",
+    "vertex_grounded_search",
+    "jina_deepsearch",      # canary; deep multi-hop
+)
+
+# Full-text extraction tier — the article-body fetchers.
+_TOOLS_EXTRACT = (
+    "tavily_extract",
+    "fetch_article_text",
+    "playwright_extract",
+    "tinyfish_extract",     # canary
+)
 
 
 SECTOR_SPECS: list[SectorSpec] = [
@@ -81,6 +198,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Note it clearly as an estimate."
         ),
         default="",
+        # weather: 3-tier parallel + 3-tier fallback all web-search shape.
+        # No body-extraction needed — synthesized answer is the deliverable.
+        tools=_TOOLS_WEB_SEARCH + ("gemini_grounded_synthesize",),
     ),
     SectorSpec(
         name="local_news",
@@ -119,6 +239,8 @@ SECTOR_SPECS: list[SectorSpec] = [
             "     deserve one honest line, not an empty array that breaks the briefing."
         ),
         default=[],
+        # local_news: heavy use of search + extract; needs grounded synthesis too.
+        tools=_TOOLS_WEB_SEARCH + _TOOLS_GROUNDED + _TOOLS_EXTRACT,
     ),
     SectorSpec(
         name="career",
@@ -137,6 +259,8 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Use null for deadline or salary_range if not found in the posting."
         ),
         default={},
+        # career: district HR pages + extraction. No grounded synth needed.
+        tools=_TOOLS_WEB_SEARCH + _TOOLS_EXTRACT,
     ),
     SectorSpec(
         name="english_lesson_plans",
@@ -215,6 +339,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "subkey rather than padding with off-topic results."
         ),
         default={"classroom_ready": [], "pedagogy_pieces": [], "notes": ""},
+        # english_lesson_plans: site-scoped searches + heavy extract (Reddit
+        # threads, GitHub READMEs). No grounded synth.
+        tools=_TOOLS_WEB_SEARCH + _TOOLS_EXTRACT,
     ),
     SectorSpec(
         name="family",
@@ -236,6 +363,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Return {choir: 'findings string', toddler: 'findings string', urls: [...]}."
         ),
         default={},
+        # family: search-only — no extract needed for events / auditions
+        # (the search snippet usually carries the audition date + venue).
+        tools=_TOOLS_WEB_SEARCH + ("tavily_extract", "fetch_article_text"),
     ),
     SectorSpec(
         name="global_news",
@@ -293,6 +423,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "does not."
         ),
         default=[],
+        # global_news: full toolbox — search, grounded synth, extract,
+        # vertex_grounded fallback all explicitly invoked.
+        tools=_TOOLS_WEB_SEARCH + _TOOLS_GROUNDED + _TOOLS_EXTRACT,
     ),
     SectorSpec(
         name="intellectual_journals",
@@ -345,6 +478,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Return a JSON array of {source, findings, urls}."
         ),
         default=[],
+        # intellectual_journals: exa-heavy (returns full text), serper fallback,
+        # tavily_extract for non-exa results.
+        tools=_TOOLS_WEB_SEARCH + _TOOLS_EXTRACT,
     ),
     SectorSpec(
         name="wearable_ai",
@@ -371,6 +507,8 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Return a JSON array of {category, findings, urls}, one entry per subsection."
         ),
         default=[],
+        # wearable_ai: product pages + EdTech blogs. Exa + serper + extract.
+        tools=_TOOLS_WEB_SEARCH + _TOOLS_EXTRACT,
     ),
     SectorSpec(
         name="triadic_ontology",
@@ -404,6 +542,10 @@ SECTOR_SPECS: list[SectorSpec] = [
             "array or list. Return exactly: {\"findings\": \"<prose>\", \"urls\": [...]}."
         ),
         default={"findings": "", "urls": []},
+        # triadic_ontology: deep-research, exa-driven (returns full text).
+        # Allow grounded peers for narrative synthesis attempts.
+        tools=("serper_search", "exa_search", "jina_search", "jina_deepsearch",
+               "tavily_extract", "fetch_article_text"),
     ),
     SectorSpec(
         name="ai_systems",
@@ -435,6 +577,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Do not put an array in the findings field."
         ),
         default={"findings": "", "urls": []},
+        # ai_systems: deep-research, exa-driven. Same shape as triadic_ontology.
+        tools=("serper_search", "exa_search", "jina_search", "jina_deepsearch",
+               "tavily_extract", "fetch_article_text"),
     ),
     SectorSpec(
         name="uap",
@@ -446,6 +591,10 @@ SECTOR_SPECS: list[SectorSpec] = [
             "or list. Return exactly: {\"findings\": \"<prose string>\", \"urls\": [...]}."
         ),
         default={"findings": "", "urls": []},
+        # uap: deep-research, fewer ongoing sources; same toolbox as the other
+        # two deep sectors.
+        tools=("serper_search", "exa_search", "jina_search", "jina_deepsearch",
+               "tavily_extract", "fetch_article_text"),
     ),
     SectorSpec(
         name="newyorker",
@@ -458,6 +607,9 @@ SECTOR_SPECS: list[SectorSpec] = [
         default={"available": False, "title": "", "section": "", "dek": "",
                  "byline": "", "date": "",
                  "text": "", "url": "", "source": "The New Yorker"},
+        # newyorker: bypassed by run_sector's direct-fetch fast path. Allowlist
+        # documents intent. The single TOTT fetcher is the only legitimate tool.
+        tools=("fetch_new_yorker_talk_of_the_town",),
     ),
     SectorSpec(
         name="enriched_articles",
@@ -484,6 +636,9 @@ SECTOR_SPECS: list[SectorSpec] = [
             "of extracted content — do not paste full article text into the JSON."
         ),
         default=[],
+        # enriched_articles: pure extraction. No search — input is the seed URL
+        # list from earlier sectors. Allow the full extract chain.
+        tools=_TOOLS_EXTRACT,
     ),
     SectorSpec(
         name="literary_pick",
@@ -501,6 +656,9 @@ SECTOR_SPECS: list[SectorSpec] = [
         ),
         default={"available": False, "title": "", "author": "", "year": None,
                  "summary": "", "url": ""},
+        # literary_pick: single exa query for one book. Allow tavily_extract +
+        # fetch_article_text in case agent wants to read a review page.
+        tools=("exa_search", "tavily_extract", "fetch_article_text"),
     ),
 ]
 
@@ -2140,6 +2298,37 @@ async def run_sector(
 ) -> Any:
     """Run one sector's agent and return the parsed sector-shape value."""
 
+    # Tag every telemetry event fired during this sector's execution with
+    # the sector name. Fixes the sector="?" gap observed in production
+    # telemetry where all 37 tool_call events on 2026-05-20 were unattributed.
+    # contextvar propagates through asyncio await boundaries automatically.
+    from .tools.telemetry import sector_context
+
+    with sector_context(spec.name):
+        return await _run_sector_inner(
+            cfg, spec, prior_urls_sample, ledger,
+            extra_user=extra_user,
+            quota_summary=quota_summary,
+            story_continuity=story_continuity,
+            prior_sources_by_host=prior_sources_by_host,
+            use_crawl4ai_research=use_crawl4ai_research,
+        )
+
+
+async def _run_sector_inner(
+    cfg: Config,
+    spec: SectorSpec,
+    prior_urls_sample: list[str],
+    ledger,
+    *,
+    extra_user: str = "",
+    quota_summary: str = "",
+    story_continuity: str = "",
+    prior_sources_by_host: dict[str, list[str]] | None = None,
+    use_crawl4ai_research: bool = False,
+) -> Any:
+    """Original run_sector body, now wrapped by the sector_context manager."""
+
     # Fast path: newyorker bypasses the LLM agent entirely.
     # fetch_talk_of_the_town is pure Python — no LLM needed or wanted.
     # Routing it through Kimi introduces three hallucination vectors:
@@ -2239,7 +2428,17 @@ async def run_sector(
         else 8192
     )
 
-    tools = all_search_tools(cfg, ledger, set(prior_urls_sample))
+    # Per-sector tool subset (sprint-2026-05-21).
+    # When JEEVES_PER_SECTOR_TOOLS=1 AND spec.tools is set, the agent
+    # receives only the tools the sector actually needs — saves ~1k
+    # tokens per sector by dropping unused tool descriptions. Default
+    # behaviour: full toolbox (back-compat). See jeeves.tools.tools_for_sector.
+    # Quota-aware exclusion layered on: tools whose provider is at >=85%
+    # of monthly cap are dropped from the toolbox when
+    # JEEVES_USE_QUOTA_AWARE_EXCLUSION=1.
+    from .tools import tools_for_sector as _tfs
+    tools = _tfs(cfg, ledger, set(prior_urls_sample), allowlist=spec.tools)
+    tools = _apply_quota_aware_exclusion(tools, ledger)
     if _use_cerebras_fallback is not None:
         llm = _use_cerebras_fallback
         _provider_label = "cerebras"
@@ -2788,12 +2987,71 @@ def _first_two_sentences(text: str, max_chars: int = 300) -> str:
     return text[: second_end + 1].strip()
 
 
+# Proper-noun cluster extractor — used to build distinguishing dedup labels
+# from findings strings whose first sentence is a generic topic header
+# ("AI policy update.") and whose distinguishing detail lives in sentence 2+.
+# Captures sequences of 2-5 Title-Case tokens (people, places, orgs, paper
+# titles) plus uppercase acronyms ≥2 chars (UN, NATO, OFAC).
+_PROPER_NOUN_RE = re.compile(
+    r"\b(?:[A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+){1,4}|[A-Z]{2,6})\b"
+)
+
+
+def _distinguishing_label(text: str, fallback_max_chars: int = 250) -> str:
+    """Return a dedup label that captures the *distinguishing* portion of a
+    findings string, not just its left prefix.
+
+    Strategy:
+      1. If the text has 1+ proper-noun cluster (length ≥2 tokens OR
+         acronym ≥2 chars), join the FIRST TWO clusters with " | ". This
+         catches "Trump tariffs | Asia" vs "Trump tariffs | Europe" which
+         a left-prefix scheme misses when both stories start "Trump tariffs
+         continue to..."
+      2. Otherwise fall back to ``_first_two_sentences`` (the previous
+         behaviour) — preserves dedup signal for stories without
+         identifiable proper nouns (rare in news but common in vague
+         summaries).
+
+    The result is intentionally ≤80 chars in the common case so the write
+    phase's 80-char prompt-truncation doesn't lop off the second cluster.
+    """
+    text = (text or "").strip()
+    if not text:
+        return ""
+    clusters = _PROPER_NOUN_RE.findall(text)
+    # Drop near-duplicates (case-insensitive) preserving order.
+    seen: set[str] = set()
+    unique: list[str] = []
+    for c in clusters:
+        key = c.lower()
+        if key not in seen:
+            seen.add(key)
+            unique.append(c)
+    if len(unique) >= 2:
+        label = f"{unique[0]} | {unique[1]}"
+        return label[:77] + "…" if len(label) > 80 else label
+    if len(unique) == 1:
+        # One cluster — combine with first 40 chars of surrounding text for
+        # context (avoids two unrelated "OpenAI" stories collapsing to one
+        # dedup key).
+        cluster = unique[0]
+        # Find the cluster's position; take ~40 chars after it as context.
+        pos = text.find(cluster)
+        if pos != -1:
+            tail = text[pos + len(cluster) : pos + len(cluster) + 50].strip()
+            label = f"{cluster}: {tail}" if tail else cluster
+            return label[:77] + "…" if len(label) > 80 else label
+        return cluster
+    return _first_two_sentences(text, max_chars=fallback_max_chars)
+
+
 def collect_headlines_from_sector(value: Any) -> list[str]:
     """Pull human-facing labels out of a sector's parsed JSON for day-over-day dedup.
 
     Extracts both explicit headline-keyed fields (title, headline, role, etc.)
-    AND the first sentence of any ``findings`` string — the latter is critical
-    for news/deep sectors whose Finding objects carry no title field.
+    AND a distinguishing label from any ``findings`` string. The fallback
+    label generation prefers proper-noun clusters over a generic left-prefix
+    truncation — see ``_distinguishing_label`` rationale.
     """
 
     out: list[str] = []
@@ -2809,12 +3067,12 @@ def collect_headlines_from_sector(value: Any) -> list[str]:
             if k in _HEADLINE_KEYS and isinstance(v, str) and v.strip():
                 out.append(v.strip())
             elif k in _FINDINGS_LIKE_KEYS and isinstance(v, str) and v.strip():
-                # Two sentences: first often a topic header ("AI policy update."),
-                # second carries the distinguishing title/place/author needed for
-                # cross-day dedup matching.
-                sentence = _first_two_sentences(v)
-                if sentence:
-                    out.append(sentence)
+                # Proper-noun-anchored label (was: _first_two_sentences which
+                # lost distinguishing detail to write-phase 80-char prefix
+                # truncation when sentence 1 was a generic topic header).
+                label = _distinguishing_label(v)
+                if label:
+                    out.append(label)
             elif isinstance(v, (dict, list)):
                 out.extend(collect_headlines_from_sector(v))
     return out
@@ -2840,9 +3098,17 @@ def _find_cross_sector_dupes(session: dict) -> list[str]:
     The write phase reads ``session.dedup.cross_sector_dupes`` and treats
     those URLs as already-covered after their first appearance — preventing
     the same story from being narrated three times under different headers.
-    Order is the order in which dupes were discovered (stable-ish; based on
-    the iteration order of sector → item → urls).
+
+    Comparison runs on `canonical_url` (lowercase host, www/m/amp stripped,
+    utm-family query params dropped, fragment dropped) so the same article
+    landing in three sectors with three different decorations
+    (`?utm_source=email`, `m.foo.com`, trailing `#section`) collapses to one
+    dupe entry instead of three distinct ones the write phase ignores.
+
+    Returns canonical URLs (the write phase compares against canonical-form
+    URLs computed identically downstream).
     """
+    from .dedup import canonical_url
 
     url_to_sectors: dict[str, list[str]] = {}
     for field in _CROSS_SECTOR_FIELDS:
@@ -2858,7 +3124,10 @@ def _find_cross_sector_dupes(session: dict) -> list[str]:
             for url in urls:
                 if not url or not isinstance(url, str):
                     continue
-                url_to_sectors.setdefault(url, []).append(field)
+                key = canonical_url(url)
+                if not key:
+                    continue
+                url_to_sectors.setdefault(key, []).append(field)
 
     dupes: list[str] = []
     seen: set[str] = set()

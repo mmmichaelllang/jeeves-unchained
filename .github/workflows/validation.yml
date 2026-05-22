@@ -83,3 +83,31 @@ jobs:
           # no skip_send (send email if write phase succeeds).
           gh workflow run daily.yml -R "${{ github.repository }}"
           echo "::notice::daily.yml dispatched at $(date -u -Is)"
+
+      # ----------------------------------------------------------------- #
+      # M6 acceptance check (2026-05-22). Was previously implicit —       #
+      # validation.yml's exit code only said "we dispatched daily.yml",   #
+      # never "the resulting briefing was rich enough." Now: run          #
+      # scripts/health_check.py against the last 12 days of session JSON  #
+      # and surface the M6 status as a workflow log notice.               #
+      #                                                                   #
+      # Non-zero exit from health_check is INFORMATIONAL, not blocking — #
+      # validation.yml's job is to keep the sprint going. The user/Tier 2 #
+      # monitor consumes the notice to decide whether to declare M6 done. #
+      # ----------------------------------------------------------------- #
+      - name: M6 acceptance check
+        if: steps.gate.outputs.validation_active == 'true'
+        continue-on-error: true
+        run: |
+          if [ -f scripts/health_check.py ]; then
+            python scripts/health_check.py --window 12 --source validation || true
+            python scripts/health_check.py --window 12 --json > /tmp/m6_status.json || true
+            if [ -f /tmp/m6_status.json ]; then
+              PASS=$(python -c "import json; print(json.load(open('/tmp/m6_status.json')).get('m6_pass'))")
+              NONEMPTY=$(python -c "import json; d=json.load(open('/tmp/m6_status.json')); print(f\"{d.get('non_empty_count')}/{d.get('sessions_found')}\")")
+              AVG=$(python -c "import json; print(json.load(open('/tmp/m6_status.json')).get('avg_populated_sectors'))")
+              echo "::notice::M6 status — non_empty=$NONEMPTY avg_sectors=$AVG m6_pass=$PASS"
+            fi
+          else
+            echo "::warning::scripts/health_check.py not found — M6 acceptance not enforced"
+          fi
