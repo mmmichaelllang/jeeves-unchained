@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] lang.mc@gmail.com: System alert from loop-monitor indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] Mrs. Lang: Daily correspondence summary from Jeeves system highlighting an email from Lady Cathy Lang about 'Cabin 2026' that requires attention.\n- [escalation] Mrs. Lang: Daily correspondence summary from Jeeves system reporting a Jeeves Daily Pipeline failure.\n- [escalation] Mrs. Lang: Jeeves pipeline alert about permanent failure of the Daily Pipeline with transient 429 error.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting a payment escalation notice from Sortd regarding a second unsuccessful payment notice.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating a permanent failure with a 429 rate-limit error in the Daily Pipeline workflow.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting an email from mother Lady Cathy Lang regarding 'Cabin 2026'.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting an email from mother Cathy Lang regarding 'Cabin 2026'.\n- [escalation] Lady Cathy: Daily correspondence summary indicating an email from Cathy Lang about 'Cabin 2026' requires Mister Lang's attention.",
+  "text": "- [escalation] lang.mc@gmail.com: Automated alert from loop-monitor indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] Lady Cathy: Daily correspondence digest highlighting an urgent email from Lady Cathy Lang.\n- [escalation] lang.mc@gmail.com: Daily correspondence digest reporting a permanent failure in the Jeeves Daily Pipeline.\n- [escalation] Lady Cathy: Daily correspondence digest highlighting an urgent email from Lady Cathy Lang.\n- [escalation] Lady Cathy: Daily correspondence digest emphasizing the pressing need to respond to Lady Cathy Lang's email.\n- [escalation] Lady Cathy: Daily correspondence digest highlighting an urgent email from Lady Cathy Lang.\n- [escalation] Lady Cathy: Daily correspondence digest highlighting an urgent email from Lady Cathy Lang.\n- [escalation] Lady Cathy: Daily correspondence digest highlighting an email from Lady Cathy Lang about Cabin 2026.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary from Jeeves system highlighting pressing matter from Lady Cathy Lang about Cabin 2026.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary from Jeeves system noting Jeeves Daily Pipeline failure.",
   "counts": {
-    "reply_needed": 1,
+    "reply_needed": 0,
     "decision_required": 1,
     "scheduling": 2,
     "follow_up": 0,
-    "escalation": 10,
-    "no_action": 36
+    "escalation": 19,
+    "no_action": 28
   }
 }
