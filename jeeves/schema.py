@@ -26,6 +26,13 @@ class Dedup(BaseModel):
     # both global_news and enriched_articles). Write phase uses these to
     # synthesise once rather than narrate the same story across 3 sections.
     cross_sector_dupes: list[str] = Field(default_factory=list)
+    # Topic slugs (proper nouns, named acts, capitalized acronyms) actually
+    # written into the briefing prose by the write phase. Persisted across
+    # runs so subsequent days can seed used_topics_this_run and avoid
+    # narrating the same topic five days in a row (the "Trump tariffs"
+    # dominance failure mode). Newest-first; capped by write phase before
+    # persistence.
+    covered_topics: list[str] = Field(default_factory=list)
 
 
 class Correspondence(BaseModel):

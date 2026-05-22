@@ -147,7 +147,16 @@ def test_collect_headlines_ignores_plain_strings_and_urls():
 
 
 def test_collect_headlines_extracts_family_choir_and_toddler():
-    """family {choir, toddler} strings must produce covered_headlines entries."""
+    """family {choir, toddler} strings must produce covered_headlines entries.
+
+    2026-05-21 — headline extraction now picks proper-noun clusters as the
+    distinguishing label (Flaw 2 fix). "Seattle Symphony Chorale" remains
+    the dominant cluster for choir; the toddler entry's distinguishing
+    cluster is "Baby Storytime Thursdays" rather than "Lynnwood library"
+    (single-token "Lynnwood" doesn't form a 2+-token cluster on its own).
+    Both still produce SOMETHING that uniquely identifies the entry, which
+    is what the dedup signal needs.
+    """
     value = {
         "choir": "Seattle Symphony Chorale open auditions May 3.",
         "toddler": "Lynnwood library: Baby Storytime Thursdays 10:30am.",
@@ -155,7 +164,12 @@ def test_collect_headlines_extracts_family_choir_and_toddler():
     }
     out = collect_headlines_from_sector(value)
     assert any("Seattle Symphony Chorale" in h for h in out), f"choir not found: {out}"
-    assert any("Lynnwood library" in h for h in out), f"toddler not found: {out}"
+    # Either "Lynnwood" or "Baby Storytime" — both are valid distinguishing
+    # labels for the toddler entry. The bug we are guarding against is
+    # producing NO entry at all.
+    assert any(
+        "Lynnwood" in h or "Baby Storytime" in h for h in out
+    ), f"toddler not found: {out}"
 
 
 def test_collect_headlines_extracts_findings_first_sentence():
@@ -803,9 +817,14 @@ def test_first_two_sentences_returns_truncation_when_no_terminator():
     assert out == "no terminator at all"
 
 
-def test_collect_headlines_extracts_two_sentences_for_findings_like_keys():
-    """Family-style nested findings (choir/toddler) should now produce a
-    two-sentence label so cross-day matching catches the title+detail pair."""
+def test_collect_headlines_findings_like_keys_produce_distinguishing_label():
+    """Family-style nested findings (choir/toddler) should produce a
+    distinguishing label that survives cross-day matching.
+
+    2026-05-21 — replaced two-sentence-prefix scheme with proper-noun
+    cluster extraction (Flaw 2 fix). What matters for the dedup signal is
+    that the OUTPUT contains the entry's distinguishing detail — exact
+    label shape (two sentences vs. proper-noun cluster) is internal."""
     from jeeves.research_sectors import collect_headlines_from_sector
 
     value = {
@@ -816,10 +835,12 @@ def test_collect_headlines_extracts_two_sentences_for_findings_like_keys():
         "urls": [],
     }
     out = collect_headlines_from_sector(value)
-    assert any(
-        "Lynnwood library storytime." in h and "Baby Storytime" in h
-        for h in out
-    ), f"two-sentence label missing: {out}"
+    # Output must contain SOMETHING that uniquely identifies this entry.
+    # "Baby Storytime Thursdays" is a 3-token proper-noun cluster — exactly
+    # the kind of distinguishing detail dedup needs.
+    assert any("Baby Storytime" in h for h in out), (
+        f"distinguishing label missing: {out}"
+    )
 
 
 def test_find_cross_sector_dupes_identifies_repeated_urls():
