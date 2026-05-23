@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] lang.mc@gmail.com: Automated alert about stuck pattern in jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Automated alert about stuck pattern in jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about permanent failure with 429 rate limit error.\n- [escalation] lang.mc@gmail.com: Automated alert about stuck pattern in jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] mmmichaelllang: GitHub workflow failure notification for the Loop Monitor in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] mmmichaelllang: GitHub workflow failure notification for the Loop Monitor in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] mmmichaelllang: GitHub workflow failure notification for the Loop Monitor in jeeves-unchained.",
+  "text": "- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting a loop-monitor alert requiring manual intervention.\n- [escalation] mmmichaelllang: GitHub notification that the Loop Monitor workflow failed in the jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert detecting a stuck pattern with same_blocker_count=3, requiring manual intervention in jeeves-unchained.\n- [escalation] mmmichaelllang: GitHub notification that the Validation Sprint workflow failed in the jeeves-unchained repository.\n- [escalation] mmmichaelllang: GitHub notification that the Loop Monitor workflow failed in the jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert detecting a stuck pattern with same_blocker_count=3, requiring manual intervention in jeeves-unchained.\n- [escalation] mmmichaelllang: GitHub notification that the Validation Sprint workflow failed in the jeeves-unchained repository.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow had some unsuccessful jobs in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating a permanent failure with transient failure marker 429 in the Daily Pipeline.",
   "counts": {
-    "reply_needed": 1,
-    "decision_required": 2,
-    "scheduling": 0,
-    "follow_up": 2,
-    "escalation": 14,
-    "no_action": 31
+    "reply_needed": 0,
+    "decision_required": 0,
+    "scheduling": 3,
+    "follow_up": 0,
+    "escalation": 30,
+    "no_action": 17
   }
 }
