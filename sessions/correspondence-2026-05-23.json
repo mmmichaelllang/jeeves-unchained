@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] mmmichaelllang: GitHub workflow failure notification for Loop Monitor in jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Automated loop monitor alert indicating stuck pattern requiring manual intervention in jeeves-unchained.\n- [escalation] mmmichaelllang: GitHub workflow failure notification for Loop Monitor in jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Automated loop monitor alert indicating stuck pattern requiring manual intervention in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Automated loop monitor alert indicating stuck pattern requiring manual intervention in jeeves-unchained.\n- [escalation] Lady Cathy: Daily correspondence digest highlighting an urgent email from Lady Cathy Lang.\n- [escalation] lang.mc@gmail.com: Daily correspondence digest reporting permanent failure of the Jeeves Daily Pipeline.\n- [escalation] Lady Cathy: Daily correspondence digest highlighting an urgent email from Lady Cathy Lang.\n- [escalation] Lady Cathy: Daily correspondence digest emphasizing the pressing need to respond to Lady Cathy Lang's email.\n- [escalation] Lady Cathy: Daily correspondence digest highlighting an urgent email from Lady Cathy Lang.",
+  "text": "- [escalation] Mrs. Lang: Loop monitor alert indicating stuck pattern requiring manual intervention in adaptive-loop.\n- [escalation] Mrs. Lang: Loop monitor alert indicating stuck pattern requiring manual intervention in adaptive-loop.\n- [escalation] Mrs. Lang: Loop monitor alert indicating stuck pattern requiring manual intervention in adaptive-loop.\n- [escalation] Mrs. Lang: Loop monitor alert indicating stuck pattern requiring manual intervention in adaptive-loop.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting a message from Lady Cathy Lang about 'Cabin 2026' that requires attention.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about permanent failure of the Daily pipeline with transient 429 errors.\n- [escalation] lang.mc@gmail.com: Pipeline alert from his own system about a permanent Jeeves daily pipeline failure with 429 rate limit errors.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting a message from his mother Lady Cathy Lang about 'Cabin 2026'.\n- [decision required] GitHub: GitHub notification that personal access token 'jeeves3' will expire in 6 days.\n- [decision required] GitHub: GitHub notification that personal access token 'jeevesagain' will expire in 6 days.",
   "counts": {
-    "reply_needed": 1,
+    "reply_needed": 0,
     "decision_required": 2,
     "scheduling": 2,
     "follow_up": 0,
-    "escalation": 13,
-    "no_action": 25
+    "escalation": 8,
+    "no_action": 38
   }
 }
