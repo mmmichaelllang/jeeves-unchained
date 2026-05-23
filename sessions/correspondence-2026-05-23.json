@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] Mrs. Lang: Loop monitor alert indicating stuck pattern requiring manual intervention in adaptive-loop.\n- [escalation] Mrs. Lang: Loop monitor alert indicating stuck pattern requiring manual intervention in adaptive-loop.\n- [escalation] Mrs. Lang: Loop monitor alert indicating stuck pattern requiring manual intervention in adaptive-loop.\n- [escalation] Mrs. Lang: Loop monitor alert indicating stuck pattern requiring manual intervention in adaptive-loop.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting a message from Lady Cathy Lang about 'Cabin 2026' that requires attention.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about permanent failure of the Daily pipeline with transient 429 errors.\n- [escalation] lang.mc@gmail.com: Pipeline alert from his own system about a permanent Jeeves daily pipeline failure with 429 rate limit errors.\n- [escalation] Lady Cathy: Daily correspondence summary highlighting a message from his mother Lady Cathy Lang about 'Cabin 2026'.\n- [decision required] GitHub: GitHub notification that personal access token 'jeeves3' will expire in 6 days.\n- [decision required] GitHub: GitHub notification that personal access token 'jeevesagain' will expire in 6 days.",
+  "text": "- [escalation] lang.mc@gmail.com: Loop monitor alert indicating stuck pattern requiring manual intervention in adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating stuck pattern requiring manual intervention in adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating stuck pattern requiring manual intervention in adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating stuck pattern requiring manual intervention in adaptive-loop.\n- [escalation] lang.mc@gmail.com: System monitor alert about stuck pattern in jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure with 429 rate limit error in the Daily Pipeline.\n- [decision required] GitHub: GitHub notification that personal access token 'jeeves3' will expire in 6 days and may need renewal.\n- [decision required] GitHub: GitHub notification that personal access token 'jeevesagain' will expire in 6 days and may need renewal.\n- [scheduling] \"Rob Collins & Esther Wakeman\": Reply in thread confirming plans to meet this Saturday around 1pm for Piper's car nap.\n- [scheduling] Sarah Moyer: Email proposing to meet this Saturday and leave around 1pm so Piper can car nap.",
   "counts": {
     "reply_needed": 0,
     "decision_required": 2,
     "scheduling": 2,
     "follow_up": 0,
-    "escalation": 8,
-    "no_action": 38
+    "escalation": 6,
+    "no_action": 40
   }
 }
