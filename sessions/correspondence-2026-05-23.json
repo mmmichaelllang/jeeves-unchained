@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern with same_blocker_count=3 requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern with same_blocker_count=3 requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern with same_blocker_count=3 requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Automated alert from lang.mc@gmail.com about a stuck pattern in the jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Automated alert from lang.mc@gmail.com about a stuck pattern in the jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Automated alert from lang.mc@gmail.com about a permanent pipeline failure in Jeeves Daily Pipeline with no auto-retry.\n- [escalation] lang.mc@gmail.com: Automated alert from lang.mc@gmail.com about a stuck pattern in the jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Automated alert from lang.mc@gmail.com about a stuck pattern in the jeeves-unchained adaptive-loop requiring manual intervention.",
+  "text": "- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern with same_blocker_count=3 requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern with same_blocker_count=3 requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for a permanent failure in the Daily Pipeline with no auto-retry.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern with same_blocker_count=3 requiring manual intervention.\n- [escalation] mmmichaelllang: GitHub workflow failure notification for Loop Monitor in jeeves-unchained repository.",
   "counts": {
-    "reply_needed": 2,
+    "reply_needed": 0,
     "decision_required": 0,
-    "scheduling": 2,
+    "scheduling": 1,
     "follow_up": 0,
-    "escalation": 22,
-    "no_action": 24
+    "escalation": 19,
+    "no_action": 30
   }
 }
