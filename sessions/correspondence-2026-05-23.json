@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] lang.mc@gmail.com: A loop-monitor alert was detected in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: A loop-monitor alert was detected in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: A loop-monitor alert was detected in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: A Jeeves pipeline alert was detected due to a permanent failure.\n- [escalation] lang.mc@gmail.com: Anomaly detected in jeeves-unchained adaptive-loop requiring manual intervention\n- [escalation] lang.mc@gmail.com: Anomaly detected in jeeves-unchained adaptive-loop requiring manual intervention\n- [escalation] lang.mc@gmail.com: Anomaly detected in jeeves-unchained adaptive-loop requiring manual intervention\n- [escalation] lang.mc@gmail.com: Anomaly detected in jeeves-unchained adaptive-loop requiring manual intervention\n- [escalation] lang.mc@gmail.com: Anomaly detected in jeeves-unchained adaptive-loop requiring manual intervention\n- [escalation] mmmichaelllang: GitHub workflow run failed for Loop Monitor\n- [escalation] lang.mc@gmail.com: Anomaly detected in jeeves-unchained adaptive-loop requiring manual intervention\n- [escalation] lang.mc@gmail.com: Anomaly detected in jeeves-unchained adaptive-loop requiring manual intervention",
+  "text": "- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] mmmichaelllang: GitHub workflow failure notification for Validation Sprint in jeeves-unchained repository.\n- [escalation] mmmichaelllang: GitHub workflow failure notification for Jeeves Daily Pipeline in jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about permanent failure with transient 429 error in Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub workflow failure notification for Loop Monitor in jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating stuck pattern requiring manual intervention in jeeves-unchained adaptive loop.",
   "counts": {
     "reply_needed": 1,
-    "decision_required": 2,
+    "decision_required": 0,
     "scheduling": 2,
     "follow_up": 0,
-    "escalation": 12,
-    "no_action": 33
+    "escalation": 17,
+    "no_action": 30
   }
 }
