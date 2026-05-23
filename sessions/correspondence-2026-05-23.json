@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] mmmichaelllang: GitHub workflow failure notification for Validation Sprint in jeeves-unchained repository.\n- [escalation] mmmichaelllang: GitHub workflow failure notification for Jeeves Daily Pipeline in jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about permanent failure with transient 429 error in Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub workflow failure notification for Loop Monitor in jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating stuck pattern requiring manual intervention in jeeves-unchained adaptive loop.",
+  "text": "- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern with same_blocker_count=3 requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern with same_blocker_count=3 requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern with same_blocker_count=3 requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Automated alert from lang.mc@gmail.com about a stuck pattern in the jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Automated alert from lang.mc@gmail.com about a stuck pattern in the jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Automated alert from lang.mc@gmail.com about a permanent pipeline failure in Jeeves Daily Pipeline with no auto-retry.\n- [escalation] lang.mc@gmail.com: Automated alert from lang.mc@gmail.com about a stuck pattern in the jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Automated alert from lang.mc@gmail.com about a stuck pattern in the jeeves-unchained adaptive-loop requiring manual intervention.",
   "counts": {
-    "reply_needed": 1,
+    "reply_needed": 2,
     "decision_required": 0,
     "scheduling": 2,
     "follow_up": 0,
-    "escalation": 17,
-    "no_action": 30
+    "escalation": 22,
+    "no_action": 24
   }
 }
