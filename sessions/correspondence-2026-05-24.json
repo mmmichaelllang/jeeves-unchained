@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern in jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure with transient failure marker detected.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern in jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern in jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern in jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] mmmichaelllang: GitHub Actions workflow 'Loop Monitor' failed for jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Loop monitor alert detecting stuck pattern in adaptive-loop requiring manual intervention.\n- [escalation] mmmichaelllang: GitHub Actions workflow 'Loop Monitor' failed for jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Loop monitor alert detecting stuck pattern in adaptive-loop requiring manual intervention.\n- [escalation] mmmichaelllang: GitHub Actions workflow 'Loop Monitor' failed for jeeves-unchained repository.",
+  "text": "- [escalation] lang.mc@gmail.com: Loop monitor alert about a stuck pattern in jeeves-unchained adaptive-loop\n- [escalation] lang.mc@gmail.com: Loop monitor alert about a stuck pattern in jeeves-unchained adaptive-loop\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure\n- [escalation] lang.mc@gmail.com: Loop monitor alert about a stuck pattern in jeeves-unchained adaptive-loop\n- [escalation] lang.mc@gmail.com: Loop monitor alert about a stuck pattern in jeeves-unchained adaptive-loop\n- [escalation] lang.mc: Loop monitor alert about an anomaly detected in jeeves-unchained adaptive-loop\n- [escalation] lang.mc: Loop monitor alert about an anomaly detected in jeeves-unchained adaptive-loop\n- [escalation] lang.mc: Loop monitor alert about an anomaly detected in jeeves-unchained adaptive-loop\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention",
   "counts": {
-    "reply_needed": 3,
-    "decision_required": 1,
+    "reply_needed": 5,
+    "decision_required": 0,
     "scheduling": 0,
-    "follow_up": 0,
-    "escalation": 24,
-    "no_action": 22
+    "follow_up": 7,
+    "escalation": 14,
+    "no_action": 24
   }
 }
