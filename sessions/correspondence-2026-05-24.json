@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting the loop-monitor alert requiring manual intervention as the most pressing matter.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting an escalation about a stuck pattern requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting a GitHub notification about a Loop Monitor run failure as the most pressing matter.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting the loop-monitor alert requiring manual intervention in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.",
+  "text": "- [escalation] lang.mc@gmail.com: Loop monitor alert indicating stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting loop-monitor alert requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting loop-monitor alert requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting escalation from lang.mc@gmail.com about stuck pattern requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting GitHub notification about Loop Monitor run failure.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] Mrs. Lang: Daily correspondence summary from lang.mc@gmail.com reporting a loop-monitor alert requiring manual intervention.",
   "counts": {
     "reply_needed": 0,
     "decision_required": 2,
     "scheduling": 0,
-    "follow_up": 3,
-    "escalation": 30,
-    "no_action": 15
+    "follow_up": 0,
+    "escalation": 24,
+    "no_action": 24
   }
 }
