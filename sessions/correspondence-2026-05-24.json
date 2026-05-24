@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] lang.mc@gmail.com: Correspondence summary with a loop-monitor alert requiring manual intervention\n- [escalation] mmmichaelllang: GitHub notification of a failed Loop Monitor workflow run\n- [escalation] lang.mc@gmail.com: Loop-monitor alert requiring manual intervention due to a stuck pattern\n- [escalation] lang.mc@gmail.com: Correspondence summary with a loop-monitor alert requiring manual intervention\n- [escalation] mmmichaelllang: GitHub notification of a failed Loop Monitor workflow run\n- [escalation] lang.mc@gmail.com: Loop-monitor alert requiring manual intervention due to a stuck pattern\n- [escalation] lang.mc@gmail.com: Correspondence summary with a notification about a declined Google One subscription payment\n- [escalation] mmmichaelllang: GitHub notification of a failed Jeeves Weekly Audit Health Report workflow run\n- [escalation] mmmichaelllang: GitHub notification of a failed Loop Monitor workflow run\n- [escalation] lang.mc@gmail.com: Loop-monitor alert requiring manual intervention due to a stuck pattern\n- [escalation] Google Play: Notification about a declined Google One subscription payment\n- [escalation] lang.mc@gmail.com: Correspondence summary with an email about a payment issue with Spotify",
+  "text": "- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern in jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure with transient failure marker detected.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern in jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern in jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern in jeeves-unchained adaptive-loop requiring manual intervention.\n- [escalation] mmmichaelllang: GitHub Actions workflow 'Loop Monitor' failed for jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Loop monitor alert detecting stuck pattern in adaptive-loop requiring manual intervention.\n- [escalation] mmmichaelllang: GitHub Actions workflow 'Loop Monitor' failed for jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Loop monitor alert detecting stuck pattern in adaptive-loop requiring manual intervention.\n- [escalation] mmmichaelllang: GitHub Actions workflow 'Loop Monitor' failed for jeeves-unchained repository.",
   "counts": {
-    "reply_needed": 11,
-    "decision_required": 0,
+    "reply_needed": 3,
+    "decision_required": 1,
     "scheduling": 0,
-    "follow_up": 3,
-    "escalation": 21,
-    "no_action": 15
+    "follow_up": 0,
+    "escalation": 24,
+    "no_action": 22
   }
 }
