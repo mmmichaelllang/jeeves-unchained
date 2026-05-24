@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] unknown: Repeated automated alert about a stuck pattern requiring manual intervention in a monitoring system.\n- [escalation] mmmichaelllang: Repeated automated alert about a stuck pattern requiring manual intervention in an adaptive loop.\n- [escalation] lang.mc@gmail.com: Automated loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop system.\n- [escalation] mmmichaelllang: GitHub notification that the Loop Monitor workflow run failed on the jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Automated loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop system.\n- [escalation] mmmichaelllang: GitHub notification that the Loop Monitor workflow run failed on the jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Automated loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop system.\n- [escalation] mmmichaelllang: GitHub notification that the Loop Monitor workflow run failed on the jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Automated loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop system.",
+  "text": "- [escalation] mmmichaelllang: A GitHub notification indicates a run failure in the Loop Monitor, requiring Mister Lang's attention.\n- [escalation] lang.mc@gmail.com: A loop-monitor alert indicates a stuck pattern in the jeeves-unchained adaptive-loop, requiring manual intervention.\n- [escalation] mmmichaelllang: A GitHub notification indicates a run failure in the Loop Monitor, requiring Mister Lang's attention.\n- [escalation] lang.mc@gmail.com: A loop-monitor alert indicates a stuck pattern in the jeeves-unchained adaptive-loop, requiring manual intervention.\n- [escalation] lang.mc@gmail.com: A loop-monitor alert indicates a stuck pattern in the jeeves-unchained adaptive-loop, requiring manual intervention.\n- [escalation] mmmichaelllang: A GitHub notification indicates a run failure in the Jeeves Daily Pipeline, requiring Mister Lang's attention.\n- [escalation] lang.mc@gmail.com: A Jeeves pipeline alert indicates a permanent failure in the Jeeves Daily Pipeline, requiring Mister Lang's attention.\n- [escalation] mmmichaelllang: GitHub notification about a failed workflow run for Loop Monitor\n- [escalation] lang.mc@gmail.com: Alert about a stuck pattern in the jeeves-unchained adaptive-loop requiring manual intervention",
   "counts": {
-    "reply_needed": 0,
-    "decision_required": 2,
+    "reply_needed": 8,
+    "decision_required": 0,
     "scheduling": 0,
-    "follow_up": 0,
-    "escalation": 11,
-    "no_action": 23
+    "follow_up": 8,
+    "escalation": 21,
+    "no_action": 13
   }
 }
