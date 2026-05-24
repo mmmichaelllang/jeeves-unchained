@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] mmmichaelllang: GitHub notification that Loop Monitor workflow failed in jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating stuck pattern with same_blocker_count=3 requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] mmmichaelllang: GitHub notification that Loop Monitor workflow failed in jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating stuck pattern with same_blocker_count=3 requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating stuck pattern with same_blocker_count=3 requiring manual intervention in jeeves-unchained adaptive-loop.",
+  "text": "- [escalation] lang.mc@gmail.com: Self-generated correspondence summary flagging a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] mmmichaelllang: GitHub notification that the Loop Monitor workflow run failed on the main branch.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert detecting a stuck pattern with same_blocker_count=3, requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Self-generated correspondence summary flagging a GitHub Loop Monitor run failure as the most pressing matter.\n- [escalation] mmmichaelllang: GitHub notification that the Loop Monitor workflow run failed on the main branch.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert detecting a stuck pattern with same_blocker_count=3, requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Self-generated correspondence summary flagging a loop-monitor alert about a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] mmmichaelllang: GitHub notification that the Loop Monitor workflow run failed on the main branch.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert detecting a stuck pattern with same_blocker_count=3, requiring manual intervention in jeeves-unchained adaptive-loop.",
   "counts": {
-    "reply_needed": 0,
-    "decision_required": 1,
+    "reply_needed": 1,
+    "decision_required": 0,
     "scheduling": 0,
     "follow_up": 0,
-    "escalation": 23,
-    "no_action": 26
+    "escalation": 27,
+    "no_action": 22
   }
 }
