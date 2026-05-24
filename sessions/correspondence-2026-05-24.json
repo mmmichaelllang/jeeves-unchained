@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting a loop-monitor alert requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting a loop-monitor alert requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting a loop-monitor alert with a stuck pattern.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting a loop-monitor alert with a stuck pattern.\n- [escalation] mmmichaelllang: GitHub notification that the Loop Monitor workflow failed again on the jeeves-unchained repository.",
+  "counts": {
+    "reply_needed": 4,
+    "decision_required": 0,
+    "scheduling": 1,
+    "follow_up": 0,
+    "escalation": 27,
+    "no_action": 18
+  }
+}
