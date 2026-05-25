@@ -1037,21 +1037,33 @@ def _parse_sector_output(raw: str, spec: SectorSpec) -> Any:
                 )
                 return _ParseFailed(raw or "")
 
-    # For enriched sectors, enforce the 500-char text cap regardless of model
-    # compliance — avoids bloated session JSON and downstream NIM context issues.
-    if spec.shape == "enriched" and isinstance(parsed, list):
-        # 2026-05-21 round 7: OR models (especially :floor) sometimes return a
-        # flat list of URL strings instead of EnrichedArticle dicts.  Filter
-        # them out before schema validation so save_session doesn't crash.
+    # 2026-05-22 round 8: generalised bare-string filter for ALL list-shape
+    # output. Round-7 fix gated this on shape=="enriched" only — but
+    # intellectual_journals (shape="list") hit the same Pydantic crash on
+    # 2026-05-22 run #90. OR :floor models return bare URL strings for any
+    # list-shape sector when they fall back to training data.
+    if spec.shape in ("list", "enriched") and isinstance(parsed, list):
         before_str_filter = len(parsed)
         parsed = [e for e in parsed if isinstance(e, dict)]
         dropped_strs = before_str_filter - len(parsed)
         if dropped_strs:
             log.warning(
-                "sector %s: dropped %d bare-string entries from enriched output "
-                "(model returned flat URL list instead of EnrichedArticle dicts).",
-                spec.name, dropped_strs,
+                "sector %s: dropped %d bare-string entries from %s output "
+                "(model returned flat URL list instead of structured dicts).",
+                spec.name, dropped_strs, spec.shape,
             )
+        # If filter emptied the list, fall back to spec.default so downstream
+        # save_session doesn't ship an empty sector that fails GATE-A.
+        if not parsed:
+            log.warning(
+                "sector %s: all entries were bare strings; falling back to default.",
+                spec.name,
+            )
+            parsed = spec.default
+
+    # For enriched sectors, enforce the 500-char text cap regardless of model
+    # compliance — avoids bloated session JSON and downstream NIM context issues.
+    if spec.shape == "enriched" and isinstance(parsed, list):
         for entry in parsed:
             if isinstance(entry.get("text"), str) and len(entry["text"]) > 500:
                 entry["text"] = entry["text"][:500]
@@ -2128,7 +2140,7 @@ async def _run_crawl4ai_sector(
 
     # 2. Extract content via Crawl4AI.
     try:
-        extractions = await batch_extract(urls, max_chars=6000)
+        extractions = await batch_extract(urls, query=query, max_chars=6000)
     except Exception as exc:
         log.warning("sector %s: crawl4ai batch_extract failed (%s); returning default.", spec.name, exc)
         return spec.default

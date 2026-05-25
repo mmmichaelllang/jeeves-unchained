@@ -1076,7 +1076,7 @@ async def test_run_crawl4ai_sector_reads_wrapper_results_key(monkeypatch):
 
     extracted_urls: list[str] = []
 
-    async def _fake_batch_extract(urls, max_chars=6000):
+    async def _fake_batch_extract(urls, query=None, max_chars=6000):
         extracted_urls.extend(urls)
         return [(f"body text for {u}", "trafilatura") for u in urls]
 
@@ -1132,7 +1132,7 @@ async def test_run_crawl4ai_sector_filters_prior_urls(monkeypatch):
 
     seen: list[str] = []
 
-    async def _fake_batch_extract(urls, max_chars=6000):
+    async def _fake_batch_extract(urls, query=None, max_chars=6000):
         seen.extend(urls)
         return [(f"body for {u}", "trafilatura") for u in urls]
 
@@ -1190,7 +1190,7 @@ async def test_run_crawl4ai_sector_rotates_cerebras_on_429(monkeypatch):
     def _fake_make_serper_search(cfg, ledger):
         return lambda query="", num=10, tbs=None: wrapped
 
-    async def _fake_batch_extract(urls, max_chars=6000):
+    async def _fake_batch_extract(urls, query=None, max_chars=6000):
         return [(f"body for {u}", "trafilatura") for u in urls]
 
     # Cerebras "model" registry: first model 429s, second succeeds.
@@ -1274,7 +1274,7 @@ async def test_run_crawl4ai_sector_returns_default_when_chain_exhausted(monkeypa
     def _fake_make_serper_search(cfg, ledger):
         return lambda query="", num=10, tbs=None: wrapped
 
-    async def _fake_batch_extract(urls, max_chars=6000):
+    async def _fake_batch_extract(urls, query=None, max_chars=6000):
         return [(f"body for {u}", "trafilatura") for u in urls]
 
     # Every model 429s; rotation should bottom out and the function returns default.
@@ -1494,7 +1494,7 @@ async def test_run_crawl4ai_sector_falls_to_or_when_cerebras_exhausted(monkeypat
     def _fake_make_serper_search(cfg, ledger):
         return lambda query="", num=10, tbs=None: wrapped
 
-    async def _fake_batch_extract(urls, max_chars=6000):
+    async def _fake_batch_extract(urls, query=None, max_chars=6000):
         return [(f"body for {u}", "trafilatura") for u in urls]
 
     # Cerebras builder always returns None (chain exhausted).
@@ -1568,7 +1568,7 @@ async def test_run_crawl4ai_sector_rotates_or_on_dead_endpoint(monkeypatch):
     def _fake_make_serper_search(cfg, ledger):
         return lambda query="", num=10, tbs=None: wrapped
 
-    async def _fake_batch_extract(urls, max_chars=6000):
+    async def _fake_batch_extract(urls, query=None, max_chars=6000):
         return [(f"body for {u}", "trafilatura") for u in urls]
 
     monkeypatch.setattr(rs, "_build_cerebras_llm", lambda max_tokens=8192: None)

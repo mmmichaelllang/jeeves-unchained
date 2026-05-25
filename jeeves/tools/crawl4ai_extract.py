@@ -98,6 +98,7 @@ ModeUsed = Literal["crawl4ai_fit", "crawl4ai_raw", "skip_paywalled", "skip_nav_h
 
 async def crawl4ai_extract(
     url: str,
+    query: str | None = None,
     max_chars: int = 8000,
     timeout: int = 30,
 ) -> tuple[str, ModeUsed]:
@@ -133,16 +134,22 @@ async def crawl4ai_extract(
 
     try:
         from crawl4ai import AsyncWebCrawler, BrowserConfig, CrawlerRunConfig
-        from crawl4ai.content_filter_strategy import BM25ContentFilter
         from crawl4ai.markdown_generation_strategy import DefaultMarkdownGenerator
     except ImportError:
         return ("", "error")
 
     try:
+        # BM25 is only useful when caller provides a real query string.
+        # Passing the URL was a 2026-05-21 bug: BM25 ranks page chunks by
+        # similarity to the URL string → fit_markdown ranks near-nothing.
+        markdown_gen_kwargs: dict = {}
+        if query and query.strip():
+            from crawl4ai.content_filter_strategy import BM25ContentFilter
+            markdown_gen_kwargs["content_filter"] = BM25ContentFilter(
+                user_query=query, bm25_threshold=0.2
+            )
         run_cfg = CrawlerRunConfig(
-            markdown_generator=DefaultMarkdownGenerator(
-                content_filter=BM25ContentFilter(user_query=url, bm25_threshold=0.2),
-            ),
+            markdown_generator=DefaultMarkdownGenerator(**markdown_gen_kwargs),
             page_timeout=timeout * 1000,
             wait_until="domcontentloaded",
         )
@@ -173,6 +180,7 @@ async def crawl4ai_extract(
 
 async def batch_extract(
     urls: list[str],
+    query: str | None = None,
     max_chars: int = 8000,
     timeout: int = 30,
     concurrency: int = 3,
@@ -185,6 +193,6 @@ async def batch_extract(
 
     async def _bounded(url: str) -> tuple[str, ModeUsed]:
         async with sem:
-            return await crawl4ai_extract(url, max_chars=max_chars, timeout=timeout)
+            return await crawl4ai_extract(url, query=query, max_chars=max_chars, timeout=timeout)
 
     return await asyncio.gather(*[_bounded(u) for u in urls])
