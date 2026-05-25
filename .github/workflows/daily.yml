@@ -150,16 +150,13 @@ jobs:
       - name: Sync dependencies
         run: uv sync --no-dev --extra vertex --extra playwright
 
-      - name: Install Playwright Chromium (headless-shell only)
-        # Universal article-fetch fallback (jeeves/tools/playwright_extractor.py).
-        # Used by talk_of_the_town, enrichment, tavily_extract, and the
-        # `playwright_extract` agent tool. Soft-fails when absent, but in
-        # production we want it present so the fallback path can fire.
-        # `--only-shell` ships chromium-headless-shell (~30% smaller, faster
-        # cold-start) instead of the full chromium binary. We never need
-        # rendering/screenshots — only DOM extraction.
+      - name: Install Playwright Chromium
+        # Full Chromium required for crawl4ai's AsyncWebCrawler — headless-shell
+        # lacks CDP features crawl4ai needs, causing all 6 crawl4ai sectors to
+        # silently return empty. playwright_extractor.py works fine with full
+        # Chromium. research.yml already uses this form successfully.
         timeout-minutes: 8
-        run: uv run python -m playwright install --with-deps --only-shell chromium
+        run: uv run python -m playwright install --with-deps chromium
 
       - name: Run research phase
         env:
