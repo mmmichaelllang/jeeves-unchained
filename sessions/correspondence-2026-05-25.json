@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] Mrs. Lang: Loop monitor alert indicating a stuck pattern requiring manual intervention from a priority contact.\n- [escalation] Mrs. Lang: Loop monitor alert from priority contact indicating a stuck pattern requiring manual intervention.\n- [escalation] Mrs. Lang: Loop monitor alert from priority contact about a stuck pattern requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Automated loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained.\n- [escalation] mmmichaelllang: GitHub notification that the Loop Monitor workflow run failed on jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Automated loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained.\n- [escalation] mmmichaelllang: GitHub notification that the Loop Monitor workflow run failed on jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Automated loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained.\n- [escalation] mmmichaelllang: GitHub notification that the Loop Monitor workflow run failed on jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Automated loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained.",
+  "text": "- [escalation] mmmichaelllang: GitHub Actions workflow failure for jeeves-unchained Loop Monitor, all jobs failed.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating stuck pattern with same_blocker_count=3 requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Morning correspondence summary flagging the loop-monitor alert as a pressing matter.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for jeeves-unchained Loop Monitor, all jobs failed.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating stuck pattern with same_blocker_count=3 requiring manual intervention.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for jeeves-unchained Jeeves Daily Pipeline, some jobs unsuccessful.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure in Daily Pipeline with transient failure marker.\n- [escalation] lang.mc@gmail.com: Morning correspondence summary flagging the loop-monitor alert as a pressing matter.\n- [escalation] lang.mc@gmail.com: Morning correspondence summary flagging the loop-monitor alert as a pressing matter.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for jeeves-unchained Loop Monitor, all jobs failed.",
   "counts": {
     "reply_needed": 0,
     "decision_required": 0,
     "scheduling": 0,
     "follow_up": 0,
-    "escalation": 28,
-    "no_action": 15
+    "escalation": 31,
+    "no_action": 19
   }
 }
