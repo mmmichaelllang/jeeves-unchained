@@ -138,8 +138,6 @@ def test_render_mock_correspondence_escapes_html_in_user_fields():
 
 
 def test_classify_with_kimi_batches_previews(monkeypatch):
-    from llama_index.core.base.llms.types import ChatMessage
-
     from jeeves import llm as llm_mod
 
     previews = [
@@ -158,7 +156,7 @@ def test_classify_with_kimi_batches_previews(monkeypatch):
             self.message = type("M", (), {"content": content})()
 
     class FakeLLM:
-        def chat(self, messages: list[ChatMessage]):
+        def chat(self, messages: list):
             payload = json.loads(messages[-1].content)
             ids = [m["id"] for m in payload["messages"]]
             calls.append(len(ids))
@@ -170,6 +168,7 @@ def test_classify_with_kimi_batches_previews(monkeypatch):
             return FakeResp(json.dumps(rows))
 
     monkeypatch.setattr(llm_mod, "build_kimi_llm", lambda *a, **kw: FakeLLM())
+    monkeypatch.setattr("jeeves.correspondence.time.sleep", lambda s: None)
 
     out = classify_with_kimi(cfg=None, previews=previews, contacts={"household": []})
 

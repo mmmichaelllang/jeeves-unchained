@@ -292,6 +292,7 @@ def test_nim_refine_is_called_for_each_part(monkeypatch):
 
     monkeypatch.setattr(wmod, "_invoke_write_llm", fake_write_llm)
     monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
+    monkeypatch.setattr(wmod, "_invoke_openrouter_narrative_edit", lambda cfg, html, **kw: html)
     monkeypatch.setattr(asyncio, "sleep", _noop_sleep)
 
     html, _warnings, _groq, _nim = _run_in_fresh_loop(generate_briefing, cfg, session)
@@ -324,6 +325,7 @@ def test_nim_refine_failure_falls_back_to_raw_draft(monkeypatch):
 
     monkeypatch.setattr(wmod, "_invoke_write_llm", fake_write_llm)
     monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
+    monkeypatch.setattr(wmod, "_invoke_openrouter_narrative_edit", lambda cfg, html, **kw: html)
     monkeypatch.setattr(asyncio, "sleep", _noop_sleep)
 
     html, _warnings, _groq, _nim = _run_in_fresh_loop(generate_briefing, cfg, session)
@@ -425,6 +427,7 @@ def test_nim_fallback_skips_groq_tpm_sleep(monkeypatch):
 
     monkeypatch.setattr(wmod, "_invoke_write_llm", fake_write_llm)
     monkeypatch.setattr(wmod, "_invoke_nim_refine", fake_nim_refine)
+    monkeypatch.setattr(wmod, "_invoke_openrouter_narrative_edit", lambda cfg, html, **kw: html)
     monkeypatch.setattr(asyncio, "sleep", _tracking_sleep)
 
     _run_in_fresh_loop(generate_briefing, cfg, session)  # return value unused
@@ -816,7 +819,10 @@ def test_narrative_edit_skipped_when_no_key(monkeypatch):
     from jeeves.config import Config
     from jeeves.write import _invoke_openrouter_narrative_edit
 
+    import jeeves.config as _cfg_mod
+    monkeypatch.setattr(_cfg_mod, "load_dotenv", lambda **kw: None)
     monkeypatch.setenv("GITHUB_REPOSITORY", "test/fixture")
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
     cfg = Config.from_env(dry_run=True, run_date="2026-04-24")
     # openrouter_api_key defaults to "" — no key set.
     assert cfg.openrouter_api_key == ""

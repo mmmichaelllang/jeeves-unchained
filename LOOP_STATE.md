@@ -2,16 +2,16 @@
 _Auto-managed. Do not edit during a run._
 
 ## Last Updated
-2026-05-22T15:38:44Z (iter 12 — divergent action per same_blocker≥2 gate; patches produced)
+2026-05-25T21:30:00Z (iter 13 — wake-gate fixes; M6 temporal blocker)
 
 ## Iteration
-12 (M6 validation sprint — 3rd-iter same-blocker; loop produced ready-to-apply round-8 patches)
+13 (M6 validation sprint — wake-gate 5 test fixes applied; avg_sectors temporal blocker ~2026-05-29)
 
 ## Last Milestone
 M6 validation sprint monitor — sprint dispatcher 12/12 closed; richness criteria still failing.
 
 ## Last Outcome
-FAILED
+FAILED (temporal blocker — avg_sectors recovering; wake-gate fixed)
 
 ## Evidence
 ```
@@ -131,7 +131,7 @@ ROOT CAUSES from latest run #90 research-job log:
 M6 sprint FAILING all three richness criteria. (A) intellectual_journals exit-1 mirror of unshipped round-7 enriched fix. (B) Crawl4AI extracting 0 chars for all 6 light sectors — almost certainly BM25 misconfiguration in tools/crawl4ai_extract.py line ~145 (user_query=url is nonsense). Combined effect: 90%% of dispatched daily.yml runs fail or produce thin output.
 
 ## Same Blocker Count
-3  (iter 10 + iter 11 + iter 12; same root causes A and B unchanged across all three iters)
+1  (reset: user override 2026-05-25; iter 13 = first iter on new baseline)
 
 ## Refined DONE WHEN
 M6 done when:
@@ -206,6 +206,7 @@ None.
 | 9 | M6 validation sprint | IN_PROGRESS | PR #136 merged (6c73150); validation.yml enabled; GH Variables set; sprint running |
 | 9 | M6 round 7 cowork fix | IN_PROGRESS | 3 bugs fixed in commit ff3e13e: enriched_articles exit-1 Pydantic crash, llama3.1-8b ctx-banned from Cerebras fallback, Connection error now rotatable in crawl4ai OR phase. Tests unverified locally (disk full). Awaiting user push + next research.yml run. |
 | 10 | M6 sprint monitor (10/12 dispatches) | FAILED | Sprint failing all 3 richness criteria: 1/10 GHA success at daily.yml layer, 2/8 sessions OK (target ≥9/12), avg 5.5/13 sectors (target ≥10). Latest #90 exit-1 Pydantic crash on intellectual_journals — same shape as round-7 enriched bug, different sector. Round-7 ff3e13e never reached main. Crawl4AI extraction returns 0c for all 6 light sectors — suspect BM25 misconfiguration (user_query=url is nonsense). USER ACTION required: land round-7, generalize bare-string filter, fix Crawl4AI BM25 query plumbing. Pytest unrunnable in sandbox so verification-gate skipped per CLAUDE.md disk-full constraint. |
+| 13 | M6 validation sprint (5-day window) | FAILED (temporal) | Wake-gate: 5 pre-existing test failures fixed (3× missing OR mock in test_write_postprocess.py, 1× llama_index import chain removed from test_correspondence.py, 1× load_dotenv bypassed for test_narrative_edit_skipped_when_no_key). M0–M5 VERIFY all pass. M6 VERIFY exit=1: non_empty=5/5 ✓, avg_sectors=7.0/13 ✗. Pre-fix sessions 05-21 to 05-24 (avg 4-6/13) dragging window below ≥10 threshold. Pipeline healthy: 05-25 sessions 10/13 + 11/13. same_blocker_count=1. ETA ~2026-05-29. |
 
 ## Refactor Phase
 M6 (Validation sprint)

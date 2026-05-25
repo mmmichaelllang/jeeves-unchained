@@ -1,3 +1,4 @@
+2026-05-25T20:16:41Z | pre_wake: VALIDATION SPRINT ACTIVE (signals: LOOP_STATE=0, gh=1). Tier 1 self-pausing. Validation.yml dispatching daily.yml every 30min — do not compete for Cerebras quota.
 2026-05-21T12:14:17Z | pre_wake: PAUSED until 2026-05-21T17:59:21Z (reason: m6-validation-sprint-active (manual write by Cowork session 2026-05-21, gap cover until Tier 2's next wake)). Skipping iteration.
 2026-05-21T13:34:10Z | pre_wake: PAUSED until 2026-05-21T17:59:21Z (reason: m6-validation-sprint-active (manual write by Cowork session 2026-05-21, gap cover until Tier 2's next wake)). Skipping iteration.
 2026-05-21T13:43:44Z | pre_wake: PAUSED until 2026-05-21T17:59:21Z (reason: m6-validation-sprint-active). Skipping iteration.
@@ -191,3 +192,6 @@ this is why the 2026-05-21 research.yml run 26253018091 succeeded with crawl4ai.
 
 **Status after fix:** Next daily.yml run should have crawl4ai sectors populated.
 Expected: 7 agent sectors + 6 crawl4ai sectors = 13/13 possible (minus failures)
+2026-05-25T20:53:40Z | pre_wake: VALIDATION SPRINT ACTIVE (signals: LOOP_STATE=0, gh=1). Tier 1 self-pausing. Validation.yml dispatching daily.yml every 30min — do not compete for Cerebras quota.
+2026-05-25T21:14:33Z | pre_wake: VALIDATION SPRINT ACTIVE (signals: LOOP_STATE=0, gh=1). Tier 1 self-pausing. Validation.yml dispatching daily.yml every 30min — do not compete for Cerebras quota.
+2026-05-25T21:43:48Z | pre_wake: VALIDATION SPRINT ACTIVE (signals: LOOP_STATE=0, gh=1). Tier 1 self-pausing. Validation.yml dispatching daily.yml every 30min — do not compete for Cerebras quota.
