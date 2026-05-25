@@ -92,6 +92,7 @@ class Config:
     github_repository: str
     # Runtime
     run_date: date
+    run_tag: str = ""   # optional suffix for manual runs (e.g. "manual1")
     dry_run: bool = False
     verbose: bool = False
     phase: Phase = "research"
@@ -144,7 +145,8 @@ class Config:
 
     def session_path(self, d: date | None = None) -> Path:
         target = d or self.run_date
-        return self.sessions_dir / f"session-{target.isoformat()}.json"
+        tag = f"-{self.run_tag}" if self.run_tag else ""
+        return self.sessions_dir / f"session-{target.isoformat()}{tag}.json"
 
     def briefing_html_path(self, d: date | None = None) -> Path:
         target = d or self.run_date
@@ -168,6 +170,7 @@ class Config:
         phase: Phase = "research",
         dry_run: bool = False,
         run_date: date | str | None = None,
+        run_tag: str = "",
         verbose: bool = False,
     ) -> Config:
         load_dotenv()
@@ -196,6 +199,7 @@ class Config:
                 "GITHUB_REPOSITORY", "mmmichaelllang/jeeves-unchained"
             ),
             run_date=resolved_date,
+            run_tag=run_tag,
             dry_run=dry_run,
             verbose=verbose,
             phase=phase,

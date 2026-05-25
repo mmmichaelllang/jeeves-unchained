@@ -91,6 +91,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Comma-separated sector whitelist (e.g. local_news,career).",
     )
     p.add_argument("--verbose", action="store_true", help="Enable verbose agent logs.")
+    p.add_argument("--run-tag", default="", help="Optional suffix for session filename (e.g. 'manual1'). Prevents overwriting the standard daily session.")
     return p.parse_args(argv)
 
 
@@ -529,6 +530,7 @@ def main(argv: list[str] | None = None) -> int:
         cfg = Config.from_env(
             dry_run=args.dry_run,
             run_date=args.date,
+            run_tag=args.run_tag,
             verbose=args.verbose,
         )
     except MissingSecret as e:

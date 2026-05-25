@@ -61,10 +61,11 @@ def save_session(session: dict[str, Any], cfg: Config) -> Path:
     apply_field_caps(session)
     SessionModel.model_validate(session)
 
+    tag = f"-{cfg.run_tag}" if cfg.run_tag else ""
     local_name = (
-        f"session-{cfg.run_date.isoformat()}.json"
+        f"session-{cfg.run_date.isoformat()}{tag}.json"
         if not cfg.dry_run
-        else f"session-{cfg.run_date.isoformat()}.local.json"
+        else f"session-{cfg.run_date.isoformat()}{tag}.local.json"
     )
     path = cfg.sessions_dir / local_name
     _write_local(path, session)
@@ -99,7 +100,7 @@ def _commit_to_github(path: Path, cfg: Config) -> None:
 
         content_b64 = base64.b64encode(path.read_bytes()).decode("ascii")
         payload: dict[str, Any] = {
-            "message": f"jeeves research {cfg.run_date.isoformat()}",
+            "message": f"jeeves research {cfg.run_date.isoformat()}{'-' + cfg.run_tag if cfg.run_tag else ''}",
             "content": content_b64,
             "branch": _current_branch(cfg),
         }

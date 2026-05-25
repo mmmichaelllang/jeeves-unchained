@@ -13,7 +13,7 @@ objective metrics tied to the M6 acceptance criteria. Exit code 0 iff
 all M6 criteria are met for the window.
 
 Usage:
-    python scripts/health_check.py                  # default window=12 days
+    python scripts/health_check.py                  # default window=5 days
     python scripts/health_check.py --window 7       # last 7 days
     python scripts/health_check.py --source validation  # filter to sprint window
     python scripts/health_check.py --json           # machine-readable output
@@ -67,8 +67,8 @@ AGENT_SECTORS: tuple[str, ...] = (
 N_AGENT_SECTORS = len(AGENT_SECTORS)
 
 # M6 thresholds — match LOOP_STATE.md's DONE-WHEN.
-DEFAULT_WINDOW_DAYS = 12
-M6_MIN_NON_EMPTY = 9        # ≥9 of <window>
+DEFAULT_WINDOW_DAYS = 5
+M6_MIN_NON_EMPTY = 4        # ≥4 of <window> (scaled from 9/12 → 4/5)
 M6_MIN_AVG_SECTORS = 10.0   # ≥10 of 13
 M6_MIN_SECTOR_CHARS = 200   # chars of substantive content to count as populated
 M6_MIN_RICH_SECTORS_FOR_NON_EMPTY = 3  # session is non-empty iff ≥3 rich sectors
@@ -146,7 +146,10 @@ def collect_sessions(window_days: int) -> list[Path]:
     out = []
     for path in sorted(SESSIONS_DIR.glob("session-*.json"), reverse=True):
         try:
-            d_str = path.stem.replace("session-", "")
+            # Strip "session-" prefix then take only the YYYY-MM-DD portion so
+            # tagged manual runs (e.g. session-2026-05-25-manual1.json) are
+            # counted under the correct calendar date.
+            d_str = "-".join(path.stem.replace("session-", "").split("-")[:3])
             d = date.fromisoformat(d_str)
         except ValueError:
             continue

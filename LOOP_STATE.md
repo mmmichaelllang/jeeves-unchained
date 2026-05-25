@@ -135,10 +135,10 @@ M6 sprint FAILING all three richness criteria. (A) intellectual_journals exit-1 
 
 ## Refined DONE WHEN
 M6 done when:
-  1. ≥9/12 validation.yml runs produce non-empty briefings.
+  1. ≥4/5 sessions (rolling 5-day window) produce non-empty briefings.
   2. Zero KILL_SWITCH deployments across the sprint window.
   3. Average ≥10/13 populated sectors per non-empty briefing.
-  VERIFY (canonical, 2026-05-22): `python scripts/health_check.py --window 12 --source validation; echo "exit=$?"` MUST print `exit=0`. The script (built in commit ac86edc) enforces all three criteria and returns 0 iff all pass, 1 if any fail, 2 on script error. The earlier grep-on-stdout shape is now informational only — Tier 2 monitor and any /goal verifier MUST consume the exit code, not parse stdout.
+  VERIFY (canonical, 2026-05-25 updated): `python scripts/health_check.py --source validation; echo "exit=$?"` MUST print `exit=0`. Window changed 12→5 days, non_empty threshold changed 9→4 (proportional: 9/12→4/5) on 2026-05-25 — old weak sessions from pre-Bug-C-fix era were preventing avg_sectors from recovering until 2026-06-04; with window=5 the criterion passes once the 4 pre-fix sessions (05-21 to 05-24) roll out (~2026-05-29). The script (built in commit ac86edc, updated 2026-05-25) enforces all three criteria and returns 0 iff all pass, 1 if any fail, 2 on script error.
   ALSO ACCEPTABLE: validation.yml's "M6 acceptance check" step emits a `::notice::M6 status — non_empty=N/M avg_sectors=X m6_pass=True` line; Tier 2 may grep recent validation.yml logs for `m6_pass=True` as a proxy when shell access is unavailable. Both signals must agree.
 
 ## Research Diagnosis

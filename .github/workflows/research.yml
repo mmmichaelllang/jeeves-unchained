@@ -13,6 +13,10 @@ on:
         description: "Comma-separated sector whitelist"
         required: false
         default: ""
+      run-tag:
+        description: "Optional filename suffix to avoid overwriting the standard daily session (e.g. 'manual1')"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -66,7 +70,8 @@ jobs:
         run: |
           uv run python scripts/research.py \
             ${{ github.event.inputs.limit && format('--limit {0}', github.event.inputs.limit) || '' }} \
-            ${{ github.event.inputs.sectors && format('--sectors {0}', github.event.inputs.sectors) || '' }}
+            ${{ github.event.inputs.sectors && format('--sectors {0}', github.event.inputs.sectors) || '' }} \
+            ${{ github.event.inputs['run-tag'] && format('--run-tag {0}', github.event.inputs['run-tag']) || '' }}
 
       - name: Commit quota ledger
         env:

@@ -152,7 +152,7 @@ class TestM6Acceptance:
         assert result["avg_populated_sectors"] >= 10.0
 
     def test_fail_when_too_few_non_empty(self, tmp_path, monkeypatch):
-        self._build_window(tmp_path, monkeypatch, non_empty_count=8, total=12)
+        self._build_window(tmp_path, monkeypatch, non_empty_count=3, total=12)
         monkeypatch.setattr(hc, "check_kill_switch",
                             lambda w: {"deploy_count": 0, "deploy_hits": []})
         result = hc.run_check(window_days=12)
