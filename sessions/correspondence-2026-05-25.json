@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained.\n- [escalation] mmmichaelllang: GitHub notification that the Loop Monitor workflow run failed on the main branch.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert about a stuck pattern with same_blocker_count=3 requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert from lang.mc@gmail.com about a stuck pattern requiring manual intervention.\n- [escalation] mmmichaelllang: GitHub notification that the Loop Monitor workflow run failed on the main branch.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert about a stuck pattern with same_blocker_count=3 requiring manual intervention.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run had unsuccessful jobs.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure in the Daily Pipeline with no auto-retry.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert from lang.mc@gmail.com about a stuck pattern requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert from lang.mc@gmail.com about a stuck pattern requiring manual intervention.",
+  "text": "- [escalation] Mrs. Lang: Loop-monitor alert from priority contact indicating a stuck pattern requiring manual intervention.\n- [escalation] Mrs. Lang: Daily correspondence summary flagging the loop-monitor alert as the most pressing matter.\n- [escalation] Mrs. Lang: Daily correspondence summary noting the loop-monitor alert requiring manual intervention.\n- [escalation] Mrs. Lang: Loop-monitor alert from priority contact about a stuck pattern requiring manual intervention.\n- [escalation] Mrs. Lang: Daily correspondence summary flagging an unresolved loop-monitor alert from earlier in the morning.\n- [escalation] Mrs. Lang: Loop-monitor alert from priority contact indicating a stuck pattern requiring manual intervention.\n- [escalation] Mrs. Lang: Jeeves pipeline alert from priority contact indicating a permanent failure with no auto-retry.\n- [escalation] Mrs. Lang: Daily correspondence summary flagging the loop-monitor alert requiring manual intervention.\n- [escalation] Mrs. Lang: Daily correspondence summary noting the loop-monitor alert requiring manual intervention.\n- [escalation] mmmichaelllang: GitHub notification that Loop Monitor workflow failed in jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.",
   "counts": {
     "reply_needed": 0,
     "decision_required": 0,
     "scheduling": 0,
-    "follow_up": 0,
-    "escalation": 36,
+    "follow_up": 1,
+    "escalation": 35,
     "no_action": 14
   }
 }
