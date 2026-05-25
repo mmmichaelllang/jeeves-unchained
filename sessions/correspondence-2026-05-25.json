@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] Mrs. Lang: Loop-monitor alert from priority contact indicating a stuck pattern requiring manual intervention.\n- [escalation] Mrs. Lang: Daily correspondence summary flagging the loop-monitor alert as the most pressing matter.\n- [escalation] Mrs. Lang: Daily correspondence summary noting the loop-monitor alert requiring manual intervention.\n- [escalation] Mrs. Lang: Loop-monitor alert from priority contact about a stuck pattern requiring manual intervention.\n- [escalation] Mrs. Lang: Daily correspondence summary flagging an unresolved loop-monitor alert from earlier in the morning.\n- [escalation] Mrs. Lang: Loop-monitor alert from priority contact indicating a stuck pattern requiring manual intervention.\n- [escalation] Mrs. Lang: Jeeves pipeline alert from priority contact indicating a permanent failure with no auto-retry.\n- [escalation] Mrs. Lang: Daily correspondence summary flagging the loop-monitor alert requiring manual intervention.\n- [escalation] Mrs. Lang: Daily correspondence summary noting the loop-monitor alert requiring manual intervention.\n- [escalation] mmmichaelllang: GitHub notification that Loop Monitor workflow failed in jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating stuck pattern requiring manual intervention in jeeves-unchained adaptive-loop.",
+  "text": "- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting the loop-monitor alert as the most pressing matter.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting the loop-monitor alert as the most pressing matter.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting the loop-monitor alert as the most pressing matter.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting the loop-monitor alert as the most pressing matter.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating a permanent failure with transient failure marker in the Daily Pipeline.",
   "counts": {
     "reply_needed": 0,
     "decision_required": 0,
     "scheduling": 0,
-    "follow_up": 1,
-    "escalation": 35,
-    "no_action": 14
+    "follow_up": 0,
+    "escalation": 17,
+    "no_action": 18
   }
 }
