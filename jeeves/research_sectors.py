@@ -866,117 +866,6 @@ class _ParseFailed:
         return f"_ParseFailed(raw_len={len(self.raw)})"
 
 
-# NIM stream-drop / tool-call-leak markers that occasionally land inside
-# `findings` strings when the streaming response is truncated mid tool-call.
-# Sprint-19 hardening: truncate at the first match before _parse_sector_output
-# returns so the corrupt suffix never reaches the write phase.
-#
-# Two-tier detection:
-#   * literal markers — explicit tool-call delimiters (NIM Hermes-style).
-#   * regex markers   — catch partial-word merges produced by streaming drops
-#     (e.g. ``...pieces thatily_extract:5`` from the 2026-05-04 corruption).
-_NIM_TOOL_CALL_MARKERS: tuple[str, ...] = (
-    "<|tool_call_argument_begin|>",
-    "<|tool_call_argument_end|>",
-    "<|tool_call",
-    "<|tool ",
-    "functions.tavily_extract:",
-    "functions.tavily_search:",
-    "functions.serper_search:",
-    "functions.exa_search:",
-    "functions.gemini_grounded",
-    "functions.fetch_article_text",
-    "functions.playwright_extract",
-    "functions.tinyfish_extract",
-    "functions.vertex_grounded",
-)
-
-# Bare tool-name regex — catches ``tavily_extract:``, ``...thatily_extract:5``
-# (streaming drop ate the leading consonants), ``functions.tavily_extract``,
-# and ``<|tool…``. The suffix ``_(extract|search|grounded|synthesize)`` is
-# unlikely in normal prose but a reliable fingerprint of leaked tool-call
-# JSON.
-_NIM_TOOL_CALL_REGEX = re.compile(
-    r"\w*_(?:extract|search|grounded|synthesize)\s*[:=]"
-    r"|functions\.[a-z_]+\s*[:=]?"
-    r"|<\|tool",
-    re.IGNORECASE,
-)
-
-
-def _strip_tool_call_markup(text: str) -> str:
-    """Truncate at the first NIM tool-call leak marker; preserve clean prefix."""
-    if not isinstance(text, str) or not text:
-        return text
-    earliest = -1
-    for marker in _NIM_TOOL_CALL_MARKERS:
-        idx = text.find(marker)
-        if idx != -1 and (earliest == -1 or idx < earliest):
-            earliest = idx
-    m = _NIM_TOOL_CALL_REGEX.search(text)
-    if m is not None and (earliest == -1 or m.start() < earliest):
-        earliest = m.start()
-    if earliest == -1:
-        return text
-    cleaned = text[:earliest].rstrip()
-    # Don't return a sentence-fragment ending mid-clause — drop a trailing
-    # incomplete final sentence if we cut mid-stream.
-    if cleaned and cleaned[-1] not in ".!?\"'”’":
-        cut = max(
-            cleaned.rfind("."),
-            cleaned.rfind("!"),
-            cleaned.rfind("?"),
-        )
-        if cut > 50:  # keep at least one full prior sentence
-            cleaned = cleaned[: cut + 1]
-    return cleaned
-
-
-def _sanitise_findings_markup(parsed: Any, spec: SectorSpec) -> Any:
-    """Scrub NIM tool-call leak from ``findings`` strings.
-
-    Only items whose findings were ACTUALLY modified (i.e. contained tool-call
-    markup that got stripped) are subject to the post-strip 20-char quality
-    floor — items with naturally-short findings are left to the existing
-    list-shape quality filter so behaviour stays additive.
-    """
-    def _scrub_dict(d: dict) -> tuple[dict, bool]:
-        modified = False
-        if isinstance(d.get("findings"), str):
-            cleaned = _strip_tool_call_markup(d["findings"])
-            if cleaned != d["findings"]:
-                modified = True
-                log.warning(
-                    "sector %s: stripped NIM tool-call markup from findings (%d → %d chars)",
-                    spec.name, len(d["findings"]), len(cleaned),
-                )
-                d["findings"] = cleaned
-        return d, modified
-
-    if isinstance(parsed, list):
-        scrubbed: list = []
-        for item in parsed:
-            if isinstance(item, dict):
-                item, modified = _scrub_dict(item)
-                if (
-                    modified
-                    and isinstance(item.get("findings"), str)
-                    and len(item["findings"].strip()) < 20
-                ):
-                    log.warning(
-                        "sector %s: dropping item — findings collapsed below "
-                        "20 chars after tool-call markup strip.",
-                        spec.name,
-                    )
-                    continue
-            scrubbed.append(item)
-        return scrubbed
-    if isinstance(parsed, dict):
-        scrubbed_dict, _ = _scrub_dict(parsed)
-        return scrubbed_dict
-    return parsed
-
-
 def _parse_sector_output(raw: str, spec: SectorSpec) -> Any:
     """Coerce the agent's final text into the sector-shape value.
 
@@ -1067,14 +956,6 @@ def _parse_sector_output(raw: str, spec: SectorSpec) -> Any:
         for entry in parsed:
             if isinstance(entry.get("text"), str) and len(entry["text"]) > 500:
                 entry["text"] = entry["text"][:500]
-
-    # Sprint-19: sanitise NIM tool-call markup leaking into prose. When NIM's
-    # streaming output is truncated mid tool-call (e.g. ``functions.tavily_extract:5
-    # <|tool_call_argument_begin|>{...``) the partial markup ends up inside a
-    # `findings` string and ships verbatim into the briefing. Detect and
-    # truncate at the first marker, then drop any item whose findings collapses
-    # below 20 chars after sanitisation.
-    parsed = _sanitise_findings_markup(parsed, spec)
 
     # For list sectors, drop any item that carries a "urls" key but has an
     # empty list — that is the fingerprint of Kimi answering from training
@@ -1552,32 +1433,6 @@ def _build_openrouter_llm(max_tokens: int = 8192, model: str | None = None):
 # or fetch_article_text) — skip the quota-increment check for these.
 _NO_QUOTA_CHECK = frozenset({"newyorker"})
 
-# Fallback exa queries for deep sectors when the quota guard fires (Kimi answered
-# from training data without calling any search tool).
-_DEEP_FALLBACK_QUERIES: dict[str, str] = {
-    "triadic_ontology": "triadic ontology relational metaphysics 2025 2026",
-    "ai_systems": "multi-agent AI research autonomous pipeline reasoning model 2026",
-    "uap": "UAP disclosure congressional hearing non-human intelligence 2026",
-    # 2026-05-10: intellectual_journals leaked the same 3 sticky URLs (Champy/
-    # Proust, Irving/republican-heritage, Popova/Sacks) for a week. Forced-
-    # retry path now applies to this sector too (see retry_when_all_overlap
-    # logic below). Query selection biases away from the long-tail aeon /
-    # marginalian essays that Kimi memorises.
-    "intellectual_journals": (
-        "NYRB LRB long-form essay this week 2026 -republican -proust "
-        "-sacks-perception"
-    ),
-}
-
-# Sectors that should ALSO force-retry when the quota guard passes BUT the
-# parsed URLs overlap heavily with prior_urls. Different failure mode from
-# the quota-bypass: tools WERE called, but the model picked URLs it has
-# memorised that happen to be in prior_urls.
-_FORCE_RETRY_ON_OVERLAP: frozenset[str] = frozenset({"intellectual_journals"})
-# Threshold — when this fraction or more of the parsed URLs are in prior_urls,
-# treat as a sticky-URL failure and force-retry.
-_OVERLAP_RETRY_THRESHOLD = 0.5
-
 # ---------------------------------------------------------------------------
 # M2 — Crawl4AI research path (JEEVES_USE_CRAWL4AI_RESEARCH=1)
 # ---------------------------------------------------------------------------
@@ -1600,494 +1455,6 @@ _SECTOR_SEARCH_QUERIES: dict[str, str] = {
     "family": "family events kids activities Edmonds Seattle this week",
     "wearable_ai": "wearable AI technology news 2026",
 }
-
-
-# 2026-05-10 (PR #113 follow-up). Host-authority table for the
-# intellectual_journals sticky-URL retry adoption gate. Higher = more
-# trusted long-form publication; default 0.4 for unknown hosts. Used to
-# prevent adopting a retry that swaps three sticky high-quality URLs
-# (NYRB, Aeon, Marginalian) for four blogspam URLs.
-_INTELLECTUAL_JOURNAL_HOST_SCORES: dict[str, float] = {
-    "nybooks.com": 0.92, "www.nybooks.com": 0.92,
-    "lrb.co.uk": 0.92, "www.lrb.co.uk": 0.92,
-    "aeon.co": 0.88, "www.aeon.co": 0.88,
-    "themarginalian.org": 0.85, "www.themarginalian.org": 0.85,
-    "harpers.org": 0.88, "www.harpers.org": 0.88,
-    "newyorker.com": 0.85, "www.newyorker.com": 0.85,
-    "propublica.org": 0.85, "www.propublica.org": 0.85,
-    "theintercept.com": 0.82, "www.theintercept.com": 0.82,
-    "jacobin.org": 0.78, "www.jacobin.org": 0.78,
-    "jacobinmag.com": 0.78, "www.jacobinmag.com": 0.78,
-    "jewishcurrents.org": 0.78, "www.jewishcurrents.org": 0.78,
-    "nplusonemag.com": 0.85, "www.nplusonemag.com": 0.85,
-    "dissentmagazine.org": 0.78, "www.dissentmagazine.org": 0.78,
-    "thebaffler.com": 0.78, "www.thebaffler.com": 0.78,
-    "bostonreview.net": 0.78, "www.bostonreview.net": 0.78,
-    "nybooks.org": 0.92,  # alias seen in some redirect URLs
-    "scientificamerican.com": 0.72,
-    "www.scientificamerican.com": 0.72,
-    "bigthink.com": 0.65, "www.bigthink.com": 0.65,
-    "kottke.org": 0.7,
-    "tabletmag.com": 0.7, "www.tabletmag.com": 0.7,
-    # Mass-market quality (lower than literary journals but still substantive)
-    "theatlantic.com": 0.7, "www.theatlantic.com": 0.7,
-    "newrepublic.com": 0.7, "www.newrepublic.com": 0.7,
-    "newstatesman.com": 0.7, "www.newstatesman.com": 0.7,
-}
-# Default for hosts not in the table — generic blog/unknown.
-_INTELLECTUAL_JOURNAL_DEFAULT_SCORE: float = 0.4
-
-
-# 2026-05-10 PR #113 follow-up — LLM-judge replaces deterministic table.
-# Per-URL cache so the judge never gets called twice for the same URL in
-# the same process. Keyed by URL string. Reset on import (one cache per
-# Python process; the daily pipeline is a fresh process).
-_IJ_LLM_SCORE_CACHE: dict[str, float] = {}
-
-# OpenRouter free-tier judge prompt. We deliberately don't require JSON —
-# free-tier models are flaky on JSON; we extract a number from the response.
-_IJ_JUDGE_SYSTEM = (
-    "You score how well a candidate URL fits the editorial brief for the "
-    "INTELLECTUAL JOURNALS section of a daily morning briefing. The brief "
-    "wants substantive long-form essay content from serious publications "
-    "(NYRB, LRB, Aeon, The New Yorker long-form, Harpers, Marginalian, "
-    "ProPublica, Intercept, Jacobin, Jewish Currents, Boston Review, "
-    "n+1, The Baffler, Dissent, Lapham's Quarterly, Granta, similar). "
-    "Output ONLY a single decimal number between 0.0 and 1.0 — nothing "
-    "else. No explanation, no JSON, no prose. Examples:\n"
-    "  - NYRB long-form essay → 0.92\n"
-    "  - Aeon essay on philosophy → 0.88\n"
-    "  - Harpers feature → 0.88\n"
-    "  - serious blog post on Substack → 0.55\n"
-    "  - SEO content-farm article → 0.20\n"
-    "  - homepage of any publication → 0.10\n"
-    "  - tag/category index page → 0.15\n"
-    "  - off-topic news article (sports/celebrity/local) → 0.30\n"
-    "Return only the number."
-)
-
-
-def _llm_score_intellectual_journal_url(
-    url: str, finding: str, openrouter_api_key: str,
-) -> float | None:
-    """Ask an OpenRouter free-tier model to rate this URL's topical fit.
-
-    Returns score in [0, 1] on success; None on any failure (LLM key
-    absent, HTTP error, model returned non-numeric, etc.). Caller must
-    fall back to the deterministic host-authority table on None.
-
-    Per-URL cache so we don't double-spend on the same URL in one run.
-    """
-    if not url or not openrouter_api_key:
-        return None
-    if url in _IJ_LLM_SCORE_CACHE:
-        return _IJ_LLM_SCORE_CACHE[url]
-    try:
-        from openai import OpenAI
-    except ImportError:
-        return None
-    try:
-        from jeeves.audit_models import resolve_audit_models
-    except Exception:
-        # audit_models may not be importable in some smoke contexts;
-        # fall back to a small built-in chain.
-        def resolve_audit_models() -> tuple[str, ...]:
-            return (
-                "qwen/qwen3-next-80b-a3b-instruct:free",
-                "meta-llama/llama-3.3-70b-instruct:free",
-            )
-
-    client = None
-    try:
-        client = OpenAI(
-            api_key=openrouter_api_key,
-            base_url="https://openrouter.ai/api/v1",
-            timeout=30.0,
-        )
-    except Exception as exc:
-        log.debug("IJ judge: client init failed (%s)", exc)
-        return None
-
-    finding_excerpt = (finding or "").strip()
-    if len(finding_excerpt) > 800:
-        finding_excerpt = finding_excerpt[:800].rstrip() + " […]"
-    user_msg = (
-        f"URL: {url}\n"
-        f"Finding excerpt: {finding_excerpt or '(none provided)'}\n"
-        f"Score (0.0-1.0, just the number):"
-    )
-    import re as _re
-    for model_id in resolve_audit_models():
-        try:
-            resp = client.chat.completions.create(
-                model=model_id,
-                messages=[
-                    {"role": "system", "content": _IJ_JUDGE_SYSTEM},
-                    {"role": "user", "content": user_msg},
-                ],
-                max_tokens=16,
-                temperature=0.0,
-            )
-            text = (resp.choices[0].message.content or "").strip()
-        except Exception as exc:
-            log.debug("IJ judge [%s] failed: %s", model_id, exc)
-            continue
-        # Extract the first decimal in [0, 1].
-        m = _re.search(r"\b([01](?:\.\d+)?|0?\.\d+)\b", text)
-        if not m:
-            log.debug("IJ judge [%s] returned non-numeric: %r", model_id, text[:60])
-            continue
-        try:
-            score = float(m.group(1))
-        except ValueError:
-            continue
-        score = max(0.0, min(1.0, score))
-        _IJ_LLM_SCORE_CACHE[url] = score
-        log.info("IJ judge [%s] %s -> %.2f", model_id, url, score)
-        return score
-    log.warning("IJ judge: all models exhausted for %s", url)
-    return None
-
-
-def _score_intellectual_journals_url(
-    url: str, finding: str = "", cfg: Config | None = None,
-) -> float:
-    """Quality score for an intellectual_journals retry URL.
-
-    PRIMARY: LLM-judge — reads URL + associated finding excerpt, rates 0-1.
-    FALLBACK: deterministic host-authority + path-quality table.
-
-    The LLM judge generalises beyond the hand-curated host table —
-    catches new high-authority outlets (Granta, Lapham's Quarterly,
-    Boston Review specials) without manual upkeep, and catches
-    blogspam on otherwise-trusted hosts (NYRB tag pages etc.).
-
-    Falls back deterministically on any LLM failure so hermetic tests
-    + LLM outages never break the adoption gate.
-    """
-    if not isinstance(url, str) or not url.startswith(("http://", "https://")):
-        return 0.0
-    # LLM judge first — only when cfg + key are available. The free-tier
-    # call is small (16 tokens out, single number) so per-PR cost is
-    # bounded by the IJ retry frequency × URLs-per-retry × cache.
-    if cfg is not None:
-        api_key = getattr(cfg, "openrouter_api_key", "") or ""
-        if api_key:
-            llm = _llm_score_intellectual_journal_url(url, finding, api_key)
-            if llm is not None:
-                return llm
-    # Deterministic fallback — host table + path penalties.
-    from urllib.parse import urlparse
-    parsed = urlparse(url)
-    host = parsed.netloc.lower()
-    base = _INTELLECTUAL_JOURNAL_HOST_SCORES.get(
-        host, _INTELLECTUAL_JOURNAL_DEFAULT_SCORE
-    )
-    path = parsed.path.lower()
-    if path in ("", "/"):
-        base -= 0.4
-    for marker in ("/tag/", "/tags/", "/category/", "/categories/",
-                   "/topic/", "/topics/", "/search", "/page/", "/issue/"):
-        if marker in path:
-            base -= 0.25
-            break
-    import re as _re
-    if _re.search(r"/20\d{2}/(0?[1-9]|1[0-2])/", path):
-        base += 0.05
-    return max(0.0, min(1.0, base))
-
-
-def _avg_score_intellectual_journals(
-    items: Iterable[Any], cfg: Config | None = None,
-) -> float:
-    """Mean URL-quality score for a set of intellectual_journals candidates.
-
-    Accepts either:
-      - iterable of URL strings (legacy / fallback)
-      - iterable of (url, finding) tuples (preferred — gives the LLM
-        judge content excerpts to score against)
-
-    Empty sequence → 0.0 (always loses the adoption gate).
-    """
-    items = list(items)
-    if not items:
-        return 0.0
-    total = 0.0
-    n = 0
-    for it in items:
-        if isinstance(it, tuple) and len(it) == 2:
-            url, finding = it
-        else:
-            url, finding = it, ""
-        total += _score_intellectual_journals_url(url, finding=finding, cfg=cfg)
-        n += 1
-    return total / n if n else 0.0
-
-
-def _extract_url_finding_pairs(parsed: Any) -> list[tuple[str, str]]:
-    """Walk a parsed sector result and return (url, finding) pairs.
-
-    For list-of-dicts shape (intellectual_journals), each item carries
-    its own findings prose; we pair each URL in the item with that text.
-    For other shapes (deep, dict-with-subkeys), findings may be None;
-    pairs default the finding to "".
-    """
-    pairs: list[tuple[str, str]] = []
-    seen: set[str] = set()
-
-    def _add(url: Any, finding: Any) -> None:
-        if not isinstance(url, str):
-            return
-        u = url.strip()
-        if not u.startswith(("http://", "https://")) or u in seen:
-            return
-        seen.add(u)
-        f = finding if isinstance(finding, str) else ""
-        pairs.append((u, f))
-
-    if isinstance(parsed, list):
-        for item in parsed:
-            if not isinstance(item, dict):
-                continue
-            finding = item.get("findings") or item.get("summary") or ""
-            for u in item.get("urls") or []:
-                _add(u, finding)
-            single = item.get("url")
-            if single:
-                _add(single, finding)
-    elif isinstance(parsed, dict):
-        # Deep-sector shape OR dict-with-subkeys.
-        finding = parsed.get("findings") or ""
-        for u in parsed.get("urls") or []:
-            _add(u, finding)
-        for v in parsed.values():
-            if isinstance(v, list):
-                for item in v:
-                    if isinstance(item, dict):
-                        sub_f = item.get("summary") or item.get("findings") or ""
-                        sub_u = item.get("url") or ""
-                        _add(sub_u, sub_f)
-    return pairs
-
-
-def _extract_urls_from_parsed(parsed: Any) -> list[str]:
-    """Pull every URL string out of a parsed sector result (any shape).
-
-    Used by the sticky-URL forced-retry detector. Handles list-of-dicts
-    (most sectors), dict-with-urls (deep sectors), and dict-with-subkeys
-    (english_lesson_plans, family). Returns deduplicated list preserving
-    insertion order.
-    """
-    seen: list[str] = []
-    seen_set: set[str] = set()
-
-    def _add(u: Any) -> None:
-        if not isinstance(u, str):
-            return
-        u = u.strip()
-        if u.startswith(("http://", "https://")) and u not in seen_set:
-            seen.append(u)
-            seen_set.add(u)
-
-    def _walk(node: Any) -> None:
-        if isinstance(node, dict):
-            for k, v in node.items():
-                if k in ("url", "link", "href"):
-                    _add(v)
-                elif k in ("urls", "links"):
-                    if isinstance(v, list):
-                        for u in v:
-                            _add(u)
-                    else:
-                        _walk(v)
-                else:
-                    _walk(v)
-        elif isinstance(node, list):
-            for item in node:
-                _walk(item)
-
-    _walk(parsed)
-    return seen
-
-
-async def _deep_sector_forced_retry(
-    cfg: Config,
-    spec: SectorSpec,
-    prior_urls_sample: list[str],
-    ledger,
-    sector_max_tokens: int,
-) -> Any:
-    """One forced-search retry for deep sectors where the quota guard fired.
-
-    Kimi sometimes answers triadic_ontology / ai_systems from training data
-    without calling any search tool, triggering the quota guard. This retry
-    uses a stripped-down system + user prompt that gives Kimi no room to
-    reason before calling exa_search, preventing the training-data bypass.
-    """
-    from llama_index.core.agent.workflow import FunctionAgent
-
-    from .llm import build_kimi_llm
-    from .tools import all_search_tools
-
-    query = _DEEP_FALLBACK_QUERIES.get(spec.name, f"{spec.name.replace('_', ' ')} research 2026")
-    forced_system = (
-        "Your ONLY job: call exa_search IMMEDIATELY, then return JSON. "
-        "No reasoning. No preamble. Your first response MUST be a tool call."
-    )
-    forced_user = (
-        f"Call exa_search right now with these exact parameters:\n"
-        f"  query='{query}'\n"
-        f"  search_type='auto'\n"
-        f"  num_results=3\n"
-        f"  text_max_chars=3000\n\n"
-        f"After you get results, return ONLY this JSON object (no markdown, no preamble):\n"
-        f'  {{"findings": "<single prose string, 300-600 chars summarising the results>", '
-        f'"urls": [<url strings from exa results>]}}'
-    )
-
-    pre_quota = _quota_snapshot(ledger)
-    tools_r = all_search_tools(cfg, ledger, set(prior_urls_sample))
-    llm_r = build_kimi_llm(cfg, max_tokens=sector_max_tokens)
-    agent_r = FunctionAgent(
-        tools=tools_r, llm=llm_r,
-        system_prompt=forced_system,
-        verbose=cfg.verbose,
-    )
-
-    log.info("sector %s: attempting forced-search retry.", spec.name)
-    try:
-        response_r = await agent_r.run(forced_user)
-    except Exception as exc:
-        log.warning("sector %s: forced retry crashed (%s); returning default", spec.name, exc)
-        return spec.default
-
-    if not _quota_increased(pre_quota, ledger):
-        log.warning(
-            "sector %s: forced retry also skipped search tools; returning default.", spec.name
-        )
-        return spec.default
-
-    raw_r = str(response_r)
-    result_r = _parse_sector_output(raw_r, spec)
-    if isinstance(result_r, _ParseFailed):
-        log.warning("sector %s: forced retry also produced malformed JSON; returning default.", spec.name)
-        return spec.default
-    log.info(
-        "sector %s: forced retry succeeded — parsed %s",
-        spec.name, type(result_r).__name__,
-    )
-    return result_r
-
-
-# JSON schema hints for the repair retry — tells Kimi the exact structure to emit
-# so it doesn't have to infer it from the malformed original output.
-_REPAIR_SHAPE_HINT: dict[str, str] = {
-    "list": '[{"category": "...", "source": "...", "findings": "...", "urls": ["..."]}]',
-    "enriched": '[{"title": "...", "url": "...", "source": "...", "text": "..."}]',
-    "dict": '{"findings": "...", "urls": ["..."]}',
-    "deep": '{"findings": "...", "urls": ["..."]}',
-    "newyorker": '{"available": true, "title": "...", "section": "...", "dek": "...", "byline": "...", "date": "...", "text": "...", "url": "...", "source": "The New Yorker"}',
-    "literary_pick": '{"available": true, "title": "...", "author": "...", "year": 2020, "summary": "...", "url": "..."}',
-}
-
-
-async def _json_repair_retry(
-    cfg: Config,
-    spec: SectorSpec,
-    failed: _ParseFailed,
-    ledger,
-    sector_max_tokens: int,
-) -> Any:
-    """Repair-retry for sectors where the main run produced malformed or missing JSON.
-
-    Two cases:
-    - *Malformed JSON* (``failed.raw`` is non-empty): send the raw output back
-      to a fresh minimal agent and ask it to reformat as valid JSON with no
-      additional reasoning.
-    - *Empty output* (``failed.raw`` is empty — e.g., enriched_articles where
-      all tool calls had None id/name so no JSON was ever emitted): ask Kimi to
-      produce the JSON directly from the sector instruction without any tool
-      calls.  This is a last-resort measure — the output won't have live search
-      data, but it is vastly preferable to an empty section in the briefing.
-
-    Uses a no-tools FunctionAgent (empty tool list) so Kimi is forced to
-    produce JSON immediately rather than looping through tool calls again.
-    """
-    from llama_index.core.agent.workflow import FunctionAgent
-
-    from .llm import build_kimi_llm
-
-    shape_hint = _REPAIR_SHAPE_HINT.get(spec.shape, '{"findings": "...", "urls": ["..."]}')
-    bracket_open = "[" if spec.shape in ("list", "enriched") else "{"
-    bracket_close = "]" if spec.shape in ("list", "enriched") else "}"
-
-    repair_system = (
-        "You are a JSON repair assistant. Your ONLY output must be valid JSON. "
-        "No markdown fences. No prose before or after. No explanations. "
-        f"The output must start with `{bracket_open}` and end with `{bracket_close}`."
-    )
-
-    if failed.raw.strip():
-        # Malformed JSON — ask Kimi to reformat what it already produced.
-        repair_user = (
-            f"The following text is the output of a research agent for sector '{spec.name}'.\n"
-            f"It contains useful findings but the JSON is malformed or improperly formatted.\n\n"
-            f"RAW OUTPUT (may be truncated or contain single-quoted keys):\n"
-            f"---\n{failed.raw[:4000]}\n---\n\n"
-            f"Reformat the content above as valid JSON matching this shape:\n{shape_hint}\n\n"
-            f"Rules:\n"
-            f"- Use double quotes for all keys and string values.\n"
-            f"- Extract as many items/findings as you can from the raw text above.\n"
-            f"- Do NOT add new findings — only reformat what is already there.\n"
-            f"- Output ONLY the JSON. Nothing else."
-        )
-        log.info("sector %s: repair retry — reformatting malformed output (%d chars).", spec.name, len(failed.raw))
-    else:
-        # Empty output — produce JSON directly from the sector instruction.
-        repair_user = (
-            f"The research agent for sector '{spec.name}' produced no output "
-            f"(all tool calls failed). You must produce the best possible JSON "
-            f"output for this sector based on your knowledge.\n\n"
-            f"SECTOR INSTRUCTION:\n{spec.instruction[:2000]}\n\n"
-            f"Return valid JSON matching this shape:\n{shape_hint}\n\n"
-            f"Rules:\n"
-            f"- Use double quotes for all keys and string values.\n"
-            f"- If you lack specific knowledge, use plausible placeholder text rather than empty strings.\n"
-            f"- Output ONLY the JSON. Nothing else."
-        )
-        log.info("sector %s: repair retry — generating JSON from empty output.", spec.name)
-
-    llm_r = build_kimi_llm(cfg, max_tokens=sector_max_tokens)
-    agent_r = FunctionAgent(
-        tools=[],
-        llm=llm_r,
-        system_prompt=repair_system,
-        verbose=cfg.verbose,
-    )
-
-    try:
-        response_r = await agent_r.run(repair_user)
-    except Exception as exc:
-        log.warning("sector %s: repair retry crashed (%s); returning default.", spec.name, exc)
-        return spec.default
-
-    raw_r = str(response_r)
-    if not raw_r or not raw_r.strip():
-        log.warning(
-            "sector %s: repair retry LLM returned empty/None response; returning default.",
-            spec.name,
-        )
-        return spec.default
-    result_r = _parse_sector_output(raw_r, spec)
-    if isinstance(result_r, _ParseFailed):
-        log.warning("sector %s: repair retry also produced malformed JSON; returning default.", spec.name)
-        return spec.default
-
-    log.info(
-        "sector %s: repair retry succeeded — parsed %s",
-        spec.name, type(result_r).__name__,
-    )
-    return result_r
 
 
 async def _run_crawl4ai_sector(
@@ -2306,7 +1673,6 @@ async def run_sector(
     quota_summary: str = "",
     story_continuity: str = "",
     prior_sources_by_host: dict[str, list[str]] | None = None,
-    use_crawl4ai_research: bool = False,
 ) -> Any:
     """Run one sector's agent and return the parsed sector-shape value."""
 
@@ -2323,7 +1689,6 @@ async def run_sector(
             quota_summary=quota_summary,
             story_continuity=story_continuity,
             prior_sources_by_host=prior_sources_by_host,
-            use_crawl4ai_research=use_crawl4ai_research,
         )
 
 
@@ -2337,18 +1702,11 @@ async def _run_sector_inner(
     quota_summary: str = "",
     story_continuity: str = "",
     prior_sources_by_host: dict[str, list[str]] | None = None,
-    use_crawl4ai_research: bool = False,
 ) -> Any:
     """Original run_sector body, now wrapped by the sector_context manager."""
 
     # Fast path: newyorker bypasses the LLM agent entirely.
     # fetch_talk_of_the_town is pure Python — no LLM needed or wanted.
-    # Routing it through Kimi introduces three hallucination vectors:
-    #   1. Kimi can skip the tool call and answer from training data
-    #      (quota guard doesn't fire — newyorker is in _NO_QUOTA_CHECK).
-    #   2. _json_repair_retry "empty output" path explicitly tells Kimi to
-    #      synthesise JSON from its own knowledge.
-    #   3. Kimi may call search tools instead of the TOTT tool and fabricate content.
     # Calling the function directly guarantees real fetched content or available=false.
     if spec.name == "newyorker":
         from .tools.talk_of_the_town import fetch_talk_of_the_town
@@ -2371,20 +1729,10 @@ async def _run_sector_inner(
         )
         return parsed
 
-    # Crawl4AI path: flag=1 AND sector in eligible set AND not a deep sector.
-    # Deep sectors (shape=="deep") always use FunctionAgent — they require
-    # multi-step tool calls and large context windows that the single-call
-    # synthesis path cannot replicate. JEEVES_USE_CRAWL4AI_RESEARCH is the
-    # feature flag; preserved for ≥30 days alongside the FunctionAgent path.
-    import os as _os
-
-    _kill_switch = _os.environ.get("JEEVES_REFACTOR_KILL_SWITCH", "0") == "1"
-    if (
-        use_crawl4ai_research
-        and not _kill_switch
-        and spec.name in _CRAWL4AI_ELIGIBLE_SECTORS
-        and spec.shape != "deep"
-    ):
+    # Crawl4AI path: always active for eligible (news_short) sectors.
+    # Deep sectors (shape=="deep") use FunctionAgent — they require
+    # multi-step tool calls and large context windows.
+    if spec.name in _CRAWL4AI_ELIGIBLE_SECTORS and spec.shape != "deep":
         return await _run_crawl4ai_sector(cfg, spec, prior_urls_sample, ledger)
 
     # Research now uses Cerebras as primary, OpenRouter as fallback.
@@ -2768,20 +2116,10 @@ async def _run_sector_inner(
         log.warning("sector %s: retry loop guard triggered; returning default.", spec.name)
         return spec.default
 
-    # Guard: if no search-provider quota moved, Kimi answered entirely from
-    # training data without calling any external tools.  For deep sectors AND
-    # sectors flagged for IJ-style forced retry, try one forced-search retry
-    # before giving up. For all others, return default so the write phase
-    # never sees hallucinated findings.
+    # Guard: if no search-provider quota moved, the agent answered from
+    # training data without calling any external tools — return default so
+    # the write phase never sees hallucinated findings.
     if spec.name not in _NO_QUOTA_CHECK and not _quota_increased(pre_quota, ledger):
-        if spec.shape == "deep" or spec.name in _FORCE_RETRY_ON_OVERLAP:
-            log.warning(
-                "sector %s: no search provider called — attempting forced-search retry.",
-                spec.name,
-            )
-            return await _deep_sector_forced_retry(
-                cfg, spec, prior_urls_sample, ledger, sector_max_tokens
-            )
         log.warning(
             "sector %s: no search provider was called — output likely hallucinated; "
             "returning default.",
@@ -2790,106 +2128,18 @@ async def _run_sector_inner(
         return spec.default
 
     if response is None:
-        log.warning("sector %s: agent.run() returned None; attempting repair retry.", spec.name)
-        return await _json_repair_retry(
-            cfg, spec, _ParseFailed(""), ledger, sector_max_tokens
-        )
+        log.warning("sector %s: agent.run() returned None; returning default.", spec.name)
+        return spec.default
 
     raw = str(response)
     parsed = _parse_sector_output(raw, spec)
 
-    # If the output was present but malformed (or completely absent due to
-    # degenerate None/None tool calls), attempt a repair retry before giving up.
-    # The repair agent has no tools — it either reformats the raw output as valid
-    # JSON or, when raw is empty, synthesises a best-effort JSON from its own
-    # knowledge.  Either outcome is vastly preferable to silently dropping the
-    # section from the briefing.
     if isinstance(parsed, _ParseFailed):
         log.warning(
-            "sector %s: triggering JSON repair retry (raw_len=%d).",
+            "sector %s: malformed JSON (raw_len=%d); returning default.",
             spec.name, len(parsed.raw),
         )
-        parsed = await _json_repair_retry(cfg, spec, parsed, ledger, sector_max_tokens)
-
-    # 2026-05-10 — sticky-URL forced retry. Some sectors (intellectual_journals
-    # observed) call search tools but return URLs the model has memorised that
-    # are already in prior_urls. The quota guard above passes (tools were
-    # called) so the leak goes through. Detect by computing overlap between
-    # parsed URLs and prior_urls; if at or above _OVERLAP_RETRY_THRESHOLD,
-    # force-retry with the deep-sector pattern.
-    if (
-        spec.name in _FORCE_RETRY_ON_OVERLAP
-        and not isinstance(parsed, _ParseFailed)
-    ):
-        parsed_urls = _extract_urls_from_parsed(parsed)
-        if parsed_urls:
-            prior_set = {u.strip() for u in prior_urls_sample if u}
-            overlap = sum(1 for u in parsed_urls if u in prior_set)
-            ratio = overlap / len(parsed_urls)
-            if ratio >= _OVERLAP_RETRY_THRESHOLD:
-                log.warning(
-                    "sector %s: %d/%d parsed URLs (%.0f%%) already in prior_urls "
-                    "— sticky-URL leak detected; attempting forced-retry.",
-                    spec.name, overlap, len(parsed_urls), ratio * 100,
-                )
-                retry_parsed = await _deep_sector_forced_retry(
-                    cfg, spec, prior_urls_sample, ledger, sector_max_tokens
-                )
-                # 2026-05-10 (PR #113 follow-up). Adoption gate now scores
-                # the URLs by host-authority + path-quality. Adopt the
-                # retry only when both:
-                #   (a) it has at least as many NEW (not-in-prior) URLs as
-                #       the original had sticky URLs, AND
-                #   (b) the average quality score of the retry's NEW URLs
-                #       is at least 0.05 above the original's sticky URLs.
-                # Prevents trading three high-authority sticky URLs (NYRB
-                # / Aeon / Marginalian) for four blogspam URLs.
-                retry_urls = _extract_urls_from_parsed(retry_parsed)
-                retry_new_urls = [u for u in retry_urls if u not in prior_set]
-                sticky_urls = [u for u in parsed_urls if u in prior_set]
-                if spec.name == "intellectual_journals":
-                    # 2026-05-10 PR #113 follow-up: score with LLM judge
-                    # using the FINDING text associated with each URL,
-                    # not just the URL string. Falls back to deterministic
-                    # host table when LLM unavailable.
-                    retry_pairs = _extract_url_finding_pairs(retry_parsed)
-                    sticky_pairs = _extract_url_finding_pairs(parsed)
-                    retry_new_pairs = [(u, f) for u, f in retry_pairs
-                                       if u not in prior_set]
-                    sticky_only_pairs = [(u, f) for u, f in sticky_pairs
-                                         if u in prior_set]
-                    new_avg = _avg_score_intellectual_journals(
-                        retry_new_pairs, cfg=cfg,
-                    )
-                    sticky_avg = _avg_score_intellectual_journals(
-                        sticky_only_pairs, cfg=cfg,
-                    )
-                else:
-                    # Non-IJ sectors fall back to count-based gate.
-                    new_avg = float(len(retry_new_urls))
-                    sticky_avg = float(len(sticky_urls))
-                quality_uplift = new_avg - sticky_avg
-                count_threshold = len(retry_new_urls) >= len(sticky_urls)
-                quality_threshold = (
-                    spec.name != "intellectual_journals"
-                    or quality_uplift >= 0.05
-                )
-                if retry_urls and count_threshold and quality_threshold:
-                    log.info(
-                        "sector %s: forced-retry adopted "
-                        "(new=%d, sticky=%d, new_avg=%.3f, sticky_avg=%.3f, uplift=%+.3f).",
-                        spec.name, len(retry_new_urls), len(sticky_urls),
-                        new_avg, sticky_avg, quality_uplift,
-                    )
-                    parsed = retry_parsed
-                else:
-                    log.warning(
-                        "sector %s: forced-retry rejected "
-                        "(new=%d, sticky=%d, new_avg=%.3f, sticky_avg=%.3f, "
-                        "uplift=%+.3f) — keeping original.",
-                        spec.name, len(retry_new_urls), len(sticky_urls),
-                        new_avg, sticky_avg, quality_uplift,
-                    )
+        return spec.default
 
     log.info(
         "sector %s: parsed %s (len=%s)",

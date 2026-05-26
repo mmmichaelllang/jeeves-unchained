@@ -561,42 +561,6 @@ def test_enriched_articles_instruction_warns_about_reuters():
     assert "401" in spec.instruction
 
 
-def test_deep_fallback_queries_cover_all_deep_sectors():
-    """Every deep-shaped sector must have a fallback query for forced-search retry.
-
-    2026-05-10: _DEEP_FALLBACK_QUERIES was extended to also serve
-    sectors in _FORCE_RETRY_ON_OVERLAP (intellectual_journals — shape
-    'list' but routed through the same forced-retry path because it
-    leaks sticky URLs). Contract is now:
-
-      - every deep sector → present in _DEEP_FALLBACK_QUERIES
-      - every key in _DEEP_FALLBACK_QUERIES that is NOT a deep sector
-        must live in _FORCE_RETRY_ON_OVERLAP
-
-    Old invariant was strict equality (set(keys) == deep_sectors). New
-    invariant relaxes it to: keys ⊇ deep_sectors AND extras ⊆
-    _FORCE_RETRY_ON_OVERLAP.
-    """
-    from jeeves.research_sectors import (
-        _DEEP_FALLBACK_QUERIES,
-        _FORCE_RETRY_ON_OVERLAP,
-    )
-
-    deep_sectors = {s.name for s in SECTOR_SPECS if s.shape == "deep"}
-    fallback_keys = set(_DEEP_FALLBACK_QUERIES.keys())
-
-    # Every deep sector covered.
-    missing = deep_sectors - fallback_keys
-    assert not missing, f"missing fallback queries for deep sectors: {missing}"
-
-    # Any extras must be in the overlap-retry allowlist (no orphaned keys).
-    extras = fallback_keys - deep_sectors
-    illegal_extras = extras - _FORCE_RETRY_ON_OVERLAP
-    assert not illegal_extras, (
-        f"_DEEP_FALLBACK_QUERIES has keys that are neither deep sectors "
-        f"nor in _FORCE_RETRY_ON_OVERLAP: {illegal_extras}"
-    )
-
 
 # ---------------------------------------------------------------------------
 # Deterministic JSON normalisation helpers
@@ -681,34 +645,6 @@ def test_parse_sector_output_repairs_truncated_enriched_array():
     assert len(out) == 1
     assert out[0]["title"] == "AI chip"
 
-
-def test_repair_shape_hint_newyorker_uses_correct_schema():
-    """_REPAIR_SHAPE_HINT for newyorker must include 'available' not 'findings'."""
-    from jeeves.research_sectors import _REPAIR_SHAPE_HINT
-
-    hint = _REPAIR_SHAPE_HINT["newyorker"]
-    assert "available" in hint, "repair hint must include 'available' field"
-    assert "findings" not in hint, "repair hint must NOT use generic 'findings' shape"
-    assert "title" in hint
-    assert "text" in hint
-    assert "url" in hint
-
-
-def test_repair_shape_hint_newyorker_is_valid_json_template():
-    """The newyorker repair hint must be valid JSON when placeholders are substituted."""
-    import json
-    from jeeves.research_sectors import _REPAIR_SHAPE_HINT
-
-    hint = _REPAIR_SHAPE_HINT["newyorker"]
-    # Replace the literal ... placeholders with actual values to check structural validity.
-    filled = (
-        hint
-        .replace('"..."', '"placeholder"')
-        .replace("true", "true")  # already valid JSON
-    )
-    obj = json.loads(filled)
-    assert isinstance(obj, dict)
-    assert "available" in obj
 
 
 def test_tavily_extract_coerces_string_url_to_list(monkeypatch):
@@ -961,7 +897,7 @@ async def test_run_sector_uses_crawl4ai_when_flag_set(monkeypatch):
     ledger._lock = threading.Lock()
 
     spec = next(s for s in rs.SECTOR_SPECS if s.name == "local_news")
-    await rs.run_sector(cfg, spec, [], ledger, use_crawl4ai_research=True)
+    await rs.run_sector(cfg, spec, [], ledger)
 
     assert crawl4ai_called == ["local_news"]
 
@@ -996,43 +932,11 @@ async def test_run_sector_skips_crawl4ai_for_deep_sectors(monkeypatch):
     ledger._lock = threading.Lock()
 
     spec = next(s for s in rs.SECTOR_SPECS if s.name == "triadic_ontology")
-    await rs.run_sector(cfg, spec, [], ledger, use_crawl4ai_research=True)
+    await rs.run_sector(cfg, spec, [], ledger)
 
     assert "triadic_ontology" not in crawl4ai_called
 
 
-async def test_run_sector_skips_crawl4ai_when_flag_false(monkeypatch):
-    """flag=False → crawl4ai path not taken even for eligible sectors."""
-    import jeeves.research_sectors as rs
-    from datetime import date
-    from jeeves.config import Config
-    from jeeves.tools.quota import QuotaLedger
-    import threading
-
-    crawl4ai_called: list[str] = []
-
-    async def _fake_crawl4ai(cfg, spec, prior, ledger):
-        crawl4ai_called.append(spec.name)
-        return spec.default
-
-    monkeypatch.setattr(rs, "_run_crawl4ai_sector", _fake_crawl4ai)
-    monkeypatch.setattr(rs, "_build_cerebras_llm", lambda max_tokens=8192: None)
-    monkeypatch.setattr(rs, "_build_openrouter_llm", lambda max_tokens=8192, model=None: None)
-
-    cfg = Config(
-        nvidia_api_key="", serper_api_key="", tavily_api_key="", exa_api_key="",
-        google_api_key="", groq_api_key="", gmail_app_password="",
-        gmail_oauth_token_json="", github_token="", github_repository="r/r",
-        run_date=date(2026, 5, 21),
-    )
-    ledger = QuotaLedger.__new__(QuotaLedger)
-    ledger._state = {"providers": {}}
-    ledger._lock = threading.Lock()
-
-    spec = next(s for s in rs.SECTOR_SPECS if s.name == "local_news")
-    await rs.run_sector(cfg, spec, [], ledger, use_crawl4ai_research=False)
-
-    assert "local_news" not in crawl4ai_called
 
 
 # ---------------------------------------------------------------------------

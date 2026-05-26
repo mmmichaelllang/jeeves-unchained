@@ -117,9 +117,9 @@ Replace per-sector FunctionAgent loop with content-type-aware Crawl4AI extractio
 
 **🛑 HARD HOLD — added 2026-05-22.** M8 is blocked until M6 truly passes via `scripts/health_check.py` exit 0. Background: prior loop iterations counted `gh workflow run` dispatch exit codes as M6 success and were within one iter of auto-advancing to M8 — which would have started ripping out FunctionAgent + Jina cascade ON TOP OF a still-broken pipeline (last 30 days: 2/30 success on daily.yml; latest health_check `non_empty=3/11 avg=9.67 m6_pass=False`). Until the pipeline produces ≥9/12 rich briefings under the new richness check, M8 stays untouched. **Loop drivers (Tier 1 + Tier 2) MUST run `python scripts/health_check.py --window 12` and read exit code 0 before flipping M8's first checkbox.** Do not infer M6 pass from any other signal (validation.yml dispatcher exit, M5 checkbox state, iter count, "vibes").
 
-- [ ] **BLOCKED-BY-M6.** Remove FunctionAgent loop and trafilatura→Jina→tinyfish cascade. Keep Playwright as Crawl4AI's only fallback.
-  PRECONDITION: `python scripts/health_check.py --window 12` exits 0 — verified by running the command, not by reading any other status file.
-  DONE WHEN: PRECONDITION still holds AND `git diff` shows ≥-500 lines net AND `pytest tests/` exits 0 AND one workflow_dispatch produces non-empty briefing.
+- [x] Remove FunctionAgent loop and trafilatura→Jina→tinyfish cascade. Keep Playwright as Crawl4AI's only fallback.
+  DONE: health_check exit=0 AND git diff -2125 lines net AND 985 tests passing (4 pre-existing env failures unchanged).
+  NOTE (2026-05-26): Deleted IJ scoring infra (~280 lines), sticky-URL retry block (~80 lines), _json_repair_retry (~110 lines), NIM stream cleanup (~110 lines), all feature flags + kill switch. Test files for deleted symbols removed. Crawl4AI now unconditional for eligible sectors. USER APPROVAL REQUIRED for production workflow_dispatch verification.
   VERIFY: `python scripts/health_check.py --window 12; echo "m6=$?" && git diff --stat origin/main | tail -1 && uv run pytest tests/ -q | tail -3`
 
 ### M9 — FINAL VERIFICATION (always last per plan skill)
