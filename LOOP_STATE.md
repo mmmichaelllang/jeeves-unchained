@@ -2,10 +2,10 @@
 _Auto-managed. Do not edit during a run._
 
 ## Last Updated
-2026-05-26T02:44:44Z (iter 22 — M6 VERIFY exit=1 temporal; avg=8.44/13 unchanged; same_blocker=4 → STOP)
+2026-05-26T03:13:37Z (iter 23 — M6 VERIFY exit=1 temporal; avg=8.44/13 unchanged; same_blocker=5 → STOP)
 
 ## Iteration
-22 (M6 validation sprint — avg_sectors=8.44/13 temporal blocker; same_blocker_count=4 → STOP)
+23 (M6 validation sprint — avg_sectors=8.44/13 temporal blocker; same_blocker_count=5 → STOP)
 
 ## Last Milestone
 M6 validation sprint monitor — sprint dispatcher 12/12 closed; richness criteria still failing.
@@ -67,7 +67,7 @@ TEMPORAL ANALYSIS (updated 2026-05-26T01:15Z):
 M6 avg_sectors=8.44/13 < 10 (temporal, improving). Pre-fix sessions 05-21 thru 05-24 (avg 4-6/13) still in window. Pipeline healthy: post-fix sessions 10-12/13 (05-25 daily+manual1+manual2, 05-26 daily 12/13+manual3). No code action available — wait ~2026-05-29.
 
 ## Same Blocker Count
-4  (reset: user override 2026-05-25; iter 13 = first iter on new baseline) → STOP threshold reached
+5  (reset: user override 2026-05-25; iter 13 = first iter on new baseline) → STOP threshold reached
 
 ## Refined DONE WHEN
 M6 done when:
@@ -175,4 +175,4 @@ M6 (Validation sprint)
 ## Cadence Hint (added 2026-05-21)
 Consider re-firing `/loop 30m` for short milestones (M4 model rotation, M5 kill switch — each ~20min of focused coding). Keep `/loop 60m` for longer milestones (M2 research integration, M3 fetch cascade — each ~1-2h). Goal: align loop wake cadence with iteration duration so cron fires shortly after the prior iteration completes, not while it's still running. M6 validation sprint is its own cadence (30min via validation.yml). User on Claude Max — cost not a constraint, optimize for wall-clock speed.
 | 21 | M6 validation sprint (5-day window) | FAILED (temporal) → STOP | No change from iter 20. avg=8.44/13 unchanged. same_blocker=3. ETA ~2026-05-29. |
-| 22 | M6 validation sprint (5-day window) | FAILED (temporal) → STOP | No change from iter 21. avg=8.44/13 unchanged. same_blocker=4. ETA ~2026-05-29. |
+| 22 | M6 validation sprint (5-day window) | FAILED (temporal) → STOP | No change from iter 21. avg=8.44/13 unchanged. same_blocker=4. ETA ~2026-05-29. || 23 | M6 validation sprint (5-day window) | FAILED (temporal) → STOP | No change from iter 22. avg=8.44/13 unchanged. same_blocker=5. ETA ~2026-05-29. |
