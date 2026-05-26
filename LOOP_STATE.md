@@ -2,13 +2,13 @@
 _Auto-managed. Do not edit during a run._
 
 ## Last Updated
-2026-05-26T08:00:00Z (iter 32 — M8 PRECONDITION GATE: health_check exit=1 avg=9.43; manual9 re-dispatched)
+2026-05-26T09:30:00Z (iter 33 — M8 PRECONDITION GATE: health_check exit=1 avg=9.78; manual13 dispatched solo)
 
 ## Iteration
-32 (M8 — Old-code retirement; PRECONDITION GATE blocking; avg=9.43/13 threshold ≥10)
+33 (M8 — Old-code retirement; PRECONDITION GATE blocking; avg=9.78/13 threshold ≥10)
 
 ## Last Milestone
-M8 PRECONDITION GATE: health_check --window 12 exit=1 (avg=9.43/13 < 10.0). Manual9 re-dispatched.
+M8 PRECONDITION GATE: health_check --window 12 exit=1 (avg=9.78/13 < 10.0). Manual13 dispatched solo.
 
 ## Last Outcome
 FAILED
@@ -64,10 +64,10 @@ TEMPORAL ANALYSIS (updated 2026-05-26T01:15Z):
 ```
 
 ## Last Blocker
-M8 PRECONDITION health_check --window 12 exit=1: avg=9.43/13 (threshold ≥10). Manual9-12 failed (concurrent Cerebras quota contention — 4 simultaneous runs). Manual8 landed 13/13. Manual9 re-dispatched solo. M2/M3 production verify flipped [x].
+M8 PRECONDITION health_check --window 12 exit=1: avg=9.78/13 (threshold ≥10). Manual9-12 landed (solo dispatches). 18/24 non-empty. Pre-fix sessions 05-21→05-24 (4-6/13) dragging avg. Need 2 more at ≥12 → manual13 dispatched (run 26439381732).
 
 ## Same Blocker Count
-1
+2
 
 ## Refined DONE WHEN
 M6 done when:
@@ -81,7 +81,7 @@ M6 done when:
 FREE_TIER_CAPACITY_CEILING (Cerebras + OR cannot deliver 70-200 agent calls/run; structural refactor required, not retries)
 
 ## Next Priority
-Wait for manual9 session to land. Run health_check --window 12. If avg still <10, dispatch manual10 solo (sequential only — concurrent runs fail). Expect avg≥10 after ~4 more sessions at ≥12/13.
+Wait for manual13 session (session-2026-05-26-manual13.json) to land. Run health_check --window 12. If avg still <10, dispatch manual14 solo. Math: need 2 more sessions at 12+: (176+24)/20=10.0 ≥ threshold.
 
 ## Active Branch
 main
@@ -139,5 +139,6 @@ M8 (Old-code retirement — PRECONDITION GATE)
 ## Cadence Hint (added 2026-05-21)
 Consider re-firing `/loop 30m` for short milestones (M4 model rotation, M5 kill switch — each ~20min of focused coding). Keep `/loop 60m` for longer milestones (M2 research integration, M3 fetch cascade — each ~1-2h). Goal: align loop wake cadence with iteration duration so cron fires shortly after the prior iteration completes, not while it's still running. M6 validation sprint is its own cadence (30min via validation.yml). User on Claude Max — cost not a constraint, optimize for wall-clock speed.
 | 32 | M8 PRECONDITION GATE | FAILED (temporal) | health_check --window 12 exit=1: avg=9.43/13 <10.0. Manual9-12 failed (concurrent Cerebras contention). Manual8=13/13. Manual9 re-dispatched solo. M2+M3 prod verify flipped [x]. |
+| 33 | M8 PRECONDITION GATE | FAILED (temporal) | health_check exit=1: avg=9.78/13. Manual9-12 all landed solo. 18/24 non-empty. Pre-fix sessions 05-21→05-24 dragging avg. Manual13 dispatched solo. Need 2 more sessions at ≥12. |
 | 21 | M6 validation sprint (5-day window) | FAILED (temporal) → STOP | No change from iter 20. avg=8.44/13 unchanged. same_blocker=3. ETA ~2026-05-29. |
 | 22 | M6 validation sprint (5-day window) | FAILED (temporal) → STOP | No change from iter 21. avg=8.44/13 unchanged. same_blocker=4. ETA ~2026-05-29. || 23 | M6 validation sprint (5-day window) | FAILED (temporal) → STOP | No change from iter 22. avg=8.44/13 unchanged. same_blocker=5. ETA ~2026-05-29. |
