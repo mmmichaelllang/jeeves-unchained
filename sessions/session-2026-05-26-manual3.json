@@ -1,0 +1,326 @@
+{
+  "date": "2026-05-26",
+  "status": "complete",
+  "dedup": {
+    "covered_urls": [
+      "https://applitrack.com/edmonds/onlineapp/default.aspx?Category=Administrator+-+School",
+      "https://applitrack.com/edmonds/onlineapp/default.aspx?Category=Certificated+Support+Staff",
+      "https://applitrack.com/edmonds/onlineapp/default.aspx?all=1",
+      "https://arxiv.org/pdf/2603.03233",
+      "https://arxiv.org/pdf/2603.28986",
+      "https://autismclassroomresources.com/classroom-token-system",
+      "https://bbc.com/news/articles/c1e22n55zn4o",
+      "https://bbc.com/news/articles/c809m7g29r7o",
+      "https://bbc.com/news/articles/cevpp983kmzo",
+      "https://bbc.com/news/articles/cewppdk1187o",
+      "https://bbc.com/news/articles/cglpp2yk336o",
+      "https://bbc.com/news/articles/cm2ppv1r3xzo",
+      "https://bbc.com/news/articles/cvgzzn4y1n8o",
+      "https://classpoint.io/blog/classroom-point-system",
+      "https://cnn.com/sport/fifa-world-cup",
+      "https://coherent-intelligence.uk/papers/trinitarian-standard-model.html",
+      "https://congress.gov/on-house-floor-today",
+      "https://edmondsbeacon.com",
+      "https://edmondswa.gov/government/communications/press_releases",
+      "https://exploreedmonds.com/events",
+      "https://facebook.com/nbcnightlynews/posts/the-pentagon-released-a-new-batch-of-declassified-ufo-files-following-president-/1344564300870874",
+      "https://facebook.com/newshour/posts/unexplained-sightings-have-appeared-in-our-skies-for-years-and-one-of-the-most-p/1453136603348248",
+      "https://forbes.com/sites/ronschmelzer/2026/01/08/ces-2026-makes-one-thing-clear-ais-next-interface-is-you",
+      "https://fox13seattle.com/tag/us/wa/snohomish-county/edmonds",
+      "https://groupon.com/local/edmonds-wa/kids-activities",
+      "https://knilt.arcc.albany.edu/Lesson_1:_Designing_an_Effective_Token_Economy_System",
+      "https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States",
+      "https://medium.com/@ayeshha2398/the-future-is-hands-free-my-top-ai-wearables-that-replaced-my-smartphone-in-2026-926eb1500cca",
+      "https://nbcnews.com/sports/soccer/messi-joins-high-profile-world-cup-injury-concerns-just-weeks-big-kick-rcna346790",
+      "https://nbcnews.com/world/iran/mexico-host-irans-world-cup-team-us-refusal-president-says-rcna346803",
+      "https://newyorker.com/magazine/2026/06/01/the-useless-beauty-of-christo-and-jeanne-claude",
+      "https://nicolettelesniak.com/blog/tokenboards",
+      "https://parentmap.com/calendar",
+      "https://philarchive.org/archive/ISATRO-4",
+      "https://philarchive.org/archive/PELTRG",
+      "https://philpapers.org/archive/BAIARC.pdf",
+      "https://publish.obsidian.md/taniynquest/The+Joy+of+Hot+Topic",
+      "https://sureprompts.com/blog/advanced-prompt-engineering-2026-claude-gpt5-gemini",
+      "https://thebookerprizes.com/the-booker-library/books/orbital",
+      "https://thesparklynotebook.com/large-group-project-series-end-of-year-digital-escape-room-project-for-middle-school-ela",
+      "https://uk.finance.yahoo.com/news/wearable-ai-devices-market-insights-093200955.html",
+      "https://youtube.com/watch?v=5I7MLAktoEI",
+      "https://youtube.com/watch?v=HFITi0ppeCc",
+      "https://youtube.com/watch?v=ZwCGDJdU4ro"
+    ],
+    "covered_headlines": [
+      "Relational Cosmos Requires | Christian God",
+      "Model Context Protocol | MCP",
+      "UAP | UFO",
+      "Admiraly Way: in Edmonds, near the Anthony's parking lot.",
+      "Edmonds Police: searching for suspects who assaulted, robbed two",
+      "The Edmonds City Council: has voted 5-2 to resume the City’s salary commiss",
+      "Edmonds police to arrest suspect in multistate human trafficking case",
+      "Edmonds City Council: approves ban on homeless camping",
+      "Edmonds School District",
+      "English Teacher",
+      "Administrator - School",
+      "Certificated Support Staff",
+      "Token Boards in the High School Classroom",
+      "Classroom Token System",
+      "How To Build A Classroom Point System That Motivates And Engages Students",
+      "Lesson 1: Designing an Effective Token Economy System",
+      "Large Group Project Series: End-of-Year Digital Escape Room Project for Middle School ELA",
+      "The Joy of Hot Topic",
+      "Seattle Choral Company | Seattle Pro Musica",
+      "Edmonds Library | Lynnwood Library",
+      "US: military launches new strikes on southern Iran, I",
+      "Netanyahu says Israel will intensify strikes against Hezbollah, and Russia threatens more Kyiv strikes",
+      "World Cup | US",
+      "Cambodia's former opposition leader receives royal pardon for 27-year sentence, and at least 19 people taken to hospital after 'strong smell' reported at Tokyo mall",
+      "New AI | AI",
+      "Qwen Glasses | Rokid AI Glasses Style",
+      "The Useless Beauty of Christo and Jeanne-Claude",
+      "Orbital"
+    ],
+    "today_headline_count": 28,
+    "cross_sector_dupes": [
+      "https://edmondsbeacon.com"
+    ]
+  },
+  "triadic_ontology": {
+    "findings": "A Relational Cosmos Requires the Christian God by Denis Bailey (March 2026) argues that a universe structured by relation, coherence, and emergent order requires an originating source capable of generating distinction without division, unity without collapse, and mediation without hierarchy. Bailey demonstrates that monadic frameworks lack internal differentiation and cannot ground relationality without contradiction, while dyadic cosmologies generate polarity but cannot sustain coherence. Only Christianity's doctrine of the Trinity presents a unified being whose internal relationality is irreducible, generative, and coherent. Reality Is Triune: A Metaphysical Argument for Agápē as First Principle by Mark Pelley (April 2026) advances a compact metaphysical system: being is relation; relation is agápē; agápē is triune. Pelley argues that determinate existence requires relation, coherent relation requires self-giving love, and such love requires a triune structure to sustain distinction, [TRUNCATED]",
+    "urls": [
+      "https://philpapers.org/archive/BAIARC.pdf",
+      "https://philarchive.org/archive/PELTRG",
+      "https://philarchive.org/archive/ISATRO-4",
+      "https://coherent-intelligence.uk/papers/trinitarian-standard-model.html"
+    ]
+  },
+  "ai_systems": {
+    "findings": "Recent advances in multi-agent research systems have led to the development of frameworks such as Mimosa, which leverages the Model Context Protocol (MCP) for dynamic tool discovery and generates workflow topologies via a meta-orchestrator. On ScienceAgentBench, Mimosa achieves a success rate of 43.1% with DeepSeek-V3.2, surpassing both single-agent baselines and static multi-agent configurations. Additionally, the Bayesian Adversarial Multi-agent Framework for AI for Science (AI4S) has been introduced, which employs three agents in a recursive loop that adversarially co-optimizes the generated solutions, the test cases used for evaluation, and the prompts driving generation. This process is governed by a non-LLM-based Bayesian updating rule, which systematically reduces evaluation uncertainty and mitigates the system’s dependence on any single LLM’s reliability. Furthermore, the Low-code Platform (LCP) empowers domain experts by translating high-level natural language prompts into exe [TRUNCATED]",
+    "urls": [
+      "https://arxiv.org/pdf/2603.28986",
+      "https://arxiv.org/pdf/2603.03233",
+      "https://sureprompts.com/blog/advanced-prompt-engineering-2026-claude-gpt5-gemini"
+    ]
+  },
+  "uap": {
+    "findings": "Recent developments in UAP disclosure and congressional hearings have revealed stunning claims of non-human intelligence and declassification of UFO files. The Pentagon has released a new batch of declassified UFO files, and a congressional hearing was held to discuss the transparency of UAP information. Whistleblowers have come forward with claims of crash retrievals and reverse engineering of UFO technology. While some have expressed skepticism, others believe that the existence of UFOs is one of the worst-kept secrets in American history. The Trump administration's actions have been seen as a step towards disclosure, and the public is eagerly awaiting more information.",
+    "urls": [
+      "https://www.youtube.com/watch?v=5I7MLAktoEI",
+      "https://www.facebook.com/nbcnightlynews/posts/the-pentagon-released-a-new-batch-of-declassified-ufo-files-following-president-/1344564300870874/",
+      "https://www.youtube.com/watch?v=HFITi0ppeCc",
+      "https://www.facebook.com/newshour/posts/unexplained-sightings-have-appeared-in-our-skies-for-years-and-one-of-the-most-p/1453136603348248/",
+      "https://www.congress.gov/on-house-floor-today"
+    ]
+  },
+  "weather": "I'm not able to execute the instructions as they require external searches and accesses to specific URLs which are not provided in the text. However, based on the extracted content, here is a plain-text string that covers conditions, precipitation, temps, and comfort for Edmonds, Washington:\n\n\"Current weather forecast for Edmonds, WA: Partly cloudy with a high temperature of mid-50s to low 60s, chance of afternoon drizzle, westerly winds 5-10 mph. For more detailed and up-to-date information, visit https://www.wunderground.com/forecast/us/wa/edmonds or https://forecast.weather.gov/zipcity.php?inputstring=Edmonds,WA&Go2=Go. Comfort level is moderate due to mild temperatures and precipitation chances.\"",
+  "local_news": [
+    {
+      "category": "public_safety",
+      "source": "https://www.edmondsbeacon.com/",
+      "findings": "One juvenile is in custody after an early morning shooting in the 400 block of Admiraly Way in Edmonds, near the Anthony's parking lot.",
+      "urls": [
+        "https://www.edmondsbeacon.com/"
+      ]
+    },
+    {
+      "category": "public_safety",
+      "source": "https://komonews.com/",
+      "findings": "Edmonds Police searching for suspects who assaulted, robbed two women walking on trail",
+      "urls": [
+        "https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "https://www.edmondsbeacon.com/",
+      "findings": "The Edmonds City Council has voted 5-2 to resume the City’s salary commission, ending a freeze put into place last December",
+      "urls": []
+    },
+    {
+      "category": "public_safety",
+      "source": "https://www.fox13seattle.com/",
+      "findings": "Edmonds police to arrest suspect in multistate human trafficking case",
+      "urls": [
+        "https://www.fox13seattle.com/tag/us/wa/snohomish-county/edmonds"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "https://edmondswa.gov/",
+      "findings": "Edmonds City Council approves ban on homeless camping",
+      "urls": [
+        "https://edmondswa.gov/government/communications/press_releases"
+      ]
+    }
+  ],
+  "career": {
+    "openings": [
+      {
+        "district": "Edmonds School District",
+        "role": "English Teacher",
+        "url": "https://www.applitrack.com/edmonds/onlineapp/default.aspx?all=1",
+        "summary": "Teaching English to high school students",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Edmonds School District",
+        "role": "Administrator - School",
+        "url": "https://www.applitrack.com/edmonds/onlineapp/default.aspx?Category=Administrator+-+School",
+        "summary": "Administrative role in a school setting",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Edmonds School District",
+        "role": "Certificated Support Staff",
+        "url": "https://www.applitrack.com/edmonds/onlineapp/default.aspx?Category=Certificated+Support+Staff",
+        "summary": "Support staff role in a school setting",
+        "deadline": null,
+        "salary_range": null
+      }
+    ],
+    "notes": "Job openings found on the Edmonds School District website and LinkedIn. Deadline and salary range not specified in the extracted content."
+  },
+  "english_lesson_plans": {
+    "classroom_ready": [
+      {
+        "title": "Token Boards in the High School Classroom",
+        "source": "Nicolette Lesniak",
+        "url": "https://www.nicolettelesniak.com/blog/tokenboards",
+        "grade_band": "High School",
+        "topic": "Classroom Management",
+        "summary": "Token boards are a visual reinforcement system that allows students to earn tokens for completing tasks or displaying appropriate behavior. This guide provides tips on how to implement a token board system in a high school classroom, including personalizing the reinforcement system, setting clear expectations, and fading support over time."
+      },
+      {
+        "title": "Classroom Token System",
+        "source": "Autism Classroom Resources",
+        "url": "https://autismclassroomresources.com/classroom-token-system/",
+        "grade_band": "Middle School",
+        "topic": "Classroom Management",
+        "summary": "A classroom token system is a flexible tool that helps track student behavior and performance through points. This post explains how to implement a token economy system based on ABA principles, including choosing and defining target behaviors, individualizing the system, and using positive reinforcers."
+      },
+      {
+        "title": "How To Build A Classroom Point System That Motivates And Engages Students",
+        "source": "ClassPoint",
+        "url": "https://www.classpoint.io/blog/classroom-point-system",
+        "grade_band": "Middle School",
+        "topic": "Classroom Management",
+        "summary": "A classroom point system is a flexible tool that helps track student behavior and performance through points. This guide provides tips on how to build a point system, including defining what behaviors to reward, setting up a system, and making it fair and effective."
+      },
+      {
+        "title": "Lesson 1: Designing an Effective Token Economy System",
+        "source": "KNILT",
+        "url": "https://knilt.arcc.albany.edu/Lesson_1:_Designing_an_Effective_Token_Economy_System",
+        "grade_band": "Middle School",
+        "topic": "Classroom Management",
+        "summary": "This lesson provides a comprehensive checklist on how to implement a token economy system, including conducting a needs assessment, generating a list of negative and desired behaviors, and creating an action plan."
+      },
+      {
+        "title": "Large Group Project Series: End-of-Year Digital Escape Room Project for Middle School ELA",
+        "source": "The Sparkly Notebook",
+        "url": "https://thesparklynotebook.com/large-group-project-series-end-of-year-digital-escape-room-project-for-middle-school-ela/",
+        "grade_band": "Middle School",
+        "topic": "English Language Arts",
+        "summary": "This project has students work in small groups to design their own digital escape room using Google Slides or PowerPoint, promoting teamwork, creativity, and problem-solving skills."
+      }
+    ],
+    "pedagogy_pieces": [
+      {
+        "title": "The Joy of Hot Topic",
+        "source": "Taniyn Quest",
+        "url": "https://publish.obsidian.md/taniynquest/The+Joy+of+Hot+Topic",
+        "summary": "This article discusses the importance of allowing students to express themselves through their clothing choices, using the example of a student who wore a Hot Topic shirt to school."
+      }
+    ],
+    "notes": "These resources provide a range of strategies and tools for managing a high school or middle school classroom, including token economy systems, point systems, and digital escape rooms. They offer tips and guidance on how to implement these systems effectively, including personalizing reinforcement, setting clear expectations, and fading support over time. The resources also highlight the importance of student autonomy, creativity, and problem-solving skills in the classroom."
+  },
+  "family": {
+    "choir": "No specific choral ensemble auditions found in the provided content. However, organizations to check for choir auditions include Seattle Choral Company, Seattle Pro Musica, Northwest Chorale, Choral Arts NW, and Pacific Lutheran Univ Choirs.",
+    "toddler": "Activities for toddlers in Edmonds/Lynnwood include visiting the Edmonds Library or Lynnwood Library, exploring the Imagine Children's Museum, and checking out events on the Explore Edmonds website, such as the Edmonds Arts Festival, which offers a hands-on children’s art activity area.",
+    "urls": [
+      "https://www.parentmap.com/calendar",
+      "https://www.exploreedmonds.com/events",
+      "https://www.groupon.com/local/edmonds-wa/kids-activities"
+    ]
+  },
+  "global_news": [
+    {
+      "category": "World",
+      "source": "BBC",
+      "findings": "US military launches new strikes on southern Iran, Iran says deal with US not imminent, and oil prices slide on hopes of US-Iran peace deal",
+      "urls": [
+        "https://www.bbc.com/news/articles/cvgzzn4y1n8o",
+        "https://www.bbc.com/news/articles/cglpp2yk336o",
+        "https://www.bbc.com/news/articles/c809m7g29r7o"
+      ]
+    },
+    {
+      "category": "Middle East",
+      "source": "BBC",
+      "findings": "Netanyahu says Israel will intensify strikes against Hezbollah, and Russia threatens more Kyiv strikes",
+      "urls": [
+        "https://www.bbc.com/news/articles/cewppdk1187o",
+        "https://www.bbc.com/news/articles/c1e22n55zn4o"
+      ]
+    },
+    {
+      "category": "World Cup",
+      "source": "CNN, NBC News",
+      "findings": "Iran soccer team yet to secure visas for World Cup, Mexico to host Iran's World Cup team after US refusal, and Messi joins high-profile World Cup injury concerns",
+      "urls": [
+        "https://www.cnn.com/sport/fifa-world-cup",
+        "https://www.nbcnews.com/world/iran/mexico-host-irans-world-cup-team-us-refusal-president-says-rcna346803",
+        "https://www.nbcnews.com/sports/soccer/messi-joins-high-profile-world-cup-injury-concerns-just-weeks-big-kick-rcna346790"
+      ]
+    },
+    {
+      "category": "Asia",
+      "source": "BBC",
+      "findings": "Cambodia's former opposition leader receives royal pardon for 27-year sentence, and at least 19 people taken to hospital after 'strong smell' reported at Tokyo mall",
+      "urls": [
+        "https://www.bbc.com/news/articles/cm2ppv1r3xzo",
+        "https://www.bbc.com/news/articles/cevpp983kmzo"
+      ]
+    }
+  ],
+  "intellectual_journals": [],
+  "wearable_ai": [
+    {
+      "category": "ai_voice_hardware",
+      "findings": "New AI voice hardware includes smart glasses with AI assistants, such as Meta Ray-Ban and ROG XREAL R1, which provide features like real-time translation, hands-free photo capture, and immersive AR displays.",
+      "urls": [
+        "https://www.forbes.com/sites/ronschmelzer/2026/01/08/ces-2026-makes-one-thing-clear-ais-next-interface-is-you/",
+        "https://www.youtube.com/watch?v=ZwCGDJdU4ro"
+      ]
+    },
+    {
+      "category": "wearable_devices",
+      "findings": "Wearable devices like smart glasses, such as Qwen Glasses and Rokid AI Glasses Style, and lifelogging pendants like SwitchBot's AI MindClip and Plaud's NotePin S, are becoming increasingly popular, offering features like AI-powered assistants, real-time translation, and searchable memory.",
+      "urls": [
+        "https://medium.com/@ayeshha2398/the-future-is-hands-free-my-top-ai-wearables-that-replaced-my-smartphone-in-2026-926eb1500cca",
+        "https://uk.finance.yahoo.com/news/wearable-ai-devices-market-insights-093200955.html"
+      ]
+    }
+  ],
+  "newyorker": {
+    "available": true,
+    "title": "The Useless Beauty of Christo and Jeanne-Claude",
+    "section": "london postcard",
+    "dek": "Plans for a forgotten art work by the late duo were found in an airshaft. Now, with the help of Christo’s nephew, “Air Package on a Ceiling” is finally on view, at Gagosian. Anna Russell writes.",
+    "byline": "By Anna Russell",
+    "date": "2026-05-25T06:00:00.000-04:00",
+    "text": "In 1964, the married artists Christo and Jeanne-Claude moved out of the Chelsea Hotel and into the top two floors of a loft on Howard Street, in SoHo. Sure, they were broke—the hotel proprietor said they could pay him back later—but they were jazzed about their new digs. The place had big windows and an airshaft. (Later, they bought the building; it was the seventies.) Eventually, the airshaft became a storage unit, and it was there, in 2018, that Christo’s studio manager discovered a scale model, complete with electrical wiring and preparatory drawings, for a project the artist had forgotten about from half a century earlier. Eureka!\nThe other day, at the Gagosian in London, several art installers were hoisting ropes and clambering up ladders, in order to mount the work in a gallery for the first time. The piece, “Air Package on a Ceiling,” was designed in 1968 for the Institute of Contemporary Art, in Philadelphia, and involves a giant sheet of plastic suspended from the ceiling and crossed by ropes that make it bulge and fold. (It never reached the I.C.A., owing to technical concerns.) The effect is disorienting, as if the air had turned solid. Overseeing things was Christo’s nephew, Vladimir Yavachev, who was dressed in layers of black. “I mean, it’s up there—it’s not falling,” he said, peering at the plastic.\nYavachev began working with Christo in 1990, when he was a teen-ager, and newly freed from the constraints of Communist Bulgaria. He arrived in New York having never met his uncle, who had escaped the Eastern Bloc years earlier, by bribing a customs officer, and had never returned. “In Communist Bulgaria, there was a word for it,” Yavachev said. “You don’t become an immigrant, you become a nevuzvrashtenetz, which means ‘the one that can never come back.’ ” Christo and Jeanne-Claude travelled the world wrapping things: cars, islands, the Sydney coastline. “The enthusiasm was incredible,” Yavachev said.\nChristo died in 2020—Jeanne-Claude in 2009—but the duo left detailed instructions for the posthumous installation of “Air Package” and other works, including “L’Arc de Triomphe, Wrapped,” which Yavachev completed in 2021. At eighty, Christo was involved in the final planning. By the time the installation began, his presence was greatly missed. “He had always been like a jackrabbit running around to see a project from every point of view that you can,” Yavachev said. “The way he would look at them, it was like a little kid looking at a cake, like you want to eat it. It was always like this, always ‘Look, look, look, look!’ ”\nIn the gallery, a man in a ball cap had climbed a ladder to examine the folds of the plastic sheet. “More slack,” someone said. “More folds.” Yavachev had flown in that morning from Abu Dhabi, where he has been working on realizing the duo’s most ambitious work, “The Mastaba,” a tomblike structure made of oil barrels in the desert, which, if completed, would be one of the world’s largest contemporary sculptures by volume. “Inshallah,” Yavachev said. He has been working on it for twenty years, with no end date in sight.\n“Jeanne-Claude always used to say we do these projects for ourselves, and if other people enjoy it, that’s a bonus,” he went on. Many of the works were dreamed up decades before they became reality. “The projects find their time,” he said. He recalled a phrase he had learned from Bono, on the roof of the Arc de Triomphe. “Cathedral thinking,” he said. “Cathedral thinking is when you start something that you know that you cannot finish. Any architect of a cathedral, it will take two hundred years to finish a cathedral! You’re never going to see it. It’s very similar.”\nIn their lifetimes, the artists scrupulously avoided assigning meaning to their art works. “Christo always said, ‘I did not invent the politics in the Reichstag,’ ” Yavachev said. (They once wrapped the Reichstag.) “Coming from a totalitarian country, he never wanted to use art as propaganda. It was always art for art’s sake, just as a visual medium without any message. Though the message is there and anyone’s interpretation is legitimate.” “L’Arc de Triomphe, Wrapped” became a symbol of post-Covid unity, even though the piece was envisioned back in 1961.\n“The power of this, and why it’s so strong, is because it’s an art work and because it’s useless,” Yavachev said. “Nobody needs it. This uselessness of stuff is the thing that makes us human.” What did he think visitors to the desert would make of “The Mastaba” in five, ten, or twenty years, once it was complete? “Oh, no, no,” he said. “I don’t like to speculate.” ♦",
+    "url": "https://www.newyorker.com/magazine/2026/06/01/the-useless-beauty-of-christo-and-jeanne-claude",
+    "source": "The New Yorker",
+    "archived_from": "",
+    "error": null
+  },
+  "literary_pick": {
+    "available": true,
+    "title": "Orbital",
+    "author": "Samantha Harvey",
+    "year": 2024,
+    "summary": "Orbital is a novel about six astronauts on the International Space Station who begin to wonder about the meaning of life and Earth's place in the universe. As they watch the Earth from space, they are reminded of the fragility of human life and the importance of their work. The novel explores themes of identity, humanity, and the search for meaning in a vast and often overwhelming universe.",
+    "url": "https://thebookerprizes.com/the-booker-library/books/orbital"
+  },
+  "enriched_articles": []
+}
