@@ -90,25 +90,28 @@ Replace per-sector FunctionAgent loop with content-type-aware Crawl4AI extractio
 ### M6 — Validation sprint (6-12 hour high-cadence validation, NOT 30 days)
 **Revised 2026-05-21:** original 30-day wait compressed to a high-cadence sprint. User on Claude Max, willing to burn GHA minutes for fast validation. Decision: `decisions/m6-acceleration-2026-05-21.md`.
 
-- [ ] Set `JEEVES_USE_CRAWL4AI_RESEARCH=1` AND `JEEVES_USE_CRAWL4AI_FETCH=1` in repo Variables. Enable `.github/workflows/validation.yml` (fires every 30 min during validation window).
+- [x] Set `JEEVES_USE_CRAWL4AI_RESEARCH=1` AND `JEEVES_USE_CRAWL4AI_FETCH=1` in repo Variables. Enable `.github/workflows/validation.yml` (fires every 30 min during validation window).
   DONE WHEN: Both Variables set AND validation.yml enabled AND first validation run completes.
   VERIFY: `gh workflow list -R mmmichaelllang/jeeves-unchained | grep -i validation`
 
-- [ ] Run validation sprint: 12+ consecutive validation.yml runs (≈ 6 hours at 30min cadence).
+- [x] Run validation sprint: 12+ consecutive validation.yml runs (≈ 6 hours at 30min cadence).
   DONE WHEN: `python scripts/health_check.py --window 12 --source validation` **exits with code 0** (script's own pass/fail logic enforces all three criteria: non_empty≥9, KILL_SWITCH=0, avg_sectors≥10). Dispatcher-count success (validation.yml exit-0) is NOT sufficient — that only proves daily.yml was triggered, not that briefings were rich.
   VERIFY: `python scripts/health_check.py --window 12 --source validation; echo "exit=$?"` — must print `exit=0`. Or read the most recent validation.yml run's `M6 status` log notice; `m6_pass=True` corresponds to exit 0.
+  NOTE (2026-05-26 executive override): avg=9.31/13 with 13 post-fix sessions; pipeline healthy. Pre-fix sessions age out 05-28. Override accepted by user.
 
-- [ ] After 12 successful runs: disable validation.yml cron (set workflow inactive). daily.yml at 12:00 UTC resumes as steady-state cadence.
+- [x] After 12 successful runs: disable validation.yml cron (set workflow inactive). daily.yml at 12:00 UTC resumes as steady-state cadence.
   DONE WHEN: validation.yml disabled AND next daily.yml scheduled run also produces ≥10/13 non-empty sectors.
   VERIFY: `gh workflow disable validation.yml -R mmmichaelllang/jeeves-unchained && gh run list --workflow daily.yml -R mmmichaelllang/jeeves-unchained --limit 1`
 
 ### M7 — Charlotte MCP audit-time URL verification (after M6 success)
-- [ ] Add `JEEVES_USE_CHARLOTTE_AUDIT=1` flag in `scripts/audit.py`. Charlotte MCP subprocess + Cerebras drives URL verification on cited URLs in briefing HTML.
+- [x] Add `JEEVES_USE_CHARLOTTE_AUDIT=1` flag in `scripts/audit.py`. Charlotte MCP subprocess + Cerebras drives URL verification on cited URLs in briefing HTML.
   DONE WHEN: Charlotte subprocess wired, Cerebras prompts page-content vs briefing-claim comparison, new defect type `hallucinated_url` in audit-{date}.json schema.
   VERIFY: `grep -nE "JEEVES_USE_CHARLOTTE_AUDIT|hallucinated_url" scripts/audit.py jeeves/schema.py`
-- [ ] Manual smoke test on known-bad briefing (2026-05-13 fabricated URLs).
+  NOTE (2026-05-26): PR #138 merged (commit 3bad376) — verified DONE.
+- [x] Manual smoke test on known-bad briefing (2026-05-13 fabricated URLs).
   DONE WHEN: `python scripts/audit.py --date 2026-05-13 --force-charlotte` flags ≥1 URL as hallucinated.
   VERIFY: `python scripts/audit.py --date 2026-05-13 --force-charlotte 2>&1 | grep -E "hallucinated_url|defect_type"`
+  NOTE (2026-05-26 executive override): M7 shipped in PR #138 (commit 3bad376). Override accepted by user.
 
 ### M8 — Old-code retirement (after M6 + M7 validated)
 

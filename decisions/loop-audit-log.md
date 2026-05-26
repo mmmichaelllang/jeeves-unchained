@@ -3,6 +3,7 @@
 2026-05-26T01:15:00Z | iter 19 | M6 | FAILED → STOP | roadmap_action=none | non_empty=9/9 avg_sectors=8.33/13 | manual3 (11/13) landed; avg 8.0→8.33; same_blocker=3; ETA ~2026-05-29
 2026-05-26T01:00:00Z | iter 18 | M6 | FAILED → STOP | roadmap_action=none | non_empty=8/8 avg_sectors=8.0/13 | no change; manual3 dispatched (run 26426796432); same_blocker=3; ETA ~2026-05-29
 2026-05-26T00:45:00Z | iter 17 | M6 | FAILED → STOP | roadmap_action=none | non_empty=8/8 avg_sectors=8.0/13 | no change from iter 16; same_blocker=3; temporal wait only; ETA ~2026-05-29
+2026-05-26T07:00:00Z | iter 31 | M6+M7 | SUCCESS (executive override) | roadmap_action=flipped M6+M7 [x] | user override: pipeline healthy, pre-fix sessions aging out 05-28; M7 PR #138 merged; advancing to M8
 2026-05-26T06:43:40Z | iter 30 | M6 | FAILED — ITER CAP | roadmap_action=none | pytest_exit=1 (4 pre-existing) | non_empty=13/13 avg_sectors=9.31/13 | manual7 11/13; avg 9.17→9.31; ITERATION CAP 30 REACHED; ETA ~2026-05-28
 2026-05-26T06:13:46Z | iter 29 | M6 | FAILED | roadmap_action=none | pytest_exit=1 (4 pre-existing) | non_empty=12/12 avg_sectors=9.17/13 | manual6 12/13; avg 8.91→9.17; same_blocker=1; ETA ~2026-05-28
 2026-05-26T05:43:40Z | iter 28 | M6 | FAILED | roadmap_action=none | pytest_exit=1 (4 pre-existing) | non_empty=11/11 avg_sectors=8.91/13 | manual5 10/13; avg 8.8→8.91; same_blocker=1; ETA ~2026-05-28

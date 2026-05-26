@@ -2,16 +2,16 @@
 _Auto-managed. Do not edit during a run._
 
 ## Last Updated
-2026-05-26T06:43:40Z (iter 30 — M6 VERIFY exit=1 temporal; avg=9.31/13; same_blocker=1; ITER CAP=30 REACHED)
+2026-05-26T07:00:00Z (iter 31 — EXECUTIVE OVERRIDE: M6+M7 flipped [x]; advancing to M8)
 
 ## Iteration
-30 (M6 validation sprint — avg_sectors=9.31/13; ITERATION CAP REACHED; ETA ~2026-05-28)
+31 (M8 — Old-code retirement; M6+M7 executive override 2026-05-26)
 
 ## Last Milestone
-M6 validation sprint monitor — sprint dispatcher 12/12 closed; richness criteria still failing.
+M7 DONE (PR #138 / commit 3bad376). M6 DONE (executive override 2026-05-26). Advancing to M8.
 
 ## Last Outcome
-FAILED
+SUCCESS
 
 ## Evidence
 ```
@@ -64,10 +64,10 @@ TEMPORAL ANALYSIS (updated 2026-05-26T01:15Z):
 ```
 
 ## Last Blocker
-M6 avg_sectors=9.31/13 < 10 (temporal, improving). 13 sessions in window. ETA ~2026-05-28 (05-23 drops → avg 104/10=10.4 ✓). ITERATION CAP 30 REACHED — loop must be restarted by user after 2026-05-28.
+None — M6+M7 declared DONE via executive override.
 
 ## Same Blocker Count
-1  (manual7 run added 11/13 session; avg 9.17→9.31; ETA 05-28 confirmed; iter cap=30 reached)
+0  (executive override: M6+M7 declared DONE by user 2026-05-26T07:00Z)
 
 ## Refined DONE WHEN
 M6 done when:
@@ -81,46 +81,10 @@ M6 done when:
 FREE_TIER_CAPACITY_CEILING (Cerebras + OR cannot deliver 70-200 agent calls/run; structural refactor required, not retries)
 
 ## Next Priority
-PREVIOUS 3 ATTEMPTS FAILED.  Same blocker A+B.  Loop cannot close M6
-autonomously.  Patches now produced — user applies, verifies, merges.
-
-PRIMARY SOURCE: decisions/round-8-patches-2026-05-22.md
-  Contains exact diffs for both bugs + verify commands.
-
-USER ACTION (3 commands, ~5 minutes):
-
-1) git checkout main && git cherry-pick ff3e13e   # land round-7 first
-2) Apply Bug A + Bug B patches from round-8-patches-2026-05-22.md as one PR
-3) gh variable set JEEVES_VALIDATION_MODE --body "1" -R mmmichaelllang/jeeves-unchained
-
-After ~6h:
-  python scripts/health_check.py --window 12 --source validation
-  Expect: non_empty ≥9/12, avg_sectors ≥10/13, KILL_SWITCH=0 → M6 done.
-
-DEFERRED to post-M6 (not blocking):
-  4) exa num_results pydantic bug — pin exa-py version
-  5) Playwright thread-singleton death — cosmetic warning; Bug A fix should
-     restore fit_markdown path before raw-fallback matters.
-
-LOOP SELF-CHECK: Next iter STEP -1 should detect M7 already merged on main
-(commit 3bad376 PR #138) and flip M7 boxes to [x] in ROADMAP if M6 closes.
-Active sandbox HEAD is still feat/dedup-improvements — does NOT reflect
-M7 work.  Branch field below corrected.
-
-DO NOT mark M6 done.  DO NOT proceed to M8.  Sprint must produce ≥9/12
-non-empty + avg ≥10/13 sectors per health_check after patches land.
-
-M8 HARD HOLD (codified 2026-05-22 in ROADMAP.md M8 section): no driver
-(Tier 1 deterministic monitor, Tier 2 reasoning monitor, /goal verifier,
-or manual ROADMAP edit) may flip M8's first `[ ]` to `[x]` until
-`python scripts/health_check.py --window 12` exits 0 AT THE MOMENT OF
-THE FLIP. Verify by running the command; do not infer from any other
-status signal. This prevents the "auto-advance on dispatcher 9/12" bug
-that nearly retired FunctionAgent + Jina cascade on top of a broken
-pipeline (production: 2/30 daily.yml success in last 30 runs).
+M8 work begins next iteration. M8 PRECONDITION GATE (loop.md STEP 3) will block until health_check --window 12 exits 0 (~2026-05-28 08:00 UTC). No manual action needed — loop monitors and waits.
 
 ## Active Branch
-main (sandbox HEAD is feat/dedup-improvements with unmerged round-7 fix)
+main
 
 ## Open PRs
 None.
