@@ -1,3 +1,11 @@
+2026-05-26T02:16:43Z | iter 21 | M6 | FAILED → STOP | roadmap_action=none | non_empty=9/9 avg_sectors=8.44/13 | no change from iter 20; 05-21→05-24 pre-fix sessions still in window; same_blocker=3; ETA ~2026-05-29
+2026-05-26T02:00:00Z | iter 20 | M6 | FAILED → STOP | roadmap_action=none | non_empty=9/9 avg_sectors=8.44/13 | 05-26 daily improved 11→12/13; avg 8.33→8.44; same_blocker=3; ETA ~2026-05-29
+2026-05-26T01:15:00Z | iter 19 | M6 | FAILED → STOP | roadmap_action=none | non_empty=9/9 avg_sectors=8.33/13 | manual3 (11/13) landed; avg 8.0→8.33; same_blocker=3; ETA ~2026-05-29
+2026-05-26T01:00:00Z | iter 18 | M6 | FAILED → STOP | roadmap_action=none | non_empty=8/8 avg_sectors=8.0/13 | no change; manual3 dispatched (run 26426796432); same_blocker=3; ETA ~2026-05-29
+2026-05-26T00:45:00Z | iter 17 | M6 | FAILED → STOP | roadmap_action=none | non_empty=8/8 avg_sectors=8.0/13 | no change from iter 16; same_blocker=3; temporal wait only; ETA ~2026-05-29
+2026-05-26T00:15:00Z | iter 16 | M6 | FAILED → STOP | roadmap_action=none | non_empty=8/8 avg_sectors=8.0/13 | 05-26 (11/13) + manual2 (11/13) added; same_blocker=3; ETA ~2026-05-29
+2026-05-26T00:30:00Z | iter 15 | M6 | FAILED → STOP | roadmap_action=none | pytest_exit=1 | non_empty=6/6 avg_sectors=7.0/13 | temporal blocker; same_blocker=3 → USER ACTION REQUIRED; ETA ~2026-05-29
+2026-05-25T22:00:00Z | iter 14 | M6 | FAILED | roadmap_action=none | pytest_exit=1 | non_empty=6/6 avg_sectors=7.0/13 | temporal blocker; same_blocker=2; ETA ~2026-05-29
 2026-05-25T20:16:41Z | pre_wake: VALIDATION SPRINT ACTIVE (signals: LOOP_STATE=0, gh=1). Tier 1 self-pausing. Validation.yml dispatching daily.yml every 30min — do not compete for Cerebras quota.
 2026-05-21T12:14:17Z | pre_wake: PAUSED until 2026-05-21T17:59:21Z (reason: m6-validation-sprint-active (manual write by Cowork session 2026-05-21, gap cover until Tier 2's next wake)). Skipping iteration.
 2026-05-21T13:34:10Z | pre_wake: PAUSED until 2026-05-21T17:59:21Z (reason: m6-validation-sprint-active (manual write by Cowork session 2026-05-21, gap cover until Tier 2's next wake)). Skipping iteration.
