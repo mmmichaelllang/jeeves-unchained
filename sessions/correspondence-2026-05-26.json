@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] lang.mc@gmail.com: Correspondence digest highlighting a loop-monitor alert requiring manual intervention in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating stuck pattern and repeated M6 attempts requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Correspondence digest highlighting a loop-monitor alert requiring manual intervention in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating stuck pattern and repeated M6 attempts requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating stuck pattern and repeated M6 attempts requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Correspondence digest highlighting a loop-monitor alert requiring manual intervention in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating stuck pattern and repeated M6 attempts requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Correspondence digest highlighting a loop-monitor alert requiring manual intervention in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Correspondence digest highlighting a loop-monitor alert requiring manual intervention in jeeves-unchained.",
+  "counts": {
+    "reply_needed": 0,
+    "decision_required": 0,
+    "scheduling": 0,
+    "follow_up": 0,
+    "escalation": 33,
+    "no_action": 17
+  }
+}
