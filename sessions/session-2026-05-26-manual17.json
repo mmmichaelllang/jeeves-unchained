@@ -1,0 +1,315 @@
+{
+  "date": "2026-05-26",
+  "status": "complete",
+  "dedup": {
+    "covered_urls": [
+      "https://aeon.co/essays/for-sergiu-klainerman-maths-is-a-fact-to-be-divined",
+      "https://applitrack.com/edmonds/onlineapp/default.aspx?Category=Certificated+Pools",
+      "https://arxiv.org/pdf/2603.28986",
+      "https://arxiv.org/pdf/2604.18897",
+      "https://bbc.com/news/articles/c8e8gx2d7j4o",
+      "https://bbc.com/news/articles/cewppdk1187o",
+      "https://bbc.com/news/articles/cglpp1g388zo",
+      "https://bbc.com/news/articles/cvgzzn4y1n8o",
+      "https://clutch.co/resources/wearable-technology-trends",
+      "https://cnn.com/world",
+      "https://coherent-intelligence.uk/papers/trinitarian-standard-model.html",
+      "https://edmondsbeacon.com/stories/memorial-day-tribute-in-edmonds,178483",
+      "https://edmondswa.gov",
+      "https://eventbrite.com/d/wa--edmonds/free-kids",
+      "https://exploreedmonds.com/events",
+      "https://facebook.com/groups/170726826406843/posts/4268970866582398",
+      "https://forbes.com/sites/ronschmelzer/2026/01/08/ces-2026-makes-one-thing-clear-ais-next-interface-is-you",
+      "https://fox13seattle.com/video/1705710",
+      "https://fox13seattle.com/video/1748765",
+      "https://github.com/Human-Agent-Society/CORAL",
+      "https://glassdoor.com/Job/puyallup-elementary-school-teacher-jobs-SRCH_IL.0,8_IC1150497_KO9,34.htm",
+      "https://glassdoor.com/Job/redmond-english-teacher-jobs-SRCH_IL.0,7_IC1150499_KO8,23.htm",
+      "https://groupon.com/local/edmonds-wa/kids-activities",
+      "https://medium.com/@ayeshha2398/the-future-is-hands-free-my-top-ai-wearables-that-replaced-my-smartphone-in-2026-926eb1500cca",
+      "https://newyorker.com/magazine/2026/06/01/the-useless-beauty-of-christo-and-jeanne-claude",
+      "https://nybooks.com/articles/2026/05/28/irans-new-winter-christopher-de-bellaigue",
+      "https://openreview.net/pdf?id=YSkby14i2v",
+      "https://parentmap.com/calendar",
+      "https://philarchive.org/archive/PELTRG",
+      "https://philpapers.org/archive/BAIARC.pdf",
+      "https://propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
+      "https://propublica.org/article/trump-immigration-scams-complaints-doubled-ice",
+      "https://thebookerprizes.com/the-booker-library/books/orbital",
+      "https://themarginalian.org/2026/05/14/bertrand-russell-useless-knowledge",
+      "https://uk.finance.yahoo.com/news/wearable-ai-devices-market-insights-093200955.html",
+      "https://youtube.com/watch?v=PTkdspJg6Pg",
+      "https://youtube.com/watch?v=cB3d1n4Cg3Y",
+      "https://youtube.com/watch?v=dvlgGKf7oq0",
+      "https://youtube.com/watch?v=li2NXjTj684"
+    ],
+    "covered_headlines": [
+      "Damiano Migliorini | Relational Ontologies",
+      "AI | The Mimosa",
+      "UAP | UFO",
+      "Admiraly Way: in Edmonds, near the Anthony's parking lot.",
+      "The Edmonds City Council: has voted 5-2 to resume the City’s salary commiss",
+      "Edmonds police say a public tip and interagency teamwork helped capture a 30-year-old man wanted in California and Nevada for human trafficking.",
+      "The Edmonds City Council: voted five to two in favor of the ordinance, whic",
+      "A man accused of brutally beating two massage therapists at an Edmonds spa is now facing multiple felony charges, but he has yet to appear in court.",
+      "Edmonds School District",
+      "English Teacher",
+      "Lake Washington School District",
+      "Puyallup School District",
+      "Edmonds Arts Festival | Art Walk Edmonds",
+      "Edmonds Jazz Walk | Coffee Edmonds",
+      "US | US Central Command",
+      "The Israeli: military hits targets in eastern Lebanon after th",
+      "Wave of child abuse cases shakes schools in Paris. A school assistant goes on trial accused of sexual mistreatment of children in his care, in the latest case to rock the Paris school system.",
+      "Rescuers race to free seven people trapped in flooded Laos cave. A team of experts who helped free a teen football team from a Thai cave in 2018 are among the rescuers.",
+      "World Cup | US",
+      "Sergiu Klainerman | Princeton University",
+      "Bertrand Russell | Useless Knowledge",
+      "Iran's new winter has brought a surge in protests and unrest, with the government responding with force. The situation is complex, with multiple factors at play, including economic hardship, political repression, and foreign interference.",
+      "ICE | CBP",
+      "ICE: agents and immigration officers using WhatsApp an",
+      "AI: devices are being launched, including smart glass",
+      "AI: -powered features.",
+      "The Useless Beauty of Christo and Jeanne-Claude",
+      "Orbital",
+      "email | lang.mc@gmail.com",
+      "email | Google",
+      "email | mmmichaelllang"
+    ],
+    "today_headline_count": 28,
+    "cross_sector_dupes": [
+      "https://edmondsbeacon.com/stories/memorial-day-tribute-in-edmonds,178483"
+    ]
+  },
+  "triadic_ontology": {
+    "findings": "Damiano Migliorini's book, Relational Ontologies and Trinitarian Metaphysics, offers a rigorous and original inquiry into the possibility of formulating a coherent trinitarian theism through the development of a relational ontology and a metaphysics grounded in the doctrine of the Trinity. Denis Bailey's paper, A Relational Cosmos Requires the Christian God, argues that a universe structured by relation, coherence, and emergent order requires an originating source capable of generating distinction without division, unity without collapse, and mediation without hierarchy. Mark Pelley's paper, Reality Is Triune, presents a metaphysical argument for agape as the first principle, arguing that reality cannot be grounded in solitary being, neutral structure, or dyadic relation. The Trinitarian Standard Model, presented by Coherent Intelligence, proposes a formal isomorphism between the mathematical structure of the Standard Model's gauge groups and the theological doctrine of the Christian T [TRUNCATED]",
+    "urls": [
+      "https://philarchive.org/archive/PELTRG",
+      "https://philpapers.org/archive/BAIARC.pdf",
+      "https://coherent-intelligence.uk/papers/trinitarian-standard-model.html"
+    ]
+  },
+  "ai_systems": {
+    "findings": "Recent research has focused on developing more advanced AI systems, including multi-agent systems and autonomous research pipelines. The Mimosa framework, for example, is an evolving multi-agent framework that automatically synthesizes task-specific multi-agent workflows and iteratively refines them through experimental feedback. Another study presented a systematic empirical study of prompt engineering for formal mathematical reasoning in the context of the SAIR Equational Theories Stage 1 competition, finding that a single-prompt ceiling exists, where accuracy improvements become unstable and non-generalizable across problem distributions. The Meta-Reasoning Prompt Engineering Agent (MR.PEA) is a self-supervised prompt optimization framework that operates with minimal input and leverages meta-reasoning to iteratively build task-specific knowledge. These advancements have the potential to improve the performance of large language models and enable more efficient and effective use of A [TRUNCATED]",
+    "urls": [
+      "https://arxiv.org/pdf/2603.28986",
+      "https://github.com/Human-Agent-Society/CORAL",
+      "https://arxiv.org/pdf/2604.18897",
+      "https://openreview.net/pdf?id=YSkby14i2v"
+    ]
+  },
+  "uap": {
+    "findings": "Recent developments in UAP disclosure and congressional hearings have shed light on the existence of unidentified flying objects. Whistleblowers have come forward with shocking revelations, and the Trump administration has taken steps to release declassified UFO files. The Pentagon has released a second batch of videos on Unidentified Anomalous Phenomena (UAP) sightings, and congressional hearings have been held to discuss the issue. While some experts believe that the files released so far do not definitively prove anything, they do provide evidence for unexplained cases and have brought the discussion to the mainstream of public discourse and the scientific community.",
+    "urls": [
+      "https://www.youtube.com/watch?v=li2NXjTj684",
+      "https://www.youtube.com/watch?v=PTkdspJg6Pg",
+      "https://www.youtube.com/watch?v=dvlgGKf7oq0"
+    ]
+  },
+  "weather": "I am not able to execute the given instructions as they require external actions, such as searching or accessing specific websites. However, I can provide a general outline of how the instructions could be followed and the type of information that might be returned based on the provided extracted content.\n\nGiven the instruction to synthesize the best data from searches and provide a plain-text string covering conditions, precipitation, temperatures, and comfort for Edmonds, Washington, here's a possible approach:\n\n1. **Analyzing Extracted Content**: From the provided URLs and their content, we can see various weather forecasts and conditions for Edmonds, WA. For example, [https://patch.com/washington/edmonds/weather](https://patch.com/washington/edmonds/weather) mentions \"Expect rainy weat [TRUNCATED]",
+  "local_news": [
+    {
+      "category": "public_safety",
+      "source": "https://www.edmondsbeacon.com/",
+      "findings": "One juvenile is in custody after an early morning shooting in the 400 block of Admiraly Way in Edmonds, near the Anthony's parking lot.",
+      "urls": [
+        "https://www.edmondsbeacon.com/stories/memorial-day-tribute-in-edmonds,178483"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "https://www.edmondsbeacon.com/",
+      "findings": "The Edmonds City Council has voted 5-2 to resume the City’s salary commission, ending a freeze put into place last December when the council suspended all nonmandatory boards and commissions to save money.",
+      "urls": []
+    },
+    {
+      "category": "public_safety",
+      "source": "https://komonews.com/",
+      "findings": "Edmonds police say a public tip and interagency teamwork helped capture a 30-year-old man wanted in California and Nevada for human trafficking.",
+      "urls": [
+        "https://www.fox13seattle.com/video/1748765"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "https://edmondswa.gov/",
+      "findings": "The Edmonds City Council voted five to two in favor of the ordinance, which means homeless campers can now face fines or jail time if they refuse an offer of housing when space is available.",
+      "urls": [
+        "https://edmondswa.gov/"
+      ]
+    },
+    {
+      "category": "public_safety",
+      "source": "https://komonews.com/",
+      "findings": "A man accused of brutally beating two massage therapists at an Edmonds spa is now facing multiple felony charges, but he has yet to appear in court.",
+      "urls": [
+        "https://www.fox13seattle.com/video/1705710"
+      ]
+    }
+  ],
+  "career": {
+    "openings": [
+      {
+        "district": "Edmonds School District",
+        "role": "English Teacher",
+        "url": "https://www.applitrack.com/edmonds/onlineapp/default.aspx?Category=Certificated+Pools",
+        "summary": "Teaching English to middle school or high school students",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Lake Washington School District",
+        "role": "English Teacher",
+        "url": "https://www.glassdoor.com/Job/redmond-english-teacher-jobs-SRCH_IL.0,7_IC1150499_KO8,23.htm",
+        "summary": "Teaching English to students",
+        "deadline": null,
+        "salary_range": "Paid per teacher salary schedule with Base contract plus additional contracts for LEAP days, and Responsibility"
+      },
+      {
+        "district": "Puyallup School District",
+        "role": "English Teacher",
+        "url": "https://www.glassdoor.com/Job/puyallup-elementary-school-teacher-jobs-SRCH_IL.0,8_IC1150497_KO9,34.htm",
+        "summary": "Teaching English to students",
+        "deadline": null,
+        "salary_range": null
+      }
+    ],
+    "notes": "Job openings are subject to change and may not be up-to-date. Applicants should check the official job boards for the most current information."
+  },
+  "english_lesson_plans": {
+    "classroom_ready": [],
+    "pedagogy_pieces": [],
+    "notes": "No usable results after 2 searches"
+  },
+  "family": {
+    "choir": "No specific choral auditions information found in the extracted content. However, some relevant events and activities were discovered, such as the 2026 Edmonds Arts Festival and Art Walk Edmonds, which might be of interest.",
+    "toddler": "Edmonds and Lynnwood offer various activities for toddlers, including the Edmonds Jazz Walk, Cars and Coffee Edmonds, and events listed on the Explore Edmonds website. Specific toddler-friendly activities include storytime at local libraries, and the Imagine Children's Museum. Some events like the Edmonds 4th of July 5K, 1K Family Run & 1K Senior Saunter, and Porchfest Edmonds might also be suitable for families with toddlers.",
+    "urls": [
+      "https://www.parentmap.com/calendar",
+      "https://www.eventbrite.com/d/wa--edmonds/free-kids/",
+      "https://www.facebook.com/groups/170726826406843/posts/4268970866582398/",
+      "https://www.exploreedmonds.com/events",
+      "https://www.groupon.com/local/edmonds-wa/kids-activities"
+    ]
+  },
+  "global_news": [
+    {
+      "category": "World",
+      "source": "BBC",
+      "findings": "US launches new strikes on Iran, targeting missile sites and boats. US Central Command says the strikes were taken in 'self-defence'.",
+      "urls": [
+        "https://www.bbc.com/news/articles/cvgzzn4y1n8o"
+      ]
+    },
+    {
+      "category": "Middle East",
+      "source": "BBC",
+      "findings": "Netanyahu says Israel will intensify strikes against Hezbollah. The Israeli military hits targets in eastern Lebanon after the prime minister announces further strikes.",
+      "urls": [
+        "https://www.bbc.com/news/articles/cewppdk1187o"
+      ]
+    },
+    {
+      "category": "Europe",
+      "source": "BBC",
+      "findings": "Wave of child abuse cases shakes schools in Paris. A school assistant goes on trial accused of sexual mistreatment of children in his care, in the latest case to rock the Paris school system.",
+      "urls": [
+        "https://www.bbc.com/news/articles/c8e8gx2d7j4o"
+      ]
+    },
+    {
+      "category": "Asia",
+      "source": "BBC",
+      "findings": "Rescuers race to free seven people trapped in flooded Laos cave. A team of experts who helped free a teen football team from a Thai cave in 2018 are among the rescuers.",
+      "urls": [
+        "https://www.bbc.com/news/articles/cglpp1g388zo"
+      ]
+    },
+    {
+      "category": "World Cup",
+      "source": "CNN",
+      "findings": "Iran to commute to World Cup games from Mexico after US refusal, Sheinbaum says.",
+      "urls": [
+        "https://www.cnn.com/world"
+      ]
+    }
+  ],
+  "intellectual_journals": [
+    {
+      "source": "Aeon",
+      "findings": "Sergiu Klainerman, a professor of mathematics at Princeton University, believes that mathematical truth precedes human thought and that our job is to discover it. He argues that mathematical structures, including well-established principles and basic geometric shapes, exist independently of human thought and are not a language we invented to describe reality. Klainerman's work includes landmark proofs that empty space is stable and that black holes do not disintegrate when perturbed.",
+      "url": "https://aeon.co/essays/for-sergiu-klainerman-maths-is-a-fact-to-be-divined",
+      "urls": []
+    },
+    {
+      "source": "The Marginalian",
+      "findings": "Bertrand Russell's essay 'Useless Knowledge' argues that knowledge is not just a means to an end, but an end in itself. He believes that the pursuit of knowledge for its own sake is essential to human flourishing and that it is being threatened by the pragmatization of everything. Russell argues that we need to defend the irreducible things that make us human, such as the wonder of curiosity, the symphony of feeling, and the beauty of art.",
+      "url": "https://www.themarginalian.org/2026/05/14/bertrand-russell-useless-knowledge/",
+      "urls": []
+    },
+    {
+      "source": "The New York Review of Books",
+      "findings": "Iran's new winter has brought a surge in protests and unrest, with the government responding with force. The situation is complex, with multiple factors at play, including economic hardship, political repression, and foreign interference. The article argues that the Iranian people are not just fighting for their rights, but for their very existence.",
+      "url": "https://www.nybooks.com/articles/2026/05/28/irans-new-winter-christopher-de-bellaigue/",
+      "urls": []
+    },
+    {
+      "source": "ProPublica",
+      "findings": "Mass arrests by Trump's ICE and CBP have repeatedly failed under scrutiny, with many cases being dismissed or lost at trial. The article argues that the arrests are often based on flawed evidence and that the government is using them to intimidate and silence immigrants and their supporters.",
+      "url": "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
+      "urls": []
+    },
+    {
+      "source": "ProPublica",
+      "findings": "Complaints of immigration scams have doubled amid Trump's sweeps, with scammers posing as ICE agents and immigration officers using WhatsApp and fake court hearings to bilk vulnerable people out of their savings. The article argues that the scams are a result of the fear and uncertainty created by the Trump administration's immigration policies.",
+      "url": "https://www.propublica.org/article/trump-immigration-scams-complaints-doubled-ice",
+      "urls": []
+    }
+  ],
+  "wearable_ai": [
+    {
+      "category": "ai_voice_hardware",
+      "findings": "New wearable AI devices are being launched, including smart glasses and pendants with AI assistants.",
+      "urls": [
+        "https://www.forbes.com/sites/ronschmelzer/2026/01/08/ces-2026-makes-one-thing-clear-ais-next-interface-is-you/",
+        "https://medium.com/@ayeshha2398/the-future-is-hands-free-my-top-ai-wearables-that-replaced-my-smartphone-in-2026-926eb1500cca"
+      ]
+    },
+    {
+      "category": "wearable_devices",
+      "findings": "Wearable devices such as smart glasses, smartwatches, and ear wear are becoming increasingly popular, with a focus on health monitoring, productivity, and AI-powered features.",
+      "urls": [
+        "https://www.youtube.com/watch?v=cB3d1n4Cg3Y",
+        "https://clutch.co/resources/wearable-technology-trends",
+        "https://uk.finance.yahoo.com/news/wearable-ai-devices-market-insights-093200955.html"
+      ]
+    }
+  ],
+  "newyorker": {
+    "available": true,
+    "title": "The Useless Beauty of Christo and Jeanne-Claude",
+    "section": "london postcard",
+    "dek": "Plans for a forgotten art work by the late duo were found in an airshaft. Now, with the help of Christo’s nephew, “Air Package on a Ceiling” is finally on view, at Gagosian. Anna Russell writes.",
+    "byline": "By Anna Russell",
+    "date": "2026-05-25T06:00:00.000-04:00",
+    "text": "In 1964, the married artists Christo and Jeanne-Claude moved out of the Chelsea Hotel and into the top two floors of a loft on Howard Street, in SoHo. Sure, they were broke—the hotel proprietor said they could pay him back later—but they were jazzed about their new digs. The place had big windows and an airshaft. (Later, they bought the building; it was the seventies.) Eventually, the airshaft became a storage unit, and it was there, in 2018, that Christo’s studio manager discovered a scale model, complete with electrical wiring and preparatory drawings, for a project the artist had forgotten about from half a century earlier. Eureka!\nThe other day, at the Gagosian in London, several art installers were hoisting ropes and clambering up ladders, in order to mount the work in a gallery for the first time. The piece, “Air Package on a Ceiling,” was designed in 1968 for the Institute of Contemporary Art, in Philadelphia, and involves a giant sheet of plastic suspended from the ceiling and crossed by ropes that make it bulge and fold. (It never reached the I.C.A., owing to technical concerns.) The effect is disorienting, as if the air had turned solid. Overseeing things was Christo’s nephew, Vladimir Yavachev, who was dressed in layers of black. “I mean, it’s up there—it’s not falling,” he said, peering at the plastic.\nYavachev began working with Christo in 1990, when he was a teen-ager, and newly freed from the constraints of Communist Bulgaria. He arrived in New York having never met his uncle, who had escaped the Eastern Bloc years earlier, by bribing a customs officer, and had never returned. “In Communist Bulgaria, there was a word for it,” Yavachev said. “You don’t become an immigrant, you become a nevuzvrashtenetz, which means ‘the one that can never come back.’ ” Christo and Jeanne-Claude travelled the world wrapping things: cars, islands, the Sydney coastline. “The enthusiasm was incredible,” Yavachev said.\nChristo died in 2020—Jeanne-Claude in 2009—but the duo left detailed instructions for the posthumous installation of “Air Package” and other works, including “L’Arc de Triomphe, Wrapped,” which Yavachev completed in 2021. At eighty, Christo was involved in the final planning. By the time the installation began, his presence was greatly missed. “He had always been like a jackrabbit running around to see a project from every point of view that you can,” Yavachev said. “The way he would look at them, it was like a little kid looking at a cake, like you want to eat it. It was always like this, always ‘Look, look, look, look!’ ”\nIn the gallery, a man in a ball cap had climbed a ladder to examine the folds of the plastic sheet. “More slack,” someone said. “More folds.” Yavachev had flown in that morning from Abu Dhabi, where he has been working on realizing the duo’s most ambitious work, “The Mastaba,” a tomblike structure made of oil barrels in the desert, which, if completed, would be one of the world’s largest contemporary sculptures by volume. “Inshallah,” Yavachev said. He has been working on it for twenty years, with no end date in sight.\n“Jeanne-Claude always used to say we do these projects for ourselves, and if other people enjoy it, that’s a bonus,” he went on. Many of the works were dreamed up decades before they became reality. “The projects find their time,” he said. He recalled a phrase he had learned from Bono, on the roof of the Arc de Triomphe. “Cathedral thinking,” he said. “Cathedral thinking is when you start something that you know that you cannot finish. Any architect of a cathedral, it will take two hundred years to finish a cathedral! You’re never going to see it. It’s very similar.”\nIn their lifetimes, the artists scrupulously avoided assigning meaning to their art works. “Christo always said, ‘I did not invent the politics in the Reichstag,’ ” Yavachev said. (They once wrapped the Reichstag.) “Coming from a totalitarian country, he never wanted to use art as propaganda. It was always art for art’s sake, just as a visual medium without any message. Though the message is there and anyone’s interpretation is legitimate.” “L’Arc de Triomphe, Wrapped” became a symbol of post-Covid unity, even though the piece was envisioned back in 1961.\n“The power of this, and why it’s so strong, is because it’s an art work and because it’s useless,” Yavachev said. “Nobody needs it. This uselessness of stuff is the thing that makes us human.” What did he think visitors to the desert would make of “The Mastaba” in five, ten, or twenty years, once it was complete? “Oh, no, no,” he said. “I don’t like to speculate.” ♦",
+    "url": "https://www.newyorker.com/magazine/2026/06/01/the-useless-beauty-of-christo-and-jeanne-claude",
+    "source": "The New Yorker",
+    "archived_from": "",
+    "error": null
+  },
+  "literary_pick": {
+    "available": true,
+    "title": "Orbital",
+    "author": "Samantha Harvey",
+    "year": 2024,
+    "summary": "Orbital is a novel about six astronauts rotating in the International Space Station, exploring the fragility of human life and the impact of the world's constant pull on their lives.",
+    "url": "https://thebookerprizes.com/the-booker-library/books/orbital"
+  },
+  "enriched_articles": [],
+  "correspondence": {
+    "found": true,
+    "fallback_used": false,
+    "text": "- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert about a stuck pattern requiring manual intervention\n- [escalation] lang.mc@gmail.com: Loop monitor alert about a stuck pattern requiring manual intervention\n- [escalation] lang.mc@gmail.com: Loop monitor alert about a stuck pattern requiring manual intervention\n- [escalation] Google: Security alert about a new sign-in to an account\n- [escalation] lang.mc@gmail.com: Loop monitor alert about a stuck pattern requiring manual intervention\n- [escalation] lang.mc@gmail.com: Loop monitor alert about a stuck pattern requiring manual intervention\n- [escalation] mmmichaelllang: Jeeves Daily Pipeline workflow run failed\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for transient failure\n- [escalation] lang.mc@gmail.com: Correspondence regarding loop-monitor alert"
+  }
+}
