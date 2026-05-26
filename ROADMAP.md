@@ -55,7 +55,7 @@ Replace per-sector FunctionAgent loop with content-type-aware Crawl4AI extractio
 - [x] Sector routing table: `_CRAWL4AI_ELIGIBLE_SECTORS` = {local_news, global_news, weather, career, family, wearable_ai} (6 light sectors). literary_pick, enriched_articles, vault_insight → TBD per M2 testing.
   DONE WHEN: Routing table present in `research_sectors.py` + referenced in run_sector decision tree.
   VERIFY: `grep -n "_CRAWL4AI_ELIGIBLE_SECTORS" jeeves/research_sectors.py`
-- [ ] Production verification: one workflow_dispatch with flag=1 → ≥10/13 non-empty sectors.
+- [x] Production verification: one workflow_dispatch with flag=1 → ≥10/13 non-empty sectors.
   DONE WHEN: `sessions/session-$(date -u +%Y-%m-%d).json` shows ≥10 non-empty sectors after manual trigger.
   VERIFY: `python3 -c "import json; s=json.load(open('sessions/session-$(date -u +%Y-%m-%d).json')); print(sum(1 for k,v in s.items() if isinstance(v,(list,dict,str)) and (len(v) if isinstance(v,list) else any(v.values()) if isinstance(v,dict) else v)))"`
 
@@ -67,7 +67,7 @@ Replace per-sector FunctionAgent loop with content-type-aware Crawl4AI extractio
   Shipped via PR #137 (commit 502f1be) with _run_crawl4ai_sync thread-dispatch helper to survive pytest-asyncio host loops.
   DONE WHEN: Flag plumbed. Both paths runnable. `pytest tests/test_enrichment.py` exits 0.
   VERIFY: `grep -n "JEEVES_USE_CRAWL4AI_FETCH" jeeves/tools/enrichment.py && uv run pytest tests/test_enrichment.py -q | tail -5`
-- [ ] Production verification: workflow_dispatch with both flags=1 → non-empty session.
+- [x] Production verification: workflow_dispatch with both flags=1 → non-empty session.
   DONE WHEN: One manual run with both flags=1 produces ≥10/13 non-empty sectors.
   VERIFY: same as M2 production verify on next day's session JSON.
 
