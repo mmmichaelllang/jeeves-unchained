@@ -1,0 +1,396 @@
+{
+  "date": "2026-05-26",
+  "status": "complete",
+  "dedup": {
+    "covered_urls": [
+      "http://yesprep.org/fs/resource-manager/view/cd64aaf7-dbe5-4362-82b1-55d181f670c6",
+      "https://abcnews.go.com",
+      "https://academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
+      "https://applitrack.com/edmonds/onlineapp/default.aspx?Category=Certificated+Pools",
+      "https://arxiv.org/pdf/2604.18897",
+      "https://autismclassroomresources.com/classroom-token-system",
+      "https://bbc.com/news/articles/cewppdk1187o",
+      "https://bbc.com/news/articles/cglpp1g388zo",
+      "https://bbc.com/news/articles/cvgzzn4y1n8o",
+      "https://classroomcenter.co.uk/classroom-economy-guide",
+      "https://clutch.co/resources/wearable-technology-trends",
+      "https://cnn.com/world",
+      "https://coherent-intelligence.uk/papers/trinitarian-standard-model.html",
+      "https://edmondsbeacon.com/stories/memorial-day-tribute-in-edmonds,178483",
+      "https://edmondswa.gov/news/what_s_new/spend_memorial_day_in_edmonds_",
+      "https://eventbrite.com/d/wa--edmonds/free-kids",
+      "https://exploreedmonds.com/events",
+      "https://facebook.com/NewsNationNow/posts/tim-gallaudet-a-uap-disclosure-advocate-wonders-if-the-trump-administration-is-s/1006348945105456",
+      "https://facebook.com/groups/170726826406843/posts/4268970866582398",
+      "https://facebook.com/nbcnightlynews/posts/the-pentagon-released-a-new-batch-of-declassified-ufo-files-following-president-/1344564300870874",
+      "https://forbes.com/sites/ronschmelzer/2026/01/08/ces-2026-makes-one-thing-clear-ais-next-interface-is-you",
+      "https://fox13seattle.com/video/1748765",
+      "https://glassdoor.com/Job/puyallup-elementary-school-teacher-jobs-SRCH_IL.0,8_IC1150497_KO9,34.htm",
+      "https://glassdoor.com/Job/redmond-english-teacher-jobs-SRCH_IL.0,7_IC1150499_KO8,23.htm",
+      "https://groupon.com/local/edmonds-wa/kids-activities",
+      "https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States",
+      "https://medium.com/@ayeshha2398/the-future-is-hands-free-my-top-ai-wearables-that-replaced-my-smartphone-in-2026-926eb1500cca",
+      "https://nbcnews.com/world/iran/mexico-host-irans-world-cup-team-us-refusal-president-says-rcna346803",
+      "https://newyorker.com/magazine/2026/06/01/the-useless-beauty-of-christo-and-jeanne-claude",
+      "https://nybooks.com/online/2026/05/16/between-devil-deep-blue-sea-christopher-de-bellaigue",
+      "https://nybooks.com/online/2026/05/24/the-education-of-pope-leo-xiv",
+      "https://parentmap.com/calendar",
+      "https://philpapers.org/archive/BAIARC.pdf",
+      "https://propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
+      "https://publish.obsidian.md/saatvik/Inclusive+Classroom+Research/Inclusive+Classroom+Research",
+      "https://publish.obsidian.md/taniynquest/The+Joy+of+Hot+Topic",
+      "https://sureprompts.com/blog/advanced-prompt-engineering-2026-claude-gpt5-gemini",
+      "https://tandfonline.com/doi/abs/10.1080/14746700600758838",
+      "https://teacherspayteachers.com/Product/Digital-Class-Banking-System-Token-Economy-Money-Budget-GOOGLE-6632283",
+      "https://thebookerprizes.com/the-booker-library/books/orbital",
+      "https://themarginalian.org/2026/05/08/gary-snyder",
+      "https://themarginalian.org/2026/05/14/bertrand-russell-useless-knowledge",
+      "https://uk.finance.yahoo.com/news/wearable-ai-devices-market-insights-093200955.html",
+      "https://whyliveschool.com/use-cases/token-economy",
+      "https://youtube.com/watch?v=HFITi0ppeCc",
+      "https://youtube.com/watch?v=PTkdspJg6Pg",
+      "https://youtube.com/watch?v=hzfP3ZmGSt0"
+    ],
+    "covered_headlines": [
+      "Relational Ontologies | Trinitarian Metaphysics",
+      "GPT | Deep Think",
+      "UAP | The Pentagon",
+      "Admiraly Way: in Edmonds, near the Anthony's parking lot.",
+      "A 30-year-old is behind bars after a multi-state investigation brought police in the Edmonds area to a motel where a teenage female victim was located.",
+      "Edmonds Police: searching for suspects who assaulted, robbed two",
+      "The Edmonds City Council: has voted 5-2 to resume the City’s salary commiss",
+      "Beloved Event Returns | Edmonds Cemetery",
+      "Edmonds School District",
+      "English Teacher",
+      "Lake Washington School District",
+      "Puyallup School District",
+      "Digital Class Banking System - Token Economy - Money - Budget - GOOGLE",
+      "Build Your Token Economy With LiveSchool",
+      "Classroom Token System: 8 ABA Steps to Reinforce Appropriate Behavior",
+      "Classroom Economy 2026: Boost Engagement & Skills",
+      "Unit and Lesson Context",
+      "The Joy of Hot Topic",
+      "Inclusive Classroom Research",
+      "Seattle Choral Company | Seattle Pro Musica",
+      "Edmonds Jazz Walk | Coffee Edmonds",
+      "US | US Central Command",
+      "The Israeli: military hits targets in eastern Lebanon after th",
+      "Rescuers race to free seven people trapped in flooded Laos cave. A team of experts who helped free a teen football team from a Thai cave in 2018 are among the rescuers.",
+      "World Cup | US",
+      "Pope Leo | AI",
+      "World Cup: team after U.S. refusal, president says.",
+      "Gary Snyder: on How to Unbreak the World",
+      "In Praise | Bertrand Russell",
+      "The Education | Pope Leo XIV",
+      "Mass Arrests | ICE",
+      "Deep Blue Sea",
+      "AI: devices are being launched, including smart glass",
+      "Wearable AI | CAGR",
+      "The Useless Beauty of Christo and Jeanne-Claude",
+      "Orbital",
+      "email | lang.mc@gmail.com"
+    ],
+    "today_headline_count": 36,
+    "cross_sector_dupes": [
+      "https://edmondsbeacon.com/stories/memorial-day-tribute-in-edmonds,178483"
+    ]
+  },
+  "triadic_ontology": {
+    "findings": "The concept of triadic ontology has been explored in various papers and research articles. One paper, titled \"Relational Ontologies and Trinitarian Metaphysics: Subsistences, Events and Gunk\" by Damiano Migliorini, offers a rigorous and original inquiry into the possibility of formulating a coherent trinitarian theism through the development of a relational ontology and a metaphysics grounded in the doctrine of the Trinity. Another paper, titled \"A Relational Cosmos Requires the Christian God\" by Denis Bailey, argues that a universe structured by relation, coherence, and emergent order requires an originating source capable of generating distinction without division, unity without collapse, and mediation without hierarchy. The paper concludes that Christianity uniquely provides a metaphysically sufficient account of how a relational universe can originate, persist, and remain intelligible, and that the triune structure of God is not a theological embellishment but the minimal operator  [TRUNCATED]",
+    "urls": [
+      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
+      "https://philpapers.org/archive/BAIARC.pdf",
+      "https://www.tandfonline.com/doi/abs/10.1080/14746700600758838",
+      "https://coherent-intelligence.uk/papers/trinitarian-standard-model.html"
+    ]
+  },
+  "ai_systems": {
+    "findings": "Recent research has focused on developing more advanced prompt engineering techniques for reasoning models, such as Claude 4.6, GPT-5.4, and Gemini 2.5 Deep Think. These models have shown significant improvements in mathematical reasoning and problem-solving capabilities. However, the old tricks like chain-of-thought no longer work and can even hurt performance on these models. Instead, users should focus on controlling effort, not technique, and use the model's built-in controls to guide its thinking. For example, Claude 4.6's adaptive thinking budget, GPT-5.4's reasoning effort parameter, and Gemini 2.5 Deep Think's tool-use chains can be used to improve performance. Additionally, researchers have identified a single-prompt ceiling, or empirical saturation region, where accuracy improvements become unstable and non-generalizable across problem distributions. This highlights the need for more advanced and nuanced approaches to prompt engineering.",
+    "urls": [
+      "https://arxiv.org/pdf/2604.18897",
+      "https://sureprompts.com/blog/advanced-prompt-engineering-2026-claude-gpt5-gemini"
+    ]
+  },
+  "uap": {
+    "findings": "Recent developments in UAP disclosure, congressional hearings, and non-human intelligence declassification have been marked by a series of shocking revelations. The Pentagon has released a new batch of declassified UFO files, and congressional hearings have featured testimony from UFO whistleblowers. While some advocates, like Tim Gallaudet, wonder if the Trump administration is stringing people along, others believe that the evidence for aliens is more convincing than that for God. The public deserves to know the truth, and transparency is essential in this matter. However, the lack of concrete evidence and the tendency for file dumps to prove nothing have led to skepticism about the government's intentions.",
+    "urls": [
+      "https://www.youtube.com/watch?v=HFITi0ppeCc",
+      "https://www.youtube.com/watch?v=PTkdspJg6Pg",
+      "https://www.facebook.com/nbcnightlynews/posts/the-pentagon-released-a-new-batch-of-declassified-ufo-files-following-president-/1344564300870874/",
+      "https://www.youtube.com/watch?v=hzfP3ZmGSt0",
+      "https://www.facebook.com/NewsNationNow/posts/tim-gallaudet-a-uap-disclosure-advocate-wonders-if-the-trump-administration-is-s/1006348945105456/"
+    ]
+  },
+  "weather": "Here's a plain-text string covering the conditions, precipitation, temps, and comfort in Edmonds, Washington:\n\n\"Expect rainy weather late this morning through late tonight in Edmonds, WA. The temperature is expected to be high of 58° and low of 49°. Partly sunny and pleasant conditions are forecasted for tomorrow. For more information, visit https://www.weather.gov/ or https://www.weatherbug.com/weather-forecast/10-day-weather/edmonds-wa-98026 for the latest forecast. Currently, it's partly cloudy with a chance of rain, making it a bit cool and damp, but comfortable with the right clothing.\"",
+  "local_news": [
+    {
+      "category": "public_safety",
+      "source": "https://www.edmondsbeacon.com/",
+      "findings": "One juvenile is in custody after an early morning shooting in the 400 block of Admiraly Way in Edmonds, near the Anthony's parking lot.",
+      "urls": [
+        "https://www.edmondsbeacon.com/stories/memorial-day-tribute-in-edmonds,178483"
+      ]
+    },
+    {
+      "category": "public_safety",
+      "source": "https://www.fox13seattle.com/",
+      "findings": "A 30-year-old is behind bars after a multi-state investigation brought police in the Edmonds area to a motel where a teenage female victim was located.",
+      "urls": [
+        "https://www.fox13seattle.com/video/1748765"
+      ]
+    },
+    {
+      "category": "public_safety",
+      "source": "https://komonews.com/",
+      "findings": "Edmonds Police searching for suspects who assaulted, robbed two women walking on trail",
+      "urls": [
+        "https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "https://www.edmondsbeacon.com/",
+      "findings": "The Edmonds City Council has voted 5-2 to resume the City’s salary commission, ending a freeze put into place last December when the council suspended all nonmandatory boards and commissions to …",
+      "urls": []
+    },
+    {
+      "category": "municipal",
+      "source": "https://edmondswa.gov/",
+      "findings": "Beloved Event Returns to the Edmonds Cemetery",
+      "urls": [
+        "https://www.edmondswa.gov/news/what_s_new/spend_memorial_day_in_edmonds_"
+      ]
+    }
+  ],
+  "career": {
+    "openings": [
+      {
+        "district": "Edmonds School District",
+        "role": "English Teacher",
+        "url": "https://www.applitrack.com/edmonds/onlineapp/default.aspx?Category=Certificated+Pools",
+        "summary": "Teaching English to middle school or high school students",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Lake Washington School District",
+        "role": "English Teacher",
+        "url": "https://www.glassdoor.com/Job/redmond-english-teacher-jobs-SRCH_IL.0,7_IC1150499_KO8,23.htm",
+        "summary": "Teaching English to students",
+        "deadline": null,
+        "salary_range": "Paid per teacher salary schedule with Base contract plus additional contracts for LEAP days, and Responsibility"
+      },
+      {
+        "district": "Puyallup School District",
+        "role": "English Teacher",
+        "url": "https://www.glassdoor.com/Job/puyallup-elementary-school-teacher-jobs-SRCH_IL.0,8_IC1150497_KO9,34.htm",
+        "summary": "Teaching English to elementary school students",
+        "deadline": null,
+        "salary_range": null
+      }
+    ],
+    "notes": "Job openings are subject to change and may not be up-to-date. Please visit the district's website or contact the district directly for the most current information."
+  },
+  "english_lesson_plans": {
+    "classroom_ready": [
+      {
+        "title": "Digital Class Banking System - Token Economy - Money - Budget - GOOGLE",
+        "source": "Teachers Pay Teachers",
+        "url": "https://www.teacherspayteachers.com/Product/Digital-Class-Banking-System-Token-Economy-Money-Budget-GOOGLE-6632283",
+        "grade_band": "High School",
+        "topic": "Classroom Management",
+        "summary": "A digital class banking system that allows students to earn and manage money, teaching them about budgeting and financial literacy."
+      },
+      {
+        "title": "Build Your Token Economy With LiveSchool",
+        "source": "LiveSchool",
+        "url": "https://www.whyliveschool.com/use-cases/token-economy",
+        "grade_band": "High School",
+        "topic": "Classroom Management",
+        "summary": "A token economy system that allows students to earn points for positive behavior, which can be redeemed for rewards."
+      },
+      {
+        "title": "Classroom Token System: 8 ABA Steps to Reinforce Appropriate Behavior",
+        "source": "Autism Classroom Resources",
+        "url": "https://autismclassroomresources.com/classroom-token-system/",
+        "grade_band": "High School",
+        "topic": "Classroom Management",
+        "summary": "A step-by-step guide to implementing a classroom token system, including choosing and defining target behaviors, individualizing the system, and providing reinforcement."
+      },
+      {
+        "title": "Classroom Economy 2026: Boost Engagement & Skills",
+        "source": "Classroom Center",
+        "url": "https://www.classroomcenter.co.uk/classroom-economy-guide/",
+        "grade_band": "High School",
+        "topic": "Classroom Management",
+        "summary": "A guide to creating a classroom economy, including designing a currency system, establishing earning opportunities, and providing spending options."
+      },
+      {
+        "title": "Unit and Lesson Context",
+        "source": "Yes Prep",
+        "url": "http://yesprep.org/fs/resource-manager/view/cd64aaf7-dbe5-4362-82b1-55d181f670c6",
+        "grade_band": "High School",
+        "topic": "English Language Arts",
+        "summary": "A lesson plan on satire, including a reading of Jonathan Swift's 'A Modest Proposal' and a writing assignment on drafting a satirical proposal to resolve a present-day social issue."
+      }
+    ],
+    "pedagogy_pieces": [
+      {
+        "title": "The Joy of Hot Topic",
+        "source": "Taniyn Quest",
+        "url": "https://publish.obsidian.md/taniynquest/The+Joy+of+Hot+Topic",
+        "summary": "A personal reflection on the importance of teaching students about satire and its relevance to real-life issues."
+      },
+      {
+        "title": "Inclusive Classroom Research",
+        "source": "Saatvik",
+        "url": "https://publish.obsidian.md/saatvik/Inclusive+Classroom+Research/Inclusive+Classroom+Research",
+        "summary": "A research-based article on creating an inclusive classroom environment, including strategies for promoting diversity, equity, and inclusion."
+      }
+    ],
+    "notes": "These resources provide a range of strategies and tools for managing a high school classroom, including token economies, classroom banking systems, and lesson plans on satire. They can be used to promote positive behavior, teach financial literacy, and encourage critical thinking and creativity."
+  },
+  "family": {
+    "choir": "No specific choir auditions found in the extracted content. However, organizations to check for choir auditions include Seattle Choral Company, Seattle Pro Musica, Northwest Chorale, Choral Arts NW, and Pacific Lutheran Univ Choirs.",
+    "toddler": "Toddler activities in Edmonds and Lynnwood include storytime at the library, and various events listed on https://www.parentmap.com/calendar and https://www.exploreedmonds.com/events. Specific events include the Edmonds Jazz Walk, Cars and Coffee Edmonds, and the Edmonds Arts Festival.",
+    "urls": [
+      "https://www.parentmap.com/calendar",
+      "https://www.exploreedmonds.com/events",
+      "https://www.facebook.com/groups/170726826406843/posts/4268970866582398/",
+      "https://www.eventbrite.com/d/wa--edmonds/free-kids/",
+      "https://www.groupon.com/local/edmonds-wa/kids-activities"
+    ]
+  },
+  "global_news": [
+    {
+      "category": "World",
+      "source": "BBC",
+      "findings": "US launches new strikes on Iran, targeting missile sites and boats. US Central Command says the strikes were taken in 'self-defense'.",
+      "urls": [
+        "https://www.bbc.com/news/articles/cvgzzn4y1n8o"
+      ]
+    },
+    {
+      "category": "Middle East",
+      "source": "BBC",
+      "findings": "Netanyahu says Israel will intensify strikes against Hezbollah. The Israeli military hits targets in eastern Lebanon after the prime minister announces further strikes.",
+      "urls": [
+        "https://www.bbc.com/news/articles/cewppdk1187o"
+      ]
+    },
+    {
+      "category": "Asia",
+      "source": "BBC",
+      "findings": "Rescuers race to free seven people trapped in flooded Laos cave. A team of experts who helped free a teen football team from a Thai cave in 2018 are among the rescuers.",
+      "urls": [
+        "https://www.bbc.com/news/articles/cglpp1g388zo"
+      ]
+    },
+    {
+      "category": "World",
+      "source": "CNN",
+      "findings": "Iran to commute to World Cup games from Mexico after US refusal, Sheinbaum says.",
+      "urls": [
+        "https://www.cnn.com/world"
+      ]
+    },
+    {
+      "category": "US",
+      "source": "ABC News",
+      "findings": "Pope Leo warns AI is fueling conflict, urges world to slow advances.",
+      "urls": [
+        "https://abcnews.go.com/"
+      ]
+    },
+    {
+      "category": "World",
+      "source": "NBC News",
+      "findings": "Mexico to host Iran’s World Cup team after U.S. refusal, president says.",
+      "urls": [
+        "https://www.nbcnews.com/world/iran/mexico-host-irans-world-cup-team-us-refusal-president-says-rcna346803"
+      ]
+    }
+  ],
+  "intellectual_journals": [
+    {
+      "source": "The Marginalian",
+      "findings": "Gary Snyder on How to Unbreak the World",
+      "urls": [
+        "https://www.themarginalian.org/2026/05/08/gary-snyder/"
+      ]
+    },
+    {
+      "source": "The Marginalian",
+      "findings": "In Praise of the Useless: Bertrand Russell’s Salve for Hard Times",
+      "urls": [
+        "https://www.themarginalian.org/2026/05/14/bertrand-russell-useless-knowledge/"
+      ]
+    },
+    {
+      "source": "The New York Review of Books",
+      "findings": "The Education of Pope Leo XIV",
+      "urls": [
+        "https://www.nybooks.com/online/2026/05/24/the-education-of-pope-leo-xiv/"
+      ]
+    },
+    {
+      "source": "ProPublica",
+      "findings": "Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny",
+      "urls": [
+        "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions"
+      ]
+    },
+    {
+      "source": "The New York Review of Books",
+      "findings": "Between the Devil and the Deep Blue Sea",
+      "urls": [
+        "https://www.nybooks.com/online/2026/05/16/between-devil-deep-blue-sea-christopher-de-bellaigue/"
+      ]
+    }
+  ],
+  "wearable_ai": [
+    {
+      "category": "ai_voice_hardware",
+      "findings": "New wearable AI devices are being launched, including smart glasses and pendants with AI assistants.",
+      "urls": [
+        "https://www.forbes.com/sites/ronschmelzer/2026/01/08/ces-2026-makes-one-thing-clear-ais-next-interface-is-you/",
+        "https://medium.com/@ayeshha2398/the-future-is-hands-free-my-top-ai-wearables-that-replaced-my-smartphone-in-2026-926eb1500cca"
+      ]
+    },
+    {
+      "category": "wearable_devices",
+      "findings": "Wearable AI devices, such as smartwatches, ear wear, and eye wear, are expected to grow at a CAGR of 14.5% during the forecast period (2026-2036).",
+      "urls": [
+        "https://uk.finance.yahoo.com/news/wearable-ai-devices-market-insights-093200955.html",
+        "https://clutch.co/resources/wearable-technology-trends"
+      ]
+    }
+  ],
+  "newyorker": {
+    "available": true,
+    "title": "The Useless Beauty of Christo and Jeanne-Claude",
+    "section": "london postcard",
+    "dek": "Plans for a forgotten art work by the late duo were found in an airshaft. Now, with the help of Christo’s nephew, “Air Package on a Ceiling” is finally on view, at Gagosian. Anna Russell writes.",
+    "byline": "By Anna Russell",
+    "date": "2026-05-25T06:00:00.000-04:00",
+    "text": "In 1964, the married artists Christo and Jeanne-Claude moved out of the Chelsea Hotel and into the top two floors of a loft on Howard Street, in SoHo. Sure, they were broke—the hotel proprietor said they could pay him back later—but they were jazzed about their new digs. The place had big windows and an airshaft. (Later, they bought the building; it was the seventies.) Eventually, the airshaft became a storage unit, and it was there, in 2018, that Christo’s studio manager discovered a scale model, complete with electrical wiring and preparatory drawings, for a project the artist had forgotten about from half a century earlier. Eureka!\nThe other day, at the Gagosian in London, several art installers were hoisting ropes and clambering up ladders, in order to mount the work in a gallery for the first time. The piece, “Air Package on a Ceiling,” was designed in 1968 for the Institute of Contemporary Art, in Philadelphia, and involves a giant sheet of plastic suspended from the ceiling and crossed by ropes that make it bulge and fold. (It never reached the I.C.A., owing to technical concerns.) The effect is disorienting, as if the air had turned solid. Overseeing things was Christo’s nephew, Vladimir Yavachev, who was dressed in layers of black. “I mean, it’s up there—it’s not falling,” he said, peering at the plastic.\nYavachev began working with Christo in 1990, when he was a teen-ager, and newly freed from the constraints of Communist Bulgaria. He arrived in New York having never met his uncle, who had escaped the Eastern Bloc years earlier, by bribing a customs officer, and had never returned. “In Communist Bulgaria, there was a word for it,” Yavachev said. “You don’t become an immigrant, you become a nevuzvrashtenetz, which means ‘the one that can never come back.’ ” Christo and Jeanne-Claude travelled the world wrapping things: cars, islands, the Sydney coastline. “The enthusiasm was incredible,” Yavachev said.\nChristo died in 2020—Jeanne-Claude in 2009—but the duo left detailed instructions for the posthumous installation of “Air Package” and other works, including “L’Arc de Triomphe, Wrapped,” which Yavachev completed in 2021. At eighty, Christo was involved in the final planning. By the time the installation began, his presence was greatly missed. “He had always been like a jackrabbit running around to see a project from every point of view that you can,” Yavachev said. “The way he would look at them, it was like a little kid looking at a cake, like you want to eat it. It was always like this, always ‘Look, look, look, look!’ ”\nIn the gallery, a man in a ball cap had climbed a ladder to examine the folds of the plastic sheet. “More slack,” someone said. “More folds.” Yavachev had flown in that morning from Abu Dhabi, where he has been working on realizing the duo’s most ambitious work, “The Mastaba,” a tomblike structure made of oil barrels in the desert, which, if completed, would be one of the world’s largest contemporary sculptures by volume. “Inshallah,” Yavachev said. He has been working on it for twenty years, with no end date in sight.\n“Jeanne-Claude always used to say we do these projects for ourselves, and if other people enjoy it, that’s a bonus,” he went on. Many of the works were dreamed up decades before they became reality. “The projects find their time,” he said. He recalled a phrase he had learned from Bono, on the roof of the Arc de Triomphe. “Cathedral thinking,” he said. “Cathedral thinking is when you start something that you know that you cannot finish. Any architect of a cathedral, it will take two hundred years to finish a cathedral! You’re never going to see it. It’s very similar.”\nIn their lifetimes, the artists scrupulously avoided assigning meaning to their art works. “Christo always said, ‘I did not invent the politics in the Reichstag,’ ” Yavachev said. (They once wrapped the Reichstag.) “Coming from a totalitarian country, he never wanted to use art as propaganda. It was always art for art’s sake, just as a visual medium without any message. Though the message is there and anyone’s interpretation is legitimate.” “L’Arc de Triomphe, Wrapped” became a symbol of post-Covid unity, even though the piece was envisioned back in 1961.\n“The power of this, and why it’s so strong, is because it’s an art work and because it’s useless,” Yavachev said. “Nobody needs it. This uselessness of stuff is the thing that makes us human.” What did he think visitors to the desert would make of “The Mastaba” in five, ten, or twenty years, once it was complete? “Oh, no, no,” he said. “I don’t like to speculate.” ♦",
+    "url": "https://www.newyorker.com/magazine/2026/06/01/the-useless-beauty-of-christo-and-jeanne-claude",
+    "source": "The New Yorker",
+    "archived_from": "",
+    "error": null
+  },
+  "literary_pick": {
+    "available": true,
+    "title": "Orbital",
+    "author": "Samantha Harvey",
+    "year": 2024,
+    "summary": "Orbital is a novel about six astronauts rotating in the International Space Station, exploring the fragility of human life and the world they observe from space.",
+    "url": "https://thebookerprizes.com/the-booker-library/books/orbital"
+  },
+  "enriched_articles": [],
+  "correspondence": {
+    "found": true,
+    "fallback_used": false,
+    "text": "- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert from lang.mc@gmail.com indicating a stuck pattern requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Tier 1 monitor alert for jeeves-unchained adaptive-loop showing same_blocker_count=3, indicating stuck pattern requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert from lang.mc@gmail.com sent at 08:49:38 remains a pressing matter indicating a stuck pattern."
+  }
+}
