@@ -3,6 +3,7 @@
 2026-05-26T01:15:00Z | iter 19 | M6 | FAILED → STOP | roadmap_action=none | non_empty=9/9 avg_sectors=8.33/13 | manual3 (11/13) landed; avg 8.0→8.33; same_blocker=3; ETA ~2026-05-29
 2026-05-26T01:00:00Z | iter 18 | M6 | FAILED → STOP | roadmap_action=none | non_empty=8/8 avg_sectors=8.0/13 | no change; manual3 dispatched (run 26426796432); same_blocker=3; ETA ~2026-05-29
 2026-05-26T00:45:00Z | iter 17 | M6 | FAILED → STOP | roadmap_action=none | non_empty=8/8 avg_sectors=8.0/13 | no change from iter 16; same_blocker=3; temporal wait only; ETA ~2026-05-29
+2026-05-26T04:13:38Z | iter 25 | M6 | FAILED → STOP | roadmap_action=none | pytest_exit=1 (4 pre-existing env) | non_empty=9/9 avg_sectors=8.44/13 | no change; same_blocker=7; ETA ~2026-05-29
 2026-05-26T03:43:54Z | iter 24 | M6 | FAILED → STOP | roadmap_action=none | pytest_exit=1 (4 pre-existing env) | non_empty=9/9 avg_sectors=8.44/13 | no change; same_blocker=6; ETA ~2026-05-29
 2026-05-26T03:13:37Z | iter 23 | M6 | FAILED → STOP | roadmap_action=none | pytest_exit=1 (4 pre-existing env) | non_empty=9/9 avg_sectors=8.44/13 | no change from iter 22; same_blocker=5; ETA ~2026-05-29
 2026-05-26T02:44:44Z | iter 22 | M6 | FAILED → STOP | roadmap_action=none | pytest_exit=1 (4 pre-existing env) | non_empty=9/9 avg_sectors=8.44/13 | no change from iter 21; same_blocker=4; ETA ~2026-05-29
