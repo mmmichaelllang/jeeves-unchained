@@ -1,0 +1,292 @@
+{
+  "date": "2026-05-26",
+  "status": "complete",
+  "dedup": {
+    "covered_urls": [
+      "https://academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
+      "https://arxiv.org/pdf/2603.28986",
+      "https://arxiv.org/pdf/2604.18897",
+      "https://autismclassroomresources.com/classroom-token-system",
+      "https://bbc.com/news/articles/cewppdk1187o",
+      "https://bbc.com/news/articles/cglpp1g388zo",
+      "https://bbc.com/news/articles/cvgzzn4y1n8o",
+      "https://classroomcenter.co.uk/classroom-economy-guide",
+      "https://cnn.com/world",
+      "https://coherent-intelligence.uk/papers/trinitarian-standard-model.html",
+      "https://edmondsbeacon.com/stories/memorial-day-tribute-in-edmonds,178483",
+      "https://edmondswa.gov",
+      "https://eventbrite.com/d/wa--edmonds/free-kids",
+      "https://exploreedmonds.com/events",
+      "https://facebook.com/groups/170726826406843/posts/4268970866582398",
+      "https://facebook.com/trtworld/posts/us-releases-a-second-set-of-formerly-classified-records-about-alleged-ufo-encoun/1466335505528686",
+      "https://forbes.com/sites/ronschmelzer/2026/01/08/ces-2026-makes-one-thing-clear-ais-next-interface-is-you",
+      "https://github.com/Human-Agent-Society/CORAL",
+      "https://groupon.com/local/edmonds-wa/kids-activities",
+      "https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States",
+      "https://linkedin.com/jobs/edmonds-school-district-jobs-edmonds-wa",
+      "https://medium.com/@ayeshha2398/the-future-is-hands-free-my-top-ai-wearables-that-replaced-my-smartphone-in-2026-926eb1500cca",
+      "https://nbcnews.com/world/the-vatican/pope-leo-encyclical-ai-conflict-magnifica-humanitas-rcna346784",
+      "https://newyorker.com/magazine/2026/06/01/the-useless-beauty-of-christo-and-jeanne-claude",
+      "https://parentmap.com/calendar",
+      "https://philpapers.org/archive/BAIARC.pdf",
+      "https://publish.obsidian.md/saatvik/Inclusive+Classroom+Research/Inclusive+Classroom+Research",
+      "https://publish.obsidian.md/taniynquest/The+Joy+of+Hot+Topic",
+      "https://sureprompts.com/blog/advanced-prompt-engineering-2026-claude-gpt5-gemini",
+      "https://teacherspayteachers.com/Product/Digital-Class-Banking-System-Token-Economy-Money-Budget-GOOGLE-6632283",
+      "https://thebookerprizes.com/the-booker-library/books/orbital",
+      "https://uk.finance.yahoo.com/news/wearable-ai-devices-market-insights-093200955.html",
+      "https://whyliveschool.com/use-cases/token-economy"
+    ],
+    "covered_headlines": [
+      "Relational Ontologies | Trinitarian Metaphysics",
+      "AI | CORAL",
+      "UAP | UFO",
+      "Admiraly Way: in Edmonds, near the Anthony's parking lot.",
+      "The Edmonds City Council: has voted 5-2 to resume the City’s salary commiss",
+      "Edmonds Police: searching for suspects who assaulted, robbed two",
+      "The Edmonds City Council: voted five to two in favor of the ordinance, whic",
+      "Edmonds School District",
+      "Digital Learning Coordinator",
+      "Digital Class Banking System - Token Economy - Money - Budget - GOOGLE",
+      "Build Your Token Economy With LiveSchool",
+      "Classroom Token System: 8 ABA Steps to Reinforce Appropriate Behavior",
+      "Classroom Economy 2026: Boost Engagement & Skills",
+      "The Joy of Hot Topic",
+      "Inclusive Classroom Research",
+      "Seattle Choral Company | Seattle Pro Musica",
+      "Explore Edmonds | Edmonds Arts Festival",
+      "US | US Central Command",
+      "The Israeli: military hits targets in eastern Lebanon after th",
+      "Rescuers race to free seven people trapped in flooded Laos cave. A team of experts who helped free a teen football team from a Thai cave in 2018 are among the rescuers.",
+      "World Cup | US",
+      "Pope Leo | AI",
+      "AI | AI MindClip",
+      "Wearable AI | Meta Ray",
+      "The Useless Beauty of Christo and Jeanne-Claude",
+      "Orbital",
+      "email | lang.mc@gmail.com"
+    ],
+    "today_headline_count": 26,
+    "cross_sector_dupes": [
+      "https://edmondsbeacon.com/stories/memorial-day-tribute-in-edmonds,178483"
+    ]
+  },
+  "triadic_ontology": {
+    "findings": "The paper \"Relational Ontologies and Trinitarian Metaphysics: Subsistences, Events and Gunk\" by Damiano Migliorini offers a rigorous and original inquiry into the possibility of formulating a coherent trinitarian theism through the development of a relational ontology and a metaphysics grounded in the doctrine of the Trinity. The paper argues that divine relationality, when properly understood, may offer a path beyond the metaphysics of pure substance without abandoning the coherence required by rational theology. Another paper, \"A Relational Cosmos Requires the Christian God\" by Denis Bailey, argues that a universe structured by relation, coherence, and emergent order requires an originating source capable of generating distinction without division, unity without collapse, and mediation without hierarchy. The paper concludes that Christianity uniquely provides a metaphysically sufficient account of how a relational universe can originate, persist, and remain intelligible, and that the [TRUNCATED]",
+    "urls": [
+      "https://www.academia.edu/130403456/Relational_Ontologies_and_Trinitarian_Metaphysics_Subsistences_Events_and_Gunk",
+      "https://philpapers.org/archive/BAIARC.pdf",
+      "https://coherent-intelligence.uk/papers/trinitarian-standard-model.html"
+    ]
+  },
+  "ai_systems": {
+    "findings": "Recent advances in AI research systems have led to the development of autonomous multi-agent frameworks such as Mimosa and CORAL. These frameworks enable the creation of evolving multi-agent workflows that can adapt to changing tasks and environments. The Mimosa framework has been shown to achieve a success rate of 43.1% on the ScienceAgentBench benchmark, surpassing single-agent baselines and static multi-agent configurations. Additionally, the CORAL framework provides a robust and lightweight infrastructure for building organizations of autonomous AI agents that can run experiments, share knowledge, and continuously improve solutions. In terms of prompt engineering, recent studies have highlighted the importance of controlling effort rather than technique when prompting reasoning models. The use of adaptive thinking budgets, reasoning effort parameters, and tool-use chains has been shown to be effective in prompting models such as Claude 4.6, GPT-5.4, and Gemini 2.5 Deep Think. Howev [TRUNCATED]",
+    "urls": [
+      "https://arxiv.org/pdf/2603.28986",
+      "https://github.com/Human-Agent-Society/CORAL",
+      "https://arxiv.org/pdf/2604.18897",
+      "https://sureprompts.com/blog/advanced-prompt-engineering-2026-claude-gpt5-gemini"
+    ]
+  },
+  "uap": {
+    "findings": "Recent developments in UAP disclosure and congressional hearings have led to the release of formerly classified records about alleged UFO encounters. The US government has released a second set of declassified files, featuring accounts of mysterious green orbs, discs, and fireballs reported by witnesses. The releases have sparked discussions about transparency, science, and national security, with some claiming that the US has recovered remains of four separate species of alien life from various UFOs. However, the documents do not prove every sighting recorded was anomalous or that any UAPs are connected to nonhuman intelligence. The Pentagon has also released new UFO files, including videos and documents, which have gained massive attention online. The releases have raised important questions about the government's handling of UFO information and the potential implications for national security.",
+    "urls": [
+      "https://www.facebook.com/trtworld/posts/us-releases-a-second-set-of-formerly-classified-records-about-alleged-ufo-encoun/1466335505528686/"
+    ]
+  },
+  "weather": "I am not able to execute the given instructions as they require external searches. However, based on the provided extracted content, here is a plain-text string covering conditions, precipitation, temps, and comfort:\n\n\"Expect rainy weather late this morning through late tonight in Edmonds, WA. The temperature is expected to be High: 58° | Low 49°. You can find more forecast information on websites like https://www.wunderground.com, https://weather.com, or https://www.weatherbug.com. For more detailed and up-to-date information, visit https://forecast.weather.gov/zipcity.php?inputstring=Edmonds,WA&Go2=Go or https://www.accuweather.com/en/us/edmonds/98020/weather-forecast/336397.\"",
+  "local_news": [
+    {
+      "category": "public_safety",
+      "source": "https://www.edmondsbeacon.com/",
+      "findings": "One juvenile is in custody after an early morning shooting in the 400 block of Admiraly Way in Edmonds, near the Anthony's parking lot.",
+      "urls": [
+        "https://www.edmondsbeacon.com/stories/memorial-day-tribute-in-edmonds,178483"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "https://www.edmondsbeacon.com/",
+      "findings": "The Edmonds City Council has voted 5-2 to resume the City’s salary commission, ending a freeze put into place last December when the council suspended all nonmandatory boards and commissions to save money.",
+      "urls": []
+    },
+    {
+      "category": "public_safety",
+      "source": "https://komonews.com/",
+      "findings": "Edmonds Police searching for suspects who assaulted, robbed two women walking on trail",
+      "urls": [
+        "https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "https://edmondswa.gov/",
+      "findings": "The Edmonds City Council voted five to two in favor of the ordinance, which means homeless campers can now face fines or jail time if they refuse an offer of housing when space is available.",
+      "urls": [
+        "https://edmondswa.gov/"
+      ]
+    }
+  ],
+  "career": {
+    "openings": [
+      {
+        "district": "Edmonds School District",
+        "role": "Digital Learning Coordinator",
+        "url": "https://www.linkedin.com/jobs/edmonds-school-district-jobs-edmonds-wa",
+        "summary": "Design and implement school-based, departmental, or district-wide professional learning to support staff in using tech-levy funded resources",
+        "deadline": null,
+        "salary_range": null
+      }
+    ],
+    "notes": "Limited information available from extracted content. Only one job posting found with relevant details."
+  },
+  "english_lesson_plans": {
+    "classroom_ready": [
+      {
+        "title": "Digital Class Banking System - Token Economy - Money - Budget - GOOGLE",
+        "source": "Teachers Pay Teachers",
+        "url": "https://www.teacherspayteachers.com/Product/Digital-Class-Banking-System-Token-Economy-Money-Budget-GOOGLE-6632283",
+        "grade_band": "High School",
+        "topic": "Classroom Management",
+        "summary": "A digital class banking system that teaches students how to manage their money online with a simple click. The system includes a framework for a class bank using Google Sheets, fully editable card templates, and video instructions to walk you through each part of the process."
+      },
+      {
+        "title": "Build Your Token Economy With LiveSchool",
+        "source": "LiveSchool",
+        "url": "https://www.whyliveschool.com/use-cases/token-economy",
+        "grade_band": "High School",
+        "topic": "Classroom Management",
+        "summary": "A digital token economy system that helps students understand the connection between their behavior and reinforcement. The system includes a digital currency, a system for earning and spending currency, and a way for students to track their balances."
+      },
+      {
+        "title": "Classroom Token System: 8 ABA Steps to Reinforce Appropriate Behavior",
+        "source": "Autism Classroom Resources",
+        "url": "https://autismclassroomresources.com/classroom-token-system/",
+        "grade_band": "High School",
+        "topic": "Classroom Management",
+        "summary": "A classroom token system that helps students understand the connection between their behavior and reinforcement. The system includes 8 steps to implement a token economy, including choosing and defining target behavior, individualizing the system, and providing feedback."
+      },
+      {
+        "title": "Classroom Economy 2026: Boost Engagement & Skills",
+        "source": "Classroom Center",
+        "url": "https://www.classroomcenter.co.uk/classroom-economy-guide/",
+        "grade_band": "High School",
+        "topic": "Classroom Management",
+        "summary": "A classroom economy system that teaches students about financial literacy and responsibility. The system includes a structured system where students earn, manage, and spend classroom currency for behaviors and tasks, simulating real-world financial principles."
+      }
+    ],
+    "pedagogy_pieces": [
+      {
+        "title": "The Joy of Hot Topic",
+        "source": "Taniyn Quest - Obsidian Publish",
+        "url": "https://publish.obsidian.md/taniynquest/The+Joy+of+Hot+Topic",
+        "summary": "A personal story about a teacher's experience with a hot topic in the classroom."
+      },
+      {
+        "title": "Inclusive Classroom Research",
+        "source": "Saatvik - Obsidian Publish",
+        "url": "https://publish.obsidian.md/saatvik/Inclusive+Classroom+Research/Inclusive+Classroom+Research",
+        "summary": "A research project on inclusive classroom practices."
+      }
+    ],
+    "notes": "The search results provided a range of resources for classroom management and token economy systems. The resources included digital class banking systems, token economy systems, and classroom economy systems. The resources were from a variety of sources, including Teachers Pay Teachers, LiveSchool, Autism Classroom Resources, and Classroom Center. The resources provided a range of strategies and tools for teachers to use in their classrooms to promote positive behavior and reinforce appropriate behavior. The resources also provided information on how to implement and manage a token economy system, including how to choose and define target behavior, individualize the system, and provide feedback. Overall, the search results provided a comprehensive range of resources for teachers to use in their classrooms to promote positive behavior and reinforce appropriate behavior."
+  },
+  "family": {
+    "choir": "No specific choir auditions found in the extracted content. However, organizations to check for choir auditions include Seattle Choral Company, Seattle Pro Musica, Northwest Chorale, Choral Arts NW, and Pacific Lutheran Univ Choirs.",
+    "toddler": "Activities for toddlers in Edmonds and Lynnwood include storytime at the library, and events listed on the Explore Edmonds website, such as the Edmonds Arts Festival, which offers a hands-on children’s art activity area. Check out https://www.exploreedmonds.com/events for more information.",
+    "urls": [
+      "https://www.parentmap.com/calendar",
+      "https://www.eventbrite.com/d/wa--edmonds/free-kids/",
+      "https://www.facebook.com/groups/170726826406843/posts/4268970866582398/",
+      "https://www.exploreedmonds.com/events",
+      "https://www.groupon.com/local/edmonds-wa/kids-activities"
+    ]
+  },
+  "global_news": [
+    {
+      "category": "World",
+      "source": "BBC",
+      "findings": "US launches new strikes on Iran, targeting missile sites and boats. US Central Command says the strikes were taken in 'self-defense'.",
+      "urls": [
+        "https://www.bbc.com/news/articles/cvgzzn4y1n8o"
+      ]
+    },
+    {
+      "category": "Middle East",
+      "source": "BBC",
+      "findings": "Netanyahu says Israel will intensify strikes against Hezbollah. The Israeli military hits targets in eastern Lebanon after the prime minister announces further strikes.",
+      "urls": [
+        "https://www.bbc.com/news/articles/cewppdk1187o"
+      ]
+    },
+    {
+      "category": "Asia",
+      "source": "BBC",
+      "findings": "Rescuers race to free seven people trapped in flooded Laos cave. A team of experts who helped free a teen football team from a Thai cave in 2018 are among the rescuers.",
+      "urls": [
+        "https://www.bbc.com/news/articles/cglpp1g388zo"
+      ]
+    },
+    {
+      "category": "World",
+      "source": "CNN",
+      "findings": "Mexico to host Iran's World Cup team after US refusal, president says.",
+      "urls": [
+        "https://www.cnn.com/world"
+      ]
+    },
+    {
+      "category": "World",
+      "source": "NBC News",
+      "findings": "Pope Leo warns AI is fueling conflict, urges world to slow advances.",
+      "urls": [
+        "https://www.nbcnews.com/world/the-vatican/pope-leo-encyclical-ai-conflict-magnifica-humanitas-rcna346784"
+      ]
+    }
+  ],
+  "intellectual_journals": [],
+  "wearable_ai": [
+    {
+      "category": "ai_voice_hardware",
+      "findings": "New wearable AI devices such as SwitchBot's AI MindClip and Plaud's NotePin S have been launched, providing AI assistants that turn speech and vision into searchable memory, action items, and summaries.",
+      "urls": [
+        "https://www.forbes.com/sites/ronschmelzer/2026/01/08/ces-2026-makes-one-thing-clear-ais-next-interface-is-you/"
+      ]
+    },
+    {
+      "category": "wearable_devices",
+      "findings": "Wearable AI devices such as Meta Ray-Ban smart glasses and SwitchBot's AI MindClip are becoming increasingly popular, with the global wearable AI devices market expected to reach approximately USD 270.2 billion by 2036.",
+      "urls": [
+        "https://uk.finance.yahoo.com/news/wearable-ai-devices-market-insights-093200955.html",
+        "https://medium.com/@ayeshha2398/the-future-is-hands-free-my-top-ai-wearables-that-replaced-my-smartphone-in-2026-926eb1500cca"
+      ]
+    }
+  ],
+  "newyorker": {
+    "available": true,
+    "title": "The Useless Beauty of Christo and Jeanne-Claude",
+    "section": "london postcard",
+    "dek": "Plans for a forgotten art work by the late duo were found in an airshaft. Now, with the help of Christo’s nephew, “Air Package on a Ceiling” is finally on view, at Gagosian. Anna Russell writes.",
+    "byline": "By Anna Russell",
+    "date": "2026-05-25T06:00:00.000-04:00",
+    "text": "In 1964, the married artists Christo and Jeanne-Claude moved out of the Chelsea Hotel and into the top two floors of a loft on Howard Street, in SoHo. Sure, they were broke—the hotel proprietor said they could pay him back later—but they were jazzed about their new digs. The place had big windows and an airshaft. (Later, they bought the building; it was the seventies.) Eventually, the airshaft became a storage unit, and it was there, in 2018, that Christo’s studio manager discovered a scale model, complete with electrical wiring and preparatory drawings, for a project the artist had forgotten about from half a century earlier. Eureka!\nThe other day, at the Gagosian in London, several art installers were hoisting ropes and clambering up ladders, in order to mount the work in a gallery for the first time. The piece, “Air Package on a Ceiling,” was designed in 1968 for the Institute of Contemporary Art, in Philadelphia, and involves a giant sheet of plastic suspended from the ceiling and crossed by ropes that make it bulge and fold. (It never reached the I.C.A., owing to technical concerns.) The effect is disorienting, as if the air had turned solid. Overseeing things was Christo’s nephew, Vladimir Yavachev, who was dressed in layers of black. “I mean, it’s up there—it’s not falling,” he said, peering at the plastic.\nYavachev began working with Christo in 1990, when he was a teen-ager, and newly freed from the constraints of Communist Bulgaria. He arrived in New York having never met his uncle, who had escaped the Eastern Bloc years earlier, by bribing a customs officer, and had never returned. “In Communist Bulgaria, there was a word for it,” Yavachev said. “You don’t become an immigrant, you become a nevuzvrashtenetz, which means ‘the one that can never come back.’ ” Christo and Jeanne-Claude travelled the world wrapping things: cars, islands, the Sydney coastline. “The enthusiasm was incredible,” Yavachev said.\nChristo died in 2020—Jeanne-Claude in 2009—but the duo left detailed instructions for the posthumous installation of “Air Package” and other works, including “L’Arc de Triomphe, Wrapped,” which Yavachev completed in 2021. At eighty, Christo was involved in the final planning. By the time the installation began, his presence was greatly missed. “He had always been like a jackrabbit running around to see a project from every point of view that you can,” Yavachev said. “The way he would look at them, it was like a little kid looking at a cake, like you want to eat it. It was always like this, always ‘Look, look, look, look!’ ”\nIn the gallery, a man in a ball cap had climbed a ladder to examine the folds of the plastic sheet. “More slack,” someone said. “More folds.” Yavachev had flown in that morning from Abu Dhabi, where he has been working on realizing the duo’s most ambitious work, “The Mastaba,” a tomblike structure made of oil barrels in the desert, which, if completed, would be one of the world’s largest contemporary sculptures by volume. “Inshallah,” Yavachev said. He has been working on it for twenty years, with no end date in sight.\n“Jeanne-Claude always used to say we do these projects for ourselves, and if other people enjoy it, that’s a bonus,” he went on. Many of the works were dreamed up decades before they became reality. “The projects find their time,” he said. He recalled a phrase he had learned from Bono, on the roof of the Arc de Triomphe. “Cathedral thinking,” he said. “Cathedral thinking is when you start something that you know that you cannot finish. Any architect of a cathedral, it will take two hundred years to finish a cathedral! You’re never going to see it. It’s very similar.”\nIn their lifetimes, the artists scrupulously avoided assigning meaning to their art works. “Christo always said, ‘I did not invent the politics in the Reichstag,’ ” Yavachev said. (They once wrapped the Reichstag.) “Coming from a totalitarian country, he never wanted to use art as propaganda. It was always art for art’s sake, just as a visual medium without any message. Though the message is there and anyone’s interpretation is legitimate.” “L’Arc de Triomphe, Wrapped” became a symbol of post-Covid unity, even though the piece was envisioned back in 1961.\n“The power of this, and why it’s so strong, is because it’s an art work and because it’s useless,” Yavachev said. “Nobody needs it. This uselessness of stuff is the thing that makes us human.” What did he think visitors to the desert would make of “The Mastaba” in five, ten, or twenty years, once it was complete? “Oh, no, no,” he said. “I don’t like to speculate.” ♦",
+    "url": "https://www.newyorker.com/magazine/2026/06/01/the-useless-beauty-of-christo-and-jeanne-claude",
+    "source": "The New Yorker",
+    "archived_from": "",
+    "error": null
+  },
+  "literary_pick": {
+    "available": true,
+    "title": "Orbital",
+    "author": "Samantha Harvey",
+    "year": 2024,
+    "summary": "Orbital is a novel about six astronauts on the International Space Station, exploring the fragility of human life and the effects of being separated from Earth. The novel delves into the astronauts' conversations, fears, and dreams, as they watch the Earth from afar and contemplate their place in the universe.",
+    "url": "https://thebookerprizes.com/the-booker-library/books/orbital"
+  },
+  "enriched_articles": [],
+  "correspondence": {
+    "found": true,
+    "fallback_used": false,
+    "text": "- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert from lang.mc@gmail.com indicating a stuck pattern requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Tier 1 monitor alert for jeeves-unchained adaptive-loop showing same_blocker_count=3, indicating stuck pattern requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert from lang.mc@gmail.com sent at 08:49:38 remains a pressing matter indicating a stuck pattern."
+  }
+}
