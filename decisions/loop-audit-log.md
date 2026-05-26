@@ -213,3 +213,4 @@ Expected: 7 agent sectors + 6 crawl4ai sectors = 13/13 possible (minus failures)
 2026-05-25T20:53:40Z | pre_wake: VALIDATION SPRINT ACTIVE (signals: LOOP_STATE=0, gh=1). Tier 1 self-pausing. Validation.yml dispatching daily.yml every 30min — do not compete for Cerebras quota.
 2026-05-25T21:14:33Z | pre_wake: VALIDATION SPRINT ACTIVE (signals: LOOP_STATE=0, gh=1). Tier 1 self-pausing. Validation.yml dispatching daily.yml every 30min — do not compete for Cerebras quota.
 2026-05-25T21:43:48Z | pre_wake: VALIDATION SPRINT ACTIVE (signals: LOOP_STATE=0, gh=1). Tier 1 self-pausing. Validation.yml dispatching daily.yml every 30min — do not compete for Cerebras quota.
+2026-05-26T10:30:00Z | iter 34 | M8 PRECONDITION GATE | FAILED (temporal) | roadmap_action=none | pytest_exit=1 (4 pre-existing env failures)
