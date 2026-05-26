@@ -238,60 +238,25 @@ def _fetch_article_text_impl(url: str) -> str:
         base.update({"title": title, "text": text[:3000], "fetch_failed": False})
         return json.dumps(base)
 
-    # Crawl4AI TIER 2 (M3, opt-in) — inserted between trafilatura and TinyFish
-    # for news_short hosts only when JEEVES_USE_CRAWL4AI_FETCH=1.  Dispatches
-    # via _run_crawl4ai_sync (module-level helper) which handles the nested-
-    # event-loop case under pytest-asyncio without crashing.
-    # Soft-fails on every error so the existing cascade continues unaffected.
-    import os as _os
+    # Crawl4AI TIER 2 — for news_short hosts only. Soft-fails so cascade continues.
+    try:
+        from .crawl4ai_extract import classify_host as _classify_host
 
-    if (
-        _os.environ.get("JEEVES_USE_CRAWL4AI_FETCH", "0") == "1"
-        and _os.environ.get("JEEVES_REFACTOR_KILL_SWITCH", "0") != "1"
-    ):
-        try:
-            from .crawl4ai_extract import classify_host as _classify_host
-
-            if _classify_host(url) == "news_short":
-                try:
-                    c4ai_text, _mode = _run_crawl4ai_sync(url, max_chars=3000)
-                    if c4ai_text and len(c4ai_text) >= 300:
-                        base.update({
-                            "title": _extract_title(html) if html else "",
-                            "text": c4ai_text[:3000],
-                            "fetch_failed": False,
-                            "extracted_via": "crawl4ai",
-                        })
-                        return json.dumps(base)
-                except Exception as e:
-                    log.debug("crawl4ai fetch failed for %s: %s", url, e)
-        except Exception as e:
-            log.debug("crawl4ai import/classify failed: %s", e)
-
-    # TinyFish fallback (sprint-18, opt-in) — managed extractor sits between
-    # trafilatura and playwright when JEEVES_USE_TINYFISH=1 AND TINYFISH_API_KEY
-    # is set. Cheaper-than-Playwright on minute-billed CI; better than Jina on
-    # JS-heavy SPAs. Soft-fails on every error path so playwright still runs.
-    import os as _os
-
-    if (
-        _os.environ.get("JEEVES_USE_TINYFISH", "").strip() == "1"
-        and _os.environ.get("TINYFISH_API_KEY", "").strip()
-    ):
-        try:
-            from .tinyfish import extract_article as _tf_extract
-
-            tf_result = _tf_extract(url, timeout_seconds=30, max_chars=3000)
-            if tf_result.get("success"):
-                base.update({
-                    "title": tf_result.get("title", ""),
-                    "text": tf_result.get("text", "")[:3000],
-                    "fetch_failed": False,
-                    "extracted_via": "tinyfish",
-                })
-                return json.dumps(base)
-        except Exception as e:
-            log.debug("tinyfish fallback failed for %s: %s", url, e)
+        if _classify_host(url) == "news_short":
+            try:
+                c4ai_text, _mode = _run_crawl4ai_sync(url, max_chars=3000)
+                if c4ai_text and len(c4ai_text) >= 300:
+                    base.update({
+                        "title": _extract_title(html) if html else "",
+                        "text": c4ai_text[:3000],
+                        "fetch_failed": False,
+                        "extracted_via": "crawl4ai",
+                    })
+                    return json.dumps(base)
+            except Exception as e:
+                log.debug("crawl4ai fetch failed for %s: %s", url, e)
+    except Exception as e:
+        log.debug("crawl4ai import/classify failed: %s", e)
 
     # Playwright fallback — last resort when httpx returned nothing OR
     # trafilatura couldn't extract enough body text.
