@@ -2,10 +2,10 @@
 _Auto-managed. Do not edit during a run._
 
 ## Last Updated
-2026-05-26T04:43:37Z (iter 26 — M6 VERIFY exit=1 temporal; avg=8.8/13 improved; same_blocker=1 → STOP; ETA now 05-28)
+2026-05-26T05:23:27Z (iter 27 — M6 VERIFY exit=1 temporal; avg=8.8/13 unchanged; same_blocker=2)
 
 ## Iteration
-26 (M6 validation sprint — avg_sectors=8.8/13 temporal blocker; same_blocker_count=1; ETA ~2026-05-28)
+27 (M6 validation sprint — avg_sectors=8.8/13 temporal blocker; same_blocker_count=2; ETA ~2026-05-28)
 
 ## Last Milestone
 M6 validation sprint monitor — sprint dispatcher 12/12 closed; richness criteria still failing.
@@ -67,7 +67,7 @@ TEMPORAL ANALYSIS (updated 2026-05-26T01:15Z):
 M6 avg_sectors=8.8/13 < 10 (temporal, improving). manual4 (12/13) added. Pre-fix sessions 05-21 thru 05-24 still in window. ETA now ~2026-05-28 (05-23 drops → avg 71/7=10.14 ✓)
 
 ## Same Blocker Count
-1  (manual4 run added 12/13 session; avg 8.44→8.8; ETA 05-29→05-28)
+2  (no new sessions; avg 8.8/13 unchanged)
 
 ## Refined DONE WHEN
 M6 done when:
