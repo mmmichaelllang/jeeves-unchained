@@ -1,0 +1,393 @@
+{
+  "date": "2026-05-26",
+  "status": "complete",
+  "dedup": {
+    "covered_urls": [
+      "https://abcnews.com",
+      "https://aeon.co/essays/for-sergiu-klainerman-maths-is-a-fact-to-be-divined",
+      "https://aljazeera.com",
+      "https://applitrack.com/edmonds/onlineapp/default.aspx?Category=Certificated+Pools",
+      "https://artforum.com/columns/daniel-wenger-rachel-wetzler-may-2026-editors-letter-1234747369",
+      "https://arxiv.org/pdf/2603.28986",
+      "https://arxiv.org/pdf/2604.18897",
+      "https://bbc.com/news/articles/cewppdk1187o",
+      "https://bbc.com/news/articles/cglpp1g388zo",
+      "https://bbc.com/news/articles/cvgzzn4y1n8o",
+      "https://clutch.co/resources/wearable-technology-trends",
+      "https://cnn.com/world",
+      "https://coherent-intelligence.uk/papers/trinitarian-standard-model.html",
+      "https://digitaltheatreplus.com/blog/how-to-ai-proof-engage-students-choice-based-curriculum",
+      "https://edmondsbeacon.com/stories/memorial-day-tribute-in-edmonds,178483",
+      "https://edmondswa.gov",
+      "https://eventbrite.com/d/wa--edmonds/free-kids",
+      "https://exploreedmonds.com/events",
+      "https://facebook.com/groups/170726826406843/posts/4268970866582398",
+      "https://forbes.com/sites/ronschmelzer/2026/01/08/ces-2026-makes-one-thing-clear-ais-next-interface-is-you",
+      "https://fox13seattle.com/video/1705710",
+      "https://github.com/Human-Agent-Society/CORAL",
+      "https://glassdoor.com/Job/redmond-english-teacher-jobs-SRCH_IL.0,7_IC1150499_KO8,23.htm",
+      "https://groupon.com/local/edmonds-wa/kids-activities",
+      "https://instagram.com/reel/DYqogg5j_W5",
+      "https://jewishcurrents.org/the-limits-of-diasporism",
+      "https://knilt.arcc.albany.edu/Lesson_1:_Designing_an_Effective_Token_Economy_System",
+      "https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States",
+      "https://linkedin.com/jobs/view/dual-language-english-spanish-teacher-1-0-fte-at-edmonds-school-district-4385189907",
+      "https://medium.com/@ayeshha2398/the-future-is-hands-free-my-top-ai-wearables-that-replaced-my-smartphone-in-2026-926eb1500cca",
+      "https://newyorker.com/magazine/2026/06/01/the-useless-beauty-of-christo-and-jeanne-claude",
+      "https://nicolettelesniak.com/blog/tokenboards",
+      "https://nybooks.com/online/2026/05/24/the-education-of-pope-leo-xiv",
+      "https://openreview.net/pdf?id=YSkby14i2v",
+      "https://parentmap.com/calendar",
+      "https://philarchive.org/archive/ISATRO-4",
+      "https://philarchive.org/archive/PELTRG",
+      "https://propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions",
+      "https://publish.obsidian.md/saatvik/Inclusive+Classroom+Research/Inclusive+Classroom+Research",
+      "https://publish.obsidian.md/taniynquest/The+Joy+of+Hot+Topic",
+      "https://teacherspayteachers.com/Product/Full-Choice-Novel-Unit-Lit-Circles-Activities-and-Assessments-High-School-ELA-11549526",
+      "https://thebookerprizes.com/the-booker-library/books/orbital",
+      "https://uk.finance.yahoo.com/news/wearable-ai-devices-market-insights-093200955.html",
+      "https://whyliveschool.com/blog/token-economy-lesson-plan",
+      "https://youtube.com/watch?v=PTkdspJg6Pg",
+      "https://youtube.com/watch?v=RYNQteF6gvQ",
+      "https://youtube.com/watch?v=dvlgGKf7oq0",
+      "https://youtube.com/watch?v=x-ddBcWycpM",
+      "https://youtube.com/watch?v=yIC6lfGe0_g"
+    ],
+    "covered_headlines": [
+      "Reality Is Triune | Metaphysical Argument",
+      "AI | CORAL",
+      "UAP | The Pentagon",
+      "Admiraly Way: in Edmonds, near the Anthony's parking lot.",
+      "A man accused of brutally beating two massage therapists at an Edmonds spa is now facing multiple felony charges.",
+      "The Edmonds City Council: has voted 5-2 to resume the City’s salary commiss",
+      "Edmonds Police: searching for suspects who assaulted, robbed two",
+      "The Edmonds City Council: voted five to two in favor of the ordinance, whic",
+      "Edmonds School District",
+      "Dual Language English/Spanish Teacher",
+      "Lake Washington School District",
+      "English Teacher",
+      "Certificated Pools",
+      "Full Choice Novel Unit: Lit Circles Activities and Assessments, High School ELA",
+      "Token Economy System",
+      "Token Boards in the High School Classroom",
+      "Engaging Students with an AI-Proof Choice-Based Curriculum",
+      "Starting Your Own Token Economy",
+      "The Joy of Hot Topic",
+      "Inclusive Classroom Research",
+      "Seattle Choral Company | Seattle Pro Musica",
+      "Macaroni KID North Sound WA | Edmonds Jazz Walk",
+      "US | US Central Command",
+      "FIFA World Cup | US",
+      "World Cup | US",
+      "Pope Leo | Memorial Day",
+      "Netanyahu says Israel will intensify strikes against Hezbollah. Rescuers race to free seven people trapped in flooded Laos cave.",
+      "The Education | Pope Leo XIV",
+      "Mass Arrests | ICE",
+      "For Sergiu Klainerman | Sergiu Klainerman",
+      "The Limits: of Diasporism. The article discusses the concept",
+      "Daniel Wenger | Rachel Wetzler",
+      "AI: devices are being launched, including smart glass",
+      "Wearable AI | USD",
+      "The Useless Beauty of Christo and Jeanne-Claude",
+      "Orbital",
+      "email | lang.mc@gmail.com"
+    ],
+    "today_headline_count": 36,
+    "cross_sector_dupes": [
+      "https://edmondsbeacon.com/stories/memorial-day-tribute-in-edmonds,178483"
+    ]
+  },
+  "triadic_ontology": {
+    "findings": "Reality Is Triune: A Metaphysical Argument for Agápē as First Principle by Mark Pelley (April 2026) advances a compact metaphysical system arguing that being is relation, relation is agápē, and agápē is triune. Pelley demonstrates that solitary being collapses and dyadic relation closes, leaving only a triune structure capable of sustaining distinction, unity, and generativity without contradiction. The argument proceeds through being → relation → self-giving relationality → minimal plurality → triadic sufficiency, establishing agápē as the non-coercive ground of reality. Triadic Relational Ontology: From Primordial Separation to Relational Field by Christopher Isabelle develops TRO as a continuation of Primordial Separation Ontology, arguing that dyadic structures are insufficient for emergence, continuity, and meaning. Isabelle posits an irreducible third term—a relational field—that must be actively maintained through tension between poles, without which intelligibility disappears r [TRUNCATED]",
+    "urls": [
+      "https://philarchive.org/archive/PELTRG",
+      "https://philarchive.org/archive/ISATRO-4",
+      "https://coherent-intelligence.uk/papers/trinitarian-standard-model.html"
+    ]
+  },
+  "ai_systems": {
+    "findings": "Recent advances in multi-agent AI research systems have led to the development of frameworks such as Mimosa and CORAL, which enable autonomous scientific discovery and self-evolution. These frameworks leverage large language models and agentic architectures to synthesize task-specific workflows and refine them through experimental feedback. Additionally, prompt engineering has become a critical aspect of maximizing the performance of large language models, with self-supervised methods such as MR.PEA offering a promising approach to optimizing prompts with minimal input. These developments have the potential to accelerate knowledge generation and automate a broad range of computationally accessible scientific tasks across disciplines.",
+    "urls": [
+      "https://arxiv.org/pdf/2603.28986",
+      "https://github.com/Human-Agent-Society/CORAL",
+      "https://arxiv.org/pdf/2604.18897",
+      "https://openreview.net/pdf?id=YSkby14i2v"
+    ]
+  },
+  "uap": {
+    "findings": "Recent developments in UAP disclosure, congressional hearings, and non-human intelligence declassification have been reported. The Pentagon has released new UFO videos under President Trump's directive, including footage of UAP sightings and audio of a medical debriefing of the Apollo 12 mission astronaut crew. The videos show instances of light flashes or 'streaks of lights' seen by the astronauts, which they describe as 'a perfectly known phenomenon' that can be caused by gamma rays or other factors. The release of these files is part of the government's effort to increase transparency around reported UFO sightings. However, many are still wondering if the government knows more than they are letting on, and some are calling for further disclosure. The topic of UAP and non-human intelligence has been discussed in various media outlets, with some experts weighing in on the possibility of extraterrestrial life and the need for further research.",
+    "urls": [
+      "https://www.youtube.com/watch?v=PTkdspJg6Pg",
+      "https://www.youtube.com/watch?v=dvlgGKf7oq0",
+      "https://www.youtube.com/watch?v=RYNQteF6gvQ",
+      "https://www.youtube.com/watch?v=x-ddBcWycpM",
+      "https://www.instagram.com/reel/DYqogg5j_W5/"
+    ]
+  },
+  "weather": "I am not able to execute the instructions as they require external searches and API calls. However, I can provide a response based on the extracted content provided.\n\n\nThe current weather in Edmonds, WA is expected to be rainy late in the morning through late tonight, with a high of 58° and a low of 49°. The sun will set at 8:54 PM, not 3:54 AM as that would be sunrise. Tomorrow's weather is expected to be partly sunny and pleasant.\n\n\nFor more information, you can visit the following websites:\n- https://www.wunderground.com/hourly/us/wa/edmonds\n- https://weather.com/weather/hourbyhour/l/Edmonds+Washington+98020\n- https://www.accuweather.com/en/us/edmonds/98020/weather-forecast/336397\n- https://forecast.weather.gov/zipcity.php?inputstring=Edmonds,WA&Go2=Go\n- https://weather.com/weather/tend [TRUNCATED]",
+  "local_news": [
+    {
+      "category": "public_safety",
+      "source": "https://www.edmondsbeacon.com/",
+      "findings": "One juvenile is in custody after an early morning shooting in the 400 block of Admiraly Way in Edmonds, near the Anthony's parking lot.",
+      "urls": [
+        "https://www.edmondsbeacon.com/stories/memorial-day-tribute-in-edmonds,178483"
+      ]
+    },
+    {
+      "category": "public_safety",
+      "source": "https://www.fox13seattle.com/",
+      "findings": "A man accused of brutally beating two massage therapists at an Edmonds spa is now facing multiple felony charges.",
+      "urls": [
+        "https://www.fox13seattle.com/video/1705710"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "https://www.edmondsbeacon.com/",
+      "findings": "The Edmonds City Council has voted 5-2 to resume the City’s salary commission, ending a freeze put into place last December.",
+      "urls": []
+    },
+    {
+      "category": "public_safety",
+      "source": "https://komonews.com/",
+      "findings": "Edmonds Police searching for suspects who assaulted, robbed two women walking on trail.",
+      "urls": [
+        "https://komonews.com/topic/Edmonds%2CWashington%2CUnited%20States"
+      ]
+    },
+    {
+      "category": "municipal",
+      "source": "https://edmondswa.gov/",
+      "findings": "The Edmonds City Council voted five to two in favor of the ordinance, which means homeless campers can now face fines or jail time if they refuse an offer of housing when space is available.",
+      "urls": [
+        "https://edmondswa.gov/"
+      ]
+    }
+  ],
+  "career": {
+    "openings": [
+      {
+        "district": "Edmonds School District",
+        "role": "Dual Language English/Spanish Teacher",
+        "url": "https://www.linkedin.com/jobs/view/dual-language-english-spanish-teacher-1-0-fte-at-edmonds-school-district-4385189907",
+        "summary": "Instructs students using strategies conducive to dual-language immersion",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Lake Washington School District",
+        "role": "English Teacher",
+        "url": "https://www.glassdoor.com/Job/redmond-english-teacher-jobs-SRCH_IL.0,7_IC1150499_KO8,23.htm",
+        "summary": "Teach English to students",
+        "deadline": null,
+        "salary_range": null
+      },
+      {
+        "district": "Edmonds School District",
+        "role": "Certificated Pools",
+        "url": "https://www.applitrack.com/edmonds/onlineapp/default.aspx?Category=Certificated+Pools",
+        "summary": "Certificated pool position",
+        "deadline": null,
+        "salary_range": null
+      }
+    ],
+    "notes": "Extracted from Edmonds School District, Glassdoor, and Applitrack websites"
+  },
+  "english_lesson_plans": {
+    "classroom_ready": [
+      {
+        "title": "Full Choice Novel Unit: Lit Circles Activities and Assessments, High School ELA",
+        "source": "Teachers Pay Teachers",
+        "url": "https://www.teacherspayteachers.com/Product/Full-Choice-Novel-Unit-Lit-Circles-Activities-and-Assessments-High-School-ELA-11549526",
+        "grade_band": "9-12",
+        "topic": "Literary Analysis",
+        "summary": "A 3-4 week, no-prep literary analysis & discussion unit that allows students to choose their own novel and participate in small group discussions and writing activities."
+      },
+      {
+        "title": "Token Economy System",
+        "source": "KNILT",
+        "url": "https://knilt.arcc.albany.edu/Lesson_1:_Designing_an_Effective_Token_Economy_System",
+        "grade_band": "9-12",
+        "topic": "Classroom Management",
+        "summary": "A comprehensive guide to designing and implementing a token economy system in the classroom, including a checklist and action plan."
+      },
+      {
+        "title": "Token Boards in the High School Classroom",
+        "source": "Nicolette Lesniak",
+        "url": "https://www.nicolettelesniak.com/blog/tokenboards",
+        "grade_band": "9-12",
+        "topic": "Classroom Management",
+        "summary": "A guide to using token boards in the high school classroom to promote self-regulation and motivation, including tips for personalizing the reinforcement system and fading support over time."
+      },
+      {
+        "title": "Engaging Students with an AI-Proof Choice-Based Curriculum",
+        "source": "Digital Theatre Plus",
+        "url": "https://www.digitaltheatreplus.com/blog/how-to-ai-proof-engage-students-choice-based-curriculum",
+        "grade_band": "9-12",
+        "topic": "Curriculum Design",
+        "summary": "A blog post discussing the importance of engaging students with a choice-based curriculum and providing tips for designing such a curriculum."
+      },
+      {
+        "title": "Starting Your Own Token Economy",
+        "source": "Why Live School",
+        "url": "https://www.whyliveschool.com/blog/token-economy-lesson-plan",
+        "grade_band": "9-12",
+        "topic": "Classroom Management",
+        "summary": "A lesson plan and guide to starting a token economy in the classroom, including a discussion of the benefits and implementation strategies."
+      }
+    ],
+    "pedagogy_pieces": [
+      {
+        "title": "The Joy of Hot Topic",
+        "source": "Taniyn Quest",
+        "url": "https://publish.obsidian.md/taniynquest/The+Joy+of+Hot+Topic",
+        "summary": "A blog post discussing the importance of student engagement and motivation in the classroom, including a personal anecdote about a successful lesson plan."
+      },
+      {
+        "title": "Inclusive Classroom Research",
+        "source": "Saatvik",
+        "url": "https://publish.obsidian.md/saatvik/Inclusive+Classroom+Research/Inclusive+Classroom+Research",
+        "summary": "A research-based blog post discussing strategies for creating an inclusive classroom environment, including tips for promoting diversity and equity."
+      }
+    ],
+    "notes": "The search results provided a range of resources for high school English language arts teachers, including lesson plans, curriculum design tips, and classroom management strategies. The resources included a mix of free and paid materials, as well as blog posts and educational websites. The search terms used were 'high school English language arts lesson plan', 'classroom token economy', and 'digital points 2026'."
+  },
+  "family": {
+    "choir": "No specific choir auditions found in the extracted content. However, organizations to check for choir auditions include Seattle Choral Company, Seattle Pro Musica, Northwest Chorale, Choral Arts NW, and Pacific Lutheran Univ Choirs.",
+    "toddler": "Edmonds and Lynnwood have various activities for toddlers, including storytime at the library, and events listed on ParentMap and Macaroni KID North Sound WA. Specific activities include the Edmonds Jazz Walk, Cars and Coffee Edmonds, and the Edmonds Arts Festival.",
+    "urls": [
+      "https://www.parentmap.com/calendar",
+      "https://www.eventbrite.com/d/wa--edmonds/free-kids/",
+      "https://www.facebook.com/groups/170726826406843/posts/4268970866582398/",
+      "https://www.exploreedmonds.com/events",
+      "https://www.groupon.com/local/edmonds-wa/kids-activities"
+    ]
+  },
+  "global_news": [
+    {
+      "category": "World",
+      "source": "BBC",
+      "findings": "US launches new strikes on Iran, targeting missile sites and boats. US Central Command says the strikes were taken in 'self-defense'.",
+      "urls": [
+        "https://www.bbc.com/news/articles/cvgzzn4y1n8o"
+      ]
+    },
+    {
+      "category": "World",
+      "source": "Al Jazeera",
+      "findings": "Mexico to host Iran team during 2026 FIFA World Cup amid US tensions. The 2026 World Cup will be played across 16 stadiums: 11 in the United States, three in Mexico and two in Canada.",
+      "urls": [
+        "https://www.aljazeera.com/"
+      ]
+    },
+    {
+      "category": "World",
+      "source": "CNN",
+      "findings": "Iran to commute to World Cup games from Mexico after US refusal. Iran's soccer team yet to secure visas for World Cup.",
+      "urls": [
+        "https://www.cnn.com/world"
+      ]
+    },
+    {
+      "category": "World",
+      "source": "ABC News",
+      "findings": "Pope Leo’s sweeping warning about artificial intelligence and its influence on the modern world. Record-breaking Memorial Day weekend travel despite storms and high gas prices.",
+      "urls": [
+        "https://abcnews.com/",
+        "https://www.youtube.com/watch?v=yIC6lfGe0_g"
+      ]
+    },
+    {
+      "category": "World",
+      "source": "BBC",
+      "findings": "Netanyahu says Israel will intensify strikes against Hezbollah. Rescuers race to free seven people trapped in flooded Laos cave.",
+      "urls": [
+        "https://www.bbc.com/news/articles/cewppdk1187o",
+        "https://www.bbc.com/news/articles/cglpp1g388zo"
+      ]
+    }
+  ],
+  "intellectual_journals": [
+    {
+      "source": "The New York Review of Books",
+      "findings": "The Education of Pope Leo XIV by Greg Grandin discusses the life and career of Pope Leo XIV, who was born as Bob Prevost and rose to become the Pope. The article explores his early life, his experiences as a priest, and his eventual election as Pope. It also delves into his views on various issues, including his opposition to liberation theology and his stance on social and economic issues.",
+      "urls": [
+        "https://www.nybooks.com/online/2026/05/24/the-education-of-pope-leo-xiv/"
+      ]
+    },
+    {
+      "source": "ProPublica",
+      "findings": "Mass Arrests by Trump's ICE, CBP Repeatedly Fail Under Scrutiny. The Trump administration has made mass arrests of protesters and bystanders during immigration sweeps, but many of these cases have fallen apart under scrutiny. The article highlights the story of Alejandro Orellana, a Marine Corps veteran who was arrested and charged with conspiracy, but the case was later dismissed.",
+      "urls": [
+        "https://www.propublica.org/article/caught-in-crackdown-ice-cbp-doj-trump-arrests-convictions"
+      ]
+    },
+    {
+      "source": "Aeon",
+      "findings": "For Sergiu Klainerman, maths is a fact to be divined. The article discusses the life and work of Sergiu Klainerman, a mathematician who has made significant contributions to the field of mathematics. It explores his views on the nature of mathematics and how it relates to the world around us.",
+      "urls": [
+        "https://aeon.co/essays/for-sergiu-klainerman-maths-is-a-fact-to-be-divined"
+      ]
+    },
+    {
+      "source": "Jewish Currents",
+      "findings": "The Limits of Diasporism. The article discusses the concept of diasporism and its relation to Jewish identity and anti-Zionism. It explores the history of diasporism and its current manifestations, and argues that it has become a dominant force in shaping Jewish identity and politics.",
+      "urls": [
+        "https://jewishcurrents.org/the-limits-of-diasporism"
+      ]
+    },
+    {
+      "source": "Artforum",
+      "findings": "Editor's Letter: Daniel Wenger and Rachel Wetzler on Criticism. The article discusses the role of criticism in the art world and how it can shape our understanding of art and its relation to the world around us. It argues that criticism has the power to surprise and challenge our assumptions, and that it is essential for creating a more nuanced and informed understanding of art.",
+      "urls": [
+        "https://www.artforum.com/columns/daniel-wenger-rachel-wetzler-may-2026-editors-letter-1234747369/"
+      ]
+    }
+  ],
+  "wearable_ai": [
+    {
+      "category": "ai_voice_hardware",
+      "findings": "New wearable AI devices are being launched, including smart glasses and pendants with AI assistants.",
+      "urls": [
+        "https://www.forbes.com/sites/ronschmelzer/2026/01/08/ces-2026-makes-one-thing-clear-ais-next-interface-is-you/",
+        "https://medium.com/@ayeshha2398/the-future-is-hands-free-my-top-ai-wearables-that-replaced-my-smartphone-in-2026-926eb1500cca"
+      ]
+    },
+    {
+      "category": "wearable_devices",
+      "findings": "Wearable AI devices, such as smartwatches, ear wear, and eye wear, are expected to grow significantly in the next decade, with a market size of approximately USD 270.2 billion by 2036.",
+      "urls": [
+        "https://uk.finance.yahoo.com/news/wearable-ai-devices-market-insights-093200955.html",
+        "https://clutch.co/resources/wearable-technology-trends"
+      ]
+    }
+  ],
+  "newyorker": {
+    "available": true,
+    "title": "The Useless Beauty of Christo and Jeanne-Claude",
+    "section": "london postcard",
+    "dek": "Plans for a forgotten art work by the late duo were found in an airshaft. Now, with the help of Christo’s nephew, “Air Package on a Ceiling” is finally on view, at Gagosian. Anna Russell writes.",
+    "byline": "By Anna Russell",
+    "date": "2026-05-25T06:00:00.000-04:00",
+    "text": "In 1964, the married artists Christo and Jeanne-Claude moved out of the Chelsea Hotel and into the top two floors of a loft on Howard Street, in SoHo. Sure, they were broke—the hotel proprietor said they could pay him back later—but they were jazzed about their new digs. The place had big windows and an airshaft. (Later, they bought the building; it was the seventies.) Eventually, the airshaft became a storage unit, and it was there, in 2018, that Christo’s studio manager discovered a scale model, complete with electrical wiring and preparatory drawings, for a project the artist had forgotten about from half a century earlier. Eureka!\nThe other day, at the Gagosian in London, several art installers were hoisting ropes and clambering up ladders, in order to mount the work in a gallery for the first time. The piece, “Air Package on a Ceiling,” was designed in 1968 for the Institute of Contemporary Art, in Philadelphia, and involves a giant sheet of plastic suspended from the ceiling and crossed by ropes that make it bulge and fold. (It never reached the I.C.A., owing to technical concerns.) The effect is disorienting, as if the air had turned solid. Overseeing things was Christo’s nephew, Vladimir Yavachev, who was dressed in layers of black. “I mean, it’s up there—it’s not falling,” he said, peering at the plastic.\nYavachev began working with Christo in 1990, when he was a teen-ager, and newly freed from the constraints of Communist Bulgaria. He arrived in New York having never met his uncle, who had escaped the Eastern Bloc years earlier, by bribing a customs officer, and had never returned. “In Communist Bulgaria, there was a word for it,” Yavachev said. “You don’t become an immigrant, you become a nevuzvrashtenetz, which means ‘the one that can never come back.’ ” Christo and Jeanne-Claude travelled the world wrapping things: cars, islands, the Sydney coastline. “The enthusiasm was incredible,” Yavachev said.\nChristo died in 2020—Jeanne-Claude in 2009—but the duo left detailed instructions for the posthumous installation of “Air Package” and other works, including “L’Arc de Triomphe, Wrapped,” which Yavachev completed in 2021. At eighty, Christo was involved in the final planning. By the time the installation began, his presence was greatly missed. “He had always been like a jackrabbit running around to see a project from every point of view that you can,” Yavachev said. “The way he would look at them, it was like a little kid looking at a cake, like you want to eat it. It was always like this, always ‘Look, look, look, look!’ ”\nIn the gallery, a man in a ball cap had climbed a ladder to examine the folds of the plastic sheet. “More slack,” someone said. “More folds.” Yavachev had flown in that morning from Abu Dhabi, where he has been working on realizing the duo’s most ambitious work, “The Mastaba,” a tomblike structure made of oil barrels in the desert, which, if completed, would be one of the world’s largest contemporary sculptures by volume. “Inshallah,” Yavachev said. He has been working on it for twenty years, with no end date in sight.\n“Jeanne-Claude always used to say we do these projects for ourselves, and if other people enjoy it, that’s a bonus,” he went on. Many of the works were dreamed up decades before they became reality. “The projects find their time,” he said. He recalled a phrase he had learned from Bono, on the roof of the Arc de Triomphe. “Cathedral thinking,” he said. “Cathedral thinking is when you start something that you know that you cannot finish. Any architect of a cathedral, it will take two hundred years to finish a cathedral! You’re never going to see it. It’s very similar.”\nIn their lifetimes, the artists scrupulously avoided assigning meaning to their art works. “Christo always said, ‘I did not invent the politics in the Reichstag,’ ” Yavachev said. (They once wrapped the Reichstag.) “Coming from a totalitarian country, he never wanted to use art as propaganda. It was always art for art’s sake, just as a visual medium without any message. Though the message is there and anyone’s interpretation is legitimate.” “L’Arc de Triomphe, Wrapped” became a symbol of post-Covid unity, even though the piece was envisioned back in 1961.\n“The power of this, and why it’s so strong, is because it’s an art work and because it’s useless,” Yavachev said. “Nobody needs it. This uselessness of stuff is the thing that makes us human.” What did he think visitors to the desert would make of “The Mastaba” in five, ten, or twenty years, once it was complete? “Oh, no, no,” he said. “I don’t like to speculate.” ♦",
+    "url": "https://www.newyorker.com/magazine/2026/06/01/the-useless-beauty-of-christo-and-jeanne-claude",
+    "source": "The New Yorker",
+    "archived_from": "",
+    "error": null
+  },
+  "literary_pick": {
+    "available": true,
+    "title": "Orbital",
+    "author": "Samantha Harvey",
+    "year": 2024,
+    "summary": "Orbital is a novel about six astronauts rotating in the International Space Station. They are there to do vital work, but slowly they begin to wonder: what is life without Earth? What is Earth without humanity? Together they watch their silent blue planet, circling it sixteen times, spinning past continents, and cycling through seasons, taking in glaciers and deserts, the peaks of mountains and the swells of oceans. Endless shows of spectacular beauty witnessed in a single day. Yet although separated from the world they cannot escape its constant pull. News reaches them of the death of a mothe [TRUNCATED]",
+    "url": "https://thebookerprizes.com/the-booker-library/books/orbital"
+  },
+  "enriched_articles": [],
+  "correspondence": {
+    "found": true,
+    "fallback_used": false,
+    "text": "- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop monitor alert indicating a stuck pattern requiring manual intervention in the jeeves-unchained adaptive-loop.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert from lang.mc@gmail.com indicating a stuck pattern requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Tier 1 monitor alert for jeeves-unchained adaptive-loop showing same_blocker_count=3, indicating stuck pattern requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert from lang.mc@gmail.com sent at 08:49:38 remains a pressing matter indicating a stuck pattern."
+  }
+}
