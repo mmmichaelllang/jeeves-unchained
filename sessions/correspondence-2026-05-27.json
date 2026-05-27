@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] mmmichaelllang: GitHub workflow failure alert for loop monitor on main branch.\n- [escalation] mmmichaelllang: Repeated GitHub workflow failure alert for tier 1 monitor with soft cap exceeded.\n- [escalation] lang.mc@gmail.com: Another GitHub workflow failure alert for loop monitor with iteration count exceeded.\n- [escalation] mmmichaelllang: Loop monitor alert indicating stuck pattern requiring manual intervention.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained.\n- [escalation] lang.mc@gmail.com: Automated loop-monitor alert indicating a stuck pattern requiring manual intervention in jeeves-unchained.",
+  "counts": {
+    "reply_needed": 0,
+    "decision_required": 0,
+    "scheduling": 0,
+    "follow_up": 0,
+    "escalation": 17,
+    "no_action": 26
+  }
+}
