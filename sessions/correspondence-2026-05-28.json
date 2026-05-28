@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert\n- [reply needed] Vervaeke Foundation: The Vervaeke Foundation is discussing meaning-making with Michael\n- [reply needed] Greg Gorsuch: Greg Gorsuch is discussing aliens, demons, or deceptions of the elite\n- [reply needed] Google Play: Google Play subscription payment was declined\n- [reply needed] Spotify: Spotify subscription payment cannot be processed\n- [reply needed] Douglas Frank: Discussion about a missing file\n- [reply needed] Alan Beasley: A file is missing an introduction\n- [reply needed] GitHub: GitHub personal access token jeeves3 is about to expire\n- [reply needed] GitHub: GitHub personal access token jeevesagain is about to expire\n- [decision required] Google Play: Google One subscription is suspended due to a payment issue\n- [follow up] Lady Cathy: Daily correspondence from lang.mc@gmail.com\n- [no action] \"Superhuman – Zain Kahn\": Newsletter about Samsung employees securing a massive AI payout\n- [no action] \"info@schooljobs.com\": Notification about a job interest card from Seattle Public Schools",
+  "counts": {
+    "reply_needed": 8,
+    "decision_required": 1,
+    "scheduling": 0,
+    "follow_up": 1,
+    "escalation": 3,
+    "no_action": 37
+  }
+}
