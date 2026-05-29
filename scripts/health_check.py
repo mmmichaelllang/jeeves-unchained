@@ -188,8 +188,13 @@ def check_kill_switch(window_days: int) -> dict:
         return {"error": f"git_log_failed: {exc}", "deploy_count": 0}
 
 
-def run_check(window_days: int) -> dict:
-    """Full M6 acceptance check. Returns structured result."""
+def run_check(window_days: int, min_non_empty: int | None = None) -> dict:
+    """Full M6 acceptance check. Returns structured result.
+
+    ``min_non_empty`` overrides the default ``M6_MIN_NON_EMPTY`` threshold
+    when supplied. Required for M9 (90-day) gate where the constant 4/5
+    threshold no longer corresponds to the ROADMAP criterion (85/90).
+    """
     sessions = collect_sessions(window_days)
     if not sessions:
         return {
@@ -208,8 +213,13 @@ def run_check(window_days: int) -> dict:
         if non_empty else 0.0
     )
 
-    # M6 thresholds.
-    crit_1 = len(non_empty) >= M6_MIN_NON_EMPTY
+    # M6 thresholds. min_non_empty override lets the same script gate
+    # both the legacy M6 12-day window (default 4) and the M9 90-day
+    # window (caller passes 85) without forking the script.
+    threshold = (
+        int(min_non_empty) if min_non_empty is not None else M6_MIN_NON_EMPTY
+    )
+    crit_1 = len(non_empty) >= threshold
     crit_2 = kill_switch_info.get("deploy_count", 0) == 0
     crit_3 = avg_populated >= M6_MIN_AVG_SECTORS
 
@@ -217,7 +227,7 @@ def run_check(window_days: int) -> dict:
         "window_days": window_days,
         "sessions_found": len(per_session),
         "non_empty_count": len(non_empty),
-        "non_empty_threshold": M6_MIN_NON_EMPTY,
+        "non_empty_threshold": threshold,
         "avg_populated_sectors": round(avg_populated, 2),
         "avg_sectors_threshold": M6_MIN_AVG_SECTORS,
         "max_sectors": N_AGENT_SECTORS,
@@ -267,10 +277,17 @@ def main(argv: list[str] | None = None) -> int:
                    help="Filter label (e.g. 'validation'). Currently advisory.")
     p.add_argument("--json", action="store_true",
                    help="Emit machine-readable JSON.")
+    p.add_argument("--min-non-empty", type=int, default=None,
+                   help=(
+                       f"Override the non-empty threshold (default "
+                       f"{M6_MIN_NON_EMPTY}). Required for the M9 90-day "
+                       "gate — pass 85 to match ROADMAP M9's '>=85/90' "
+                       "criterion."
+                   ))
     args = p.parse_args(argv)
 
     try:
-        result = run_check(args.window)
+        result = run_check(args.window, min_non_empty=args.min_non_empty)
     except Exception as exc:
         print(f"health_check error: {exc}", file=sys.stderr)
         return 2
