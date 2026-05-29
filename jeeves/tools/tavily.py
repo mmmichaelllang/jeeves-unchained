@@ -45,13 +45,21 @@ def make_tavily_search(cfg: Config, ledger: QuotaLedger):
             from tavily import TavilyClient  # type: ignore
 
             client = TavilyClient(api_key=cfg.tavily_api_key)
+            search_kwargs: dict[str, Any] = {
+                "query": query,
+                "max_results": max_results,
+                "search_depth": depth,
+                "include_answer": True,
+            }
+            # 2026-05-29: time_range was declared in the signature, documented
+            # in the tool description, AND prompted in research_sectors.py:688,
+            # but never passed through to the SDK call — silent dead path.
+            # Conditional add because some Tavily SDK versions reject
+            # time_range=None.
+            if time_range:
+                search_kwargs["time_range"] = time_range
             with _rl_acquire("tavily"):
-                resp = client.search(
-                    query=query,
-                    max_results=max_results,
-                    search_depth=depth,
-                    include_answer=True,
-                )
+                resp = client.search(**search_kwargs)
         except Exception as e:
             log.warning("tavily search error: %s", e)
             _emit(
@@ -84,6 +92,7 @@ def make_tavily_search(cfg: Config, ledger: QuotaLedger):
             provider="tavily",
             query=query,
             depth=depth,
+            time_range=time_range or "",
             ok=True,
             results=len(results),
             latency_ms=int((time.monotonic() - t0) * 1000),
