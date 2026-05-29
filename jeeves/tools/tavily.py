@@ -126,9 +126,31 @@ def make_tavily_extract(cfg: Config, ledger: QuotaLedger):
         """
         if isinstance(urls, str):
             urls = [urls]
+        # 2026-05-29: tighten the empty-URL guard. The old guard only
+        # caught the fully-empty case (urls=[]); urls=[''] slipped through
+        # because `not ['']` is False. Per PROBLEM_CHRONICLE.md §4.2,
+        # implicated in the 2026-05-13 empty-research incident when an
+        # upstream Serper 400 left the agent calling extract on a stale
+        # bag of empty strings. Filter to http(s) URLs only AND emit
+        # telemetry so the silent-failure mode surfaces in the JSONL
+        # stream (grep 'empty_url_filtered').
+        urls = [
+            u.strip()
+            for u in (urls or [])
+            if isinstance(u, str)
+            and u.strip().startswith(("http://", "https://"))
+        ]
         if not urls:
+            _emit(
+                "tool_call",
+                provider="tavily_extract",
+                urls=0,
+                ok=False,
+                latency_ms=0,
+                error="empty_url_filtered",
+            )
             return (
-                "ERROR: tavily_extract requires a non-empty 'urls' list. "
+                "ERROR: tavily_extract requires a non-empty list of http(s) URLs. "
                 "Example: tavily_extract(urls=['https://example.com/article'])"
             )
         urls = urls[:10]
