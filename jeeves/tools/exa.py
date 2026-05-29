@@ -67,6 +67,12 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
             }
             if category:
                 kwargs["category"] = category
+            # 2026-05-29: start_published_date was declared in the signature,
+            # documented in the tool description, AND prompted in
+            # research_sectors.py:689, but never added to kwargs — silent dead
+            # path. Same shape bug as tavily.py time_range.
+            if start_published_date:
+                kwargs["start_published_date"] = start_published_date
             with _rl_acquire("exa"):
                 resp = client.search(query, **kwargs)
         except Exception as e:
@@ -102,6 +108,7 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
             provider="exa",
             query=query,
             search_type=search_type,
+            start_published_date=start_published_date or "",
             ok=True,
             results=len(results),
             latency_ms=int((time.monotonic() - t0) * 1000),
