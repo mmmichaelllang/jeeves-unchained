@@ -205,6 +205,82 @@ class TestM6Acceptance:
         assert exit_code == 1
 
 
+class TestMinNonEmptyOverride:
+    """The --min-non-empty flag lets one script gate two ROADMAP criteria:
+    the legacy M6 12-day window (default threshold 4) and the M9 90-day
+    window (caller passes 85 to match ROADMAP M9's >=85/90).
+    Before the flag, --window 90 trivially exited 0 with >=4 rich sessions
+    in the entire 90-day window — the M9 gate had no teeth.
+    """
+
+    def _build_window(self, tmp_path, monkeypatch, non_empty_count: int, total: int):
+        monkeypatch.setattr(hc, "SESSIONS_DIR", tmp_path)
+        today = date.today()
+        rich_payload = {
+            "local_news": [{"findings": "x" * 250}],
+            "global_news": [{"findings": "y" * 250}],
+            "intellectual_journals": [{"findings": "z" * 250}],
+            "triadic_ontology": {"findings": "a" * 250},
+            "ai_systems": {"findings": "b" * 250},
+            "uap": {"findings": "c" * 250},
+            "weather": "d" * 250,
+            "career": {"notes": "e" * 250},
+            "family": {"choir": "f" * 250},
+            "english_lesson_plans": {"notes": "g" * 250},
+            "wearable_ai": [{"findings": "h" * 250}],
+        }
+        thin_payload = {"local_news": [{"findings": "x" * 50}]}
+        for i in range(total):
+            day = (today - timedelta(days=i)).isoformat()
+            payload = rich_payload if i < non_empty_count else thin_payload
+            (tmp_path / f"session-{day}.json").write_text(json.dumps(payload))
+        monkeypatch.setattr(hc, "check_kill_switch",
+                            lambda w: {"deploy_count": 0, "deploy_hits": []})
+
+    def test_default_threshold_when_override_none(self, tmp_path, monkeypatch):
+        """Default behaviour preserved: omit --min-non-empty and the script
+        still uses M6_MIN_NON_EMPTY (4). 6 rich sessions in a 10-day window
+        passes the legacy gate."""
+        self._build_window(tmp_path, monkeypatch, non_empty_count=6, total=10)
+        result = hc.run_check(window_days=10)
+        assert result["non_empty_threshold"] == hc.M6_MIN_NON_EMPTY
+        assert result["m6_criterion_1_non_empty_count"] is True
+
+    def test_override_above_actual_fails(self, tmp_path, monkeypatch):
+        """Setting --min-non-empty above the actual non_empty count flips
+        crit_1 to False — this is the M9 gate doing its job."""
+        self._build_window(tmp_path, monkeypatch, non_empty_count=80, total=90)
+        result = hc.run_check(window_days=90, min_non_empty=85)
+        assert result["non_empty_threshold"] == 85
+        assert result["non_empty_count"] == 80
+        assert result["m6_criterion_1_non_empty_count"] is False
+        assert result["m6_pass"] is False
+
+    def test_override_at_or_below_actual_passes(self, tmp_path, monkeypatch):
+        """When non_empty_count >= threshold, crit_1 is True. This is the
+        target outcome when M9 is genuinely reached."""
+        self._build_window(tmp_path, monkeypatch, non_empty_count=85, total=90)
+        result = hc.run_check(window_days=90, min_non_empty=85)
+        assert result["non_empty_threshold"] == 85
+        assert result["non_empty_count"] == 85
+        assert result["m6_criterion_1_non_empty_count"] is True
+
+    def test_cli_min_non_empty_flag_passes_through(self, tmp_path, monkeypatch):
+        """End-to-end: passing --min-non-empty 85 via argv reaches run_check
+        and flips the exit code accordingly."""
+        # 80 rich of 90 — fails at threshold 85.
+        self._build_window(tmp_path, monkeypatch, non_empty_count=80, total=90)
+        exit_code = hc.main(["--window", "90", "--min-non-empty", "85"])
+        assert exit_code == 1
+
+    def test_cli_min_non_empty_pass_path(self, tmp_path, monkeypatch):
+        """Same plumbing, pass path. 85 rich of 90 + avg_sectors >= 10 +
+        no kill switch deploy → exit 0."""
+        self._build_window(tmp_path, monkeypatch, non_empty_count=85, total=90)
+        exit_code = hc.main(["--window", "90", "--min-non-empty", "85"])
+        assert exit_code == 0
+
+
 def test_render_text_grep_matches_loop_state_pattern():
     """LOOP_STATE.md's VERIFY grep is `non_empty|KILL_SWITCH|avg_sectors`.
     Output must contain all three tokens so the grep is satisfied."""
