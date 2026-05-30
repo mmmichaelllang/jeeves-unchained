@@ -7,10 +7,13 @@ the jeeves-memory truncation table.
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field as dc_field
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+log = logging.getLogger(__name__)
 
 
 class Dedup(BaseModel):
@@ -213,8 +216,68 @@ class AuditResult:
     charlotte_flagged: int = 0
 
 
+# Sector-level GATE-A: refusal text detection.
+#
+# Triggered by 2026-05-30: weather sector captured raw LLM refusal ("I am not
+# able to execute the instructions...") followed by FABRICATED JSON. Write
+# phase's `session.weather or 'unremarkable'` fallback would have shipped the
+# refusal verbatim to the reader. Existing GATE-A (scripts/write.py) catches
+# all-empty research but NOT refusal-shaped sector content — this is the
+# sector-level mirror, applied at field-cap time so every string-shape sector
+# field gets the same treatment.
+#
+# Lower-case prefixes; comparison is case-insensitive against the text head.
+# Conservative list — only phrases that almost always indicate the model
+# refusing the task rather than describing the world.
+_REFUSAL_PREFIXES: tuple[str, ...] = (
+    "i am not able",
+    "i'm not able",
+    "i cannot",
+    "i can't",
+    "i don't have",
+    "i do not have",
+    "i'm sorry, but i",
+    "i am sorry, but i",
+    "i'm unable",
+    "i am unable",
+    "unfortunately, i ",
+    "unfortunately i ",
+    "as an ai",
+    "as a language model",
+)
+
+
+def is_refusal_text(text: str) -> bool:
+    """True if `text` opens with a known LLM refusal phrase.
+
+    Checks the first 200 non-whitespace chars (case-insensitive) against
+    `_REFUSAL_PREFIXES`. Returns False for empty/non-string input.
+    """
+    if not text or not isinstance(text, str):
+        return False
+    head = text.lstrip().lower()[:200]
+    return any(head.startswith(p) for p in _REFUSAL_PREFIXES)
+
+
 def _cap(text: str, limit: int) -> str:
-    if not isinstance(text, str) or len(text) <= limit:
+    """Truncate `text` to `limit` chars and strip LLM refusal text.
+
+    Refusal handling: when a sector's LLM refused but the agent harness
+    captured the refusal string as findings (today's weather case), drop
+    the field to empty so downstream sees "no data" instead of shipping
+    the refusal verbatim or — worse — the fabricated JSON that the model
+    often appends after the refusal preamble.
+    """
+    if not isinstance(text, str):
+        return text
+    if is_refusal_text(text):
+        log.warning(
+            "schema._cap stripped LLM refusal text (%d chars); first 80=%r",
+            len(text),
+            text[:80],
+        )
+        return ""
+    if len(text) <= limit:
         return text
     return text[:limit] + " [TRUNCATED]"
 
