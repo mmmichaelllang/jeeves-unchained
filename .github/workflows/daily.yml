@@ -178,28 +178,35 @@ jobs:
           # 429 cascade. Plumb here so research_sectors._build_cerebras_llm
           # can resolve the key.
           CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
-          # ── Sprint-18 TinyFish canary (managed extractor). Defaults: shadow
-          # OFF, active OFF — pipeline behaves exactly as pre-sprint when both
-          # vars are empty. Flip via repo Variables to promote.
-          TINYFISH_API_KEY: ${{ secrets.TINYFISH_API_KEY }}
-          JEEVES_TINYFISH_SHADOW: ${{ vars.JEEVES_TINYFISH_SHADOW || '' }}
-          JEEVES_USE_TINYFISH: ${{ vars.JEEVES_USE_TINYFISH || '' }}
+          # ── Sprint-18 TinyFish canary (managed extractor).
+          # 2026-05-29: TINYFISH endpoints unreachable from GHA runner
+          # (EAI_NONAME on every call — see PROBLEM_CHRONICLE.md §4.1).
+          # 47 tinyfish + 159 tinyfish_search + 13 playwright_search
+          # calls/week, ALL 100% failure. The repo Variables may still
+          # be set, but the workflow no longer reads them so the broken
+          # tools are not registered. Frees ~232 wasted agent-loop
+          # iterations per week. Promotion path: resolve vendor host
+          # (or swap to scrapling — see PR #199) and re-add passthrough
+          # in a follow-up PR.
+          # TINYFISH_API_KEY / JEEVES_TINYFISH_SHADOW / JEEVES_USE_TINYFISH
+          # passthroughs REMOVED 2026-05-29.
           # ── Sprint-19 slice D (search-agent canaries). Each tool registers
           # only when its flag is set. All default-off.
+          # 2026-05-29: JEEVES_USE_TINYFISH_SEARCH + JEEVES_USE_PLAYWRIGHT_SEARCH
+          # passthroughs REMOVED — same DNS-fail root cause as the TinyFish
+          # extract above. JINA_* kept because Jina endpoints are reachable.
           JEEVES_USE_JINA_SEARCH: ${{ vars.JEEVES_USE_JINA_SEARCH || '' }}
           JEEVES_USE_JINA_DEEPSEARCH: ${{ vars.JEEVES_USE_JINA_DEEPSEARCH || '' }}
           JEEVES_USE_JINA_RERANK: ${{ vars.JEEVES_USE_JINA_RERANK || '' }}
-          JEEVES_USE_TINYFISH_SEARCH: ${{ vars.JEEVES_USE_TINYFISH_SEARCH || '' }}
-          JEEVES_USE_PLAYWRIGHT_SEARCH: ${{ vars.JEEVES_USE_PLAYWRIGHT_SEARCH || '' }}
           # ── Sprint-19 slice E (telemetry + search-shadow). Telemetry writes
           # one JSONL line per tool call to sessions/telemetry-<utc>.jsonl.
           # Shadow flags fire peer providers in parallel after serper_search
           # and write to sessions/shadow-search-<provider>-<utc>.jsonl. All
           # default-off; production output is bit-identical when unset.
+          # 2026-05-29: TINYFISH + PLAYWRIGHT shadow passthroughs REMOVED
+          # — they only generated 100%-failure rows.
           JEEVES_TELEMETRY: ${{ vars.JEEVES_TELEMETRY || '' }}
           JEEVES_JINA_SEARCH_SHADOW: ${{ vars.JEEVES_JINA_SEARCH_SHADOW || '' }}
-          JEEVES_TINYFISH_SEARCH_SHADOW: ${{ vars.JEEVES_TINYFISH_SEARCH_SHADOW || '' }}
-          JEEVES_PLAYWRIGHT_SEARCH_SHADOW: ${{ vars.JEEVES_PLAYWRIGHT_SEARCH_SHADOW || '' }}
           # ── M3-M5 Crawl4AI refactor (2026-05-21). GH Variables were set but
           # daily.yml never plumbed them through, so the agent path kept running
           # instead — repeating the FREE_TIER_CAPACITY_CEILING failure (#79, #80
