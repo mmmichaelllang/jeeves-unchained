@@ -1218,6 +1218,153 @@ _CEREBRAS_TRIED_MODELS: set[str] = set()  # models that 429'd this session
 _CEREBRAS_EXHAUSTED: bool = False
 
 
+# 2026-05-30 (Phase-D option ii): Groq research tier — intermediate fallback
+# between Cerebras-exhausted and OpenRouter for deep-sector synthesis.
+#
+# Why: Cerebras free-tier exhausts quickly (often on first sector). OpenRouter
+# free chain has token-output caps too tight for deep sectors (gpu-poor models
+# truncate at 1500-2000 tokens, dropping intellectual_journals to 0).
+#
+# Risk: Groq shares its 100k/day TPD with the write phase (~82k/day spend).
+# Adding research load could cascade into write-phase Part 9 TPD overage
+# (chronicle run #69, 2026-05-15). Mitigations:
+#   1) Default-OFF flag (JEEVES_USE_GROQ_RESEARCH_TIER) — opt-in per env.
+#   2) Per-process char budget (`_GROQ_RESEARCH_DAILY_CAP`) approximates token
+#      cost using chars/4. ~15k chars ≈ ~3.75k tokens — caps research-side
+#      Groq draw to ≤4% of daily TPD. Trip → cascade to OpenRouter.
+#   3) Per-call telemetry so production has visibility into trip rate.
+_GROQ_RESEARCH_DAILY_CAP: int = 15000  # chars across all sector calls combined
+_GROQ_RESEARCH_USED_CHARS: int = 0
+import threading as _threading_groq  # localized import — avoid top-of-file noise
+_GROQ_RESEARCH_LOCK = _threading_groq.Lock()
+
+
+def _groq_research_tier_enabled() -> bool:
+    """Runtime flag check — allows tests to flip the env var without re-import."""
+    import os as _os
+    return _os.environ.get("JEEVES_USE_GROQ_RESEARCH_TIER", "").lower() in (
+        "1", "true", "yes",
+    )
+
+
+def _groq_research_budget_remaining() -> int:
+    """Chars remaining in today's Groq-research budget. 0 → tripped."""
+    with _GROQ_RESEARCH_LOCK:
+        return max(0, _GROQ_RESEARCH_DAILY_CAP - _GROQ_RESEARCH_USED_CHARS)
+
+
+def _groq_research_record_use(chars: int) -> None:
+    """Atomically add `chars` to the daily counter."""
+    global _GROQ_RESEARCH_USED_CHARS
+    with _GROQ_RESEARCH_LOCK:
+        _GROQ_RESEARCH_USED_CHARS += max(0, int(chars))
+
+
+def _reset_groq_research_breaker() -> None:
+    """Test helper — clear the daily-char counter so each case starts fresh."""
+    global _GROQ_RESEARCH_USED_CHARS
+    with _GROQ_RESEARCH_LOCK:
+        _GROQ_RESEARCH_USED_CHARS = 0
+
+
+async def _try_groq_research_synthesis(cfg, spec, messages) -> str | None:
+    """Best-effort Groq synthesis for deep sectors when Cerebras is exhausted.
+
+    Returns the response text on success, None on any failure (flag off,
+    budget exhausted, missing key, API error). Emits one telemetry row per
+    attempt so production can track trip rates.
+
+    Caller pattern (inside _run_crawl4ai_sector after Cerebras exhaustion):
+        groq_raw = await _try_groq_research_synthesis(cfg, spec, messages)
+        if groq_raw:
+            raw = groq_raw  # downstream OR-phase guard skips because raw is set
+    """
+    if not _groq_research_tier_enabled():
+        return None
+
+    # Approximate prompt size by char count. Cheaper than running a tokenizer
+    # and good enough for the guard's 1k-char resolution.
+    prompt_chars = sum(len(getattr(m, "content", "") or "") for m in messages)
+    remaining = _groq_research_budget_remaining()
+    if prompt_chars > remaining:
+        log.info(
+            "sector %s: groq research tier — budget exhausted "
+            "(prompt=%d > remaining=%d); cascading to OR.",
+            spec.name, prompt_chars, remaining,
+        )
+        try:
+            from .tools.telemetry import emit as _emit
+            _emit(
+                "llm_call",
+                provider="groq",
+                label="research_sector",
+                sector=spec.name,
+                ok=False,
+                error="groq_research_daily_budget_exhausted",
+            )
+        except Exception:
+            pass
+        return None
+
+    try:
+        from .llm import build_groq_llm
+        # max_tokens=2048 keeps any single deep-sector synthesis well under
+        # the 4k-ish token margin Groq leaves for write-phase TPD headroom.
+        llm = build_groq_llm(cfg, temperature=0.65, max_tokens=2048)
+    except Exception as exc:
+        log.warning(
+            "sector %s: groq research tier build_groq_llm failed (%s).",
+            spec.name, exc,
+        )
+        return None
+
+    try:
+        import time as _t
+        t0 = _t.monotonic()
+        resp = await llm.achat(messages)
+        raw = (resp.message.content or "").strip()
+        latency_ms = (_t.monotonic() - t0) * 1000
+        # Record use: prompt + completion chars.
+        _groq_research_record_use(prompt_chars + len(raw))
+        log.info(
+            "sector %s: groq research tier — synthesis ok "
+            "(%d chars in %.0f ms).",
+            spec.name, len(raw), latency_ms,
+        )
+        try:
+            from .tools.telemetry import emit as _emit
+            _emit(
+                "llm_call",
+                provider="groq",
+                label="research_sector",
+                sector=spec.name,
+                ok=True,
+                latency_ms=latency_ms,
+                chars=len(raw),
+            )
+        except Exception:
+            pass
+        return raw
+    except Exception as exc:
+        log.warning(
+            "sector %s: groq research tier synthesis failed (%s); cascading to OR.",
+            spec.name, exc,
+        )
+        try:
+            from .tools.telemetry import emit as _emit
+            _emit(
+                "llm_call",
+                provider="groq",
+                label="research_sector",
+                sector=spec.name,
+                ok=False,
+                error=str(exc)[:200],
+            )
+        except Exception:
+            pass
+        return None
+
+
 def _reset_cerebras_breaker() -> None:
     """Test helper — clear the exhaustion breaker plus tried-models set
     and the cached resolution. Used by tests so each case starts from a
@@ -1227,6 +1374,7 @@ def _reset_cerebras_breaker() -> None:
     _CEREBRAS_EXHAUSTED = False
     _RESOLVED_CEREBRAS_MODEL = None
     _CEREBRAS_TRIED_MODELS.clear()
+    _reset_groq_research_breaker()
 
 
 def _resolve_cerebras_model(api_key: str) -> str | None:
@@ -1640,6 +1788,16 @@ async def _run_crawl4ai_sector(
             return spec.default
     else:
         cerebras_chain_exhausted = True
+
+    # ── Phase 1.5: Groq research tier (opt-in via JEEVES_USE_GROQ_RESEARCH_TIER)
+    # Inserted 2026-05-30 (Phase-D option ii). Default-OFF — safe no-op when
+    # flag is unset. When enabled, tries Groq once before falling through to
+    # OpenRouter; daily-char budget guard prevents cascade into write-phase
+    # TPD overage. Sets `raw` on success so the OR-phase guard below skips.
+    if not raw and cerebras_chain_exhausted:
+        groq_raw = await _try_groq_research_synthesis(cfg, spec, messages)
+        if groq_raw:
+            raw = groq_raw
 
     # ── Phase 2: OpenRouter rotation (only if Cerebras fully exhausted) ──
     if not raw and cerebras_chain_exhausted:
