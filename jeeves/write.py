@@ -6217,6 +6217,35 @@ def _covered_topics_path(cfg, run_date=None):
 _PARAGRAPH_BLOCK_RE = re.compile(r"<p\b[^>]*>(.*?)</p>", re.IGNORECASE | re.DOTALL)
 _HREF_RE = re.compile(r'<a\s+[^>]*href=["\']([^"\']+)["\']', re.IGNORECASE)
 
+# Identifies a paragraph already rewritten by `rewrite_cross_day_overlap_paragraphs`.
+# Used by `_collapse_consecutive_stale_paragraphs` to merge runs of identical
+# rewrites (e.g. ai_systems sector where every URL is prior-covered would
+# otherwise emit N identical paragraphs back-to-back).
+_STALE_PARAGRAPH_RE = re.compile(
+    r'<p>The matter at <a href="[^"]+">[^<]+</a> stands '
+    r'as we left it, Sir, with nothing materially advanced since our prior review\.</p>'
+)
+_CONSECUTIVE_STALE_RE = re.compile(
+    rf'(?:{_STALE_PARAGRAPH_RE.pattern}\s*){{2,}}'
+)
+
+
+def _collapse_consecutive_stale_paragraphs(html: str) -> str:
+    """Merge 2+ consecutive 'stands as we left it' paragraphs into one summary.
+
+    Without this, recurring-source sectors emit one identical template per URL —
+    e.g. ai_systems on 2026-05-30 had 3 URLs all in covered_urls, producing 3
+    identical reader-visible "The matter at X stands as we left it, Sir..."
+    lines back-to-back. Reader experience worse than no briefing at all.
+
+    Idempotent: passing already-collapsed html through is a no-op.
+    """
+    return _CONSECUTIVE_STALE_RE.sub(
+        '<p>Several earlier threads stand as we left them, Sir, '
+        'with nothing materially advanced since our prior review.</p>',
+        html,
+    )
+
 
 def rewrite_cross_day_overlap_paragraphs(
     html: str,
@@ -6243,11 +6272,35 @@ def rewrite_cross_day_overlap_paragraphs(
         return html
 
     try:
-        from .dedup import canonical_url
+        from .dedup import canonical_headline, canonical_url
         covered_canon = {canonical_url(u) for u in (session.dedup.covered_urls or [])}
         covered_canon.discard("")
         if not covered_canon:
             return html
+
+        # Headline guard set. Used to distinguish "URL repeats AND same story"
+        # (safe to collapse) from "URL repeats with new story" (e.g. index/
+        # landing pages like bbc.com/news, parentmap.com/calendar — collapsing
+        # these silently drops fresh content). Empty → preserve original
+        # URL-only behavior (backward compat for callers that don't populate
+        # covered_headlines).
+        covered_headlines_canon = {
+            canonical_headline(h) for h in (session.dedup.covered_headlines or [])
+        }
+        covered_headlines_canon.discard("")
+
+        # Normal pipeline state has covered_headlines populated (606 on
+        # 2026-05-30). If we have covered_urls but no covered_headlines,
+        # something upstream skipped headline tracking — surface it so the
+        # backward-compat URL-only path doesn't silently misfire on
+        # index-page URLs.
+        if covered_canon and not covered_headlines_canon:
+            log.warning(
+                "rewrite_cross_day_overlap_paragraphs: covered_headlines_empty "
+                "(covered_urls=%d) — falling back to URL-only collapse; "
+                "index-page URLs may collapse fresh stories.",
+                len(covered_canon),
+            )
 
         def _rewrite(match: "re.Match[str]") -> str:
             inner = match.group(1)
@@ -6270,14 +6323,10 @@ def rewrite_cross_day_overlap_paragraphs(
                         f"cross_day_overlap_mixed_paragraph:{covered_hits[0][1]}"
                     )
                 return match.group(0)
-            # Pure repeat. Replace block with canonical 2-sentence shape.
-            # First sentence: backward-reference. Second: kept brief and
-            # generic since we can't synthesize a thoughtful connection
-            # mechanically — better one honest acknowledgement than a
-            # fabricated "interesting" coda.
+            # Pure URL repeat. Pull anchor text first — needed both for the
+            # replacement and (if covered_headlines is populated) for the
+            # headline-match guard.
             first_href, first_canon = covered_hits[0]
-            # Pull anchor text from the original `<a href>...</a>` block —
-            # use it verbatim so source attribution stays human-readable.
             anchor_match = re.search(
                 rf'<a[^>]*href=["\']{re.escape(first_href)}["\'][^>]*>(.*?)</a>',
                 inner,
@@ -6285,6 +6334,25 @@ def rewrite_cross_day_overlap_paragraphs(
             )
             anchor_text = anchor_match.group(1).strip() if anchor_match else "the source"
             anchor_text = re.sub(r"<[^>]+>", "", anchor_text).strip() or "the source"
+
+            # Headline guard: if covered_headlines is populated AND this
+            # anchor's canonical form is not among them, the URL repeats but
+            # the story is new (typical of index/landing pages). Preserve.
+            # Empty covered_headlines → skip guard (URL-only behavior).
+            if covered_headlines_canon:
+                anchor_canon = canonical_headline(anchor_text)
+                if anchor_canon and anchor_canon not in covered_headlines_canon:
+                    if quality_warnings is not None:
+                        quality_warnings.append(
+                            f"cross_day_url_repeat_new_headline:{first_canon}"
+                        )
+                    return match.group(0)
+
+            # Pure repeat. Replace block with canonical 2-sentence shape.
+            # First sentence: backward-reference. Second: kept brief and
+            # generic since we can't synthesize a thoughtful connection
+            # mechanically — better one honest acknowledgement than a
+            # fabricated "interesting" coda.
             replacement = (
                 f'<p>The matter at <a href="{first_href}">{anchor_text}</a> stands '
                 f"as we left it, Sir, with nothing materially advanced since our prior review.</p>"
@@ -6293,7 +6361,8 @@ def rewrite_cross_day_overlap_paragraphs(
                 quality_warnings.append(f"cross_day_overlap_rewritten:{first_canon}")
             return replacement
 
-        return _PARAGRAPH_BLOCK_RE.sub(_rewrite, html)
+        rewritten = _PARAGRAPH_BLOCK_RE.sub(_rewrite, html)
+        return _collapse_consecutive_stale_paragraphs(rewritten)
     except Exception as exc:
         log.warning("cross_day_overlap rewriter raised: %s — returning original", exc)
         return html

@@ -280,6 +280,171 @@ class TestCrossDayOverlapRewrite:
         html = "<p>Just prose, no links here at all.</p>"
         assert rewrite_cross_day_overlap_paragraphs(html, session, []) == html
 
+    # -----------------------------------------------------------------------
+    # 2026-05-30: per-URL template spam fix.
+    # Headline-guard (URL covered but anchor is new → leave) + post-pass
+    # collapse of 2+ consecutive identical templates into one summary.
+    # -----------------------------------------------------------------------
+
+    def _make_session_with_headlines(self, covered_urls, covered_headlines):
+        from jeeves.schema import SessionModel
+        return SessionModel(
+            date="2026-05-30",
+            dedup={
+                "covered_urls": covered_urls,
+                "covered_headlines": covered_headlines,
+            },
+        )
+
+    def test_url_repeat_new_headline_left_intact(self):
+        """URL covered, but anchor text is a NEW headline → don't collapse.
+
+        Catches the index-page case: bbc.com/news, parentmap.com/calendar etc.
+        repeat the same URL daily but carry new stories. Pre-2026-05-30 the
+        rewriter wrongly collapsed these, dropping fresh content.
+        """
+        from jeeves.write import rewrite_cross_day_overlap_paragraphs
+
+        session = self._make_session_with_headlines(
+            covered_urls=["https://bbc.com/news"],
+            covered_headlines=["Tariffs spark market jitters"],
+        )
+        html = (
+            '<p>A <a href="https://bbc.com/news">poison seller sentenced</a> '
+            'to fifteen years.</p>'
+        )
+        warnings: list[str] = []
+        rewritten = rewrite_cross_day_overlap_paragraphs(html, session, warnings)
+        assert "stands as we left it" not in rewritten
+        assert "poison seller sentenced" in rewritten
+        assert any(
+            w.startswith("cross_day_url_repeat_new_headline:") for w in warnings
+        )
+
+    def test_url_repeat_matching_headline_collapsed(self):
+        """URL covered AND anchor matches a covered headline → collapse."""
+        from jeeves.write import rewrite_cross_day_overlap_paragraphs
+
+        session = self._make_session_with_headlines(
+            covered_urls=["https://reuters.com/article/x"],
+            covered_headlines=["Tensions continue to rise across all parties"],
+        )
+        html = (
+            '<p>A <a href="https://reuters.com/article/x">Tensions continue '
+            'to rise across all parties</a> in the dispute.</p>'
+        )
+        warnings: list[str] = []
+        rewritten = rewrite_cross_day_overlap_paragraphs(html, session, warnings)
+        assert "stands as we left it" in rewritten
+        assert any(w.startswith("cross_day_overlap_rewritten:") for w in warnings)
+
+    def test_empty_covered_headlines_preserves_url_only_behavior(self):
+        """Backward compat: empty covered_headlines → URL match alone collapses.
+
+        Existing callers that don't populate covered_headlines see the
+        pre-2026-05-30 behavior unchanged.
+        """
+        from jeeves.write import rewrite_cross_day_overlap_paragraphs
+
+        session = self._make_session(["https://reuters.com/x"])
+        html = '<p>A <a href="https://reuters.com/x">brand new story</a> here.</p>'
+        rewritten = rewrite_cross_day_overlap_paragraphs(html, session, [])
+        assert "stands as we left it" in rewritten
+
+    def test_consecutive_stale_paragraphs_collapsed_to_summary(self):
+        """3 back-to-back templates → 1 summary line. Reader-facing UX fix.
+
+        Today's run had ai_systems emit 3 identical "stands as we left it"
+        paragraphs because every URL was covered AND every anchor matched a
+        prior headline. Post-pass merges them.
+        """
+        from jeeves.write import rewrite_cross_day_overlap_paragraphs
+
+        session = self._make_session_with_headlines(
+            covered_urls=[
+                "https://example.com/a",
+                "https://example.com/b",
+                "https://example.com/c",
+            ],
+            covered_headlines=["story alpha", "story beta", "story gamma"],
+        )
+        html = (
+            '<p>The <a href="https://example.com/a">story alpha</a> piece.</p>\n'
+            '<p>The <a href="https://example.com/b">story beta</a> piece.</p>\n'
+            '<p>The <a href="https://example.com/c">story gamma</a> piece.</p>'
+        )
+        rewritten = rewrite_cross_day_overlap_paragraphs(html, session, [])
+        assert rewritten.count("stands as we left it") == 0
+        assert rewritten.count("Several earlier threads stand as we left them") == 1
+
+    def test_single_stale_paragraph_not_collapsed(self):
+        """A lone template stays as-is — collapse only fires for runs of 2+."""
+        from jeeves.write import rewrite_cross_day_overlap_paragraphs
+
+        session = self._make_session_with_headlines(
+            covered_urls=["https://example.com/a"],
+            covered_headlines=["story alpha"],
+        )
+        html = '<p>The <a href="https://example.com/a">story alpha</a> piece.</p>'
+        rewritten = rewrite_cross_day_overlap_paragraphs(html, session, [])
+        assert "stands as we left it" in rewritten
+        assert "Several earlier threads stand as we left them" not in rewritten
+
+    def test_non_adjacent_stale_paragraphs_each_kept(self):
+        """Template + content + template (non-adjacent) → no merge.
+
+        Collapse must only fire on CONSECUTIVE stale paragraphs, not across
+        intervening real content.
+        """
+        from jeeves.write import rewrite_cross_day_overlap_paragraphs
+
+        session = self._make_session_with_headlines(
+            covered_urls=["https://example.com/a", "https://example.com/b"],
+            covered_headlines=["story alpha", "story beta"],
+        )
+        html = (
+            '<p>The <a href="https://example.com/a">story alpha</a> piece.</p>\n'
+            '<p>Some fresh prose with <a href="https://new.com/x">a new link</a>.</p>\n'
+            '<p>The <a href="https://example.com/b">story beta</a> piece.</p>'
+        )
+        rewritten = rewrite_cross_day_overlap_paragraphs(html, session, [])
+        assert rewritten.count("stands as we left it") == 2
+        assert "Several earlier threads stand as we left them" not in rewritten
+
+    def test_empty_covered_headlines_logs_observability_warning(self, caplog):
+        """When covered_urls populated but covered_headlines empty → log warns.
+
+        Normal pipeline has 606 covered_headlines today. If headlines drop to
+        zero while URLs remain, something upstream skipped headline tracking
+        and the URL-only fallback may misfire on index-page URLs. Surface it.
+        """
+        import logging
+        from jeeves.write import rewrite_cross_day_overlap_paragraphs
+
+        session = self._make_session(["https://reuters.com/x"])  # no headlines
+        html = '<p>A <a href="https://reuters.com/x">link</a> here.</p>'
+        with caplog.at_level(logging.WARNING, logger="jeeves.write"):
+            rewrite_cross_day_overlap_paragraphs(html, session, [])
+        assert any(
+            "covered_headlines_empty" in r.getMessage() for r in caplog.records
+        )
+
+    def test_populated_covered_headlines_no_observability_warning(self, caplog):
+        """Normal state (headlines populated) → no warning, no spurious noise."""
+        import logging
+        from jeeves.write import rewrite_cross_day_overlap_paragraphs
+
+        session = self._make_session_with_headlines(
+            covered_urls=["https://reuters.com/x"],
+            covered_headlines=["some prior story"],
+        )
+        html = '<p>A <a href="https://reuters.com/x">link</a> here.</p>'
+        with caplog.at_level(logging.WARNING, logger="jeeves.write"):
+            rewrite_cross_day_overlap_paragraphs(html, session, [])
+        assert not any(
+            "covered_headlines_empty" in r.getMessage() for r in caplog.records
+        )
+
 
 # ---------------------------------------------------------------------------
 # Flaw 10 — seen_url_cache
