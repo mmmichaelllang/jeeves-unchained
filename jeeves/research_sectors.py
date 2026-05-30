@@ -1267,6 +1267,39 @@ def _reset_groq_research_breaker() -> None:
         _GROQ_RESEARCH_USED_CHARS = 0
 
 
+def _try_attach_groq_to_agent(cfg):
+    """Build a Groq LLM for the FunctionAgent path's Cerebras-exhausted cascade.
+
+    Returns ``(True, llm)`` on success — caller should swap ``llm`` into the
+    agent loop. Returns ``(False, None)`` when flag off, budget exhausted,
+    or build failed — caller should cascade to OpenRouter.
+
+    Pre-charges the daily budget on success (pessimistic upper bound assuming
+    max_tokens × 4 chars). The FunctionAgent loop may make multiple tool-
+    driven Groq calls per sector and per-call cost isn't knowable in advance;
+    biasing the budget high here is safer than under-counting and blowing
+    the shared write-phase TPD ceiling.
+    """
+    if not _groq_research_tier_enabled():
+        return False, None
+    if _groq_research_budget_remaining() <= 1000:
+        return False, None
+    try:
+        from .llm import build_groq_llm
+        groq_llm = build_groq_llm(cfg, temperature=0.65, max_tokens=2048)
+    except Exception as exc:
+        log.warning(
+            "groq research tier (agent path) build failed (%s); "
+            "caller should cascade to OpenRouter.",
+            exc,
+        )
+        return False, None
+    if groq_llm is None:
+        return False, None
+    _groq_research_record_use(2048 * 4)
+    return True, groq_llm
+
+
 async def _try_groq_research_synthesis(cfg, spec, messages) -> str | None:
     """Best-effort Groq synthesis for deep sectors when Cerebras is exhausted.
 
@@ -2157,6 +2190,39 @@ async def _run_sector_inner(
                         ok=False,
                         error="cerebras_chain_exhausted",
                     )
+
+                    # 2026-05-30 Phase-D follow-up: Groq research tier for the
+                    # FunctionAgent path (intellectual_journals / enriched_articles
+                    # / global_news etc). PR #201 covered crawl4ai-path sectors;
+                    # this completes the cascade for tool-using sectors. Same
+                    # JEEVES_USE_GROQ_RESEARCH_TIER flag + same _GROQ_RESEARCH_*
+                    # budget. Groq's llama-3.3-70b-versatile supports tool-use
+                    # so the FunctionAgent loop runs unchanged with Groq as LLM.
+                    # On Groq exhaustion the rate-limit handler below cascades
+                    # to OpenRouter (single attempt — no Groq rotation chain).
+                    _groq_ok, _groq_agent_llm = _try_attach_groq_to_agent(cfg)
+                    if _groq_ok:
+                        log.warning(
+                            "sector %s: all Cerebras models 429'd; "
+                            "trying Groq research tier.",
+                            spec.name,
+                        )
+                        llm = _groq_agent_llm
+                        _provider_label = "groq"
+                        rl_attempts = 0
+                        net_attempts = 0
+                        timeout_attempts = 0
+                        last_exc = None
+                        tools = all_search_tools(
+                            cfg, ledger, set(prior_urls_sample),
+                        )
+                        agent = FunctionAgent(
+                            tools=tools, llm=llm,
+                            system_prompt=_system_prompt,
+                            verbose=cfg.verbose,
+                        )
+                        continue  # retry with Groq
+
                     if _use_openrouter_fallback is None:
                         _use_openrouter_fallback = _build_openrouter_llm(
                             max_tokens=4096 if spec.shape != "enriched" else 2048
@@ -2239,9 +2305,54 @@ async def _run_sector_inner(
                     )
                     return spec.default
 
+                # Groq research tier 429/exhaustion — single attempt, then
+                # cascade to OpenRouter. We don't rotate inside Groq (one model
+                # only) and we don't sleep-retry (would burn the shared write-
+                # phase TPD budget). 2026-05-30 follow-up to PR #201.
+                if _provider_label == "groq":
+                    emit_llm_call(
+                        provider="groq",
+                        model=getattr(llm, "model", "unknown"),
+                        label="research_sector",
+                        sector=spec.name,
+                        latency_ms=(_t.monotonic() - _sector_t0) * 1000,
+                        ok=False,
+                        error="groq_research_tier_exhausted",
+                    )
+                    if _use_openrouter_fallback is None:
+                        _use_openrouter_fallback = _build_openrouter_llm(
+                            max_tokens=4096 if spec.shape != "enriched" else 2048
+                        )
+                    if _use_openrouter_fallback is not None:
+                        log.warning(
+                            "sector %s: groq research tier 429 (%s); "
+                            "falling through to OpenRouter.",
+                            spec.name, e,
+                        )
+                        llm = _use_openrouter_fallback
+                        _provider_label = "openrouter"
+                        rl_attempts = 0
+                        net_attempts = 0
+                        timeout_attempts = 0
+                        last_exc = None
+                        tools = all_search_tools(
+                            cfg, ledger, set(prior_urls_sample),
+                        )
+                        agent = FunctionAgent(
+                            tools=tools, llm=llm,
+                            system_prompt=_system_prompt, verbose=cfg.verbose,
+                        )
+                        continue
+                    log.warning(
+                        "sector %s: groq research tier exhausted and no "
+                        "OpenRouter fallback; returning default.",
+                        spec.name,
+                    )
+                    return spec.default
+
                 # Unknown provider 429 (shouldn't happen — _provider_label is
-                # set to "cerebras" or "openrouter" elsewhere). Conservative
-                # same-model retry with sleep.
+                # set to "cerebras", "groq", or "openrouter" elsewhere).
+                # Conservative same-model retry with sleep.
                 if rl_attempts >= len(_ratelimit_delays):
                     emit_llm_call(
                         provider=_provider_label,
