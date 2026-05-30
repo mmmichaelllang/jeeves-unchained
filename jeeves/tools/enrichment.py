@@ -258,6 +258,32 @@ def _fetch_article_text_impl(url: str) -> str:
     except Exception as e:
         log.debug("crawl4ai import/classify failed: %s", e)
 
+    # Scrapling TIER 2.5 — stealth extractor with Cloudflare-solve, gated
+    # by JEEVES_USE_SCRAPLING=1. Sits between Crawl4AI (news_short fast
+    # path) and Playwright (last-resort raw Patchright) because it
+    # specifically beats soft-paywall / Cloudflare-gated hosts where the
+    # raw Playwright fallback today silently lands on a challenge page.
+    # When the flag is unset this block is a near-zero-cost no-op (one
+    # env read, one function call returning False).
+    try:
+        from .scrapling_extract import (
+            extract_article as _sc_extract,
+            is_enabled as _sc_enabled,
+        )
+
+        if _sc_enabled():
+            sc_result = _sc_extract(url, timeout_seconds=30, max_chars=3000)
+            if sc_result.get("success"):
+                base.update({
+                    "title": sc_result.get("title", ""),
+                    "text": sc_result.get("text", "")[:3000],
+                    "fetch_failed": False,
+                    "extracted_via": "scrapling",
+                })
+                return json.dumps(base)
+    except Exception as e:
+        log.debug("scrapling tier failed for %s: %s", url, e)
+
     # Playwright fallback — last resort when httpx returned nothing OR
     # trafilatura couldn't extract enough body text.
     try:

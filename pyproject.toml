@@ -53,6 +53,17 @@ playwright = [
     "patchright>=1.40",
     "playwright>=1.40",
 ]
+# Scrapling stealth extractor (2026-05-29). NOT declared as a uv-managed
+# extra because scrapling>=0.4 requires lxml>=6.1 and our current
+# crawl4ai==0.8.6 requires lxml<6 — the dep resolver rejects both
+# coexisting. The Python wrapper at jeeves/tools/scrapling_extract.py
+# lazy-imports and soft-fails when scrapling is absent, so the flag
+# JEEVES_USE_SCRAPLING=1 is a no-op in CI today. To actually promote:
+#   1. Either pin scrapling<0.3.99 (last lxml-5-compatible version) and
+#      add it as an extra here, OR bump crawl4ai to a version that
+#      accepts lxml>=6.
+#   2. Then add `--extra scrapling` to .github/workflows/daily.yml.
+#   3. Then set repo Variable JEEVES_USE_SCRAPLING=1.
 
 [tool.uv]
 package = true

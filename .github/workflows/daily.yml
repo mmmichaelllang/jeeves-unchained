@@ -208,6 +208,13 @@ jobs:
           JEEVES_USE_CRAWL4AI_RESEARCH: ${{ vars.JEEVES_USE_CRAWL4AI_RESEARCH || '' }}
           JEEVES_USE_CRAWL4AI_FETCH: ${{ vars.JEEVES_USE_CRAWL4AI_FETCH || '' }}
           JEEVES_REFACTOR_KILL_SWITCH: ${{ vars.JEEVES_REFACTOR_KILL_SWITCH || '' }}
+          # 2026-05-29: Scrapling stealth extractor (replaces tinyfish's
+          # role in the fetch-chain). When set to '1' in repo Variables,
+          # jeeves/tools/enrichment.py inserts scrapling between Crawl4AI
+          # and Playwright tiers. NB: requires `uv sync --extra scrapling`
+          # to actually install the package — this flag is a no-op when
+          # scrapling is not installed (the import fails fast-soft).
+          JEEVES_USE_SCRAPLING: ${{ vars.JEEVES_USE_SCRAPLING || '' }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF_NAME: ${{ github.ref_name }}

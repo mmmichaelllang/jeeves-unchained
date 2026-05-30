@@ -86,6 +86,12 @@ DAILY_HARD_CAPS: dict[str, int] = {
     # Browser launch is the cost (CI minutes); cap fires before runaway
     # auth-rot scenarios hammer the runner.
     "stealth": 40,
+    # Scrapling stealth extractor (2026-05-29). Replaces tinyfish's role
+    # in the fetch-chain. Cost is CI minutes (Patchright Chromium already
+    # provisioned by daily.yml); cap is a wall-clock guardrail, not
+    # billing. 200 = generous because typical day extracts ~50-80 URLs
+    # across all sectors.
+    "scrapling": 200,
 }
 
 
