@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [reply needed] \"Rob Collins & Esther Wakeman\": Rob Collins and Esther Wakeman are planning to meet and need Mister Lang to print a ticket and bring a backpack\n- [reply needed] Alex Nucci: Alex Nucci is introducing a new tool called Interact that allows users to control browsers with natural language\n- [reply needed] lang.mc: Correspondence summary from lang.mc@gmail.com\n- [reply needed] Vervaeke Foundation: Vervaeke Foundation email about meaning-making\n- [reply needed] lang.mc: Correspondence summary from lang.mc@gmail.com\n- [reply needed] Google Play: Google Play payment was declined for Google One subscription\n- [reply needed] Spotify: Spotify is having trouble collecting subscription payment\n- [decision required] Representative Data: Mister Lang has been invited to join a team on Representative Data\n- [decision required] David Purdy: David Purdy has invited Mister Lang to collaborate on the 5mts/sainthelens repository on GitHub\n- [decision required] David Purdy: David Purdy has invited Mister Lang to collaborate on the 5mts/regionflex repository on GitHub\n- [decision required] David Purdy: David Purdy has invited Mister Lang to collaborate on the 5mts/electup repository on GitHub",
+  "text": "- [escalation] GitHub: GitHub personal access token 'jeeves3' expires in about 5 hours.\n- [escalation] GitHub: GitHub personal access token 'jeevesagain' expires in about 5 hours.\n- [escalation] mmmichaelllang: GitHub Actions workflow 'Loop Monitor' failed on jeeves-unchained repository.\n- [escalation] Google Play: Google One subscription suspended due to declined payment.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure due to a 429 rate-limit error in the Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure due to a 429 rate-limit error in the Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Weekly Audit Health Report workflow run failed completely.\n- [escalation] Spotify: Spotify payment failed and subscription is at risk.\n- [reply needed] \"Rob Collins & Esther Wakeman\": Rob Collins and Esther Wakeman responding to scheduling thread, proposing lunch and asking for ticket printing and backpack delivery.",
   "counts": {
-    "reply_needed": 7,
-    "decision_required": 10,
+    "reply_needed": 3,
+    "decision_required": 3,
     "scheduling": 0,
     "follow_up": 0,
-    "escalation": 0,
-    "no_action": 33
+    "escalation": 10,
+    "no_action": 34
   }
 }
