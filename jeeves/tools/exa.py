@@ -60,10 +60,24 @@ def make_exa_search(cfg: Config, ledger: QuotaLedger):
             from exa_py import Exa  # type: ignore
 
             client = Exa(api_key=cfg.exa_api_key)
+            # 2026-05-30: defensive int coercion. exa-py SDK rejects non-int
+            # values for num_results and max_characters even when the value
+            # is numerically valid (typeguard signature check). LlamaIndex /
+            # FunctionAgent occasionally pass string forms. See telemetry
+            # 2026-05-30 row provider=exa error="Invalid value for option
+            # 'num_results': 10. Expected one of [<class 'int'>]".
+            try:
+                num_results_int = int(num_results)
+            except (TypeError, ValueError):
+                num_results_int = 10
+            try:
+                text_max_chars_int = int(text_max_chars)
+            except (TypeError, ValueError):
+                text_max_chars_int = 20000
             kwargs: dict[str, Any] = {
                 "type": search_type,
-                "num_results": num_results,
-                "contents": {"text": {"max_characters": text_max_chars}},
+                "num_results": num_results_int,
+                "contents": {"text": {"max_characters": text_max_chars_int}},
             }
             if category:
                 kwargs["category"] = category

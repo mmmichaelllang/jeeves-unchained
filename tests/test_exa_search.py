@@ -176,3 +176,78 @@ def test_start_published_date_empty_string_in_telemetry_when_none(
     assert rows[0].get("start_published_date") == "", (
         f"start_published_date must be '' when not passed, got {rows[0]!r}"
     )
+
+
+class TestNumResultsCoercion:
+    """2026-05-30 (m8c): defensive int coercion for num_results and
+    text_max_chars. Telemetry captured a row:
+        provider=exa ok=false error="Invalid value for option
+        'num_results': 10. Expected one of [<class 'int'>]"
+    LlamaIndex / FunctionAgent occasionally pass numeric values in string
+    form. The exa-py SDK uses typeguard and rejects non-int even when the
+    string would parse cleanly. Wrap with int() to absorb.
+    """
+
+    def test_string_num_results_coerced_to_int(self, monkeypatch):
+        _install_fake_exa(monkeypatch)
+        from jeeves.tools.exa import make_exa_search
+
+        fn = make_exa_search(_make_cfg(), _make_ledger())
+        fn(query="ai systems", num_results="5")  # type: ignore[arg-type]
+
+        assert _FakeExa.last_kwargs.get("num_results") == 5
+        assert isinstance(_FakeExa.last_kwargs["num_results"], int)
+
+    def test_float_num_results_coerced_to_int(self, monkeypatch):
+        _install_fake_exa(monkeypatch)
+        from jeeves.tools.exa import make_exa_search
+
+        fn = make_exa_search(_make_cfg(), _make_ledger())
+        fn(query="test", num_results=7.0)  # type: ignore[arg-type]
+
+        assert _FakeExa.last_kwargs.get("num_results") == 7
+        assert isinstance(_FakeExa.last_kwargs["num_results"], int)
+
+    def test_garbage_num_results_falls_back_to_default_10(self, monkeypatch):
+        _install_fake_exa(monkeypatch)
+        from jeeves.tools.exa import make_exa_search
+
+        fn = make_exa_search(_make_cfg(), _make_ledger())
+        fn(query="test", num_results="not-a-number")  # type: ignore[arg-type]
+
+        # Default in signature is 10 — coercion failure restores it.
+        assert _FakeExa.last_kwargs.get("num_results") == 10
+
+    def test_string_text_max_chars_coerced_to_int(self, monkeypatch):
+        _install_fake_exa(monkeypatch)
+        from jeeves.tools.exa import make_exa_search
+
+        fn = make_exa_search(_make_cfg(), _make_ledger())
+        fn(query="test", text_max_chars="5000")  # type: ignore[arg-type]
+
+        contents = _FakeExa.last_kwargs.get("contents", {})
+        max_chars = contents.get("text", {}).get("max_characters")
+        assert max_chars == 5000
+        assert isinstance(max_chars, int)
+
+    def test_garbage_text_max_chars_falls_back_to_default(self, monkeypatch):
+        _install_fake_exa(monkeypatch)
+        from jeeves.tools.exa import make_exa_search
+
+        fn = make_exa_search(_make_cfg(), _make_ledger())
+        fn(query="test", text_max_chars=None)  # type: ignore[arg-type]
+
+        contents = _FakeExa.last_kwargs.get("contents", {})
+        # None -> TypeError -> fallback to 20000 (signature default).
+        assert contents.get("text", {}).get("max_characters") == 20000
+
+    def test_native_int_num_results_preserved(self, monkeypatch):
+        """Backward-compat: existing callers pass int — verify unchanged."""
+        _install_fake_exa(monkeypatch)
+        from jeeves.tools.exa import make_exa_search
+
+        fn = make_exa_search(_make_cfg(), _make_ledger())
+        fn(query="test", num_results=3)
+
+        assert _FakeExa.last_kwargs.get("num_results") == 3
+        assert isinstance(_FakeExa.last_kwargs["num_results"], int)
