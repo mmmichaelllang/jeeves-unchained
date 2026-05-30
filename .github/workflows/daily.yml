@@ -222,6 +222,15 @@ jobs:
           # to actually install the package — this flag is a no-op when
           # scrapling is not installed (the import fails fast-soft).
           JEEVES_USE_SCRAPLING: ${{ vars.JEEVES_USE_SCRAPLING || '' }}
+          # 2026-05-30 (Phase-D option ii): Groq research tier between
+          # Cerebras-exhausted and OpenRouter for deep-sector synthesis.
+          # Daily char budget guard (_GROQ_RESEARCH_DAILY_CAP=15000) protects
+          # the write phase's Groq TPD. Default-ON here per user direction;
+          # flip OFF by setting repo Variable JEEVES_USE_GROQ_RESEARCH_TIER=0.
+          JEEVES_USE_GROQ_RESEARCH_TIER: ${{ vars.JEEVES_USE_GROQ_RESEARCH_TIER || '1' }}
+          # GROQ_API_KEY needed by the Groq research tier (same secret used by
+          # the write phase). Plumb here so build_groq_llm can resolve the key.
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
@@ -333,7 +342,11 @@ jobs:
     name: Auditor
     needs: write
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # 2026-05-30: bumped 30→60. Cron at 12:00Z + correspondence delay puts
+    # auditor start past 14:00Z; Charlotte MCP per-URL verification eats
+    # ~15-25 min on full-briefing days. Manual workflow_dispatch had timeout
+    # headroom from earlier dispatch time; cron was hitting the 30-min ceiling.
+    timeout-minutes: 60
     # Don't block the run if write was retried — we still want to audit
     # whatever briefing landed.
     if: always() && needs.write.result != 'cancelled'
