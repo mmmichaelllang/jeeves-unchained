@@ -177,3 +177,74 @@ class TestGroqResearchAccounting:
         assert result == "X" * 200
         # 100 prompt + 200 completion = 300 chars consumed
         assert rs._groq_research_budget_remaining() == before - 300
+
+
+# ─── FunctionAgent path attachment (2026-05-30 follow-up to PR #201) ────────
+#
+# Tests cover _try_attach_groq_to_agent — the helper used inside the
+# FunctionAgent rate-limit handler to swap llm/provider when Cerebras
+# exhausts. Mirrors the crawl4ai path tier but for tool-using sectors
+# (intellectual_journals, enriched_articles, global_news, etc.).
+
+class TestGroqAttachToFunctionAgent:
+    def test_flag_off_returns_false_no_build(self, monkeypatch):
+        """Flag unset → helper returns (False, None) and does NOT build llm."""
+        called = {"n": 0}
+
+        def _fake_build(*a, **kw):
+            called["n"] += 1
+            return _FakeGroqLLM()
+
+        monkeypatch.setattr("jeeves.llm.build_groq_llm", _fake_build)
+        ok, llm = rs._try_attach_groq_to_agent(cfg=object())
+        assert (ok, llm) == (False, None)
+        assert called["n"] == 0
+
+    def test_flag_on_with_budget_returns_llm_and_precharges(self, monkeypatch):
+        """Flag set + budget available → returns built llm + records 2048*4 chars."""
+        monkeypatch.setenv("JEEVES_USE_GROQ_RESEARCH_TIER", "1")
+        fake_llm = _FakeGroqLLM()
+        monkeypatch.setattr("jeeves.llm.build_groq_llm", lambda *a, **kw: fake_llm)
+        before = rs._groq_research_budget_remaining()
+        ok, llm = rs._try_attach_groq_to_agent(cfg=object())
+        assert ok is True
+        assert llm is fake_llm
+        # Pessimistic pre-charge: max_tokens (2048) × 4 chars/token = 8192.
+        assert rs._groq_research_budget_remaining() == before - 8192
+
+    def test_budget_exhausted_returns_false(self, monkeypatch):
+        """Budget below threshold (≤1000 chars) → skip build, return (False, None)."""
+        monkeypatch.setenv("JEEVES_USE_GROQ_RESEARCH_TIER", "1")
+        # Burn budget down to ~999 remaining.
+        rs._groq_research_record_use(rs._GROQ_RESEARCH_DAILY_CAP - 999)
+        called = {"n": 0}
+        monkeypatch.setattr(
+            "jeeves.llm.build_groq_llm",
+            lambda *a, **kw: (called.__setitem__("n", called["n"] + 1) or _FakeGroqLLM()),
+        )
+        ok, llm = rs._try_attach_groq_to_agent(cfg=object())
+        assert (ok, llm) == (False, None)
+        assert called["n"] == 0
+
+    def test_build_failure_returns_false(self, monkeypatch):
+        """build_groq_llm raises (no key etc.) → (False, None); budget NOT charged."""
+        monkeypatch.setenv("JEEVES_USE_GROQ_RESEARCH_TIER", "1")
+
+        def _raise(*a, **kw):
+            raise RuntimeError("no GROQ_API_KEY")
+
+        monkeypatch.setattr("jeeves.llm.build_groq_llm", _raise)
+        before = rs._groq_research_budget_remaining()
+        ok, llm = rs._try_attach_groq_to_agent(cfg=object())
+        assert (ok, llm) == (False, None)
+        # No pre-charge on failed build.
+        assert rs._groq_research_budget_remaining() == before
+
+    def test_build_returns_none_treated_as_failure(self, monkeypatch):
+        """If build_groq_llm returns None directly → (False, None), no charge."""
+        monkeypatch.setenv("JEEVES_USE_GROQ_RESEARCH_TIER", "1")
+        monkeypatch.setattr("jeeves.llm.build_groq_llm", lambda *a, **kw: None)
+        before = rs._groq_research_budget_remaining()
+        ok, llm = rs._try_attach_groq_to_agent(cfg=object())
+        assert (ok, llm) == (False, None)
+        assert rs._groq_research_budget_remaining() == before
