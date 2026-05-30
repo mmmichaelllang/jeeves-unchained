@@ -662,3 +662,114 @@ def test_extract_article_returns_quality_score_field():
     out = pe.extract_article("")
     assert "quality_score" in out
     assert out["quality_score"] == 0.0
+
+
+# ---------------------------------------------------------------------------
+# Singleton recovery (2026-05-29 fix)
+#
+# Production telemetry showed dozens of consecutive
+# "new_page failed: cannot switch to a different thread (which happens
+# to have exited)" warnings per run — the browser singleton died, never
+# recovered, and the rest of the run's fetches all hit the same dead
+# context. This regressed the entire last-resort fetch tier
+# (enriched_articles is the worst-affected sector — 43 chars/session in
+# production telemetry).
+#
+# These tests pin the recovery shape: _force_reset_singleton drops every
+# module-level reference so the next _get_shared_context call relaunches.
+# ---------------------------------------------------------------------------
+
+
+class _DeadObject:
+    """Fake browser/context whose .close()/.stop() raise — mimics the
+    real failure mode where the underlying Playwright thread has exited."""
+
+    def __init__(self):
+        self.close_called = False
+        self.stop_called = False
+
+    def close(self):
+        self.close_called = True
+        raise RuntimeError("thread already exited")
+
+    def stop(self):
+        self.stop_called = True
+        raise RuntimeError("thread already exited")
+
+
+def test_force_reset_singleton_nulls_all_module_state(monkeypatch):
+    """Even when every close() raises, the four module-level singletons
+    MUST be reset to None so the next _get_shared_context call sees a
+    fresh slate and relaunches."""
+    dead_pw = _DeadObject()
+    dead_browser = _DeadObject()
+    dead_ctx = _DeadObject()
+    dead_ctx_nojs = _DeadObject()
+
+    monkeypatch.setattr(pe, "_PW_INSTANCE", dead_pw)
+    monkeypatch.setattr(pe, "_BROWSER", dead_browser)
+    monkeypatch.setattr(pe, "_CONTEXT", dead_ctx)
+    monkeypatch.setattr(pe, "_CONTEXT_NOJS", dead_ctx_nojs)
+
+    pe._force_reset_singleton()
+
+    assert pe._PW_INSTANCE is None
+    assert pe._BROWSER is None
+    assert pe._CONTEXT is None
+    assert pe._CONTEXT_NOJS is None
+
+
+def test_force_reset_singleton_attempts_close_on_each(monkeypatch):
+    """Best-effort close: we don't care if it succeeds (dead threads
+    fail every call), but we DO attempt each one — defensive cleanup
+    for the rare case where the browser is only partially dead."""
+    dead_pw = _DeadObject()
+    dead_browser = _DeadObject()
+    dead_ctx = _DeadObject()
+    dead_ctx_nojs = _DeadObject()
+
+    monkeypatch.setattr(pe, "_PW_INSTANCE", dead_pw)
+    monkeypatch.setattr(pe, "_BROWSER", dead_browser)
+    monkeypatch.setattr(pe, "_CONTEXT", dead_ctx)
+    monkeypatch.setattr(pe, "_CONTEXT_NOJS", dead_ctx_nojs)
+
+    pe._force_reset_singleton()
+
+    assert dead_browser.close_called
+    assert dead_ctx.close_called
+    assert dead_ctx_nojs.close_called
+    assert dead_pw.stop_called
+
+
+def test_force_reset_singleton_safe_when_already_none():
+    """No-op when nothing is set. Required because the function is
+    called from inside the new_page exception handler, which can fire
+    on the very first call before the singleton was fully built."""
+    # Save+restore in case any prior test left state.
+    saved = (pe._PW_INSTANCE, pe._BROWSER, pe._CONTEXT, pe._CONTEXT_NOJS)
+    pe._PW_INSTANCE = pe._BROWSER = pe._CONTEXT = pe._CONTEXT_NOJS = None
+    try:
+        pe._force_reset_singleton()  # MUST NOT raise
+        assert pe._PW_INSTANCE is None
+        assert pe._BROWSER is None
+        assert pe._CONTEXT is None
+        assert pe._CONTEXT_NOJS is None
+    finally:
+        pe._PW_INSTANCE, pe._BROWSER, pe._CONTEXT, pe._CONTEXT_NOJS = saved
+
+
+def test_force_reset_singleton_partial_state(monkeypatch):
+    """Defensive: if only _BROWSER is set (e.g. context creation failed
+    between launch and context build), reset should still null what's
+    there and leave the None refs untouched. Required to support the
+    early-failure paths in _get_shared_context."""
+    dead_browser = _DeadObject()
+    monkeypatch.setattr(pe, "_PW_INSTANCE", None)
+    monkeypatch.setattr(pe, "_BROWSER", dead_browser)
+    monkeypatch.setattr(pe, "_CONTEXT", None)
+    monkeypatch.setattr(pe, "_CONTEXT_NOJS", None)
+
+    pe._force_reset_singleton()
+
+    assert pe._BROWSER is None
+    assert dead_browser.close_called

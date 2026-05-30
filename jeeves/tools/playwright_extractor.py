@@ -313,8 +313,49 @@ def _get_shared_context(*, java_script_enabled: bool = True) -> tuple[Any, Any] 
         page.set_default_navigation_timeout(30000)
         return page, ctx
     except Exception as e:
-        log.warning("new_page failed: %s", e)
+        # 2026-05-29: the original implementation just returned None here,
+        # which left the dead singleton in place — every subsequent extract
+        # call re-used the same broken context and hit the same exception.
+        # Production telemetry showed dozens of consecutive "new_page
+        # failed: cannot switch to a different thread (which happens to
+        # have exited)" warnings per run, all on the same dead instance.
+        # Tear it all down so the next call re-launches a fresh browser.
+        # This restores the last-resort fetch tier mid-run instead of
+        # losing it for the rest of the daily.yml run.
+        log.warning("new_page failed: %s — tearing down singleton for re-init", e)
+        _force_reset_singleton()
         return None
+
+
+def _force_reset_singleton() -> None:
+    """Discard the module-level singleton without waiting on close calls.
+
+    Used when ``new_page()`` raises — the underlying browser thread has
+    almost certainly exited, so close() would block or fail. We just
+    drop our references; the next ``_get_shared_context`` call will
+    relaunch from scratch.
+
+    Acquires ``_BROWSER_LOCK`` because it's called from outside the
+    main lock scope in ``_get_shared_context`` (the new_page() call
+    happens after the lock is released).
+    """
+    global _PW_INSTANCE, _BROWSER, _CONTEXT, _CONTEXT_NOJS
+    with _BROWSER_LOCK:
+        # Best-effort close — wrap each in try because a dead thread can
+        # make every close() call raise. We don't care if it works; we
+        # just want our references gone so the next call relaunches.
+        for obj in (_CONTEXT, _CONTEXT_NOJS, _BROWSER):
+            if obj is not None:
+                try:
+                    obj.close()
+                except Exception:
+                    pass  # expected when underlying thread is dead
+        if _PW_INSTANCE is not None:
+            try:
+                _PW_INSTANCE.stop()
+            except Exception:
+                pass
+        _PW_INSTANCE = _BROWSER = _CONTEXT = _CONTEXT_NOJS = None
 
 
 def _shutdown_browser() -> None:

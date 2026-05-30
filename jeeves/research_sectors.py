@@ -1207,6 +1207,26 @@ _CEREBRAS_CTX_BANNED: frozenset[str] = frozenset({"llama3.1-8b"})
 
 _RESOLVED_CEREBRAS_MODEL: str | None = None
 _CEREBRAS_TRIED_MODELS: set[str] = set()  # models that 429'd this session
+# 2026-05-29: Cerebras chain exhaustion breaker. Once all chain entries
+# have 429'd in a given run, set this True so subsequent sectors skip
+# the entire Cerebras path (no more /v1/models probes, no more chain
+# walks). Chronicle Pattern P3: circuit-breaker + skip beats per-call
+# retry when the provider is broken. Production telemetry showed
+# repeated "cerebras_chain_exhausted" rows across every sector AFTER
+# the first exhaustion, plus a /v1/models probe per sector — all
+# wasted time. The breaker collapses that to a single None return.
+_CEREBRAS_EXHAUSTED: bool = False
+
+
+def _reset_cerebras_breaker() -> None:
+    """Test helper — clear the exhaustion breaker plus tried-models set
+    and the cached resolution. Used by tests so each case starts from a
+    pristine breaker state. Production never resets within a run;
+    chain exhaustion is one-way per process lifetime."""
+    global _CEREBRAS_EXHAUSTED, _RESOLVED_CEREBRAS_MODEL
+    _CEREBRAS_EXHAUSTED = False
+    _RESOLVED_CEREBRAS_MODEL = None
+    _CEREBRAS_TRIED_MODELS.clear()
 
 
 def _resolve_cerebras_model(api_key: str) -> str | None:
@@ -1217,8 +1237,20 @@ def _resolve_cerebras_model(api_key: str) -> str | None:
     Soft-fails to the first untried chain entry when the probe request fails.
 
     Returns None only when all chain entries are exhausted.
+
+    Once the chain is fully exhausted in a run, _CEREBRAS_EXHAUSTED is
+    set to True and ALL subsequent calls return None immediately without
+    re-probing /v1/models. This is the chronicle Pattern P3 breaker
+    pattern (skip > retry when provider is broken). Production
+    telemetry showed sectors-after-exhaustion each issuing a fresh
+    /v1/models probe; the breaker collapses that to a single
+    short-circuit.
     """
-    global _RESOLVED_CEREBRAS_MODEL
+    global _RESOLVED_CEREBRAS_MODEL, _CEREBRAS_EXHAUSTED
+
+    # Breaker short-circuit — every sector after exhaustion hits this.
+    if _CEREBRAS_EXHAUSTED:
+        return None
 
     if _RESOLVED_CEREBRAS_MODEL is not None:
         return _RESOLVED_CEREBRAS_MODEL
@@ -1247,7 +1279,13 @@ def _resolve_cerebras_model(api_key: str) -> str | None:
                     _RESOLVED_CEREBRAS_MODEL,
                 )
                 return _RESOLVED_CEREBRAS_MODEL
-            log.warning("Cerebras: /v1/models listed no untried models")
+            # 2026-05-29: chain fully exhausted. Trip the breaker so
+            # subsequent sectors short-circuit before re-probing /v1/models.
+            _CEREBRAS_EXHAUSTED = True
+            log.warning(
+                "Cerebras: /v1/models listed no untried models — tripping "
+                "exhaustion breaker for rest of run"
+            )
             return None
         else:
             log.warning("Cerebras /v1/models returned %d", resp.status_code)
@@ -1259,6 +1297,11 @@ def _resolve_cerebras_model(api_key: str) -> str | None:
         if candidate not in _CEREBRAS_TRIED_MODELS:
             _RESOLVED_CEREBRAS_MODEL = candidate
             return candidate
+    # 2026-05-29: chain exhausted via the blind-fallback path too.
+    _CEREBRAS_EXHAUSTED = True
+    log.warning(
+        "Cerebras: chain exhausted via blind-fallback path — tripping breaker"
+    )
     return None
 
 
@@ -1270,7 +1313,7 @@ def _rotate_on_429(failed_model: str) -> str | None:
 
     Returns the next untried model name, or None when all entries are exhausted.
     """
-    global _RESOLVED_CEREBRAS_MODEL, _CEREBRAS_TRIED_MODELS
+    global _RESOLVED_CEREBRAS_MODEL, _CEREBRAS_TRIED_MODELS, _CEREBRAS_EXHAUSTED
 
     _CEREBRAS_TRIED_MODELS.add(failed_model)
     _RESOLVED_CEREBRAS_MODEL = None  # force re-resolution next call
@@ -1280,7 +1323,15 @@ def _rotate_on_429(failed_model: str) -> str | None:
             log.info("Cerebras 429 on %s → rotating to %s", failed_model, candidate)
             return candidate
 
-    log.warning("Cerebras: all models in chain exhausted after 429 on %s", failed_model)
+    # 2026-05-29: 429-driven chain exhaustion is the most common path
+    # to exhaustion in practice. Trip the breaker so subsequent sectors
+    # short-circuit before re-probing /v1/models or walking the chain.
+    _CEREBRAS_EXHAUSTED = True
+    log.warning(
+        "Cerebras: all models in chain exhausted after 429 on %s — "
+        "tripping exhaustion breaker for rest of run",
+        failed_model,
+    )
     return None
 
 
