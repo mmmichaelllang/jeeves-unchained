@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] mmmichaelllang: GitHub workflow failure notification for Jeeves Weekly Audit Health Report.\n- [escalation] GitHub: GitHub notification that personal access token 'jeeves3' will expire in about 5 hours.\n- [escalation] GitHub: GitHub notification that personal access token 'jeevesagain' will expire in about 5 hours.\n- [escalation] mmmichaelllang: GitHub notification that Loop Monitor workflow failed in the jeeves-unchained repository.\n- [escalation] Mrs. Lang: Daily correspondence summary indicating 3 alerts from loop-monitor requiring attention.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Daily Pipeline workflow had unsuccessful jobs.\n- [escalation] Mrs. Lang: Jeeves pipeline alert indicating permanent failure with 429 rate limit error on Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [reply needed] Zamzar: Zamzar billing service requesting updated payment details due to failed charge.\n- [reply needed] \"David Purdy (via Google Drive)\": David Purdy shared a Google Drive folder named CommonGround and invited collaboration.\n- [reply needed] Tavily: Stripe failed payment notification for $47.12 charge to Tavily.",
+  "counts": {
+    "reply_needed": 5,
+    "decision_required": 9,
+    "scheduling": 2,
+    "follow_up": 0,
+    "escalation": 8,
+    "no_action": 26
+  }
+}
