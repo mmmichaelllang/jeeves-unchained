@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] GitHub: GitHub notification that personal access token 'jeeves3' will expire in about 5 hours.\n- [escalation] GitHub: GitHub notification that personal access token 'jeevesagain' will expire in about 5 hours.\n- [escalation] mmmichaelllang: GitHub notification that Loop Monitor workflow failed in jeeves-unchained repository.\n- [escalation] Mrs. Lang: Daily correspondence summary from lang.mc@gmail.com highlighting 3 loop-monitor alerts as most pressing matter.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Daily Pipeline workflow had unsuccessful jobs.\n- [escalation] Mrs. Lang: Jeeves pipeline alert from lang.mc@gmail.com about permanent failure of Daily Pipeline due to 429 rate limit error.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed on the main branch.\n- [reply needed] Zamzar: Zamzar billing service requesting updated payment details due to failed payment processing.\n- [reply needed] Tavily: Stripe notification that Tavily payment of $47.12 failed due to credit card issue.\n- [reply needed] Tavily: Tavily notification that pay-as-you-go charge failed, possibly due to expired card or insufficient funds.",
+  "text": "- [escalation] Tavily: Failed Tavily payment of $47.12 due to unsuccessful credit card charge.\n- [escalation] Tavily: Tavily notification that a pay-as-you-go charge was unsuccessful, likely due to expired card or insufficient funds.\n- [escalation] mmmichaelllang: GitHub Actions failure notification for jeeves-unchained Loop Monitor workflow.\n- [escalation] lang.mc@gmail.com: Daily correspondence digest indicating 3 alerts from lang.mc@gmail.com requiring attention.\n- [escalation] Google Play: Google One subscription suspended due to declined payment method.\n- [escalation] Google: Google security alert about new sign-in to glenam98@gmail.com account.\n- [escalation] mmmichaelllang: GitHub Actions failure for jeeves-unchained Daily Pipeline workflow.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating permanent failure of Daily Pipeline with no auto-retry.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [reply needed] Zamzar: Zamzar billing service requesting updated payment details due to a billing issue.\n- [reply needed] Greg Gorsuch: Greg Gorsuch sharing video content and notes, requesting review before Thursday.",
   "counts": {
-    "reply_needed": 4,
-    "decision_required": 8,
+    "reply_needed": 2,
+    "decision_required": 0,
     "scheduling": 2,
     "follow_up": 0,
-    "escalation": 7,
-    "no_action": 29
+    "escalation": 9,
+    "no_action": 36
   }
 }
