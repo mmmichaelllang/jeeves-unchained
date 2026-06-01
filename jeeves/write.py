@@ -5,6 +5,7 @@ from __future__ import annotations
 import html as _html
 import json
 import logging
+import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -817,6 +818,14 @@ CONTINUATION_RULES = """
       - `myedmondsnews.com reports that…`
       - `According to edmondsbeacon.com,`
       - `bbc.co.uk notes that…`
+
+**SELF-CONTAINED SECTION OPENERS — MANDATORY:** The FIRST sentence of
+each <h2>/<h3> section must be self-contained. Do NOT open with an
+anaphoric reference ('This X', 'That Y', 'Such a step', 'Said matter',
+'These items', 'The above'). The reader has NOT seen what you are
+referencing. Open with the concrete subject directly: 'The Edmonds
+City Council passed...' not 'This swift regulatory move...'.
+
 """
 
 
@@ -1612,6 +1621,98 @@ PART_INSTRUCTIONS_BY_NAME: dict[str, str] = {
     "part8": PART8_INSTRUCTIONS,
     "part9": PART9_INSTRUCTIONS,
 }
+
+
+# Item A (m8d, 2026-06-01): Library Stacks literary-pick mode.
+# Activated when env var JEEVES_PART8_LITERARY_PICK_PRIMARY is truthy.
+# When active, PART 8 sources `literary_pick` (populated daily) instead of
+# `vault_insight` (never populated in production). vault_insight remains a
+# secondary path inside the same template so a future vault-insight source
+# can light up automatically. Default-OFF — original PART8_INSTRUCTIONS
+# behaviour preserved when flag absent.
+PART8_LITERARY_PICK_INSTRUCTIONS = CONTINUATION_RULES + """
+
+---
+
+## PART 8 of 9 — Library Stacks (Sector 6) [literary-pick mode]
+
+**PART 8 SCOPE — CRITICAL:** Your payload may contain `literary_pick` and
+`vault_insight`. Write ONLY about Library Stacks. DO NOT re-cover any
+earlier sector. DO NOT write the Talk of the Town intro or article here —
+Part 9 handles that. DO NOT write the sign-off — Part 9 handles that.
+
+### If `literary_pick.available === true`:
+
+Open with a brief Jeeves aside that he has been browsing the library
+stacks in the small hours, varying the phrasing each day. Then present
+`literary_pick.title` by `literary_pick.author` (`literary_pick.year`)
+in Jeeves's voice, at roughly 150-200 words. Cover what the book is
+about, why critics and readers consider it a potential or confirmed
+literary classic, and why it might interest Mister Lang given his taste
+as a teacher-philosopher. Close with one wry (non-profane) Jeeves
+observation.
+
+If `literary_pick.url` is non-empty, link the title once:
+`<a href="[literary_pick.url]">[title]</a>`.
+
+### If `literary_pick.available === false` AND `vault_insight.available === true`:
+
+Open with the original vault aside: *"I have been, as is my habit, browsing
+the library stacks in the small hours, Sir, and came across something
+rather arresting…"* Then present `vault_insight.insight` per the legacy
+rules (~200 words, reference notes by topic not by `note_path`).
+
+### If neither available:
+
+Output EXACTLY: `<p>The library stacks offer nothing fresh this morning, Sir.</p>`
+
+Nothing else. No apology, no pivot, no padding.
+
+### Closing sentinel
+
+Always emit `<!-- PART8 END -->` and STOP. Do NOT close outer tags.
+Part 9 handles those.
+"""
+
+
+def _part8_literary_pick_primary_enabled() -> bool:
+    """Item A flag check (default-OFF).
+
+    Reads env at call time so tests can monkeypatch. Truthy values:
+    "1", "true", "yes", "on" (case-insensitive). Anything else = OFF.
+    """
+    return os.environ.get("JEEVES_PART8_LITERARY_PICK_PRIMARY", "").lower() in (
+        "1", "true", "yes", "on"
+    )
+
+
+def get_part_plan() -> list[tuple[str, list[str]]]:
+    """Return the active PART_PLAN, honouring the Item A flag.
+
+    When JEEVES_PART8_LITERARY_PICK_PRIMARY=1, part8's payload sectors
+    become [literary_pick, vault_insight] so the literary-pick template
+    can render. literary_pick stays in part7 too — PART7 ROUTE A is the
+    UAP-quiet fallback path which only triggers when `uap_has_new` is
+    false, a narrow window. Duplicate-render risk noted in PR #m8d.
+    """
+    if not _part8_literary_pick_primary_enabled():
+        return PART_PLAN
+    plan: list[tuple[str, list[str]]] = []
+    for label, sectors in PART_PLAN:
+        if label == "part8":
+            plan.append((label, ["literary_pick", "vault_insight"]))
+        else:
+            plan.append((label, list(sectors)))
+    return plan
+
+
+def get_part_instructions(label: str) -> str:
+    """Return the active PART instructions, honouring the Item A flag for part8."""
+    if label == "part8" and _part8_literary_pick_primary_enabled():
+        return PART8_LITERARY_PICK_INSTRUCTIONS
+    return PART_INSTRUCTIONS_BY_NAME[label]
+
+
 
 
 def _session_subset(payload: dict[str, Any], fields: list[str]) -> dict[str, Any]:
@@ -3489,6 +3590,97 @@ def _inject_asides_to_floor(
     # `injected` was built in reverse order; reverse so callers see prose-order.
     injected.reverse()
     return modified, injected
+
+
+def _detect_anaphoric_openers(html: str) -> list[str]:
+    """Find sections whose first <p> opens with an anaphoric pronoun.
+
+    "Anaphoric opener" = a paragraph that opens with one of {This, That,
+    Such, Said, These, The above} as the FIRST word, immediately after an
+    <h2> or <h3>. These reference an antecedent the briefing did not
+    establish (model paraphrasing source-article context without
+    grounding). Reader pattern: low-trust on the section.
+
+    Returns a list of "anaphoric_opener:<heading-text-snippet>" strings,
+    one per violation. Caller appends to quality_warnings.
+
+    Idempotent (no mutation). Defensive (returns [] on regex failure).
+    """
+    if not isinstance(html, str) or not html:
+        return []
+    try:
+        violations: list[str] = []
+        # Match: <h2|h3 ...>HEADING</h2|h3> + optional whitespace + <p ...>FIRST_WORD
+        pat = re.compile(
+            r"<h([23])[^>]*>([^<]{1,120})</h\1>\s*<p[^>]*>\s*"
+            r"(This|That|Such|Said|These|The above)\b",
+            re.IGNORECASE,
+        )
+        for m in pat.finditer(html):
+            heading_snippet = m.group(2).strip()[:40]
+            opener = m.group(3)
+            violations.append(f"anaphoric_opener:{heading_snippet}:{opener}")
+        return violations
+    except Exception as exc:
+        log.warning("anaphoric opener detector raised: %s", exc)
+        return []
+
+
+def _ensure_weather_sentinel(
+    part1_html: str,
+    weather_text: str,
+    quality_warnings: list[str] | None = None,
+) -> str:
+    """Programmatically guarantee Part 1 contains a weather paragraph.
+
+    When session.weather is empty (post schema._cap refusal strip or any
+    other empty path), the prompt directive says Part 1 must emit the
+    unavailable sentinel. Models occasionally skip it and the briefing
+    ships with no weather paragraph at all (chronicled 2026-05-30,
+    2026-06-01).
+
+    Behaviour:
+      - If weather_text has >=30 chars, no-op (trust the LLM emitted real
+        weather content).
+      - If weather_text is empty/short AND part1_html already mentions
+        weather/forecast/temperature in a `<p>` tag, no-op (LLM did the
+        right thing on its own).
+      - Otherwise inject the sentinel paragraph. Placement: directly
+        before the first `<h2>` (next section start) so the sentinel
+        sits at the end of the Sector 1 intro block. If no `<h2>` exists
+        in Part 1, append at end.
+
+    Idempotent (no-op if sentinel already present).
+    """
+    SENTINEL = (
+        "<p>The weather forecast is unavailable this morning, Sir.</p>"
+    )
+    if not isinstance(part1_html, str) or not part1_html:
+        return part1_html
+    weather_text = (weather_text or "").strip()
+    if len(weather_text) >= 30:
+        return part1_html
+    if SENTINEL in part1_html:
+        return part1_html
+    # Heuristic: did the LLM emit ANY weather-flavoured paragraph?
+    weather_re = re.compile(
+        r"<p[^>]*>[^<]{0,1200}"
+        r"(?:weather|forecast|temperature|cloudy|sunny|rain|drizzle|wind|"
+        r"°F|°C|precipitat)"
+        r"[^<]{0,1200}</p>",
+        re.IGNORECASE,
+    )
+    if weather_re.search(part1_html):
+        return part1_html
+    # Inject before first <h2> (next major section) if present.
+    m = re.search(r"<h2[^>]*>", part1_html)
+    if m:
+        injected = part1_html[:m.start()] + SENTINEL + "\n" + part1_html[m.start():]
+    else:
+        injected = part1_html.rstrip() + "\n" + SENTINEL + "\n"
+    if quality_warnings is not None:
+        quality_warnings.append("part1_weather_sentinel_injected")
+    return injected
 
 
 def _ensure_tott_scaffolding(part9_html: str, newyorker_available: bool, ny_url: str = "") -> str:
@@ -5917,7 +6109,8 @@ async def generate_briefing(
             except Exception as exc:
                 log.warning("[%s] refined debug dump failed: %s", label, exc)
 
-    for i, (label, sectors) in enumerate(PART_PLAN):
+    active_plan = get_part_plan()
+    for i, (label, sectors) in enumerate(active_plan):
         if i > 0:
             if last_used_groq:
                 # Groq free-tier 12k TPM window — must clear before next call.
@@ -5944,7 +6137,7 @@ async def generate_briefing(
             run_used_asides=used_this_run,
             run_used_topics=used_topics_this_run,
         )
-        part_system = base_system + PART_INSTRUCTIONS_BY_NAME[label]
+        part_system = base_system + get_part_instructions(label)
         part_user = build_user_prompt_from_payload(part_payload)
         raw_part, last_used_groq = _invoke_write_llm(
             cfg, part_system, part_user, max_tokens=max_tokens, label=label
@@ -6013,6 +6206,25 @@ async def generate_briefing(
                 )
             except Exception as exc:
                 log.warning("part8 literary rescue raised: %s", exc)
+
+        # Part 1 weather-empty fallback (Item B, 2026-06-01). When session.weather
+        # is empty (post schema._cap refusal strip), the prompt directive at
+        # PART1_INSTRUCTIONS instructs Part 1 to emit a sentinel paragraph.
+        # Models occasionally skip it (chronicled 2026-05-30, 2026-06-01) and
+        # the briefing ships with no weather paragraph at all. Inject the
+        # sentinel programmatically when needed.
+        if label == "part1":
+            try:
+                weather_text = ""
+                if isinstance(payload, dict):
+                    weather_text = payload.get("weather", "") or ""
+                elif hasattr(payload, "weather"):
+                    weather_text = getattr(payload, "weather", "") or ""
+                raw_part = _ensure_weather_sentinel(
+                    raw_part, weather_text, quality_warnings
+                )
+            except Exception as exc:
+                log.warning("part1 weather sentinel injector raised: %s", exc)
 
         # Part 9 scaffolding hardening — guarantee TOTT intro + placeholder
         # are present so _inject_newyorker_verbatim can splice in the verbatim
@@ -6105,8 +6317,20 @@ async def generate_briefing(
                 task.cancel()
             refined.setdefault(label, raw_drafts[label])
 
-    final_parts = [refined.get(label, raw_drafts[label]) for label, _ in PART_PLAN]
+    final_parts = [refined.get(label, raw_drafts[label]) for label, _ in active_plan]
     stitched = _stitch_parts(*final_parts)
+    # Item C (m8d): anaphoric-opener post-validator. Detects sections
+    # opening with 'This/That/Such...' without antecedent in the same
+    # paragraph. Logs as quality_warning so an editor pass can address.
+    # See _detect_anaphoric_openers docstring.
+    anaphoric_violations = _detect_anaphoric_openers(stitched)
+    if anaphoric_violations:
+        quality_warnings.extend(anaphoric_violations)
+        log.warning(
+            "anaphoric opener violations: %d (sections: %s)",
+            len(anaphoric_violations),
+            ", ".join(v.split(":", 2)[1] for v in anaphoric_violations[:5]),
+        )
     log.info(
         "stitched briefing: %d chars across %d parts (%s)",
         len(stitched), len(final_parts), ", ".join(str(len(p)) for p in final_parts),
