@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] GitHub: GitHub notification that personal access token 'jeeves3' will expire in about 5 hours.\n- [escalation] GitHub: GitHub notification that personal access token 'jeevesagain' will expire in about 5 hours.\n- [escalation] mmmichaelllang: GitHub notification that Loop Monitor workflow failed in jeeves-unchained repository.\n- [escalation] Mrs. Lang: Daily correspondence summary from lang.mc@gmail.com highlighting 3 loop-monitor alerts as most pressing matter.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Daily Pipeline workflow had unsuccessful jobs.\n- [escalation] Mrs. Lang: Jeeves pipeline alert from lang.mc@gmail.com about permanent failure of Daily Pipeline due to 429 rate limit error.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed on the main branch.\n- [reply needed] Zamzar: Zamzar billing service requesting updated payment details due to failed payment processing.\n- [reply needed] Tavily: Stripe notification that Tavily payment of $47.12 failed due to credit card issue.\n- [reply needed] Tavily: Tavily notification that pay-as-you-go charge failed, possibly due to expired card or insufficient funds.",
+  "counts": {
+    "reply_needed": 4,
+    "decision_required": 8,
+    "scheduling": 2,
+    "follow_up": 0,
+    "escalation": 7,
+    "no_action": 29
+  }
+}
