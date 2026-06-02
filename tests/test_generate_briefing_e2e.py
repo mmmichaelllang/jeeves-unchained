@@ -417,20 +417,6 @@ def _fragments_omit_uap() -> dict[str, str]:
     return out
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "PRODUCTION DEFECT 2026-06-02 — Item B sentinel does not survive "
-        "to final HTML. Local repro: _ensure_weather_sentinel's injection "
-        "branch is reached (warning would be appended), but the sentinel "
-        "<p> is missing from the final stitched HTML. Bisect candidates: "
-        "(a) sentinel injected into raw_part but _stitch_parts strips it "
-        "as orphaned-outside-container (see warning 'structural repair: "
-        "156 chars orphaned outside .container'); (b) sentinel never "
-        "injected because guard short-circuits before append. When fix "
-        "lands, REMOVE this xfail — strict=True will XPASS-fail the suite."
-    ),
-)
 def test_e2e_weather_sentinel_injects_when_llm_omits_weather(
     monkeypatch, cfg, session
 ):
@@ -470,21 +456,6 @@ def test_e2e_weather_sentinel_injects_when_llm_omits_weather(
     )
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "PRODUCTION DEFECT 2026-06-01 (Plan item 1) — UAP fallback fires "
-        "at part7 raw level but content is stripped from final HTML. Local "
-        "repro confirms _maybe_inject_part7_fallbacks runs ROUTE B "
-        "detection AND injection (both quality warnings appear), AND logs "
-        "'part7: <!-- PART7 END --> marker missing — appending fallback "
-        "at end of fragment'. But post-stitch HTML still has zero UAP "
-        "tokens. Likely cause: appended-at-end fallback gets caught by "
-        "_stitch_parts' 'orphaned outside .container' repair pass and "
-        "spliced into a location where the narrative editor or dedup "
-        "later drops it. When Plan item 1 fix lands, REMOVE this xfail."
-    ),
-)
 def test_e2e_part7_uap_fallback_injects_when_llm_drops_uap(
     monkeypatch, cfg, session
 ):
@@ -516,12 +487,21 @@ def test_e2e_part7_uap_fallback_injects_when_llm_drops_uap(
         "UAP fallback HTML not spliced — detection fired but injection "
         "branch returned without writing"
     )
-    body_lc = wmod._strip_tags(html).lower()
-    uap_present = any(
-        tok in body_lc
-        for tok in ("uap", "unidentified", "phenomena", "uaps")
+    # The fallback paragraph template is
+    # `<p><em>On the disclosure front, Sir,</em> {findings} <a href="{url}">Source</a>.</p>`
+    # (see jeeves.write._build_uap_fallback_html). The canned session.uap
+    # findings ("Congressional subcommittee scheduled a May hearing.") does
+    # NOT contain any "uap"/"unidentified"/"phenomena" token, so asserting on
+    # those tokens reproduces a fixture/assertion mismatch, not a real strip.
+    # Assert on the unique template marker AND the canned anchor URL — both
+    # deterministic indicators that the fallback paragraph survived through
+    # stitch, dedup, and source-link passes intact.
+    html_lc = html.lower()
+    assert "on the disclosure front" in html_lc, (
+        "fallback template phrase missing from final HTML — fallback was "
+        "injected into part7 raw but a downstream pass dropped it"
     )
-    assert uap_present, (
-        "post-stitch HTML still lacks any UAP token — fallback was "
-        "injected into part7 raw but stitcher/post-process dropped it"
+    assert "congress.gov" in html_lc, (
+        "fallback source anchor missing from final HTML — paragraph "
+        "may have been kept but the URL got stripped or rewritten"
     )
