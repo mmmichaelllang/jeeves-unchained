@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] mmmichaelllang: GitHub notification that a workflow run failed in the jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary indicating 3 alerts from loop-monitor require attention.\n- [reply needed] Barry: Barry shared a NYTimes article about AI in university curriculum that he thought Michael would find interesting.\n- [decision required] David Purdy: GitHub invitation to collaborate on the 5mts/sainthelens repository.\n- [decision required] David Purdy: GitHub invitation to collaborate on the 5mts/regionflex repository.\n- [decision required] David Purdy: GitHub invitation to collaborate on the 5mts/electup repository.\n- [decision required] David Purdy: GitHub invitation to collaborate on the 5mts/map-sniffer repository.\n- [decision required] David Purdy: GitHub invitation to collaborate on the 5mts/electup-embed repository.\n- [decision required] David Purdy: GitHub invitation to collaborate on the 5mts/tahoma repository.\n- [follow up] David Purdy: David Purdy apologizes for pushing and explains a client is asking about maps, indicating the ball is back in Michael's court on the Setup project.\n- [follow up] David Purdy: David Purdy asks if Michael has made progress on RegionFlex districts and whether he has questions, as a Florida organization is preparing to publish.",
+  "text": "- [escalation] lang.mc@gmail.com: Daily correspondence summary flagging an urgent GitHub personal access token expiration notice.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary flagging a Tavily payment failure that requires immediate attention.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary flagging a Zamzar billing issue as the most pressing matter.\n- [escalation] GitHub: Urgent notification that GitHub personal access token 'jeeves3' expires in about 5 hours.\n- [escalation] GitHub: Urgent notification that GitHub personal access token 'jeevesagain' expires in about 5 hours.\n- [reply needed] David Purdy: David Purdy apologizes for pushing and explains a client is asking about map deliverables.\n- [reply needed] Michael Lang: Michael Lang informs David Purdy he will focus on the project this week while family is away.\n- [reply needed] David Purdy: David Purdy asks Michael for an update on RegionFlex districts work and offers help.\n- [decision required] Zamzar: Zamzar billing service requesting updated payment details due to failed payment processing.\n- [decision required] Laravel: Invitation to join a team on Laravel platform that requires acceptance or rejection.",
   "counts": {
-    "reply_needed": 1,
-    "decision_required": 6,
-    "scheduling": 0,
-    "follow_up": 2,
-    "escalation": 2,
-    "no_action": 24
+    "reply_needed": 3,
+    "decision_required": 4,
+    "scheduling": 2,
+    "follow_up": 1,
+    "escalation": 5,
+    "no_action": 30
   }
 }
