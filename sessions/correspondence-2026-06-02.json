@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] GitHub: GitHub personal access token 'jeeves3' expires in about 5 hours.\n- [escalation] GitHub: GitHub personal access token 'jeevesagain' expires in about 5 hours.\n- [escalation] mmmichaelllang: GitHub Actions workflow 'Loop Monitor' failed in jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: System alert about 3 loop-monitor alerts from Mister Lang's own account, flagged as most pressing matter.\n- [reply needed] Vervaeke Foundation: Vervaeke Foundation outreach about a dialogue on meaning-making.\n- [decision required] David Purdy: GitHub invitation to collaborate on the 5mts/electup repository.\n- [decision required] David Purdy: GitHub invitation to collaborate on the 5mts/map-sniffer repository.\n- [decision required] David Purdy: GitHub invitation to collaborate on the 5mts/electup-embed repository.\n- [decision required] David Purdy: GitHub invitation to collaborate on the 5mts/tahoma repository.\n- [decision required] Google Play: Google One subscription suspended due to declined payment; requires payment method update to reactivate.\n- [no action] TurboTax Monthly: TurboTax marketing email about rising costs and tips.\n- [no action] lang.mc@gmail.com: Daily correspondence summary from Jeeves system for May 28, 2026.",
+  "counts": {
+    "reply_needed": 1,
+    "decision_required": 5,
+    "scheduling": 0,
+    "follow_up": 0,
+    "escalation": 4,
+    "no_action": 10
+  }
+}
