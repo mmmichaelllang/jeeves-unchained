@@ -224,6 +224,71 @@ def test_editor_quality_gate_accepts_tight_edit():
     assert "word-ceiling" not in reason
 
 
+def test_editor_quality_gate_rejects_h3_deletion():
+    """Pin briefing-2026-06-02 production defect — OR editor dropped sections.
+
+    The 01:04Z 2026-06-02 cron's stitched draft had 9 <h3> sections; the
+    nvidia/nemotron-nano-12b-v2-vl:free narrative-edit pass returned 6
+    <h3> (UAP, Reading Room, Domestic Calendar, Library Stacks dropped),
+    word-floor/ceiling/density gates passed because the model padded the
+    remaining sections to keep the word count. The h3 count check now
+    rejects on deletion as well as inflation.
+    """
+    # 9-section input (word count high enough to pass word-floor at 70%).
+    input_html = (
+        "<html><body>"
+        + "".join(
+            f'<h3>Section {i}</h3><p><a href="https://x.com/{i}">x</a> '
+            + ("real prose here please. " * 12)
+            + "</p>"
+            for i in range(9)
+        )
+        + "</body></html>"
+    )
+    # Edited drops 3 sections, pads the remaining ones to stay above word floor.
+    edited_html = (
+        "<html><body>"
+        + "".join(
+            f'<h3>Section {i}</h3><p><a href="https://x.com/{i}">x</a> '
+            + ("real prose here please. " * 18)
+            + "</p>"
+            for i in range(6)
+        )
+        + "</body></html>"
+    )
+    passed, reason = _editor_quality_gates(input_html, edited_html, "test-model")
+    assert not passed
+    assert "h3-deletion" in reason
+    assert "9" in reason and "6" in reason
+
+
+def test_editor_quality_gate_accepts_h3_preserved():
+    """Same section count → h3 check passes (sanity check for the equality gate)."""
+    input_html = (
+        "<html><body>"
+        + "".join(
+            f'<h3>Section {i}</h3><p><a href="https://x.com/{i}">x</a> '
+            + ("real prose here please. " * 12)
+            + "</p>"
+            for i in range(5)
+        )
+        + "</body></html>"
+    )
+    edited_html = (
+        "<html><body>"
+        + "".join(
+            f'<h3>Renamed {i}</h3><p><a href="https://x.com/{i}">x</a> '
+            + ("real prose here please. " * 10)
+            + "</p>"
+            for i in range(5)
+        )
+        + "</body></html>"
+    )
+    passed, reason = _editor_quality_gates(input_html, edited_html, "test-model")
+    assert "h3-deletion" not in reason
+    assert "h3-inflation" not in reason
+
+
 # -----------------------------------------------------------------------------
 # Pre-stitch fragment validator.
 # -----------------------------------------------------------------------------

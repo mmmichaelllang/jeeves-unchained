@@ -5376,14 +5376,25 @@ def _editor_quality_gates(
             f"ratio {out_words / in_words:.2f}) — likely echo+edit failure"
         )
 
-    # H3 count must not increase. Editor adding new sections = full-briefing
-    # hallucination (root cause of triple-pass duplication symptom).
+    # H3 count must match input exactly. Editor adding new sections =
+    # full-briefing hallucination (root cause of triple-pass duplication
+    # symptom). Editor DROPPING sections = structural collapse (root cause
+    # of briefing-2026-05-30/-31/06-01/06-02 missing weather + UAP +
+    # Reading Room + Library Stacks: nvidia/nemotron-nano-12b-v2-vl:free
+    # passed words/density/orphans gates while merging 9 sections into 6).
+    # Deterministic _collapse_adjacent_duplicate_h3 + _dedup_h3_sections
+    # passes run AFTER this so OR must preserve h3 count exactly.
     in_h3 = len(_H3_TAG_RE.findall(input_html))
     out_h3 = len(_H3_TAG_RE.findall(edited_html))
     if out_h3 > in_h3:
         return False, (
             f"h3-inflation: edited has {out_h3} <h3> headers, input had {in_h3} — "
             "editor added sections (full-briefing hallucination)"
+        )
+    if out_h3 < in_h3:
+        return False, (
+            f"h3-deletion: edited has {out_h3} <h3> headers, input had {in_h3} — "
+            "editor dropped sections (structural collapse)"
         )
 
     orphans = _validate_aside_placement(edited_html)
