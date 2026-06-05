@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Andy: Andrew Lang sends personal reflection email about trying to change or fix people.\n- [escalation] Sarah Moyer: Sarah Moyer sent an empty email with no subject or content.\n- [reply needed] Zamzar Limited: Zamzar requesting updated payment details to resolve a failed payment.\n- [reply needed] Barry: Barry shares a NYTimes article about AI in curriculum that he thought Michael would find interesting.\n- [reply needed] Greg Gorsuch: Greg Gorsuch suggests posting a flat file of a home page without rotating quotes to save time.\n- [reply needed] Greg Gorsuch: Greg Gorsuch expresses concern that missing wayback sections mean they are 'toast'.\n- [reply needed] Greg Gorsuch: Greg Gorsuch instructs to capture 4-5 graphics from wayback that appear over time.\n- [reply needed] Greg Gorsuch: Greg Gorsuch shared WayBack snapshots and asks if missing sections of a website can be recovered.\n- [decision required] Zamzar: Zamzar billing service reports a failed payment and requests updated payment details.\n- [scheduling] Peter Nordlund: Peter Nordlund invites Matt and Michael to June 19 Scriptural Reasoning and asks if they can bring fruit.\n- [scheduling] Sarah Moyer: Sarah Moyer updates that she missed the 10:30 and will arrive around 12:30 via Edmonds ferry.",
+  "counts": {
+    "reply_needed": 6,
+    "decision_required": 1,
+    "scheduling": 3,
+    "follow_up": 0,
+    "escalation": 2,
+    "no_action": 38
+  }
+}
