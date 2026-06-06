@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Andy: Daily correspondence summary from Jeeves mentioning an escalation from Andrew Lang requiring immediate attention.\n- [reply needed] Zamzar Limited: Zamzar Limited unable to process recent payment and requests update of payment details.\n- [reply needed] Andy: Andrew Lang is asking Michael a reflective question about trying to change or fix people.\n- [decision required] Zamzar: Zamzar is reporting a billing issue and requesting updated payment details to process a recent payment.\n- [scheduling] Peter Nordlund: Peter Nordlund invites Matt and Michael to June 19 Scriptural Reasoning event and asks about bringing cut-up fruit.\n- [scheduling] Alan Beasley: Alan Beasley is sharing a chapter from Mark's book for a Loder Group discussion scheduled for 10am on Saturday, June 27.\n- [scheduling] Sarah Moyer: Sarah Moyer updates arrival time to 12:30 due to missing the 10:30 ferry and declines food offer.\n- [scheduling] \"Rob Collins & Esther Wakeman\": Rob Collins and Esther Wakeman propose meeting at 11:30 for lunch before an event and ask to print a ticket and return a backpack.\n- [follow up] Greg Gorsuch: Greg Gorsuch is responding in a thread about posting a flat file of a 'home' page, suggesting to skip rotating quotes to save time.",
+  "counts": {
+    "reply_needed": 2,
+    "decision_required": 1,
+    "scheduling": 4,
+    "follow_up": 1,
+    "escalation": 1,
+    "no_action": 41
+  }
+}
