@@ -8,6 +8,7 @@ the jeeves-memory truncation table.
 from __future__ import annotations
 
 import logging
+
 from dataclasses import dataclass, field as dc_field
 from typing import Any
 
