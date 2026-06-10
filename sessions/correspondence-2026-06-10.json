@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Andy: Newsletter or blog post from Andrew Lang about belonging and community.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Daily Pipeline workflow run failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about permanent failure with 429 rate limit error in Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for a permanent failure with 429 rate-limiting error.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Weekly Audit Health Report workflow completely failed.\n- [reply needed] Zamzar Limited: Zamzar billing issue requiring payment details update to resolve failed payment processing.\n- [reply needed] Andy: Andrew Lang is asking Michael a reflective question about trying to change or fix people.\n- [scheduling] Peter Nordlund: Peter Nordlund inviting Matt and Michael to June 19 Scriptural Reasoning event and asking about bringing fruit.\n- [scheduling] Alan Beasley: Alan Beasley is sharing a chapter from Mark's book for a Loder Group discussion scheduled for 10am on Saturday, June 27.\n- [follow up] lang.mc@gmail.com: Daily correspondence summary flagging ongoing Zamzar billing issue requiring attention.",
+  "counts": {
+    "reply_needed": 2,
+    "decision_required": 0,
+    "scheduling": 2,
+    "follow_up": 2,
+    "escalation": 6,
+    "no_action": 38
+  }
+}
