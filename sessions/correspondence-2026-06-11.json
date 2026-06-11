@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating a permanent failure with 429 rate limiting in the Daily Pipeline.\n- [escalation] lang.mc@gmail.com: Daily correspondence report from Jeeves system noting Tavily API usage at 80% of June limit.\n- [escalation] lang.mc@gmail.com: Daily correspondence report from Jeeves system flagging urgent escalation from Andrew Lang requiring immediate attention.\n- [reply needed] Greg Gorsuch: Greg Gorsuch asks about CG site updates and questions a white Interdisciplinary statement on the site.\n- [reply needed] Zamzar Limited: Zamzar billing team reports failed payment and requests updated payment details.\n- [decision required] Greg Gorsuch: Greg Gorsuch requests a button be added to the Presentations page linking to past presentations.\n- [decision required] Greg Gorsuch: Greg Gorsuch repeats a request for a Past Presentations button on the Presentations page.\n- [scheduling] Peter Nordlund: Peter Nordlund invites Matt and Michael to a June 19 Scriptural Reasoning event and asks about bringing fruit.\n- [no action] Greg Gorsuch: Greg Gorsuch shares an update on the final proofing and indexing timeline for FODA.\n- [no action] \"Superhuman – Zain Kahn\": Superhuman newsletter about Anthropic's CEO and a dictation tool for Android.",
+  "counts": {
+    "reply_needed": 2,
+    "decision_required": 2,
+    "scheduling": 1,
+    "follow_up": 0,
+    "escalation": 3,
+    "no_action": 27
+  }
+}
