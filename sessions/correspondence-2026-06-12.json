@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating permanent failure due to 429 rate limit error in daily workflow.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating permanent failure due to 429 rate limit error in daily workflow.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed with some unsuccessful jobs.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure with 429 rate limit error in the Daily Pipeline workflow.\n- [escalation] lang.mc@gmail.com: Jeeves daily correspondence summary highlighting the failed GitHub workflow run as most pressing matter.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for a permanent failure with 429 rate limit error in the Daily Pipeline.\n- [escalation] lang.mc@gmail.com: Jeeves daily correspondence report flagging an ongoing Zamzar billing issue requiring immediate attention.\n- [escalation] Michael Lang: Jeeves daily correspondence report highlighting multiple matters demanding immediate attention.\n- [escalation] lang.mc@gmail.com: Jeeves daily correspondence report alerting that Tavily API usage has reached 80% of the June 2026 limit.",
+  "counts": {
+    "reply_needed": 1,
+    "decision_required": 2,
+    "scheduling": 0,
+    "follow_up": 1,
+    "escalation": 12,
+    "no_action": 34
+  }
+}
