@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Google: Security alert that a Google Account is no longer recoverable.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Daily Pipeline workflow run failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure due to 429 rate limit error.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure due to 429 rate limit error.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating a permanent failure with 429 rate limit error in the Daily Pipeline.\n- [escalation] Andy: Email from Andrew Lang (brother) with subject about belonging and intention.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about permanent failure with 429 rate limit error.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about permanent failure with 429 rate limit error.\n- [escalation] lang.mc@gmail.com: Automated correspondence report flagging a Tavily API usage alert at 80% of June 2026 limit.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Weekly Audit Health Report workflow has failed.\n- [reply needed] Greg Gorsuch: Greg Gorsuch requests adding a 'Past Presentations' button to the Presentations page with a table of contents.",
+  "counts": {
+    "reply_needed": 3,
+    "decision_required": 0,
+    "scheduling": 0,
+    "follow_up": 3,
+    "escalation": 10,
+    "no_action": 34
+  }
+}
