@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] mmmichaelllang: GitHub notification that Jeeves Weekly Audit Health Report workflow failed.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Daily Pipeline workflow had unsuccessful jobs.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure of Daily Pipeline with 429 rate limit error.\n- [escalation] Google: Security alert that Google Account thaolang2@gmail.com is no longer recoverable.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Daily Pipeline workflow had unsuccessful jobs.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure of Daily Pipeline with 429 rate limit error.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure due to a 429 rate limit error.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for a permanent failure due to a 429 rate limit error.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for a permanent failure due to a 429 rate limit error.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Daily Pipeline workflow run failed with unsuccessful jobs.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure of Daily Pipeline due to 429 rate limit error with no auto-retry.",
+  "counts": {
+    "reply_needed": 3,
+    "decision_required": 0,
+    "scheduling": 0,
+    "follow_up": 3,
+    "escalation": 14,
+    "no_action": 30
+  }
+}
