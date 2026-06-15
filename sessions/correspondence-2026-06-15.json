@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Andy: Rich Lang forwarded a blog article about manufacturing that reminded him of Mister Lang's views.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Daily Pipeline workflow failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure with 429 rate limit error in Daily Pipeline.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Weekly Audit Health Report workflow completely failed.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Daily Pipeline workflow failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure with 429 rate limit error in Daily Pipeline.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting a Google security alert that an account is no longer recoverable.\n- [escalation] Google: Google security alert that a Google Account (thaolang2@gmail.com) is no longer recoverable; langmc@gmail.com is the recovery email.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating a permanent failure due to a 429 rate limit error with no auto-retry.",
+  "counts": {
+    "reply_needed": 4,
+    "decision_required": 0,
+    "scheduling": 0,
+    "follow_up": 0,
+    "escalation": 17,
+    "no_action": 29
+  }
+}
