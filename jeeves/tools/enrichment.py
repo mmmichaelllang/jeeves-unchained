@@ -284,6 +284,36 @@ def _fetch_article_text_impl(url: str) -> str:
     except Exception as e:
         log.debug("scrapling tier failed for %s: %s", url, e)
 
+    # ZenRows / Scrapfly TIER 2.6/2.7 — managed anti-bot scraper APIs,
+    # DORMANT unless JEEVES_USE_ZENROWS=1 / JEEVES_USE_SCRAPFLY=1. Added
+    # 2026-06-16 as opt-in capability for bot-walled hosts; off by default
+    # because extraction was not the measured failure mode. Each block is a
+    # near-zero-cost no-op (one env read) when its flag is unset.
+    try:
+        from .managed_scraper_extract import (
+            extract_article_zenrows as _zr_extract,
+            extract_article_scrapfly as _sf_extract,
+            zenrows_enabled as _zr_enabled,
+            scrapfly_enabled as _sf_enabled,
+        )
+
+        for _ms_enabled, _ms_extract, _ms_via in (
+            (_zr_enabled, _zr_extract, "zenrows"),
+            (_sf_enabled, _sf_extract, "scrapfly"),
+        ):
+            if _ms_enabled():
+                ms_result = _ms_extract(url, timeout_seconds=60, max_chars=3000)
+                if ms_result.get("success"):
+                    base.update({
+                        "title": ms_result.get("title", ""),
+                        "text": ms_result.get("text", "")[:3000],
+                        "fetch_failed": False,
+                        "extracted_via": _ms_via,
+                    })
+                    return json.dumps(base)
+    except Exception as e:
+        log.debug("managed-scraper tier failed for %s: %s", url, e)
+
     # Playwright fallback — last resort when httpx returned nothing OR
     # trafilatura couldn't extract enough body text.
     try:

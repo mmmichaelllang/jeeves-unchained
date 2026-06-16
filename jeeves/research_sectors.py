@@ -1727,8 +1727,11 @@ async def _run_crawl4ai_sector(
     Falls back to spec.default on any failure.
     """
     import json as _json
+    from dataclasses import replace as _dc_replace
 
     from .tools.serper import make_serper_search
+    from .tools.brave import make_brave_search
+    from .tools.jina import make_jina_search
     from .tools.tavily import make_tavily_search
     from .tools.exa import make_exa_search
     from .tools.crawl4ai_extract import batch_extract
@@ -1738,15 +1741,20 @@ async def _run_crawl4ai_sector(
 
     # 1. Search for candidate URLs.
     #
-    # Provider cascade (2026-06-16): serper → tavily → exa. Previously this
-    # used serper ONLY; when serper returned 400 "Not enough credits" (or any
-    # error), the sector silently starved → empty findings → GATE-B exit 6.
-    # All three share the same wrapper shape: {"results":[{"url",...}, ...]}.
+    # Provider cascade (2026-06-16): serper → brave → jina → tavily →
+    # tavily#2 → exa. Previously serper ONLY; when serper returned 400 "Not
+    # enough credits" the sector silently starved → empty findings → GATE-B
+    # exit 6. All providers share the wrapper shape {"results":[{"url",...}]}.
     # Take the first provider that yields fresh URLs.
+    #
+    # Each entry: (label, factory_cfg, factory, count_kwarg, has_key).
+    # Entries whose key is absent are skipped — no point burning a hop on a
+    # provider that will return an unconditional "key not set" error. Tavily#2
+    # reuses the tavily tool with a cfg clone swapping in the second key.
     prior_set = set(prior_urls_sample)
 
     def _urls_from(search_fn, count_kwarg: str) -> list[str]:
-        # Each provider names its result-count param differently: serper=num,
+        # Providers name the count param differently: serper/brave/jina=num,
         # tavily=max_results, exa=num_results. Pass the right one per provider.
         search_raw = search_fn(query=query, **{count_kwarg: 10})
         search_data = _json.loads(search_raw)
@@ -1756,14 +1764,22 @@ async def _run_crawl4ai_sector(
             if r.get("url") and r["url"] not in prior_set
         ][:8]
 
+    _cfg_tavily2 = _dc_replace(cfg, tavily_api_key=cfg.tavily_api_key_2)
+    _cascade = (
+        ("serper", cfg, make_serper_search, "num", bool(cfg.serper_api_key)),
+        ("brave", cfg, make_brave_search, "num", bool(cfg.brave_api_key)),
+        ("jina", cfg, make_jina_search, "num", bool(cfg.jina_api_key)),
+        ("tavily", cfg, make_tavily_search, "max_results", bool(cfg.tavily_api_key)),
+        ("tavily#2", _cfg_tavily2, make_tavily_search, "max_results", bool(cfg.tavily_api_key_2)),
+        ("exa", cfg, make_exa_search, "num_results", bool(cfg.exa_api_key)),
+    )
+
     urls: list[str] = []
-    for _provider_name, _factory, _count_kwarg in (
-        ("serper", make_serper_search, "num"),
-        ("tavily", make_tavily_search, "max_results"),
-        ("exa", make_exa_search, "num_results"),
-    ):
+    for _provider_name, _factory_cfg, _factory, _count_kwarg, _has_key in _cascade:
+        if not _has_key:
+            continue
         try:
-            urls = _urls_from(_factory(cfg, ledger), _count_kwarg)
+            urls = _urls_from(_factory(_factory_cfg, ledger), _count_kwarg)
         except Exception as exc:
             log.warning(
                 "sector %s: crawl4ai %s search failed (%s); trying next provider.",
