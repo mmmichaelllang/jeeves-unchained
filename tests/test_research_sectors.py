@@ -1012,6 +1012,73 @@ async def test_run_crawl4ai_sector_reads_wrapper_results_key(monkeypatch):
     ], f"crawl4ai schema regression: got {extracted_urls!r}"
 
 
+async def test_run_crawl4ai_sector_cascades_to_tavily_when_serper_fails(monkeypatch):
+    """2026-06-16 regression: serper 400 'Not enough credits' must cascade to
+    tavily, not starve the sector.
+
+    Before the search-provider cascade, _run_crawl4ai_sector used serper
+    exclusively; a serper error (or empty result) returned spec.default →
+    every sector empty → GATE-B exit 6 for a week.
+    """
+    import json
+    import threading
+    from datetime import date
+
+    import jeeves.research_sectors as rs
+    from jeeves.config import Config
+    from jeeves.tools.quota import QuotaLedger
+
+    def _fake_make_serper_search(cfg, ledger):
+        def _serper_search(query: str = "", num: int = 10, tbs=None):
+            raise RuntimeError("400 Bad Request: Not enough credits")
+        return _serper_search
+
+    tavily_response = json.dumps({
+        "provider": "tavily",
+        "results": [
+            {"title": "AP", "url": "https://example.com/tav1", "snippet": ""},
+            {"title": "Reuters", "url": "https://example.com/tav2", "snippet": ""},
+        ],
+    })
+
+    def _fake_make_tavily_search(cfg, ledger):
+        # Real signature: tavily_search(query, max_results, depth, time_range).
+        # NO **kw — pins the count-kwarg contract so a wrong kwarg name fails here.
+        def _tavily_search(query: str = "", max_results: int = 8,
+                           depth: str = "basic", time_range=None):
+            return tavily_response
+        return _tavily_search
+
+    extracted_urls: list[str] = []
+
+    async def _fake_batch_extract(urls, query=None, max_chars=6000):
+        extracted_urls.extend(urls)
+        return [(f"body for {u}", "trafilatura") for u in urls]
+
+    monkeypatch.setattr("jeeves.tools.serper.make_serper_search", _fake_make_serper_search)
+    monkeypatch.setattr("jeeves.tools.tavily.make_tavily_search", _fake_make_tavily_search)
+    monkeypatch.setattr("jeeves.tools.crawl4ai_extract.batch_extract", _fake_batch_extract)
+    monkeypatch.setattr(rs, "_build_cerebras_llm", lambda max_tokens=8192: None)
+
+    cfg = Config(
+        nvidia_api_key="", serper_api_key="k", tavily_api_key="k", exa_api_key="",
+        google_api_key="", groq_api_key="", gmail_app_password="",
+        gmail_oauth_token_json="", github_token="", github_repository="r/r",
+        run_date=date(2026, 6, 16),
+    )
+    ledger = QuotaLedger.__new__(QuotaLedger)
+    ledger._state = {"providers": {}}
+    ledger._lock = threading.Lock()
+
+    spec = next(s for s in rs.SECTOR_SPECS if s.name == "global_news")
+    await rs._run_crawl4ai_sector(cfg, spec, [], ledger)
+
+    assert extracted_urls == [
+        "https://example.com/tav1",
+        "https://example.com/tav2",
+    ], f"serper→tavily cascade broken: got {extracted_urls!r}"
+
+
 async def test_run_crawl4ai_sector_filters_prior_urls(monkeypatch):
     """Wrapper-shape URLs must still be dedup-filtered against prior_urls_sample."""
     import json
@@ -1331,6 +1398,19 @@ def test_is_or_dead_endpoint_detects_404_no_endpoints():
     exc = Exception(
         "Error code: 404 - {'error': {'message': 'No endpoints found for "
         "qwen/qwen-2.5-72b-instruct:free.', 'code': 404}, 'user_id': 'user_xxx'}"
+    )
+    assert rs._is_or_dead_endpoint(exc) is True
+
+
+def test_is_or_dead_endpoint_detects_404_unavailable_for_free():
+    # 2026-06-16 regression: OR retired the free tier of gemma-2-27b-it and
+    # returns a DIFFERENT 404 message than the "No endpoints found" shape.
+    # This message swallowed every research sector → GATE-B exit 6 for a week.
+    import jeeves.research_sectors as rs
+    exc = Exception(
+        "Error code: 404 - {'error': {'message': 'This model is unavailable "
+        "for free. The paid version is available now - use this slug instead: "
+        "google/gemma-2-27b-it', 'code': 404}, 'user_id': 'user_xxx'}"
     )
     assert rs._is_or_dead_endpoint(exc) is True
 

@@ -1138,17 +1138,27 @@ def _is_nim_rate_limit(exc: Exception) -> bool:
 
 
 def _is_or_dead_endpoint(exc: Exception) -> bool:
-    """True when OpenRouter returns 404 "No endpoints found for X".
+    """True when OpenRouter returns a 404 indicating a model route is gone.
 
-    OR deprecates model variants from time to time (e.g.,
-    qwen/qwen-2.5-72b-instruct:free 2026-05). When that happens, the
-    request returns ``404 - {'error': {'message': 'No endpoints found
-    for ...'}}``. The semantically-correct response is the same as a
-    429 — rotate to the next chain entry — not "agent crashed". This
-    helper lets the retry loop treat dead routes as rotation triggers.
+    OR deprecates model variants from time to time. Two distinct 404 shapes
+    have been observed, both meaning "this route is dead — rotate to the next
+    chain entry", same as a 429:
+
+    1. Route fully removed (e.g. qwen/qwen-2.5-72b-instruct:free 2026-05):
+       ``404 - {'error': {'message': 'No endpoints found for ...'}}``
+    2. Free tier retired but paid kept (e.g. google/gemma-2-27b-it:free
+       2026-06): ``404 - {'error': {'message': 'This model is unavailable
+       for free. The paid version is available now ...'}}``
+
+    Matching only shape (1) caused the 2026-06 empty-research outage: the
+    crawl4ai OR loop hit shape (2) on gemma, failed to recognise it as
+    rotatable, and returned spec.default instead of advancing to the next
+    chain model — every sector empty → GATE-B exit 6.
     """
     msg = str(exc).lower()
-    return "no endpoints found" in msg and "404" in msg
+    if "404" not in msg:
+        return False
+    return "no endpoints found" in msg or "unavailable for free" in msg
 
 
 def _is_stream_timeout(exc: Exception) -> bool:
@@ -1580,7 +1590,10 @@ _OPENROUTER_MODEL_CHAIN = [
     # qwen/qwen-2.5-72b-instruct:free" — same dead-route fix that landed
     # in correspondence.py round 2 (commit fbcff57), now propagated here.
     "meta-llama/llama-3.3-70b-instruct:free",
-    "google/gemma-2-27b-it:free",
+    # google/gemma-2-27b-it:free REMOVED 2026-06-16 — OR retired the free
+    # tier (404 "This model is unavailable for free. The paid version is
+    # available now"). Was the terminal slug that swallowed every sector
+    # before the _is_or_dead_endpoint fix; drop it so no rotation hop is wasted.
     "deepseek/deepseek-chat-v3:free",
     "mistralai/mistral-small-3.1-24b-instruct:free",
     # PAID backstop — :floor picks cheapest healthy provider for each.
@@ -1716,33 +1729,60 @@ async def _run_crawl4ai_sector(
     import json as _json
 
     from .tools.serper import make_serper_search
+    from .tools.tavily import make_tavily_search
+    from .tools.exa import make_exa_search
     from .tools.crawl4ai_extract import batch_extract
 
     query = _SECTOR_SEARCH_QUERIES.get(spec.name, f"{spec.name} news today")
     log.info("sector %s: crawl4ai path — query=%r", spec.name, query)
 
     # 1. Search for candidate URLs.
-    serper_fn = make_serper_search(cfg, ledger)
-    try:
-        search_raw = serper_fn(query=query, num=10)
+    #
+    # Provider cascade (2026-06-16): serper → tavily → exa. Previously this
+    # used serper ONLY; when serper returned 400 "Not enough credits" (or any
+    # error), the sector silently starved → empty findings → GATE-B exit 6.
+    # All three share the same wrapper shape: {"results":[{"url",...}, ...]}.
+    # Take the first provider that yields fresh URLs.
+    prior_set = set(prior_urls_sample)
+
+    def _urls_from(search_fn, count_kwarg: str) -> list[str]:
+        # Each provider names its result-count param differently: serper=num,
+        # tavily=max_results, exa=num_results. Pass the right one per provider.
+        search_raw = search_fn(query=query, **{count_kwarg: 10})
         search_data = _json.loads(search_raw)
-        prior_set = set(prior_urls_sample)
-        # NOTE: make_serper_search wraps Serper's raw response into
-        # {"provider":..., "query":..., "results":[{"title","url","snippet",...}, ...]}.
-        # Earlier code keyed off the raw API shape ("organic" / "link") and
-        # therefore returned 0 URLs for every sector — silent starve since
-        # M2 ship. 2026-05-21 fix uses the wrapper shape: "results" / "url".
-        urls = [
+        return [
             r["url"]
             for r in search_data.get("results", [])
             if r.get("url") and r["url"] not in prior_set
         ][:8]
-    except Exception as exc:
-        log.warning("sector %s: crawl4ai serper failed (%s); returning default.", spec.name, exc)
-        return spec.default
+
+    urls: list[str] = []
+    for _provider_name, _factory, _count_kwarg in (
+        ("serper", make_serper_search, "num"),
+        ("tavily", make_tavily_search, "max_results"),
+        ("exa", make_exa_search, "num_results"),
+    ):
+        try:
+            urls = _urls_from(_factory(cfg, ledger), _count_kwarg)
+        except Exception as exc:
+            log.warning(
+                "sector %s: crawl4ai %s search failed (%s); trying next provider.",
+                spec.name, _provider_name, exc,
+            )
+            continue
+        if urls:
+            log.info(
+                "sector %s: crawl4ai search via %s — %d fresh URLs.",
+                spec.name, _provider_name, len(urls),
+            )
+            break
+        log.info(
+            "sector %s: crawl4ai %s returned 0 fresh URLs; trying next provider.",
+            spec.name, _provider_name,
+        )
 
     if not urls:
-        log.warning("sector %s: crawl4ai no fresh URLs from search; returning default.", spec.name)
+        log.warning("sector %s: crawl4ai no fresh URLs from any search provider; returning default.", spec.name)
         return spec.default
 
     # 2. Extract content via Crawl4AI.
