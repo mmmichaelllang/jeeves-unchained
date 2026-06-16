@@ -103,6 +103,21 @@ class Config:
     nim_write_model_id: str = "meta/llama-3.3-70b-instruct"
     # Jina AI reader (optional — used by talk_of_the_town for clean markdown)
     jina_api_key: str = ""
+    # Brave Search (optional — search-cascade fallback for URL discovery).
+    # 2026-06-16: added after serper ran out of credits and starved the
+    # crawl4ai discovery path. Independent index (not Google-derived), ~2k
+    # free queries/month. Set BRAVE_API_KEY to enable; absent → skipped.
+    brave_api_key: str = ""
+    # Second Tavily account (optional — doubles free search quota). Set
+    # TAVILY_API_KEY_2 to enable a second tavily entry in the search cascade.
+    tavily_api_key_2: str = ""
+    # Mistral (optional — synthesis-LLM fallback before OR paid floor).
+    mistral_api_key: str = ""
+    # ZenRows / Scrapfly (optional — managed anti-bot extraction fallbacks).
+    # DORMANT by default; only consulted when JEEVES_USE_ZENROWS /
+    # JEEVES_USE_SCRAPFLY are set. Mirrors the TinyFish opt-in pattern.
+    zenrows_api_key: str = ""
+    scrapfly_api_key: str = ""
     # OpenRouter (optional — narrative editor pass in write phase)
     openrouter_api_key: str = ""
     openrouter_model_id: str = "nvidia/nemotron-3-super-120b-a12b:free"
@@ -212,6 +227,11 @@ class Config:
                 "NIM_WRITE_MODEL_ID", "meta/llama-3.3-70b-instruct"
             ),
             jina_api_key=os.environ.get("JINA_API_KEY", ""),
+            brave_api_key=os.environ.get("BRAVE_API_KEY", ""),
+            tavily_api_key_2=os.environ.get("TAVILY_API_KEY_2", ""),
+            mistral_api_key=os.environ.get("MISTRAL_API_KEY", ""),
+            zenrows_api_key=os.environ.get("ZENROWS_API_KEY", ""),
+            scrapfly_api_key=os.environ.get("SCRAPFLY_API_KEY", ""),
             openrouter_api_key=os.environ.get("OPENROUTER_API_KEY", ""),
             openrouter_model_id=os.environ.get(
                 "OPENROUTER_MODEL_ID", "nvidia/nemotron-3-super-120b-a12b:free"

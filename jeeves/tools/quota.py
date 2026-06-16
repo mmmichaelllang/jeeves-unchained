@@ -21,6 +21,8 @@ log = logging.getLogger(__name__)
 DEFAULT_STATE = {
     "serper": {"used": 0, "free_cap": 2500, "overage_per_1k_usd": 0.30},
     "tavily": {"used": 0, "free_cap": 1000, "overage_per_1k_usd": 8.00},
+    # brave: ~2k free queries/month (Brave Search API free tier). 2026-06-16.
+    "brave": {"used": 0, "free_cap": 2000, "overage_per_1k_usd": 5.00},
     "exa": {"used": 0, "free_cap": 500, "overage_per_1k_usd": 5.00},
     "gemini": {"used": 0, "free_cap": 1500, "overage_per_1k_usd": 35.00},
     # TinyFish (sprint-18): canary fetch-chain peer to playwright. Free tier
@@ -41,6 +43,11 @@ DEFAULT_STATE = {
     # ceiling, not a billing one — the daily hard cap below is what
     # actually fires in production.
     "stealth": {"used": 0, "free_cap": 200, "overage_per_1k_usd": 0.00},
+    # ZenRows / Scrapfly managed scrapers (2026-06-16). DORMANT opt-in
+    # extraction fallbacks; credit-billed. free_cap reflects typical
+    # starter-plan monthly allotment.
+    "zenrows": {"used": 0, "free_cap": 1000, "overage_per_1k_usd": 1.00},
+    "scrapfly": {"used": 0, "free_cap": 1000, "overage_per_1k_usd": 1.00},
 }
 
 # Sprint-19: auxiliary providers are tracked in the ledger (so usage counts
@@ -50,6 +57,12 @@ DEFAULT_STATE = {
 # These canary tools are surfaced via opt-in env flags; the agent picks
 # them by description, not by overage price.
 _AUX_PROVIDERS: set[str] = {
+    # brave is a discovery-cascade FALLBACK (consulted explicitly when serper
+    # is exhausted), not a primary the cost-optimizer should auto-select.
+    # Excluded so cheapest_with_capacity preserves serper-first semantics.
+    "brave",
+    "zenrows",
+    "scrapfly",
     "tinyfish",
     "tinyfish_search",
     "jina_search",
@@ -92,6 +105,13 @@ DAILY_HARD_CAPS: dict[str, int] = {
     # billing. 200 = generous because typical day extracts ~50-80 URLs
     # across all sectors.
     "scrapling": 200,
+    # ZenRows / Scrapfly managed scrapers (2026-06-16). DORMANT unless
+    # JEEVES_USE_ZENROWS / JEEVES_USE_SCRAPFLY set. These bill real API
+    # credits (unlike scrapling's CI-minutes), so caps are tighter — opt-in
+    # bot-wall fallback, not a default tier. Raise after a measured gap
+    # justifies the spend.
+    "zenrows": 50,
+    "scrapfly": 50,
 }
 
 

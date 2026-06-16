@@ -163,6 +163,12 @@ jobs:
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          # 2026-06-16: search-discovery cascade fallbacks (serper → brave →
+          # jina → tavily → tavily#2 → exa). Added after serper hit "Not
+          # enough credits" and starved every sector. brave = independent
+          # index; TAVILY_API_KEY_2 = second account doubling free quota.
+          BRAVE_API_KEY: ${{ secrets.BRAVE_API_KEY }}
+          TAVILY_API_KEY_2: ${{ secrets.TAVILY_API_KEY_2 }}
           EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
@@ -178,6 +184,16 @@ jobs:
           # 429 cascade. Plumb here so research_sectors._build_cerebras_llm
           # can resolve the key.
           CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
+          # 2026-06-16: Mistral reachable via OR chain today, but plumb the
+          # direct key too for future use. ZenRows/Scrapfly are DORMANT
+          # extraction fallbacks — keys present so flipping the repo Variable
+          # JEEVES_USE_ZENROWS / JEEVES_USE_SCRAPFLY=1 works without a second
+          # deploy (avoids the CEREBRAS_API_KEY oversight pattern).
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          ZENROWS_API_KEY: ${{ secrets.ZENROWS_API_KEY }}
+          SCRAPFLY_API_KEY: ${{ secrets.SCRAPFLY_API_KEY }}
+          JEEVES_USE_ZENROWS: ${{ vars.JEEVES_USE_ZENROWS || '' }}
+          JEEVES_USE_SCRAPFLY: ${{ vars.JEEVES_USE_SCRAPFLY || '' }}
           # ── Sprint-18 TinyFish canary (managed extractor).
           # 2026-05-29: TINYFISH endpoints unreachable from GHA runner
           # (EAI_NONAME on every call — see PROBLEM_CHRONICLE.md §4.1).
