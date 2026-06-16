@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating permanent failure with 429 rate limit error.\n- [escalation] Rich Lang: Rich Lang forwards a blog article about manufacturing discord that reminded him of Michael's views.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Daily Pipeline workflow run failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating permanent failure with 429 rate limit error.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Weekly Audit Health Report workflow run failed.\n- [escalation] lang.mc@gmail.com: Automated Jeeves pipeline alert about a permanent failure due to a 429 rate limit error.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting a Google security alert about an unrecoverable account.\n- [escalation] Google: Google security alert stating that a Google Account is no longer recoverable.\n- [escalation] lang.mc@gmail.com: Automated Jeeves pipeline alert about a permanent failure due to a 429 rate limit error.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary highlighting a Jeeves pipeline permanent failure due to 429 rate limit.\n- [escalation] lang.mc@gmail.com: Jeeves daily pipeline has failed permanently with a 429 rate-limit error.",
+  "counts": {
+    "reply_needed": 2,
+    "decision_required": 2,
+    "scheduling": 0,
+    "follow_up": 0,
+    "escalation": 14,
+    "no_action": 32
+  }
+}
