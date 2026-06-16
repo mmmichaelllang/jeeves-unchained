@@ -25,6 +25,7 @@ Fail-soft: never raises; returns ``success=False`` + ``error`` on any failure.
 
 from __future__ import annotations
 
+import atexit
 import logging
 import os
 import time
@@ -42,7 +43,9 @@ _ZENROWS_ENDPOINT = "https://api.zenrows.com/v1/"
 _SCRAPFLY_ENDPOINT = "https://api.scrapfly.io/scrape"
 
 # Module-level client reused across calls (cheap when flags unset — never hit).
+# Per-request timeout is passed at the .get() call; this is just the default.
 _HTTP_CLIENT = httpx.Client(timeout=60.0)
+atexit.register(_HTTP_CLIENT.close)
 
 
 def zenrows_enabled() -> bool:
@@ -101,7 +104,8 @@ def _finish(base: dict, html: str, provider: str, t0: float, max_chars: int) -> 
     return base
 
 
-def _extract(provider: str, url: str, max_chars: int, ledger: Any) -> dict:
+def _extract(provider: str, url: str, max_chars: int, ledger: Any,
+             timeout_seconds: int) -> dict:
     base: dict = {
         "url": url, "title": "", "text": "", "success": False,
         "extracted_via": provider, "quality_score": 0.0,
@@ -125,7 +129,7 @@ def _extract(provider: str, url: str, max_chars: int, ledger: Any) -> dict:
 
     t0 = time.monotonic()
     try:
-        r = _HTTP_CLIENT.get(endpoint, params=params)
+        r = _HTTP_CLIENT.get(endpoint, params=params, timeout=timeout_seconds)
         r.raise_for_status()
         if provider == "scrapfly":
             # Scrapfly wraps the page in JSON: {result: {content: "<html>"}}.
@@ -154,10 +158,10 @@ def _extract(provider: str, url: str, max_chars: int, ledger: Any) -> dict:
 def extract_article_zenrows(url: str, *, timeout_seconds: int = 60,
                             max_chars: int = 3000, ledger: Any = None) -> dict:
     """ZenRows-backed extraction. Fail-soft. Shape matches scrapling/playwright."""
-    return _extract("zenrows", url, max_chars, ledger)
+    return _extract("zenrows", url, max_chars, ledger, timeout_seconds)
 
 
 def extract_article_scrapfly(url: str, *, timeout_seconds: int = 60,
                              max_chars: int = 3000, ledger: Any = None) -> dict:
     """Scrapfly-backed extraction. Fail-soft. Shape matches scrapling/playwright."""
-    return _extract("scrapfly", url, max_chars, ledger)
+    return _extract("scrapfly", url, max_chars, ledger, timeout_seconds)
