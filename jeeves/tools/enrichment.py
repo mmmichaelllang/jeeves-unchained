@@ -181,6 +181,124 @@ def fetch_article_text(url: str) -> str:
     return result
 
 
+# ---------------------------------------------------------------------------
+# Fallback extractor tiers.
+#
+# When httpx+trafilatura yields too little prose, fetch_article_text walks a
+# fixed cascade of fallback extractors. Each tier is a function
+# ``(url, html) -> dict | None`` that owns its own gating (host classification
+# or env flag), lazy import (heavy optional deps stay unimported when the tier
+# is dormant), and soft-fail (never raises — returns None to fall through).
+# On success it returns {title, text, extracted_via}; the caller applies the
+# shared 3000-char truncation and fetch_failed=False bookkeeping in one place.
+# ---------------------------------------------------------------------------
+
+
+def _try_crawl4ai(url: str, html: str) -> dict | None:
+    """TIER 2 — Crawl4AI, news_short hosts only."""
+    try:
+        from .crawl4ai_extract import classify_host as _classify_host
+
+        if _classify_host(url) != "news_short":
+            return None
+        try:
+            c4ai_text, _mode = _run_crawl4ai_sync(url, max_chars=3000)
+            if c4ai_text and len(c4ai_text) >= 300:
+                return {
+                    "title": _extract_title(html) if html else "",
+                    "text": c4ai_text,
+                    "extracted_via": "crawl4ai",
+                }
+        except Exception as e:
+            log.debug("crawl4ai fetch failed for %s: %s", url, e)
+    except Exception as e:
+        log.debug("crawl4ai import/classify failed: %s", e)
+    return None
+
+
+def _try_scrapling(url: str, html: str) -> dict | None:
+    """TIER 2.5 — Scrapling stealth extractor, gated by JEEVES_USE_SCRAPLING.
+
+    Beats soft-paywall / Cloudflare-gated hosts where raw Playwright lands on
+    a challenge page. Dormant (one env read) when the flag is unset.
+    """
+    try:
+        from .scrapling_extract import (
+            extract_article as _sc_extract,
+            is_enabled as _sc_enabled,
+        )
+
+        if _sc_enabled():
+            sc_result = _sc_extract(url, timeout_seconds=30, max_chars=3000)
+            if sc_result.get("success"):
+                return {
+                    "title": sc_result.get("title", ""),
+                    "text": sc_result.get("text", ""),
+                    "extracted_via": "scrapling",
+                }
+    except Exception as e:
+        log.debug("scrapling tier failed for %s: %s", url, e)
+    return None
+
+
+def _try_managed_scrapers(url: str, html: str) -> dict | None:
+    """TIER 2.6/2.7 — ZenRows then Scrapfly managed anti-bot APIs.
+
+    DORMANT unless JEEVES_USE_ZENROWS / JEEVES_USE_SCRAPFLY set. Off by
+    default because extraction was not the measured failure mode (2026-06-16).
+    """
+    try:
+        from .managed_scraper_extract import (
+            extract_article_zenrows as _zr_extract,
+            extract_article_scrapfly as _sf_extract,
+            zenrows_enabled as _zr_enabled,
+            scrapfly_enabled as _sf_enabled,
+        )
+
+        for _enabled, _extract, _via in (
+            (_zr_enabled, _zr_extract, "zenrows"),
+            (_sf_enabled, _sf_extract, "scrapfly"),
+        ):
+            if _enabled():
+                result = _extract(url, timeout_seconds=60, max_chars=3000)
+                if result.get("success"):
+                    return {
+                        "title": result.get("title", ""),
+                        "text": result.get("text", ""),
+                        "extracted_via": _via,
+                    }
+    except Exception as e:
+        log.debug("managed-scraper tier failed for %s: %s", url, e)
+    return None
+
+
+def _try_playwright(url: str, html: str) -> dict | None:
+    """Last-resort tier — headless Playwright; always attempted."""
+    try:
+        from .playwright_extractor import extract_article as _pw_extract
+
+        pw_result = _pw_extract(url, timeout_seconds=30, max_chars=3000)
+        if pw_result.get("success"):
+            return {
+                "title": pw_result.get("title", ""),
+                "text": pw_result.get("text", ""),
+                "extracted_via": "playwright",
+            }
+    except Exception as e:
+        log.debug("playwright fallback failed for %s: %s", url, e)
+    return None
+
+
+# Cascade order is significant: news_short fast path → stealth → managed APIs
+# → raw Playwright last resort. Mirrors the historical tier numbering.
+_EXTRACTION_TIERS = (
+    _try_crawl4ai,
+    _try_scrapling,
+    _try_managed_scrapers,
+    _try_playwright,
+)
+
+
 def _fetch_article_text_impl(url: str) -> str:
     """The original fetch implementation. Kept as a separate function so the
     public ``fetch_article_text`` can wrap it with the per-run seen-URL
@@ -238,98 +356,22 @@ def _fetch_article_text_impl(url: str) -> str:
         base.update({"title": title, "text": text[:3000], "fetch_failed": False})
         return json.dumps(base)
 
-    # Crawl4AI TIER 2 — for news_short hosts only. Soft-fails so cascade continues.
-    try:
-        from .crawl4ai_extract import classify_host as _classify_host
-
-        if _classify_host(url) == "news_short":
-            try:
-                c4ai_text, _mode = _run_crawl4ai_sync(url, max_chars=3000)
-                if c4ai_text and len(c4ai_text) >= 300:
-                    base.update({
-                        "title": _extract_title(html) if html else "",
-                        "text": c4ai_text[:3000],
-                        "fetch_failed": False,
-                        "extracted_via": "crawl4ai",
-                    })
-                    return json.dumps(base)
-            except Exception as e:
-                log.debug("crawl4ai fetch failed for %s: %s", url, e)
-    except Exception as e:
-        log.debug("crawl4ai import/classify failed: %s", e)
-
-    # Scrapling TIER 2.5 — stealth extractor with Cloudflare-solve, gated
-    # by JEEVES_USE_SCRAPLING=1. Sits between Crawl4AI (news_short fast
-    # path) and Playwright (last-resort raw Patchright) because it
-    # specifically beats soft-paywall / Cloudflare-gated hosts where the
-    # raw Playwright fallback today silently lands on a challenge page.
-    # When the flag is unset this block is a near-zero-cost no-op (one
-    # env read, one function call returning False).
-    try:
-        from .scrapling_extract import (
-            extract_article as _sc_extract,
-            is_enabled as _sc_enabled,
-        )
-
-        if _sc_enabled():
-            sc_result = _sc_extract(url, timeout_seconds=30, max_chars=3000)
-            if sc_result.get("success"):
-                base.update({
-                    "title": sc_result.get("title", ""),
-                    "text": sc_result.get("text", "")[:3000],
-                    "fetch_failed": False,
-                    "extracted_via": "scrapling",
-                })
-                return json.dumps(base)
-    except Exception as e:
-        log.debug("scrapling tier failed for %s: %s", url, e)
-
-    # ZenRows / Scrapfly TIER 2.6/2.7 — managed anti-bot scraper APIs,
-    # DORMANT unless JEEVES_USE_ZENROWS=1 / JEEVES_USE_SCRAPFLY=1. Added
-    # 2026-06-16 as opt-in capability for bot-walled hosts; off by default
-    # because extraction was not the measured failure mode. Each block is a
-    # near-zero-cost no-op (one env read) when its flag is unset.
-    try:
-        from .managed_scraper_extract import (
-            extract_article_zenrows as _zr_extract,
-            extract_article_scrapfly as _sf_extract,
-            zenrows_enabled as _zr_enabled,
-            scrapfly_enabled as _sf_enabled,
-        )
-
-        for _ms_enabled, _ms_extract, _ms_via in (
-            (_zr_enabled, _zr_extract, "zenrows"),
-            (_sf_enabled, _sf_extract, "scrapfly"),
-        ):
-            if _ms_enabled():
-                ms_result = _ms_extract(url, timeout_seconds=60, max_chars=3000)
-                if ms_result.get("success"):
-                    base.update({
-                        "title": ms_result.get("title", ""),
-                        "text": ms_result.get("text", "")[:3000],
-                        "fetch_failed": False,
-                        "extracted_via": _ms_via,
-                    })
-                    return json.dumps(base)
-    except Exception as e:
-        log.debug("managed-scraper tier failed for %s: %s", url, e)
-
-    # Playwright fallback — last resort when httpx returned nothing OR
-    # trafilatura couldn't extract enough body text.
-    try:
-        from .playwright_extractor import extract_article as _pw_extract
-
-        pw_result = _pw_extract(url, timeout_seconds=30, max_chars=3000)
-        if pw_result.get("success"):
+    # Fallback extractor tiers (in priority order). Each tier function owns
+    # its own gating, lazy import, and soft-fail, returning a dict
+    # {title, text, extracted_via} on success or None to fall through to the
+    # next tier. See _EXTRACTION_TIERS / _try_* helpers above. Replaces five
+    # near-identical try/if-success/base.update/return blocks (2026-06-16
+    # refactor) with one loop and a single success-handling site.
+    for _tier in _EXTRACTION_TIERS:
+        hit = _tier(url, html)
+        if hit is not None:
             base.update({
-                "title": pw_result.get("title", ""),
-                "text": pw_result.get("text", "")[:3000],
+                "title": hit.get("title", ""),
+                "text": (hit.get("text") or "")[:3000],
                 "fetch_failed": False,
-                "extracted_via": "playwright",
+                "extracted_via": hit["extracted_via"],
             })
             return json.dumps(base)
-    except Exception as e:
-        log.debug("playwright fallback failed for %s: %s", url, e)
 
     if primary_error:
         base["text"] = f"fetch_error: {primary_error}"
