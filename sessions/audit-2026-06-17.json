@@ -40,43 +40,83 @@
         "issues": [
           {
             "section": "Opening CSS block",
-            "issue": "Inserts raw stylesheet code, breaking narrative flow with non\u2011prose content."
+            "issue": "Inserts unrelated styling code that interrupts the narrative flow before any content begins."
           },
           {
-            "section": "Greeting line",
-            "issue": "Awkward spacing ('G ood morning') disrupts readability."
+            "section": "Pipeline report",
+            "issue": "Abruptly shifts from technical failure details to colloquial expletive without a transitional bridge."
           },
           {
-            "section": "Pipeline failure description",
-            "issue": "Jumps from technical alert details to colloquial profanity without transition."
+            "section": "Domestic Sphere",
+            "issue": "Repeats the phrase 'stands as it did' multiple times, creating a monotonous rhythm that stalls progression."
           },
           {
-            "section": "Domestic Sphere paragraph",
-            "issue": "Lists unrelated local updates as a string of facts, lacking thematic linkage."
+            "section": "Wider World",
+            "issue": "Jumps from local school news to international football with no logical connective tissue."
           },
           {
-            "section": "Wider World section",
-            "issue": "Abrupt shift from local news to international sports with no connective sentence."
+            "section": "The Reading Room",
+            "issue": "Presents disjointed literary reviews as a list, lacking any evaluative synthesis or segue."
           },
           {
-            "section": "Reading Room segment",
-            "issue": "Repeats similar critique of sources, creating redundant, stagnant prose."
+            "section": "Specific Enquiries",
+            "issue": "Introduces sensational UAP claims then immediately undercuts them, causing tonal whiplash."
           },
           {
-            "section": "Specific Enquiries block",
-            "issue": "Introduces speculative claims then immediately dismisses them, causing logical whiplash."
+            "section": "The Commercial Ledger",
+            "issue": "Drops into product speculation with profanity, breaking the cultivated butler register."
           },
           {
-            "section": "Commercial Ledger portion",
-            "issue": "Mix of product speculation and vulgar assessment, undermining coherent progression."
+            "section": "The New Yorker excerpt",
+            "issue": "Inserts a lengthy quoted article without a clear lead\u2011in or concluding remark, disrupting the briefing\u2019s cohesion."
           },
           {
-            "section": "New Yorker excerpt",
-            "issue": "Lengthy descriptive passage inserts a self\u2011contained story, halting the briefing\u2019s momentum."
+            "section": "Conclusion",
+            "issue": "Ends with a mishmash of sign\u2011off, library stacks, and a stray symbol, leaving no resolved closure."
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "writing_quality_low",
+      "severity": "high",
+      "section": null,
+      "detail": "writing quality score 2/10",
+      "evidence": {
+        "score": 2,
+        "issues": [
+          {
+            "type": "filler",
+            "evidence": "the only update worth noting."
           },
           {
-            "section": "Closing sign\u2011off",
-            "issue": "Redundant self\u2011referential sign\u2011off and repeated 'Butler' phrasing adds no narrative advancement."
+            "type": "filler",
+            "evidence": "A rainy-day alternative worth considering:"
+          },
+          {
+            "type": "repetition",
+            "evidence": "The matter at Edmonds School District stands as we left it, Sir, with nothing materially advanced since our prior review."
+          },
+          {
+            "type": "repetition",
+            "evidence": "The matter at When We Cease to Understand the World stands as we left it, Sir, with nothing materially advanced since our prior review."
+          },
+          {
+            "type": "vague",
+            "evidence": "The city's newsletter continues its weekly cadence, unremarkable but reliable \u2014 the sort of municipal competence that never makes headlines, which is precisely the point."
+          },
+          {
+            "type": "aside_overuse",
+            "evidence": "The matter at Edmonds School District stands as we left it, Sir, with nothing materially advanced since our prior review."
+          },
+          {
+            "type": "voice_break",
+            "evidence": "A total and utter shitshow before breakfast."
+          },
+          {
+            "type": "voice_break",
+            "evidence": "A proper omnishambles of the highest, most fucking degree."
           }
         ],
         "model": "nvidia/nemotron-3-super-120b-a12b:free"
@@ -100,7 +140,7 @@
       "section": "(greeting)",
       "detail": "weather string present in session but not in greeting",
       "evidence": {
-        "weather_preview": "It appears there was an issue with the provided instructions, as the requested format was for a plai"
+        "weather_preview": "It appears there was an issue with the provided instructions, as the format requested was JSON but t"
       }
     }
   ],
@@ -109,7 +149,7 @@
   "empty_section_count": 1,
   "aside_template_count": 0,
   "narrative_flow_score": 3,
-  "writing_quality_score": null,
+  "writing_quality_score": 2,
   "dedup_score": null,
   "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free",
   "charlotte_verified_count": 2,

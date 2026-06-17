@@ -49,7 +49,7 @@
       "section": "(greeting)",
       "detail": "weather string present in session but not in greeting",
       "evidence": {
-        "weather_preview": "It appears there was an issue with the provided instructions, as the requested format was for a plai"
+        "weather_preview": "It appears there was an issue with the provided instructions, as the format requested was JSON but t"
       }
     }
   ],
