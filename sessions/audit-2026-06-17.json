@@ -40,46 +40,81 @@
         "issues": [
           {
             "section": "Opening",
-            "issue": "Intrusive CSS code block disrupts narrative onset."
+            "issue": "Begins with unrelated CSS code that interrupts the narrative flow."
           },
           {
-            "section": "Tone register",
-            "issue": "Shifts between formal butler voice and vulgar slang, breaking voice consistency."
+            "section": "Tone",
+            "issue": "Shifts abruptly from formal butler register to profanity\u2011laden colloquialisms, breaking voice consistency."
           },
           {
-            "section": "Repetitive phrasing",
-            "issue": "Repeated use of \u201cstands as it did\u201d/\u201cstands as we left it, Sir\u201d creates monotony."
+            "section": "Structure",
+            "issue": "Sections are introduced without clear transitions, creating a disjointed list of topics."
           },
           {
-            "section": "Thematic jumps",
-            "issue": "Abrupt transitions among unrelated topics without linking transitions."
+            "section": "Repetition",
+            "issue": "Repeated phrases like \u201cstands as it did\u201d and \u201cnothing materially advanced\u201d appear multiple times, hindering progression."
           },
           {
-            "section": "Sentence complexity",
-            "issue": "Overly long, convoluted sentences impede logical progression."
+            "section": "Logical links",
+            "issue": "Moves from pipeline failures to local news to international sports without causal or thematic connections."
           },
           {
-            "section": "Parenthetical interruptions",
-            "issue": "Frequent em\u2011dashes and parenthetical asides fragment the flow."
+            "section": "Parenthetical asides",
+            "issue": "Frequent interruptive asides (e.g., \u201cA metric fuck\u2011ton of stupidity\u201d) distract from the main thread."
           },
           {
-            "section": "New Yorker insertion",
-            "issue": "Embedded Talk of the Town excerpt inserted without clear segue or framing."
+            "section": "Redundant detail",
+            "issue": "Over\u2011enumeration of trivial items (e.g., list of truck logos) adds noise rather than advancing the briefing."
           },
           {
-            "section": "Sign\u2011off inconsistency",
-            "issue": "Contradictory closings confuse the narrative closure."
-          },
-          {
-            "section": "Excessive profanity",
-            "issue": "Repeated expletives undermine the cultivated butler register."
-          },
-          {
-            "section": "Lack of unifying thread",
-            "issue": "No overarching theme; reads as a disconnected list."
+            "section": "Conclusion",
+            "issue": "Ends with an abrupt, unrelated sign\u2011off that fails to summarize or resolve the preceding content."
           }
         ],
         "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "writing_quality_low",
+      "severity": "high",
+      "section": null,
+      "detail": "writing quality score 4/10",
+      "evidence": {
+        "score": 4,
+        "issues": [
+          {
+            "type": "filler",
+            "evidence": "the silence from the prosecutor's office is the only update worth noting."
+          },
+          {
+            "type": "repetition",
+            "evidence": "The matter at Edmonds School District stands as we left it, Sir, with nothing materially advanced since our prior review."
+          },
+          {
+            "type": "vague",
+            "evidence": "The city's newsletter continues its weekly cadence, unremarkable but reliable \u2014 the sort of municipal competence that never makes headlines, which is precisely the point."
+          },
+          {
+            "type": "voice_break",
+            "evidence": "A total and utter shitshow before breakfast."
+          },
+          {
+            "type": "aside_overuse",
+            "evidence": "(it is the largest ICE prison on the East Coast)"
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "missing_section",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "h3 'The Library Stacks' absent but sectors ['literary_pick'] have data",
+      "evidence": {
+        "sectors": [
+          "literary_pick"
+        ]
       }
     },
     {
@@ -88,16 +123,7 @@
       "section": "(greeting)",
       "detail": "weather string present in session but not in greeting",
       "evidence": {
-        "weather_preview": "\"Edmonds, WA: Mostly sunny today with a high of 68\u00b0F and a low of 51\u00b0F. Light air at 2 mph. Humidity"
-      }
-    },
-    {
-      "type": "greeting_missing_correspondence",
-      "severity": "medium",
-      "section": "(greeting)",
-      "detail": "correspondence handoff text present but no preview in greeting",
-      "evidence": {
-        "handoff_preview": "- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [reply needed] Sir Richard: Rich Lang asks how to proceed with purchasing the Acer Aspire 16 AI"
+        "weather_preview": "Today's weather in Edmonds, Washington is mostly sunny with a high of 68\u00b0. The current temperature i"
       }
     }
   ],
@@ -106,7 +132,7 @@
   "empty_section_count": 0,
   "aside_template_count": 0,
   "narrative_flow_score": 3,
-  "writing_quality_score": null,
+  "writing_quality_score": 4,
   "dedup_score": null,
   "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free",
   "charlotte_verified_count": 2,

@@ -1,6 +1,6 @@
 {
   "date": "2026-06-17",
-  "briefing_chars": 16483,
+  "briefing_chars": 16572,
   "session_status": "complete",
   "detectors_run": [
     "D8_dedup",
@@ -26,8 +26,20 @@
       "evidence": {
         "overlap_count": 2,
         "samples": [
-          "https://applitrack.com/edmonds/onlineapp/default.aspx?Category=Certificated+Teacher+-+MS",
-          "https://newyorker.com/magazine/2026/06/22/on-the-front-lines-of-delaney-hall-ices-newark-prison"
+          "https://newyorker.com/magazine/2026/06/22/on-the-front-lines-of-delaney-hall-ices-newark-prison",
+          "https://applitrack.com/edmonds/onlineapp/default.aspx?Category=Certificated+Teacher+-+MS"
+        ]
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "section under 30 words (10) but sectors ['literary_pick'] have available data",
+      "evidence": {
+        "word_count": 10,
+        "data_signals": [
+          "literary_pick=populated"
         ]
       }
     },
@@ -37,22 +49,13 @@
       "section": "(greeting)",
       "detail": "weather string present in session but not in greeting",
       "evidence": {
-        "weather_preview": "\"Edmonds, WA: Mostly sunny today with a high of 68\u00b0F and a low of 51\u00b0F. Light air at 2 mph. Humidity"
-      }
-    },
-    {
-      "type": "greeting_missing_correspondence",
-      "severity": "medium",
-      "section": "(greeting)",
-      "detail": "correspondence handoff text present but no preview in greeting",
-      "evidence": {
-        "handoff_preview": "- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [reply needed] Sir Richard: Rich Lang asks how to proceed with purchasing the Acer Aspire 16 AI"
+        "weather_preview": "Today's weather in Edmonds, Washington is mostly sunny with a high of 68\u00b0. The current temperature i"
       }
     }
   ],
-  "section_count": 6,
+  "section_count": 7,
   "hallucinated_url_count": 0,
-  "empty_section_count": 0,
+  "empty_section_count": 1,
   "aside_template_count": 0,
   "narrative_flow_score": null,
   "writing_quality_score": null,
