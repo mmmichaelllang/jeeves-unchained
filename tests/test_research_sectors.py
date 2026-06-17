@@ -1317,24 +1317,52 @@ async def test_run_crawl4ai_sector_returns_default_when_chain_exhausted(monkeypa
 # are present, and that exhaustion returns None.
 # ---------------------------------------------------------------------------
 
-def test_openrouter_chain_includes_paid_backstop():
+def test_openrouter_chain_free_only_when_paid_flag_unset(monkeypatch):
+    """2026-06-17: paid :floor entries are now opt-in. With JEEVES_USE_PAID_OR
+    unset the chain is FREE-ONLY — no credit can be spent (closes the prior
+    unconditional-spend exposure)."""
     import jeeves.research_sectors as rs
-    paid_entries = [m for m in rs._OPENROUTER_MODEL_CHAIN if m.endswith(":floor")]
-    assert len(paid_entries) >= 1, (
-        f"chain must include at least one :floor (paid) entry; got "
-        f"{rs._OPENROUTER_MODEL_CHAIN!r}"
+    monkeypatch.delenv("JEEVES_USE_PAID_OR", raising=False)
+    chain = rs._build_openrouter_model_chain()
+    assert chain, "free chain must be non-empty"
+    assert all(m.endswith(":free") for m in chain), (
+        f"flag unset must yield free-only chain; got {chain!r}"
     )
-    # And free entries must precede paid entries — try free first.
-    first_paid_idx = next(
-        i for i, m in enumerate(rs._OPENROUTER_MODEL_CHAIN) if m.endswith(":floor")
+    assert not any(m.endswith(":floor") for m in chain)
+
+
+def test_openrouter_chain_appends_paid_when_flag_set(monkeypatch):
+    """With JEEVES_USE_PAID_OR=1 the paid :floor backstops are appended AFTER
+    all free entries (free tried first, paid only on free exhaustion)."""
+    import jeeves.research_sectors as rs
+    monkeypatch.setenv("JEEVES_USE_PAID_OR", "1")
+    chain = rs._build_openrouter_model_chain()
+    paid = [m for m in chain if m.endswith(":floor")]
+    assert len(paid) >= 1, f"flag set must include paid backstop; got {chain!r}"
+    first_paid_idx = next(i for i, m in enumerate(chain) if m.endswith(":floor"))
+    assert all(m.endswith(":free") for m in chain[:first_paid_idx]), (
+        f"all entries before first :floor must be :free; got {chain!r}"
     )
-    free_before_paid = all(
-        m.endswith(":free") for m in rs._OPENROUTER_MODEL_CHAIN[:first_paid_idx]
-    )
-    assert free_before_paid, (
-        f"all entries before first :floor must be :free; got "
-        f"{rs._OPENROUTER_MODEL_CHAIN[:first_paid_idx]!r}"
-    )
+
+
+def test_build_openrouter_llm_refuses_paid_past_budget(monkeypatch):
+    """The per-run paid-call cap must refuse :floor models once exhausted, so a
+    429-storm cannot drain the OR balance."""
+    import jeeves.research_sectors as rs
+    monkeypatch.setenv("OPENROUTER_API_KEY", "k")
+    monkeypatch.setattr(rs, "_PAID_OR_MAX_CALLS", 2)
+    monkeypatch.setattr(rs, "_paid_or_calls_made", 0)
+
+    # First two paid builds succeed (return an LLM object), third is refused.
+    a = rs._build_openrouter_llm(model="meta-llama/llama-3.3-70b-instruct:floor")
+    b = rs._build_openrouter_llm(model="meta-llama/llama-3.3-70b-instruct:floor")
+    c = rs._build_openrouter_llm(model="meta-llama/llama-3.3-70b-instruct:floor")
+    assert a is not None and b is not None, "first 2 paid calls within budget"
+    assert c is None, "3rd paid call must be refused once budget (2) is hit"
+
+    # Free models are never metered — still build after the paid cap is hit.
+    free = rs._build_openrouter_llm(model="meta-llama/llama-3.3-70b-instruct:free")
+    assert free is not None, "free models must not be blocked by the paid cap"
 
 
 def test_rotate_openrouter_on_429_advances_chain():

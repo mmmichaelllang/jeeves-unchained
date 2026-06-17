@@ -244,6 +244,14 @@ jobs:
           # the write phase's Groq TPD. Default-ON here per user direction;
           # flip OFF by setting repo Variable JEEVES_USE_GROQ_RESEARCH_TIER=0.
           JEEVES_USE_GROQ_RESEARCH_TIER: ${{ vars.JEEVES_USE_GROQ_RESEARCH_TIER || '1' }}
+          # 2026-06-17: opt-in paid OpenRouter :floor fallback. Previously the
+          # :floor entries were UNCONDITIONAL — every free-tier-exhausted run
+          # silently spent OR credit. Now default-OFF (free-only, degrades
+          # gracefully). Set repo Variable JEEVES_USE_PAID_OR=1 to enable paid
+          # backstop after free exhaustion; JEEVES_PAID_OR_MAX_CALLS caps spend
+          # per run (default 15 ≈ $0.05-0.10).
+          JEEVES_USE_PAID_OR: ${{ vars.JEEVES_USE_PAID_OR || '' }}
+          JEEVES_PAID_OR_MAX_CALLS: ${{ vars.JEEVES_PAID_OR_MAX_CALLS || '15' }}
           # GROQ_API_KEY needed by the Groq research tier (same secret used by
           # the write phase). Plumb here so build_groq_llm can resolve the key.
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
