@@ -484,7 +484,10 @@ SECTOR_SPECS: list[SectorSpec] = [
             "this week', tbs='qdr:w') — then tavily_extract on top 2 results.\n"
             "  6. exa_search(query='Artforum N+1 Jewish Currents Dissent essay 2026', "
             "search_type='fast', num_results=3, text_max_chars=4000)\n"
-            "Return a JSON array of {source, findings, urls}."
+            "Return a JSON array of {source, findings, urls}.\n"
+            "OUTPUT SHAPE — return an array of OBJECTS, never bare URL strings. Exactly:\n"
+            '[{"source": "Aeon", "findings": "Title — Author. Two-sentence synthesis '
+            'written from the article body.", "urls": ["https://aeon.co/essays/x"]}]'
         ),
         default=[],
         # intellectual_journals: exa-heavy (returns full text), serper fallback,
