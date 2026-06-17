@@ -641,7 +641,10 @@ SECTOR_SPECS: list[SectorSpec] = [
             "Your final array must have 5 entries with fetch_failed=false. "
             "Return a JSON array of {url, source, title, fetch_failed, text} — one entry "
             "per extracted URL. For the 'text' field include ONLY the first 500 characters "
-            "of extracted content — do not paste full article text into the JSON."
+            "of extracted content — do not paste full article text into the JSON.\n"
+            "OUTPUT SHAPE — return an array of OBJECTS, never bare URL strings. Exactly:\n"
+            '[{"url": "https://bbc.com/news/x", "source": "bbc.com", "title": "Headline", '
+            '"fetch_failed": false, "text": "First 500 chars..."}]'
         ),
         default=[],
         # enriched_articles: pure extraction. No search — input is the seed URL
@@ -941,12 +944,39 @@ def _parse_sector_output(raw: str, spec: SectorSpec) -> Any:
     # list-shape sector when they fall back to training data.
     if spec.shape in ("list", "enriched") and isinstance(parsed, list):
         before_str_filter = len(parsed)
-        parsed = [e for e in parsed if isinstance(e, dict)]
+
+        # 2026-06-17: enriched_articles is a pure-extraction sector seeded with
+        # URLs — when a weak OR :floor model returns a flat list of URL strings
+        # instead of {url,...} dicts, those strings are still usable signal (the
+        # model DID pick URLs, it just skipped the wrapper). Salvage URL-shaped
+        # strings into minimal dicts rather than dropping all 5 and shipping an
+        # empty sector. Non-enriched list sectors carry SYNTHESIZED findings, so
+        # a bare URL there has no finding to recover — keep dropping those.
+        if spec.shape == "enriched":
+            from urllib.parse import urlparse as _up
+
+            salvaged: list = []
+            for e in parsed:
+                if isinstance(e, dict):
+                    salvaged.append(e)
+                elif isinstance(e, str) and e.strip().startswith(("http://", "https://")):
+                    _u = e.strip()
+                    salvaged.append({
+                        "url": _u,
+                        "source": _up(_u).netloc,
+                        "title": "",
+                        "text": "",
+                        "fetch_failed": False,
+                    })
+            parsed = salvaged
+        else:
+            parsed = [e for e in parsed if isinstance(e, dict)]
+
         dropped_strs = before_str_filter - len(parsed)
         if dropped_strs:
             log.warning(
-                "sector %s: dropped %d bare-string entries from %s output "
-                "(model returned flat URL list instead of structured dicts).",
+                "sector %s: dropped %d unsalvageable bare-string entries from %s "
+                "output (model returned flat list instead of structured dicts).",
                 spec.name, dropped_strs, spec.shape,
             )
         # If filter emptied the list, fall back to spec.default so downstream
@@ -1552,7 +1582,15 @@ def _build_cerebras_llm(max_tokens: int = 8192):
 
     model = _resolve_cerebras_model(api_key)
     if model is None:
-        log.warning("Cerebras unavailable (no key or model resolution failed)")
+        # Key IS present (checked above) — model is None means the chain is
+        # exhausted (all models 429'd this run, breaker tripped) or /v1/models
+        # listed nothing usable. NOT a config/key problem. 2026-06-17: the old
+        # "(no key or ...)" wording wrongly implied a missing secret during the
+        # empty-research debugging.
+        log.warning(
+            "Cerebras unavailable (model chain exhausted or no usable model "
+            "this run — key is present)"
+        )
         return None
 
     try:

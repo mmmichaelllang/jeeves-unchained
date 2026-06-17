@@ -1616,10 +1616,12 @@ async def test_run_crawl4ai_sector_rotates_or_on_dead_endpoint(monkeypatch):
 # 2026-05-21 round 7 fixes
 # ---------------------------------------------------------------------------
 
-def test_parse_sector_output_drops_bare_url_strings_from_enriched():
-    """OR models sometimes return a flat list of URL strings instead of
-    EnrichedArticle dicts.  _parse_sector_output must filter them out so
-    save_session doesn't crash on Pydantic validation.
+def test_parse_sector_output_salvages_bare_url_strings_from_enriched():
+    """2026-06-17: OR models sometimes return a flat list of URL strings instead
+    of EnrichedArticle dicts. enriched_articles is a pure-extraction sector, so a
+    bare URL is still usable signal — _parse_sector_output now SALVAGES URL-shaped
+    strings into minimal {url,source,title,text,fetch_failed} dicts rather than
+    dropping all of them and shipping an empty sector (the 2026-06-17 failure).
     """
     raw = (
         '["https://arxiv.org/pdf/2603.28986",'
@@ -1629,23 +1631,27 @@ def test_parse_sector_output_drops_bare_url_strings_from_enriched():
     spec = next(s for s in SECTOR_SPECS if s.name == "enriched_articles")
     out = _parse_sector_output(raw, spec)
     assert isinstance(out, list)
-    assert out == [], (
-        "bare URL strings must be filtered — result should be empty list, "
-        f"got {out!r}"
-    )
+    assert len(out) == 3, f"all 3 URL strings should be salvaged, got {out!r}"
+    assert all(isinstance(e, dict) and e["url"].startswith("http") for e in out)
+    assert out[0]["source"] == "arxiv.org"
+    assert out[0]["fetch_failed"] is False
 
 
-def test_parse_sector_output_keeps_valid_enriched_dicts():
-    """Valid EnrichedArticle dicts are preserved; bare strings mixed in are dropped."""
+def test_parse_sector_output_salvage_drops_non_url_strings():
+    """Bare strings that are NOT URLs carry no recoverable signal — still dropped.
+    Valid dicts are preserved alongside salvaged URL strings."""
     raw = (
-        '["https://arxiv.org/pdf/discard",'
+        '["not a url, just model rambling",'
+        ' "https://arxiv.org/pdf/keep",'
         ' {"url": "https://arxiv.org/abs/2603.28986",'
         '  "title": "Some Paper", "text": "Abstract here."}]'
     )
     spec = next(s for s in SECTOR_SPECS if s.name == "enriched_articles")
     out = _parse_sector_output(raw, spec)
-    assert len(out) == 1
-    assert out[0]["title"] == "Some Paper"
+    # The non-URL string is dropped; the URL string is salvaged; the dict kept.
+    assert len(out) == 2, f"expected non-url dropped, url salvaged, dict kept; got {out!r}"
+    titles = {e.get("title", "") for e in out}
+    assert "Some Paper" in titles
 
 
 def test_is_retryable_network_error_matches_connection_error():

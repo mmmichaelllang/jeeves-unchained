@@ -205,3 +205,87 @@ class TestVerifyUrlsWithCharlotte:
 
         assert charlotte_call_count <= _CHARLOTTE_URL_CAP
         assert charlotte_call_count <= 20
+
+    def test_verify_urls_breaks_on_job_budget(self, monkeypatch):
+        """2026-06-17 regression: a slow URL set must not exceed the wall-clock
+        budget. After the budget elapses the loop breaks with partial results
+        instead of running all 20 URLs (which hung the auditor for ~58 min)."""
+        from scripts.audit import verify_urls_with_charlotte, Defect, _CHARLOTTE_JOB_BUDGET_S
+
+        links = "".join(
+            f'<a href="https://site{i}.com/page">link {i}</a>\n' for i in range(20)
+        )
+        html = f"<html><body>{links}</body></html>"
+
+        charlotte_call_count = 0
+
+        def _fake_asyncio_run(coro):
+            nonlocal charlotte_call_count
+            charlotte_call_count += 1
+            coro.close()
+            return "page text"
+
+        # Fake clock: t_start=0 (pre-loop), iter1 elapsed=0 (under budget → URL
+        # runs), iter2 elapsed=budget+1 (→ break). Net: exactly 1 URL processed.
+        clock = iter([0.0, 0.0] + [_CHARLOTTE_JOB_BUDGET_S + 1.0] * 50)
+
+        with patch("scripts.audit.asyncio") as mock_asyncio, \
+             patch("scripts.audit._cerebras_verify_claim", return_value="YES"), \
+             patch("scripts.audit.time.monotonic", side_effect=lambda: next(clock)):
+            mock_asyncio.run.side_effect = _fake_asyncio_run
+            defects: list[Defect] = []
+            verify_urls_with_charlotte(html, _SIMPLE_SESSION, defects)
+
+        # Only the first URL ran before the budget tripped.
+        assert charlotte_call_count == 1, (
+            f"expected loop to break after budget, got {charlotte_call_count} calls"
+        )
+
+    def test_fetch_url_bounded_wait_does_not_hang(self):
+        """The finally-block proc.wait() must be bounded: a subprocess whose
+        .wait() never resolves after kill() must NOT hang the caller."""
+        from jeeves.tools.charlotte import fetch_url_via_charlotte
+
+        mock_proc = MagicMock()
+        mock_proc.returncode = None
+
+        async def _hanging_readline():
+            await asyncio.sleep(9999)
+            return b""
+
+        mock_stdout = MagicMock()
+        mock_stdout.readline = _hanging_readline
+        mock_stdin = MagicMock()
+        mock_stdin.write = MagicMock()
+
+        async def _drain():
+            pass
+
+        mock_stdin.drain = _drain
+        mock_proc.stdin = mock_stdin
+        mock_proc.stdout = mock_stdout
+
+        async def _kill():
+            pass
+
+        async def _never_resolving_wait():
+            await asyncio.sleep(9999)
+
+        mock_proc.kill = _kill
+        mock_proc.wait = _never_resolving_wait
+
+        async def _fake_exec(*args, **kwargs):
+            return mock_proc
+
+        async def _run():
+            # Outer guard: if the bounded wait regresses to unbounded, this
+            # wait_for fires and the test fails loudly instead of hanging CI.
+            return await asyncio.wait_for(
+                fetch_url_via_charlotte("https://example.com", timeout=0.1),
+                timeout=10.0,
+            )
+
+        with patch("jeeves.tools.charlotte.asyncio.create_subprocess_exec", new=_fake_exec):
+            result = asyncio.run(_run())
+
+        assert result == ""
