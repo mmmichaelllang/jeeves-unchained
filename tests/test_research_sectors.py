@@ -561,6 +561,18 @@ def test_enriched_articles_instruction_warns_about_reuters():
     assert "401" in spec.instruction
 
 
+def test_intellectual_journals_instruction_has_object_shape_example():
+    """2026-06-17: weak OR fallback models returned a flat list of bare URL
+    strings for intellectual_journals (shape='list', so salvage drops them →
+    empty). A concrete object-shape example in the prompt steers compliance,
+    same fix that helped enriched_articles."""
+    spec = _spec("intellectual_journals")
+    assert "never bare URL strings" in spec.instruction
+    # The example must show the {source, findings, urls} object shape.
+    assert '"source"' in spec.instruction and '"findings"' in spec.instruction
+    assert '"urls"' in spec.instruction
+
+
 
 # ---------------------------------------------------------------------------
 # Deterministic JSON normalisation helpers
