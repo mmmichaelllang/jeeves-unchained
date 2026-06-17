@@ -19,6 +19,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import os
 import re
 from dataclasses import dataclass
 from collections.abc import Iterable
@@ -1621,25 +1622,56 @@ def _build_cerebras_llm(max_tokens: int = 8192):
 # (sort providers by price). Spend ~$0.002 per sector when free is hot
 # instead of returning empty. User has $10+ credit and a $5 OR account
 # spending cap so the worst case is bounded.
-_OPENROUTER_MODEL_CHAIN = [
-    # Free tier — try first; 8 RPM per model, daily cap shared across users.
-    # 2026-05-21 round 5: qwen/qwen-2.5-72b-instruct:free DROPPED. OR has
-    # deprecated the route and returns 404 "No endpoints found for
-    # qwen/qwen-2.5-72b-instruct:free" — same dead-route fix that landed
-    # in correspondence.py round 2 (commit fbcff57), now propagated here.
+# Free tier — try first; 8 RPM per model, daily cap shared across users.
+# 2026-05-21 round 5: qwen/qwen-2.5-72b-instruct:free DROPPED. OR deprecated
+# the route (404 "No endpoints found"). google/gemma-2-27b-it:free REMOVED
+# 2026-06-16 — OR retired its free tier.
+_OPENROUTER_FREE_MODELS = [
     "meta-llama/llama-3.3-70b-instruct:free",
-    # google/gemma-2-27b-it:free REMOVED 2026-06-16 — OR retired the free
-    # tier (404 "This model is unavailable for free. The paid version is
-    # available now"). Was the terminal slug that swallowed every sector
-    # before the _is_or_dead_endpoint fix; drop it so no rotation hop is wasted.
     "deepseek/deepseek-chat-v3:free",
     "mistralai/mistral-small-3.1-24b-instruct:free",
-    # PAID backstop — :floor picks cheapest healthy provider for each.
-    # ~$0.13/M input + ~$0.40/M output for llama-3.3-70b on paid endpoints.
-    # 13-sector run if EVERY sector falls to paid = ~$0.03. $5 cap = ~165 runs.
+]
+
+# PAID backstop — :floor picks cheapest healthy provider for each model.
+# ~$0.13/M input + ~$0.40/M output for llama-3.3-70b on paid endpoints; a
+# 13-sector run fully on paid ≈ $0.03-0.07.
+_OPENROUTER_PAID_MODELS = [
     "meta-llama/llama-3.3-70b-instruct:floor",
     "mistralai/mistral-small-3.1-24b-instruct:floor",
 ]
+
+
+def _paid_or_enabled() -> bool:
+    """JEEVES_USE_PAID_OR=1 opts INTO paid :floor OR fallback.
+
+    2026-06-17: previously the :floor entries were UNCONDITIONALLY in the chain
+    — every degraded run (all free tiers 429/404) silently spent OR credit with
+    no flag and no cap. Now paid is opt-in: unset → free-only (the pipeline
+    degrades gracefully, ships what free tiers produced), set → paid backstops
+    appended after free, bounded by _PAID_OR_MAX_CALLS per run.
+    """
+    return os.environ.get("JEEVES_USE_PAID_OR", "").strip() == "1"
+
+
+# Per-run paid-call budget — hard ceiling so a 429-storm cannot drain the OR
+# balance. Each :floor call is ~$0.002-0.005; 15 ≈ $0.05-0.10/run worst case.
+# Override via JEEVES_PAID_OR_MAX_CALLS. Counter is module-level, reset per
+# process (each GHA fire is fresh).
+_PAID_OR_MAX_CALLS = int(os.environ.get("JEEVES_PAID_OR_MAX_CALLS", "15") or "15")
+_paid_or_calls_made = 0
+
+
+def _build_openrouter_model_chain() -> list[str]:
+    """Compose the OR rotation chain: free models always, paid :floor appended
+    only when JEEVES_USE_PAID_OR is set. Evaluated at module load + re-derivable
+    in tests that toggle the flag."""
+    chain = list(_OPENROUTER_FREE_MODELS)
+    if _paid_or_enabled():
+        chain += _OPENROUTER_PAID_MODELS
+    return chain
+
+
+_OPENROUTER_MODEL_CHAIN = _build_openrouter_model_chain()
 
 # Back-compat alias — internal name renamed 2026-05-21 round 4 from
 # _OPENROUTER_FREE_MODEL_CHAIN. Keep the old name working until any
@@ -1707,6 +1739,24 @@ def _build_openrouter_llm(max_tokens: int = 8192, model: str | None = None):
             "OpenRouter: all chain models 429'd in this process — no LLM built.",
         )
         return None
+
+    # Cost guard: :floor entries spend real OR credit. Cap paid calls per run so
+    # a 429-storm can't drain the balance. Free models are unmetered here.
+    if resolved_model.endswith(":floor"):
+        global _paid_or_calls_made
+        if _paid_or_calls_made >= _PAID_OR_MAX_CALLS:
+            log.warning(
+                "OpenRouter: paid-call budget reached (%d/%d) — refusing paid "
+                "model %s. Sector will fall back to default.",
+                _paid_or_calls_made, _PAID_OR_MAX_CALLS, resolved_model,
+            )
+            return None
+        _paid_or_calls_made += 1
+        log.info(
+            "OpenRouter: paid call %d/%d on %s",
+            _paid_or_calls_made, _PAID_OR_MAX_CALLS, resolved_model,
+        )
+
     return OpenAILike(
         model=resolved_model,
         api_base="https://openrouter.ai/api/v1",
