@@ -1,0 +1,260 @@
+{
+  "date": "2026-06-17",
+  "briefing_chars": 17437,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D7_narrative_flow",
+    "D9_writing_quality",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete",
+    "D10_recurring_opener",
+    "D_charlotte_url_verify"
+  ],
+  "detectors_skipped": [],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "3 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 3,
+        "samples": [
+          "https://wareable.com/wearable-tech/mwc-2026-best-wearables-ai-hardware-announcements-of-the-show",
+          "https://newyorker.com/magazine/2026/06/22/on-the-front-lines-of-delaney-hall-ices-newark-prison",
+          "https://applitrack.com/edmonds/onlineapp/default.aspx?Category=Certificated+Teacher+-+MS"
+        ]
+      }
+    },
+    {
+      "type": "narrative_flow_low",
+      "severity": "high",
+      "section": null,
+      "detail": "narrative flow score 3/10",
+      "evidence": {
+        "score": 3,
+        "issues": [
+          {
+            "section": "Opening",
+            "issue": "CSS code block unrelated to narrative disrupts flow"
+          },
+          {
+            "section": "Greeting",
+            "issue": "Abrupt shift from code to salutation without transition"
+          },
+          {
+            "section": "Tone",
+            "issue": "Mix of formal Jeeves register with profanity and slang undermines voice consistency"
+          },
+          {
+            "section": "Structure",
+            "issue": "Rapid jumps between topics (pipeline, domestic, world, reading) lack linking sentences"
+          },
+          {
+            "section": "Repetition",
+            "issue": "Overuse of phrases like 'stands as it did' and 'stands as we left it' creates monotony"
+          },
+          {
+            "section": "Asides",
+            "issue": "Parenthetical remarks interrupt prose flow and distract from main point"
+          },
+          {
+            "section": "Inserted excerpt",
+            "issue": "New Yorker block quote inserted without clear introduction or transition"
+          },
+          {
+            "section": "Closing",
+            "issue": "Redundant, garbled sign\u2011off confuses the narrator\u2019s identity"
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "writing_quality_low",
+      "severity": "medium",
+      "section": null,
+      "detail": "writing quality score 6/10",
+      "evidence": {
+        "score": 6,
+        "issues": [
+          {
+            "type": "filler",
+            "evidence": "the only update worth noting"
+          },
+          {
+            "type": "filler",
+            "evidence": "A rainy-day alternative worth considering"
+          },
+          {
+            "type": "repetition",
+            "evidence": "The matter at Edmonds School District stands as we left it, Sir, with nothing materially advanced since our prior review."
+          },
+          {
+            "type": "voice_break",
+            "evidence": "A total and utter shitshow before breakfast."
+          },
+          {
+            "type": "aside_overuse",
+            "evidence": ", Sir,"
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://www.keepindianlearning.com/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.keepindianlearning.com/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://readingsage.com/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://readingsage.com/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://teacherentrepreneurs.com/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://teacherentrepreneurs.com/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://secondaryenglishcoffeeshop.com/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://secondaryenglishcoffeeshop.com/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Domestic Sphere",
+      "detail": "href 'https://obsidianpublish.com/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://obsidianpublish.com/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Wider World",
+      "detail": "href 'https://www.cnn.com/world' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.cnn.com/world",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Reading Room",
+      "detail": "href 'https://www.nybooks.com/online/2026/06/13/planet-ufc/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.nybooks.com/online/2026/06/13/planet-ufc/",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Reading Room",
+      "detail": "href 'https://www.themarginalian.org/2026/06/14/jeanne-villepreux-power-argonaut/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.themarginalian.org/2026/06/14/jeanne-villepreux-power-argonaut/",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Reading Room",
+      "detail": "href 'https://www.scientificamerican.com/article/americas-compact-between-science-and-politics-is-broken/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.scientificamerican.com/article/americas-compact-between-science-and-politics-is-broken/",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Specific Enquiries",
+      "detail": "href 'https://uaplogbook.com/david-grusch-june-9-capitol-uap-press-conference/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://uaplogbook.com/david-grusch-june-9-capitol-uap-press-conference/",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Specific Enquiries",
+      "detail": "href 'https://www.foxnews.com/politics/ufo-whistleblower-claims-billions-secret-spending-hidden-from-congress.amp' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.foxnews.com/politics/ufo-whistleblower-claims-billions-secret-spending-hidden-from-congress.amp",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Commercial Ledger",
+      "detail": "href 'https://www.wareable.com/wearable-tech/mwc-2026-best-wearables-ai-hardware-announcements-of-the-show/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.wareable.com/wearable-tech/mwc-2026-best-wearables-ai-hardware-announcements-of-the-show/",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "medium",
+      "section": "The Commercial Ledger",
+      "detail": "href 'https://pushkinpress.com/book/when-we-cease-to-understand-the-world/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://pushkinpress.com/book/when-we-cease-to-understand-the-world/",
+        "is_homepage": false
+      }
+    },
+    {
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
+      "evidence": {
+        "weather_preview": "Here is the weather forecast for Edmonds, Washington:\n\nPartly sunny with a slight chance of rain in "
+      }
+    }
+  ],
+  "section_count": 6,
+  "hallucinated_url_count": 13,
+  "empty_section_count": 0,
+  "aside_template_count": 0,
+  "narrative_flow_score": 3,
+  "writing_quality_score": 6,
+  "dedup_score": null,
+  "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free",
+  "charlotte_verified_count": 2,
+  "charlotte_flagged_count": 0
+}

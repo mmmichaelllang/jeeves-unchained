@@ -1,0 +1,137 @@
+{
+  "date": "2026-06-17",
+  "pre_fix_chars": 17437,
+  "post_fix_chars": 16483,
+  "actions": [
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.keepindianlearning.com/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.keepindianlearning.com/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://readingsage.com/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://readingsage.com/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://teacherentrepreneurs.com/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://teacherentrepreneurs.com/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://secondaryenglishcoffeeshop.com/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://secondaryenglishcoffeeshop.com/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://obsidianpublish.com/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://obsidianpublish.com/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.cnn.com/world'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.cnn.com/world"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.nybooks.com/online/2026/06/13/planet-ufc/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.nybooks.com/online/2026/06/13/planet-ufc/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.themarginalian.org/2026/06/14/jeanne-villepreux-power-argonaut/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.themarginalian.org/2026/06/14/jeanne-villepreux-power-argonaut/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.scientificamerican.com/article/americas-compact-between-science-and-politics-is-broken/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.scientificamerican.com/article/americas-compact-between-science-and-politics-is-broken/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://uaplogbook.com/david-grusch-june-9-capitol-uap-press-conference/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://uaplogbook.com/david-grusch-june-9-capitol-uap-press-conference/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.foxnews.com/politics/ufo-whistleblower-claims-billions-secret-spending-hidden-from-congress.amp'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.foxnews.com/politics/ufo-whistleblower-claims-billions-secret-spending-hidden-from-congress.amp"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.wareable.com/wearable-tech/mwc-2026-best-wearables-ai-hardware-announcements-of-the-show/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.wareable.com/wearable-tech/mwc-2026-best-wearables-ai-hardware-announcements-of-the-show/"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://pushkinpress.com/book/when-we-cease-to-understand-the-world/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://pushkinpress.com/book/when-we-cease-to-understand-the-world/"
+      }
+    },
+    {
+      "type": "rerender_greeting",
+      "section": "(greeting)",
+      "detail": "validator rejected: non-html prefix: 'We need to produce a single HTML <p> paragraph, 80-150 words'",
+      "status": "failed",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to produce a single HTML <p> paragraph, 80-150 words, dry precise butler voice. Must mention the weekday, the we"
+      }
+    }
+  ],
+  "pre_fix_defect_count": 17,
+  "post_fix_defect_count": null,
+  "audit_model_used": null
+}

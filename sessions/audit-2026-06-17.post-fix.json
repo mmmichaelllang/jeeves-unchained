@@ -1,0 +1,54 @@
+{
+  "date": "2026-06-17",
+  "briefing_chars": 16483,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete",
+    "D10_recurring_opener"
+  ],
+  "detectors_skipped": [
+    "D7_narrative_flow",
+    "D9_writing_quality",
+    "D_charlotte_url_verify"
+  ],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "2 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 2,
+        "samples": [
+          "https://newyorker.com/magazine/2026/06/22/on-the-front-lines-of-delaney-hall-ices-newark-prison",
+          "https://applitrack.com/edmonds/onlineapp/default.aspx?Category=Certificated+Teacher+-+MS"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
+      "evidence": {
+        "weather_preview": "Here is the weather forecast for Edmonds, Washington:\n\nPartly sunny with a slight chance of rain in "
+      }
+    }
+  ],
+  "section_count": 6,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 0,
+  "aside_template_count": 0,
+  "narrative_flow_score": null,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": null,
+  "charlotte_verified_count": 0,
+  "charlotte_flagged_count": 0
+}
