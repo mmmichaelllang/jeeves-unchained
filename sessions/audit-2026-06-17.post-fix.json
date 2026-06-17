@@ -26,8 +26,8 @@
       "evidence": {
         "overlap_count": 2,
         "samples": [
-          "https://newyorker.com/magazine/2026/06/22/on-the-front-lines-of-delaney-hall-ices-newark-prison",
-          "https://applitrack.com/edmonds/onlineapp/default.aspx?Category=Certificated+Teacher+-+MS"
+          "https://applitrack.com/edmonds/onlineapp/default.aspx?Category=Certificated+Teacher+-+MS",
+          "https://newyorker.com/magazine/2026/06/22/on-the-front-lines-of-delaney-hall-ices-newark-prison"
         ]
       }
     },
@@ -37,7 +37,16 @@
       "section": "(greeting)",
       "detail": "weather string present in session but not in greeting",
       "evidence": {
-        "weather_preview": "Here is the weather forecast for Edmonds, Washington:\n\nPartly sunny with a slight chance of rain in "
+        "weather_preview": "\"Edmonds, WA: Mostly sunny today with a high of 68\u00b0F and a low of 51\u00b0F. Light air at 2 mph. Humidity"
+      }
+    },
+    {
+      "type": "greeting_missing_correspondence",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "correspondence handoff text present but no preview in greeting",
+      "evidence": {
+        "handoff_preview": "- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [reply needed] Sir Richard: Rich Lang asks how to proceed with purchasing the Acer Aspire 16 AI"
       }
     }
   ],
