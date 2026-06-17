@@ -819,6 +819,29 @@ def _try_normalize_json(fragment: str, *, is_array: bool) -> Any | None:
         except (json.JSONDecodeError, ValueError):
             return None
 
+    def _try_first_json(s: str) -> Any | None:
+        """Parse the FIRST complete JSON value and ignore any trailing data.
+
+        Handles the "Extra data: line 1 column N" failure (2026-06-17): weak
+        agent-path models emit a complete object/array followed by trailing
+        junk — a second concatenated value, explanatory prose, or a repeated
+        block. raw_decode() stops at the end of the first value, so we recover
+        the intended payload instead of discarding 3KB of valid content.
+        Only accepts a first value matching the expected container type so we
+        don't return a bare {...} when the shape wants a list (that case is
+        handled by the bare-object-to-array coercion below).
+        """
+        st = s.lstrip()
+        try:
+            value, _end = json.JSONDecoder().raw_decode(st)
+        except (json.JSONDecodeError, ValueError):
+            return None
+        if is_array and not isinstance(value, list):
+            return None
+        if not is_array and not isinstance(value, dict):
+            return None
+        return value
+
     # 0. Bare-object-to-array coercion — must run BEFORE steps 1-3 so a valid
     #    JSON object doesn't get returned as a dict when the shape wants a list.
     if is_array and fragment.strip().startswith("{"):
@@ -829,6 +852,24 @@ def _try_normalize_json(fragment: str, *, is_array: bool) -> Any | None:
         if (v := _try(_remove_trailing_commas(_python_repr_to_json(wrapped)))) is not None:
             log.debug("_try_normalize_json: pass 'bare_obj_to_array+repr+comma' succeeded.")
             return v
+        # Bare object FOLLOWED by trailing junk (e.g. "{...} prose"): grab the
+        # first complete object via raw_decode, then wrap it. The naive wrap
+        # above fails here because the junk lands inside the synthetic array.
+        try:
+            obj, _end = json.JSONDecoder().raw_decode(fragment.strip())
+            if isinstance(obj, dict):
+                log.debug("_try_normalize_json: pass 'bare_obj_trailing_to_array' succeeded.")
+                return [obj]
+        except (json.JSONDecodeError, ValueError):
+            pass
+
+    # 0.5. Trailing-data strip — recover the first complete JSON value when the
+    #      model appended junk after it ("Extra data: line 1 column N"). Runs
+    #      after the bare-object coercion so a list-shape bare {...} is wrapped
+    #      first, and only accepts a value matching the expected container type.
+    if (v := _try_first_json(fragment)) is not None:
+        log.debug("_try_normalize_json: pass 'first_json_strip_trailing' succeeded.")
+        return v
 
     # 1. Python repr conversion alone.
     repr_fixed = _python_repr_to_json(fragment)
