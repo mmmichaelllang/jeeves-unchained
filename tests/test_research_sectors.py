@@ -624,6 +624,41 @@ def test_try_normalize_json_coerces_bare_object_to_array():
     assert result[0]["source"] == "BBC"
 
 
+def test_try_normalize_json_strips_trailing_data_after_object():
+    """2026-06-17: 'Extra data: line 1 column N' — model emits a complete object
+    followed by trailing junk (prose / a 2nd block). Recover the first object."""
+    raw = '{"findings": "real content", "urls": ["https://x"]} Here is some extra prose.'
+    result = _try_normalize_json(raw, is_array=False)
+    assert result == {"findings": "real content", "urls": ["https://x"]}
+
+
+def test_try_normalize_json_strips_trailing_data_after_array():
+    """Same failure for list-shape: a complete array followed by a second
+    concatenated array / trailing text. Keep the first array only."""
+    raw = '[{"a": 1}, {"b": 2}]\n[{"c": 3}] trailing'
+    result = _try_normalize_json(raw, is_array=True)
+    assert result == [{"a": 1}, {"b": 2}]
+
+
+def test_try_normalize_json_trailing_strip_respects_container_type():
+    """A bare object for a list-shape sector must NOT be returned as a dict via
+    the trailing-strip path — the bare-object-to-array coercion wraps it first."""
+    result = _try_normalize_json('{"source": "BBC", "urls": []} junk', is_array=True)
+    assert isinstance(result, list)
+    assert result[0]["source"] == "BBC"
+
+
+def test_try_normalize_json_truncated_array_still_recovered_not_stolen():
+    """A TRUNCATED array (no closing ]) must still route to truncation recovery,
+    not be falsely 'completed' by the trailing-strip pass (which only accepts a
+    fully-parseable first value)."""
+    truncated = '[{"title": "A", "url": "https://x", "source": "B", "text": "c"}, {"title": "B'
+    result = _try_normalize_json(truncated, is_array=True)
+    assert isinstance(result, list)
+    assert len(result) == 1
+    assert result[0]["title"] == "A"
+
+
 def test_try_normalize_json_returns_none_for_garbled_input():
     result = _try_normalize_json("{broken: json 'mixed\" [unclosed", is_array=False)
     assert result is None
