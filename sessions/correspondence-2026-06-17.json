@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure due to a 429 rate limit error.\n- [escalation] Google: Google security alert stating a Google Account is no longer recoverable.\n- [escalation] mmmichaelllang: GitHub notification about failed Jeeves Daily Pipeline workflow run.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure due to a 429 rate limit error.\n- [escalation] lang.mc@gmail.com: Automated alert about a permanent failure in the Jeeves Daily Pipeline workflow due to a 429 error.\n- [reply needed] Sir Richard: Rich Lang asks how to proceed with the Acer Aspire 16 AI purchase.\n- [reply needed] Greg Gorsuch: Greg Gorsuch requests adding a 'Past Presentations' button to the Presentations page.\n- [reply needed] Greg Gorsuch: Greg Gorsuch repeats request for a 'Past Presentations' button on the Presentations page.\n- [scheduling] David Purdy: David Purdy confirms he will join the Google Meet call.\n- [scheduling] Michael Lang: Michael Lang proposes a call at 11 or 11:30 with David Purdy.\n- [scheduling] David Purdy: David Purdy confirms availability for a call today.",
+  "text": "- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed for jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure with 429 rate limit error in Daily pipeline.\n- [escalation] Andy: Rich Lang (brother Andy) forwards a blog article about manufacturing that reminded him of Michael's views.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Daily Pipeline workflow run failed.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure with 429 rate limit error in daily pipeline.\n- [escalation] mmmichaelllang: GitHub notification that Jeeves Weekly Audit Health Report workflow run failed completely.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure due to a 429 rate limit error.\n- [escalation] lang.mc@gmail.com: Jeeves daily correspondence report highlighting a Google security alert about an unrecoverable account.\n- [escalation] Google: Google security alert that a Google Account is no longer recoverable.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure due to a 429 rate limit error.\n- [escalation] lang.mc@gmail.com: Jeeves daily correspondence report highlighting a Jeeves pipeline permanent failure due to 429 rate limit.",
   "counts": {
-    "reply_needed": 3,
+    "reply_needed": 4,
     "decision_required": 0,
-    "scheduling": 4,
+    "scheduling": 3,
     "follow_up": 0,
-    "escalation": 6,
-    "no_action": 22
+    "escalation": 12,
+    "no_action": 31
   }
 }
