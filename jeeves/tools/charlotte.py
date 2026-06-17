@@ -170,6 +170,19 @@ async def fetch_url_via_charlotte(url: str, timeout: float = 30.0) -> str:
         try:
             if proc is not None and proc.returncode is None:
                 proc.kill()
-                await proc.wait()
+                # Bound the reap: a wedged Charlotte MCP subprocess (Node +
+                # headless browser) can ignore SIGKILL long enough that a bare
+                # `await proc.wait()` blocks indefinitely — OUTSIDE the request
+                # timeout above. That defeated the per-URL cap and let one URL
+                # hang the auditor for ~58 min until the GHA 1h ceiling killed
+                # it (2026-06-17 run). Cap the wait; if it expires, leave the
+                # orphan for the OS to reap rather than blocking the caller.
+                try:
+                    await asyncio.wait_for(proc.wait(), timeout=5.0)
+                except (TimeoutError, asyncio.TimeoutError):
+                    log.warning(
+                        "charlotte: subprocess did not exit within 5s of kill "
+                        "for %s — abandoning to OS reaper", url,
+                    )
         except Exception:
             pass

@@ -44,6 +44,7 @@ import logging
 import os
 import re
 import sys
+import time
 from collections.abc import Iterable
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
@@ -978,6 +979,12 @@ _ANCHOR_CONTEXT_RE = re.compile(
 
 _CHARLOTTE_URL_CAP = 20  # max URLs to verify per run (Cerebras free tier budget)
 
+# Whole-job wall-clock budget. Even with the per-URL timeout in charlotte.py,
+# 20 URLs × a slow-but-not-hung page could exceed the GHA 1h auditor ceiling.
+# Break the loop once cumulative time crosses this so the job always finishes
+# and uploads partial results. 900s = 15 min, well under the 60-min job cap.
+_CHARLOTTE_JOB_BUDGET_S = 900.0
+
 # Skip these domains — archive fallbacks, not content claims.
 _CHARLOTTE_SKIP_HOSTS = frozenset({"web.archive.org", "archive.ph", "archive.org"})
 
@@ -1107,7 +1114,17 @@ def verify_urls_with_charlotte(
 
     verified = 0
     flagged = 0
+    t_start = time.monotonic()
     for url in hrefs:
+        elapsed = time.monotonic() - t_start
+        if elapsed > _CHARLOTTE_JOB_BUDGET_S:
+            log.warning(
+                "charlotte: job budget (%.0fs) exceeded after %d/%d URLs "
+                "(%d verified, %d flagged) — stopping with partial results",
+                _CHARLOTTE_JOB_BUDGET_S, verified + flagged, len(hrefs),
+                verified, flagged,
+            )
+            break
         log.info("charlotte: verifying %s", url)
         try:
             page_text = asyncio.run(fetch_url_via_charlotte(url))
