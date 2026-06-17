@@ -1,13 +1,13 @@
 {
   "found": true,
   "fallback_used": false,
-  "text": "- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Weekly Audit Health Report.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Daily Pipeline.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure due to 429 rate limit error.\n- [escalation] lang.mc@gmail.com: Daily correspondence compilation highlighting a Google security alert about account recovery.\n- [escalation] Google: Google security alert that a linked account is no longer recoverable.\n- [escalation] mmmichaelllang: GitHub Actions workflow failure for Jeeves Daily Pipeline.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure due to 429 rate limit error.\n- [escalation] lang.mc@gmail.com: Daily correspondence compilation highlighting Jeeves pipeline alert for permanent 429 failure.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating permanent failure with 429 rate limit error in Daily Pipeline.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert indicating permanent failure with 429 rate limit error in Daily Pipeline.\n- [reply needed] Greg Gorsuch: Greg Gorsuch updates on FODA publication timeline, with final indexing and publishing imminent.",
+  "text": "- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed.\n- [reply needed] Sir Richard: Rich Lang asks how to proceed with purchasing the Acer Aspire 16 AI laptop.\n- [reply needed] Greg Gorsuch: Greg Gorsuch requests adding a 'Past Presentations' button to the Presentations page with a table of contents.\n- [reply needed] Greg Gorsuch: Greg Gorsuch requests a 'Past Presentations' button on the opening title with a table of contents.\n- [reply needed] Greg Gorsuch: Greg Gorsuch asks about CG site updates and questions a white 'Interdisciplinary' statement, requesting it become a popup on his academic page.\n- [scheduling] David Purdy: David Purdy confirms he will join the Google Meet call for a discussion.\n- [scheduling] Michael Lang: Michael Lang proposed a call at 11 or 11:30 with David Purdy.\n- [scheduling] David Purdy: David Purdy confirms availability for a call after missing earlier message.\n- [scheduling] Michael Lang: Michael Lang proposed a quick call with David Purdy to resolve geoJSON site permission issues.\n- [follow up] lang.mc+cc@gmail.com: Daily brief reminder to submit finalized geoJSON files to David Purdy.\n- [no action] Andy: Newsletter-style message from Andrew Lang about urgency and awareness.",
   "counts": {
-    "reply_needed": 3,
+    "reply_needed": 4,
     "decision_required": 0,
-    "scheduling": 0,
-    "follow_up": 0,
-    "escalation": 10,
-    "no_action": 22
+    "scheduling": 4,
+    "follow_up": 1,
+    "escalation": 1,
+    "no_action": 10
   }
 }
