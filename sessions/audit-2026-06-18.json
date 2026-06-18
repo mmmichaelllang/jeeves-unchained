@@ -1,0 +1,158 @@
+{
+  "date": "2026-06-18",
+  "briefing_chars": 13856,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D7_narrative_flow",
+    "D9_writing_quality",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete",
+    "D10_recurring_opener",
+    "D_charlotte_url_verify"
+  ],
+  "detectors_skipped": [],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "14 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 14,
+        "samples": [
+          "https://specpicks.com/reviews/microsoft-skillopt-gpt-5-5-markdown-file-2026-news",
+          "https://forbes.com/sites/ronschmelzer/2026/01/08/ces-2026-makes-one-thing-clear-ais-next-interface-is-you",
+          "https://bbc.com/news",
+          "https://newyorker.com/magazine/2026/06/22/on-the-front-lines-of-delaney-hall-ices-newark-prison",
+          "https://exploreedmonds.com/events"
+        ]
+      }
+    },
+    {
+      "type": "narrative_flow_low",
+      "severity": "high",
+      "section": null,
+      "detail": "narrative flow score 3/10",
+      "evidence": {
+        "score": 3,
+        "issues": [
+          {
+            "section": "Opening",
+            "issue": "Unrelated CSS code block disrupts narrative flow."
+          },
+          {
+            "section": "Greeting transition",
+            "issue": "Abrupt jump from CSS to greeting without segue."
+          },
+          {
+            "section": "Topic shifts",
+            "issue": "Rapid, unfocused jumps between tech, personal, crime, and world news."
+          },
+          {
+            "section": "Tone inconsistency",
+            "issue": "Mix of formal butler register with profanity undermines voice."
+          },
+          {
+            "section": "Section headings",
+            "issue": "Weak transitions between titled sections; logical progression unclear."
+          },
+          {
+            "section": "Profanity frequency",
+            "issue": "Repeated expletives break cultivated tone and distract."
+          },
+          {
+            "section": "Talk of the Town excerpt",
+            "issue": "Overly long, detailed passage halts briefing momentum."
+          },
+          {
+            "section": "HTML entity",
+            "issue": "Visible '&middot;' entity interrupts prose flow."
+          },
+          {
+            "section": "Conclusion",
+            "issue": "No summarizing closure before signoff; ending feels abrupt."
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Wider World",
+      "detail": "href 'https://www.newyorker.com' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.newyorker.com",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Wider World",
+      "detail": "href 'https://www.seattlechoralcompany.org' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.seattlechoralcompany.org",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Wider World",
+      "detail": "href 'https://www.seattlepromusica.org' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.seattlepromusica.org",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "missing_section",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "h3 'The Library Stacks' absent but sectors ['literary_pick'] have data",
+      "evidence": {
+        "sectors": [
+          "literary_pick"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
+      "evidence": {
+        "weather_preview": "Here is the weather forecast for Edmonds, Washington:\n\nToday's weather forecast for Edmonds, WA is p"
+      }
+    },
+    {
+      "type": "recurring_opener",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "today's first paragraph recurs vs 2026-06-17 (shared 4-gram 'ood morning mister lang').",
+      "evidence": {
+        "matches_date": "2026-06-17",
+        "opener_preview": "g ood morning, mister lang. the salient matters are these: google ai studio requires action to secure gemini api access ",
+        "prior_opener_preview": "g ood morning, mister lang. the pipeline spent the night failing repeatedly \u2014 nine alerts across github and gmail, each ",
+        "jaccard_similarity": 0.094,
+        "shared_ngram": "ood morning mister lang"
+      }
+    }
+  ],
+  "section_count": 6,
+  "hallucinated_url_count": 3,
+  "empty_section_count": 0,
+  "aside_template_count": 0,
+  "narrative_flow_score": 3,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free",
+  "charlotte_verified_count": 14,
+  "charlotte_flagged_count": 0
+}

@@ -1,0 +1,66 @@
+{
+  "date": "2026-06-18",
+  "pre_fix_chars": 13856,
+  "post_fix_chars": 13807,
+  "actions": [
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.newyorker.com'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.newyorker.com"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.seattlechoralcompany.org'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.seattlechoralcompany.org"
+      }
+    },
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.seattlepromusica.org'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.seattlepromusica.org"
+      }
+    },
+    {
+      "type": "rerender_missing_section",
+      "section": "The Library Stacks",
+      "detail": "validator rejected: non-html prefix: 'We need to produce HTML paragraph(s) with the given data. On'",
+      "status": "failed",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to produce HTML paragraph(s) with the given data. Only one paragraph (or two if data demands). Data: River East,"
+      }
+    },
+    {
+      "type": "inject_missing_section",
+      "section": "The Library Stacks",
+      "detail": "injected empty-feed for The Library Stacks",
+      "status": "applied",
+      "evidence": {
+        "anchor": "The Commercial Ledger"
+      }
+    },
+    {
+      "type": "rerender_greeting",
+      "section": "(greeting)",
+      "detail": "validator rejected: non-html prefix: 'We need to produce a single HTML <p> paragraph, 80-150 words'",
+      "status": "failed",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to produce a single HTML <p> paragraph, 80-150 words, Jeeves voice: dry, precise butler. Must mention weekday, w"
+      }
+    }
+  ],
+  "pre_fix_defect_count": 8,
+  "post_fix_defect_count": null,
+  "audit_model_used": null
+}
