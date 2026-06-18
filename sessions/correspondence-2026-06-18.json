@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Google AI Studio: Google AI Studio correction requiring action to secure Gemini API access by June 19, 2026, with updated project and API key information.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed on the main branch.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure with 429 rate-limiting error in the Daily workflow.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Daily Pipeline workflow run failed on the main branch.\n- [escalation] lang.mc@gmail.com: Automated alert about a permanent failure in the Jeeves Daily Pipeline workflow due to a 429 rate-limiting error.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Weekly Audit Health Report workflow run has completely failed.\n- [reply needed] Sir Richard: Rich Lang asks how to proceed with purchasing the Acer Aspire 16 AI laptop after reviewing Michael's research report.\n- [scheduling] Peter Nordlund: Peter Nordlund confirms Michael's attendance at a Scriptural Reasoning event on Friday June 19 at Temple Beth Or at 6:00pm, and approves bringing cut fruit.\n- [scheduling] reminders@drchrono.com: Appointment reminder for Monty Owens on Monday, June 22, 2026 at 10:30 AM PDT.",
+  "counts": {
+    "reply_needed": 1,
+    "decision_required": 0,
+    "scheduling": 3,
+    "follow_up": 1,
+    "escalation": 6,
+    "no_action": 39
+  }
+}
