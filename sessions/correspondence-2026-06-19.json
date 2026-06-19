@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Sir Richard: Father responding positively to a previous email about an new Acer laptop.\n- [escalation] mmmichaelllang: GitHub workflow failure for Jeeves Weekly Audit Health Report.\n- [escalation] mmmichaelllang: GitHub workflow failure for Jeeves Daily Pipeline with unsuccessful jobs.\n- [escalation] lang.mc@gmail.com: Jeeves pipeline alert for permanent failure with 429 rate limit error in Daily Pipeline.\n- [decision required] Google AI Studio: Google AI Studio requires action to secure Gemini API access by June 19, 2026.\n- [scheduling] reminders@drchrono.com: Appointment reminder for Monty Owens on Monday, June 22, 2026 at 10:30 AM PDT.\n- [no action] lang.mc+cc@gmail.com: Daily brief newsletter with a reminder to restrict an unrestricted Gemini API key.\n- [no action] \"Superhuman – Zain Kahn\": Marketing newsletter from Superhuman about a YC-backed video editing startup.\n- [no action] Michael Lang: Automated daily correspondence summary from Jeeves system.\n- [no action] \"info@schooljobs.com\": Automated job interest notification from Seattle Public Schools.\n- [no action] Google: Security alert about Microsoft Copilot being granted access to Google Account data.\n- [no action] Google: Security alert about Microsoft Copilot being granted access to Google Account data.",
+  "counts": {
+    "reply_needed": 0,
+    "decision_required": 1,
+    "scheduling": 1,
+    "follow_up": 0,
+    "escalation": 4,
+    "no_action": 29
+  }
+}
