@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] mmmichaelllang: GitHub notification that the Jeeves Weekly Audit Health Report workflow has failed.\n- [scheduling] reminders@drchrono.com: Appointment reminder for Monty Owens, MN, PMHNP-BC on Monday, June 22, 2026 at 10:30 AM PDT.\n- [no action] lang.mc+cc@gmail.com: Daily brief newsletter with personal updates and task reminders.\n- [no action] Michael Lang: Automated daily correspondence summary from Jeeves system.\n- [no action] Beeper: One-time login verification code for Beeper service.\n- [no action] Scrapfly: Marketing email from Scrapfly about web scraper blocking resources.\n- [no action] \"Superhuman – Zain Kahn\": Newsletter from Superhuman about a YC-backed video editing startup.\n- [no action] Michael Lang: Automated daily correspondence summary from Jeeves system.\n- [no action] \"info@schooljobs.com\": Automated job interest notification from Seattle Public Schools.\n- [no action] Google: Security alert about Microsoft Copilot being granted Google Account access.\n- [no action] Google: Security alert about Microsoft Copilot being granted Google Account access.\n- [no action] Google: Security alert about Microsoft Copilot being granted Google Account access.\n- [no action] Google: Security alert about Microsoft Copilot being granted Google Account access.",
+  "counts": {
+    "reply_needed": 0,
+    "decision_required": 0,
+    "scheduling": 1,
+    "follow_up": 0,
+    "escalation": 1,
+    "no_action": 33
+  }
+}
