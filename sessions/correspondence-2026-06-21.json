@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Google AI Studio: Google AI Studio urgent notice requiring action to secure Gemini API access by June 19, 2026.\n- [escalation] lang.mc@gmail.com: Automated Jeeves pipeline alert about a permanent failure with no auto-retry.\n- [no action] Google: Google notification about sharing account data with Claude via Sign in with Google.\n- [no action] CARFAX Car Care: CARFAX service update and feedback request for Subaru Outback maintenance visit.\n- [no action] TurboScribe: TurboScribe notification that transcript New Recording 124 is ready for download.\n- [no action] TurboScribe: TurboScribe notification that transcript New Recording 126 is ready for download.\n- [no action] TurboScribe: TurboScribe notification that transcript New Recording 129 is ready for download.\n- [no action] TurboScribe: TurboScribe notification that transcript New Recording 125 is ready for download.\n- [no action] TurboScribe: TurboScribe notification that transcript New Recording 133 is ready for download.\n- [no action] TurboScribe: TurboScribe notification that transcript New Recording 132 is ready for download.\n- [no action] TurboScribe: TurboScribe notification that transcript New Recording 131 is ready for download.",
+  "counts": {
+    "reply_needed": 0,
+    "decision_required": 0,
+    "scheduling": 0,
+    "follow_up": 0,
+    "escalation": 2,
+    "no_action": 18
+  }
+}
