@@ -1,0 +1,73 @@
+{
+  "date": "2026-06-22",
+  "briefing_chars": 13879,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete",
+    "D10_recurring_opener"
+  ],
+  "detectors_skipped": [
+    "D7_narrative_flow",
+    "D9_writing_quality",
+    "D_charlotte_url_verify"
+  ],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "16 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 16,
+        "samples": [
+          "https://cnn.com/sport/fifa-world-cup",
+          "https://bigthinkmedia.substack.com/p/forget-stoicism-skepticism-is-the",
+          "https://komonews.com",
+          "https://nbcnews.com/sports/soccer/live-blog/fifa-world-cup-games-2026-june-22-live-updates-rcna351129",
+          "https://agentmelt.com/blog/ai-agent-context-engineering-guide"
+        ]
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "section under 30 words (10) but sectors ['literary_pick'] have available data",
+      "evidence": {
+        "word_count": 10,
+        "data_signals": [
+          "literary_pick=populated"
+        ]
+      }
+    },
+    {
+      "type": "recurring_opener",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "today's first paragraph recurs vs 2026-06-18 (shared 4-gram 'ood morning mister lang').",
+      "evidence": {
+        "matches_date": "2026-06-18",
+        "opener_preview": "g ood morning, mister lang. your correspondence tops the agenda. rich lang forwarded a bibliography on latter rain from ",
+        "prior_opener_preview": "g ood morning, mister lang. the salient matters are these: google ai studio requires action to secure gemini api access ",
+        "jaccard_similarity": 0.1,
+        "shared_ngram": "ood morning mister lang"
+      }
+    }
+  ],
+  "section_count": 7,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 1,
+  "aside_template_count": 0,
+  "narrative_flow_score": null,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": null,
+  "charlotte_verified_count": 0,
+  "charlotte_flagged_count": 0
+}
