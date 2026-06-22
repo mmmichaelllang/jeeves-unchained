@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Rich Lang: Rich Lang forwarded a bibliography on Latter Rain from David Kling.\n- [escalation] Rich Lang: Rich Lang forwarded a message from Alison Kling about Erin's show.\n- [escalation] Rich Lang: Rich Lang replied in a family thread about a paint party, confirming attendance with playful tone.\n- [reply needed] Greg Gorsuch: Greg Gorsuch reports website bugs including broken Van Gogh button, navigation issues, and wordy homepage content.\n- [reply needed] Greg Gorsuch: Greg Gorsuch requests changing 'human' to 'our' in a specific line of text.\n- [reply needed] Greg Gorsuch: Greg Gorsuch suggests changing popups to hyperlinks to new pages if popups cannot be edited.\n- [reply needed] Greg Gorsuch: Greg Gorsuch approves the 'what' page format and requests navigation bar and layout changes.\n- [reply needed] Greg Gorsuch: Greg Gorsuch requests moving the VG page inside performances and adjusting the CG logo color.\n- [reply needed] Greg Gorsuch: Greg Gorsuch reports that popup circles on the first page display outside the view screen.\n- [scheduling] reminders@drchrono.com: Appointment reminder for Monty Owens on June 22, 2026 at 10:30 AM PDT.\n- [follow up] Michael Lang: Self-generated summary of people awaiting replies from Mister Lang.",
+  "counts": {
+    "reply_needed": 6,
+    "decision_required": 0,
+    "scheduling": 1,
+    "follow_up": 1,
+    "escalation": 3,
+    "no_action": 39
+  }
+}
