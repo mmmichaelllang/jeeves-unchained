@@ -1,0 +1,145 @@
+{
+  "date": "2026-06-24",
+  "briefing_chars": 23996,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D7_narrative_flow",
+    "D9_writing_quality",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete",
+    "D10_recurring_opener",
+    "D_charlotte_url_verify"
+  ],
+  "detectors_skipped": [],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "24 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 24,
+        "samples": [
+          "https://bespokeclassroom.com/blog/2026/6/15/high-school-ela-lesson-plans-that-work",
+          "https://edjoblist.com/employment/english-history-teacher-long-term-substitute-listing-221621.aspx",
+          "https://desmoinesregister.com/press-release/story/87058/as-uap-declassification-begins-psychologists-release-first-report-on-possible-psychological-implications",
+          "https://newyorker.com/magazine/2026/07/06/chronicle-of-a-disaster-foretold",
+          "https://nbcnews.com/sports/soccer/colombia-congo-world-cup-rcna351490"
+        ]
+      }
+    },
+    {
+      "type": "narrative_flow_low",
+      "severity": "high",
+      "section": null,
+      "detail": "narrative flow score 3/10",
+      "evidence": {
+        "score": 3,
+        "issues": [
+          {
+            "section": "Opening",
+            "issue": "CSS code block precedes narrative, disrupting butler voice"
+          },
+          {
+            "section": "Greeting",
+            "issue": "Typo 'G ood morning' breaks formal register"
+          },
+          {
+            "section": "Tone",
+            "issue": "Shifts abruptly from cultivated Jeeves register to vulgar slang"
+          },
+          {
+            "section": "Repetition",
+            "issue": "Repeated use of 'Sir' and 'Mister Lang' without variation"
+          },
+          {
+            "section": "Transitions",
+            "issue": "Abrupt topic changes lack linking sentences or logical bridges"
+          },
+          {
+            "section": "Metaphor overuse",
+            "issue": "Frequent clich\u00e9d phrases like 'total and utter shitshow' dilute tone"
+          },
+          {
+            "section": "Content blocks",
+            "issue": "Promotional descriptions of Bespoke ELA, LiveSchool etc. inserted without transition"
+          },
+          {
+            "section": "Structure",
+            "issue": "Sections (Domestic Sphere, Wider World, etc.) lack clear hierarchical delineation"
+          },
+          {
+            "section": "Parenthetical asides",
+            "issue": "Excessive parenthetical remarks interrupt flow"
+          },
+          {
+            "section": "Closing",
+            "issue": "Sudden \u2666 symbol and sign\u2011off feel tacked on, not integrated"
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "section under 30 words (0) but sectors ['literary_pick'] have available data",
+      "evidence": {
+        "word_count": 0,
+        "data_signals": [
+          "literary_pick=populated"
+        ]
+      }
+    },
+    {
+      "type": "missing_section",
+      "severity": "high",
+      "section": "The Reading Room",
+      "detail": "h3 'The Reading Room' absent but sectors ['intellectual_journals', 'enriched_articles'] have data",
+      "evidence": {
+        "sectors": [
+          "intellectual_journals",
+          "enriched_articles"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
+      "evidence": {
+        "weather_preview": "Today's weather forecast for Edmonds, Washington (47.81, -122.38) is mostly sunny with a high temper"
+      }
+    },
+    {
+      "type": "recurring_opener",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "today's first paragraph recurs vs 2026-06-23 (shared 4-gram 'ood morning mister lang').",
+      "evidence": {
+        "matches_date": "2026-06-23",
+        "opener_preview": "g ood morning, mister lang. the world, much like the current situation, appears to be mostly sunny, but with a few cloud",
+        "prior_opener_preview": "g ood morning, mister lang. the world has not improved overnight, but it has at least produced several new opportunities",
+        "jaccard_similarity": 0.175,
+        "shared_ngram": "ood morning mister lang"
+      }
+    }
+  ],
+  "section_count": 7,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 1,
+  "aside_template_count": 0,
+  "narrative_flow_score": 3,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free",
+  "charlotte_verified_count": 20,
+  "charlotte_flagged_count": 0
+}
