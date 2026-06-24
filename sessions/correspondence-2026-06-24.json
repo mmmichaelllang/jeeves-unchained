@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Andy: Newsletter from brother Andrew Lang about making care visible.\n- [escalation] Sir Richard: Forwarded message from Rich Lang about Alison's note regarding Erin's show.\n- [escalation] Google AI Studio: Google AI Studio urgent notice requiring action to secure Gemini API access by June 19, 2026.\n- [reply needed] Greg Gorsuch: Bug report and feedback about cg website functionality and content issues.\n- [reply needed] Greg Gorsuch: Greg Gorsuch suggests editing text to change 'human' to 'our' in a line.\n- [reply needed] Greg Gorsuch: Greg Gorsuch proposes changing popups to hyperlinks to new pages if they cannot be edited.\n- [reply needed] Greg Gorsuch: Greg Gorsuch approves 'what' page format and requests navigation bar and layout changes.\n- [reply needed] Greg Gorsuch: Greg Gorsuch requests moving the VG page inside the performances page with a button and changing a logo color.\n- [reply needed] Greg Gorsuch: Greg Gorsuch reports that popup sizing on the first page is broken on mobile or small screens.\n- [scheduling] reminders@drchrono.com: Automated reminder for upcoming medical appointment with Monty Owens on June 22, 2026.\n- [no action] lang.mc+cc@gmail.com: Daily brief email with task reminders for Michael Lang.",
+  "counts": {
+    "reply_needed": 6,
+    "decision_required": 0,
+    "scheduling": 1,
+    "follow_up": 0,
+    "escalation": 3,
+    "no_action": 40
+  }
+}
