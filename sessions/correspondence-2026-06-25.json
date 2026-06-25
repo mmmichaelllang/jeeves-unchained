@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Andy: Newsletter from Andrew Lang (brother) about making care visible.\n- [escalation] Sir Richard: Forwarded message from Rich Lang (father) about Alison's note regarding Erin's show.\n- [reply needed] Greg Gorsuch: Bug report Greg Gorsuch reporting website issues with broken button and navigation problems.\n- [reply needed] Greg Gorsuch: Greg Gorsuch requests a text edit changing 'human' to 'our' in a specific line.\n- [reply needed] Greg Gorsuch: Greg Gorsuch proposes changing popups to hyperlinked pages if popups cannot be edited.\n- [reply needed] Greg Gorsuch: Greg Gorsuch approves the 'what' page format and requests navigation and layout changes.\n- [reply needed] Greg Gorsuch: Greg Gorsuch requests moving the vg page inside performances and adjusting the CG logo color.\n- [reply needed] Greg Gorsuch: Greg Gorsuch reports popup sizing issues on the first page where content is cut off.\n- [scheduling] Alan Beasley: Alan Beasley confirming a Zoom meeting for Saturday morning at 10am Pacific Daylight Time.\n- [no action] lang.mc+cc@gmail.com: Daily brief email with a note about investigating a PrivadoVPN password reset request.\n- [no action] noreply-ngc@nvidia.com: NVIDIA notification about NGC API paths retiring on September 30, 2026.",
+  "counts": {
+    "reply_needed": 6,
+    "decision_required": 0,
+    "scheduling": 1,
+    "follow_up": 0,
+    "escalation": 2,
+    "no_action": 41
+  }
+}
