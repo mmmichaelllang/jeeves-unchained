@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Andy: Newsletter from Andrew Lang about making care visible and its permanence.\n- [escalation] Sir Richard: Rich Lang forwarded a message from Alison Kling about Erin's new show.\n- [reply needed] Greg Gorsuch: Greg Gorsuch reports website bugs including broken Van Gogh button, navigation issues in past presentations, and wordy homepage content.\n- [reply needed] Greg Gorsuch: Greg Gorsuch forwarded an article by Kenneth Gergen suggesting it for Michael Lang's teaching efforts.\n- [reply needed] Greg Gorsuch: Greg Gorsuch sent a minor text correction changing 'human' to 'our' in a line.\n- [reply needed] Greg Gorsuch: Greg Gorsuch approves the 'what' page format and requests navigation additions to the vg page.\n- [reply needed] Greg Gorsuch: Greg Gorsuch requests moving the VG page inside the performances page with a button, and changing the CG logo color to yellow.\n- [reply needed] Greg Gorsuch: Greg Gorsuch reports that two popup circles on the first page display outside the viewport and need fixing.\n- [decision required] Google AI Studio: Google AI Studio requires action to secure Gemini API access by June 19, 2026.\n- [decision required] Greg Gorsuch: Greg Gorsuch proposes changing popups to hyperlinked pages if they cannot be edited.",
+  "counts": {
+    "reply_needed": 6,
+    "decision_required": 2,
+    "scheduling": 2,
+    "follow_up": 1,
+    "escalation": 2,
+    "no_action": 37
+  }
+}
