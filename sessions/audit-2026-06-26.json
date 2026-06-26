@@ -1,0 +1,153 @@
+{
+  "date": "2026-06-26",
+  "briefing_chars": 20556,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D7_narrative_flow",
+    "D9_writing_quality",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete",
+    "D10_recurring_opener",
+    "D_charlotte_url_verify"
+  ],
+  "detectors_skipped": [],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "25 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 25,
+        "samples": [
+          "https://sea.plaud.ai/en-my/blogs/articles/9-life-changing-ai-wearable-devices-in-2026?srsltid=AfmBOoq79alG_4KKWx5ov9iMynlXPc2ysFesk5fq0JeKs1jPYwfiL1x_",
+          "https://bigthinkmedia.substack.com/p/forget-stoicism-skepticism-is-the",
+          "https://theguardian.com",
+          "https://forbes.com/sites/tiriasresearch/2026/06/03/how-ai-is-driving-wearable-tech-as-the-future-of-personal-computing",
+          "https://cnn.com/sport/fifa-world-cup"
+        ]
+      }
+    },
+    {
+      "type": "narrative_flow_low",
+      "severity": "high",
+      "section": null,
+      "detail": "narrative flow score 4/10",
+      "evidence": {
+        "score": 4,
+        "issues": [
+          {
+            "section": "Opening",
+            "issue": "Begins with raw CSS code unrelated to narrative, disrupting flow"
+          },
+          {
+            "section": "Greeting",
+            "issue": "Abrupt shift from CSS to informal greeting without transition"
+          },
+          {
+            "section": "Domestic Sphere",
+            "issue": "Jumping from local news to profanity-laden commentary lacking logical progression"
+          },
+          {
+            "section": "Wider World",
+            "issue": "Sudden shift to World Cup stats with no link to prior domestic topics"
+          },
+          {
+            "section": "Intellectual Journals",
+            "issue": "Inserts vulgar assessments breaking tonal consistency"
+          },
+          {
+            "section": "Specific Enquiries",
+            "issue": "Mix of UAP report and wearable tech without clear thematic connection"
+          },
+          {
+            "section": "Commercial Ledger",
+            "issue": "Repeats earlier 'nothing materially advanced' phrase, creating redundancy"
+          },
+          {
+            "section": "Talk of the Town",
+            "issue": "Long excerpt overwhelms briefing, causing imbalance and loss of concise update"
+          },
+          {
+            "section": "Signoff",
+            "issue": "Abrupt signoff after lengthy digression, lacking closure"
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Commercial Ledger",
+      "detail": "section under 30 words (20) but sectors ['wearable_ai', 'ai_systems'] have available data",
+      "evidence": {
+        "word_count": 20,
+        "data_signals": [
+          "wearable_ai=2items",
+          "ai_systems=populated"
+        ]
+      }
+    },
+    {
+      "type": "missing_section",
+      "severity": "high",
+      "section": "The Reading Room",
+      "detail": "h3 'The Reading Room' absent but sectors ['intellectual_journals', 'enriched_articles'] have data",
+      "evidence": {
+        "sectors": [
+          "intellectual_journals",
+          "enriched_articles"
+        ]
+      }
+    },
+    {
+      "type": "missing_section",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "h3 'The Library Stacks' absent but sectors ['literary_pick'] have data",
+      "evidence": {
+        "sectors": [
+          "literary_pick"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
+      "evidence": {
+        "weather_preview": "Edmonds, WA: Cloudy with a high of 62\u00b0F, feels like 45\u00b0F, 90% humidity, 16 mph wind. Chance of preci"
+      }
+    },
+    {
+      "type": "recurring_opener",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "today's first paragraph recurs vs 2026-06-24 (shared 4-gram 'ood morning mister lang').",
+      "evidence": {
+        "matches_date": "2026-06-24",
+        "opener_preview": "g ood morning, mister lang. the world has not improved overnight, but it has at least produced several new opportunities",
+        "prior_opener_preview": "g ood morning, mister lang. the world, much like the current situation, appears to be mostly sunny, but with a few cloud",
+        "jaccard_similarity": 0.179,
+        "shared_ngram": "ood morning mister lang"
+      }
+    }
+  ],
+  "section_count": 6,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 1,
+  "aside_template_count": 0,
+  "narrative_flow_score": 4,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free",
+  "charlotte_verified_count": 20,
+  "charlotte_flagged_count": 0
+}

@@ -1,0 +1,108 @@
+{
+  "date": "2026-06-26",
+  "briefing_chars": 20770,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete",
+    "D10_recurring_opener"
+  ],
+  "detectors_skipped": [
+    "D7_narrative_flow",
+    "D9_writing_quality",
+    "D_charlotte_url_verify"
+  ],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "25 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 25,
+        "samples": [
+          "https://nbcnews.com/sports/soccer/36-million-soccer-fans-attended-years-world-cup-matches-setting-new-re-rcna351442",
+          "https://facebook.com/EdmondsPoliceDepartment",
+          "https://linkedin.com/jobs/view/Elementary-School-Counselor-1-0-FTE-at-Edmonds-School-District",
+          "https://lrb.co.uk/the-paper/v48/n11/hester-van-hensbergen/big-ag",
+          "https://jacobin.com/2026/06/libertys-brutal-conquest"
+        ]
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Reading Room",
+      "detail": "section under 30 words (13) but sectors ['intellectual_journals', 'enriched_articles'] have available data",
+      "evidence": {
+        "word_count": 13,
+        "data_signals": [
+          "intellectual_journals=4items",
+          "enriched_articles=5items"
+        ]
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Commercial Ledger",
+      "detail": "section under 30 words (20) but sectors ['wearable_ai', 'ai_systems'] have available data",
+      "evidence": {
+        "word_count": 20,
+        "data_signals": [
+          "wearable_ai=2items",
+          "ai_systems=populated"
+        ]
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "section under 30 words (10) but sectors ['literary_pick'] have available data",
+      "evidence": {
+        "word_count": 10,
+        "data_signals": [
+          "literary_pick=populated"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
+      "evidence": {
+        "weather_preview": "Edmonds, WA: Cloudy with a high of 62\u00b0F, feels like 45\u00b0F, 90% humidity, 16 mph wind. Chance of preci"
+      }
+    },
+    {
+      "type": "recurring_opener",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "today's first paragraph recurs vs 2026-06-24 (shared 4-gram 'ood morning mister lang').",
+      "evidence": {
+        "matches_date": "2026-06-24",
+        "opener_preview": "g ood morning, mister lang. the world has not improved overnight, but it has at least produced several new opportunities",
+        "prior_opener_preview": "g ood morning, mister lang. the world, much like the current situation, appears to be mostly sunny, but with a few cloud",
+        "jaccard_similarity": 0.179,
+        "shared_ngram": "ood morning mister lang"
+      }
+    }
+  ],
+  "section_count": 8,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 3,
+  "aside_template_count": 0,
+  "narrative_flow_score": null,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": null,
+  "charlotte_verified_count": 0,
+  "charlotte_flagged_count": 0
+}

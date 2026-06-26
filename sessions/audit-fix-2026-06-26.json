@@ -1,0 +1,65 @@
+{
+  "date": "2026-06-26",
+  "pre_fix_chars": 20556,
+  "post_fix_chars": 20770,
+  "actions": [
+    {
+      "type": "rerender_missing_section",
+      "section": "The Reading Room",
+      "detail": "validator rejected: non-html prefix: 'We need to produce a paragraph (or two) in HTML <p> tags, 60'",
+      "status": "failed",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to produce a paragraph (or two) in HTML <p> tags, 60-180 words. Must use <a href=\"...\">title</a> for URL anchors"
+      }
+    },
+    {
+      "type": "inject_missing_section",
+      "section": "The Reading Room",
+      "detail": "injected empty-feed for The Reading Room",
+      "status": "applied",
+      "evidence": {
+        "anchor": "The Wider World"
+      }
+    },
+    {
+      "type": "rerender_missing_section",
+      "section": "The Library Stacks",
+      "detail": "validator rejected: non-html prefix: 'We need to write a paragraph(s) about \"The Library Stacks\" s'",
+      "status": "failed",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to write a paragraph(s) about \"The Library Stacks\" section, using given data: only one book: \"Stranger Than Fict"
+      }
+    },
+    {
+      "type": "inject_missing_section",
+      "section": "The Library Stacks",
+      "detail": "injected empty-feed for The Library Stacks",
+      "status": "applied",
+      "evidence": {
+        "anchor": "The Commercial Ledger"
+      }
+    },
+    {
+      "type": "rerender_empty_with_data",
+      "section": "The Commercial Ledger",
+      "detail": "skipped \u2014 no usable data extracted from session",
+      "status": "skipped",
+      "evidence": {}
+    },
+    {
+      "type": "rerender_greeting",
+      "section": "(greeting)",
+      "detail": "validator rejected: non-html prefix: 'We need to produce a single HTML <p> paragraph, 80-150 words'",
+      "status": "failed",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to produce a single HTML <p> paragraph, 80-150 words, Jeeves voice (dry, precise butler). Must mention weekday, "
+      }
+    }
+  ],
+  "pre_fix_defect_count": 7,
+  "post_fix_defect_count": null,
+  "audit_model_used": null
+}
