@@ -1,0 +1,39 @@
+{
+  "date": "2026-06-27",
+  "pre_fix_chars": 22991,
+  "post_fix_chars": 22950,
+  "actions": [
+    {
+      "type": "strip_hallucinated_url",
+      "section": null,
+      "detail": "stripped <a href='https://www.newyorker.com/'>",
+      "status": "applied",
+      "evidence": {
+        "url": "https://www.newyorker.com/"
+      }
+    },
+    {
+      "type": "rerender_empty_with_data",
+      "section": "The Library Stacks",
+      "detail": "validator rejected: non-html prefix: 'We need to write a paragraph (or two) 60-180 words, HTML <p>'",
+      "status": "failed",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to write a paragraph (or two) 60-180 words, HTML <p>...</p>. Use <a href=\"...\">title</a> for URL anchors only \u2014 "
+      }
+    },
+    {
+      "type": "rerender_greeting",
+      "section": "(greeting)",
+      "detail": "validator rejected: non-html prefix: 'We need to produce a single HTML <p> paragraph, 80-150 words'",
+      "status": "failed",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to produce a single HTML <p> paragraph, 80-150 words, Jeeves voice: dry, precise butler. Must mention weekday, w"
+      }
+    }
+  ],
+  "pre_fix_defect_count": 5,
+  "post_fix_defect_count": null,
+  "audit_model_used": null
+}

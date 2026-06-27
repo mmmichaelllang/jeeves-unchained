@@ -1,0 +1,130 @@
+{
+  "date": "2026-06-27",
+  "briefing_chars": 22991,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D7_narrative_flow",
+    "D9_writing_quality",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete",
+    "D10_recurring_opener",
+    "D_charlotte_url_verify"
+  ],
+  "detectors_skipped": [],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "23 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 23,
+        "samples": [
+          "https://forbes.com/sites/tiriasresearch/2026/06/03/how-ai-is-driving-wearable-tech-as-the-future-of-personal-computing",
+          "https://themarginalian.org/2026/06/20/alan-lightman-death",
+          "https://nbcnews.com/sports/soccer/world-cup-cape-verde-knockouts-rcna352022",
+          "https://mrsdscorner.com/how-to-create-token-economy",
+          "https://sakana.ai/fugu-release"
+        ]
+      }
+    },
+    {
+      "type": "narrative_flow_low",
+      "severity": "high",
+      "section": null,
+      "detail": "narrative flow score 2/10",
+      "evidence": {
+        "score": 2,
+        "issues": [
+          {
+            "section": "CSS block",
+            "issue": "Opening with unrelated stylesheet disrupts narrative entry."
+          },
+          {
+            "section": "Opening greeting",
+            "issue": "Shifts abruptly from formal butler tone to profanity without transition."
+          },
+          {
+            "section": "Domestic Sphere",
+            "issue": "Moves from school district overview to toddler events lacking logical linkage."
+          },
+          {
+            "section": "Wider World",
+            "issue": "Inserts a profanity\u2011laden heading that fractures the flow of news items."
+          },
+          {
+            "section": "Reading Room",
+            "issue": "Presents a list of articles without synthesis or connecting commentary."
+          },
+          {
+            "section": "Specific Enquiries",
+            "issue": "Jumps from AI developments to vague implications, omitting explanatory bridge."
+          },
+          {
+            "section": "Commercial Ledger",
+            "issue": "Introduces wearable tech as an isolated topic, unrelated to preceding sections."
+          },
+          {
+            "section": "Talk of the Town",
+            "issue": "Appends a lengthy excerpt without clear transition from commercial content."
+          },
+          {
+            "section": "Signoff",
+            "issue": "Concludes after disjointed material, providing no summarising closure."
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "hallucinated_url",
+      "severity": "high",
+      "section": "The Wider World",
+      "detail": "href 'https://www.newyorker.com/' not present in any session JSON sector",
+      "evidence": {
+        "url": "https://www.newyorker.com/",
+        "is_homepage": true
+      }
+    },
+    {
+      "type": "empty_with_data",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "section under 30 words (0) but sectors ['literary_pick'] have available data",
+      "evidence": {
+        "word_count": 0,
+        "data_signals": [
+          "literary_pick=populated"
+        ]
+      }
+    },
+    {
+      "type": "recurring_opener",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "today's first paragraph recurs vs 2026-06-26 (Jaccard=34%; shared 4-gram 'ood morning mister lang').",
+      "evidence": {
+        "matches_date": "2026-06-26",
+        "opener_preview": "g ood morning, mister lang. june persists, and with it, the complexities of our little world. the morning's corresponden",
+        "prior_opener_preview": "g ood morning, mister lang. the world has not improved overnight, but it has at least produced several new opportunities",
+        "jaccard_similarity": 0.344,
+        "shared_ngram": "ood morning mister lang"
+      }
+    }
+  ],
+  "section_count": 7,
+  "hallucinated_url_count": 1,
+  "empty_section_count": 1,
+  "aside_template_count": 0,
+  "narrative_flow_score": 2,
+  "writing_quality_score": null,
+  "dedup_score": null,
+  "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free",
+  "charlotte_verified_count": 20,
+  "charlotte_flagged_count": 0
+}
