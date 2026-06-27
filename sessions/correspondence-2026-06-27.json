@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Sir Richard: Father forwarded a message from Alison Kling about Erin's show.\n- [reply needed] Greg Gorsuch: Greg Gorsuch reports website bugs and UX feedback for the CG site.\n- [reply needed] Greg Gorsuch: Greg Gorsuch forwarded a new Kenneth Gergen publication for teaching reference.\n- [reply needed] Greg Gorsuch: Greg Gorsuch requests a text edit changing 'human' to 'our' in a line.\n- [reply needed] Greg Gorsuch: Greg Gorsuch proposes changing popups to hyperlinked pages due to editing limitations.\n- [reply needed] Greg Gorsuch: Greg Gorsuch approves the 'what' page format and requests navigation and layout changes.\n- [reply needed] Greg Gorsuch: Greg Gorsuch requests moving the VG page into performances and adjusting the logo color.\n- [scheduling] Alan Beasley: Alan Beasley confirms a Zoom meeting scheduled for Saturday morning at 10am Pacific Daylight Time.\n- [no action] Supabase: Automated security notification about a new OAuth application being authorized for Supabase.\n- [no action] Supabase: Automated welcome email from Supabase onboarding new users to their platform.\n- [no action] GitHub: Automated GitHub security alert about a third-party OAuth application being added to the account.",
+  "counts": {
+    "reply_needed": 6,
+    "decision_required": 0,
+    "scheduling": 1,
+    "follow_up": 0,
+    "escalation": 1,
+    "no_action": 27
+  }
+}
