@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [reply needed] Don Cooper: Don Cooper following up to schedule their next meeting and proposing another discussion about hardware resources.\n- [reply needed] Greg Gorsuch: Greg Gorsuch sent a follow-up email mentioning a painting attachment that was apparently missing from a previous message.\n- [reply needed] Greg Gorsuch: Greg Gorsuch forwarded preliminary layer paintings from Scott for a Jacob wrestling artwork project.\n- [reply needed] Greg Gorsuch: Greg Gorsuch introduced Mike and Scott regarding cover design work and expects them to coordinate directly.\n- [scheduling] Alan Beasley: Alan Beasley sending Zoom link for a Saturday morning meeting at 10am.\n- [scheduling] Alan Beasley: Alan Beasley confirmed a Zoom meeting scheduled for Saturday at 10am Pacific Daylight Time.\n- [no action] \"Sol's Civic Minute!\": Newsletter from Sol's Civic Minute announcing summer break and last issue until September.\n- [no action] mmmichaelllang: GitHub notification that a weekly audit workflow run failed in the jeeves-unchained repository.\n- [no action] CARFAX Car Care: CARFAX vehicle care report and service reminder for a Subaru Outback.\n- [no action] Apple: Apple security notification that an Apple Account was used to sign in to iCloud via web browser.",
+  "counts": {
+    "reply_needed": 4,
+    "decision_required": 0,
+    "scheduling": 2,
+    "follow_up": 0,
+    "escalation": 0,
+    "no_action": 29
+  }
+}
