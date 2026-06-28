@@ -1,0 +1,198 @@
+{
+  "date": "2026-06-28",
+  "briefing_chars": 26359,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D7_narrative_flow",
+    "D9_writing_quality",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete",
+    "D10_recurring_opener",
+    "D_charlotte_url_verify"
+  ],
+  "detectors_skipped": [],
+  "defects": [
+    {
+      "type": "dedup_url_cross_section",
+      "severity": "high",
+      "section": null,
+      "detail": "URL appears in 2 sections",
+      "evidence": {
+        "url": "https://www.propublica.org/article/wedges-climate-research-bp-fossil-fuel-princeton",
+        "sections": [
+          "The Intellectual Journals",
+          "Talk of the Town"
+        ]
+      }
+    },
+    {
+      "type": "dedup_url_cross_section",
+      "severity": "high",
+      "section": null,
+      "detail": "URL appears in 2 sections",
+      "evidence": {
+        "url": "https://www.nybooks.com/online/2026/06/27/spare-me-the-hedgehoggery/",
+        "sections": [
+          "The Intellectual Journals",
+          "Talk of the Town"
+        ]
+      }
+    },
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "10 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 10,
+        "samples": [
+          "https://developers.googleblog.com/build-cross-language-multi-agent-team-with-google-agent-development-kit-and-a2a",
+          "https://lrb.co.uk/the-paper/v48/n11/hester-van-hensbergen/big-ag",
+          "https://morgensternbooks.com/book/9780060557553",
+          "https://themarginalian.org/2026/06/23/yes-to-life-in-spite-of-everything-viktor-frankl",
+          "https://propublica.org/article/wedges-climate-research-bp-fossil-fuel-princeton"
+        ]
+      }
+    },
+    {
+      "type": "narrative_flow_low",
+      "severity": "high",
+      "section": null,
+      "detail": "narrative flow score 3/10",
+      "evidence": {
+        "score": 3,
+        "issues": [
+          {
+            "section": "Opening CSS block",
+            "issue": "Irrelevant styling code interrupts narrative start."
+          },
+          {
+            "section": "Domestic Sphere heading",
+            "issue": "Abrupt shift from greeting without transition."
+          },
+          {
+            "section": "Domestic Sphere content",
+            "issue": "Colloquial expletive ('goat-fuck') disrupts formal tone and flow."
+          },
+          {
+            "section": "Domestic Sphere police sentence",
+            "issue": "Sudden exclamation ('proper omnishambles...') unrelated to prior sentence."
+          },
+          {
+            "section": "Wider World heading",
+            "issue": "Missing connective paragraph before new section."
+          },
+          {
+            "section": "Wider World news list",
+            "issue": "Series of disjointed statements lacking logical progression."
+          },
+          {
+            "section": "Intellectual Journals heading",
+            "issue": "Abrupt transition without linking sentence."
+          },
+          {
+            "section": "Intellectual Journals content",
+            "issue": "Random expletive ('clusterfuck') interrupts scholarly discussion."
+          },
+          {
+            "section": "Specific Enquiries heading",
+            "issue": "Abrupt shift with no segue."
+          },
+          {
+            "section": "Specific Enquiries content",
+            "issue": "Expletive ('total and utter shitshow') breaks flow."
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "writing_quality_low",
+      "severity": "high",
+      "section": null,
+      "detail": "writing quality score 4/10",
+      "evidence": {
+        "score": 4,
+        "issues": [
+          {
+            "type": "repetition",
+            "evidence": "A proper, old-fashioned goat-fuck of an achievement."
+          },
+          {
+            "type": "vague",
+            "evidence": "As the festival continues to expand, it is likely to attract more visitors and attention to the city, which could have a positive impact on local businesses and tourism."
+          },
+          {
+            "type": "voice_break",
+            "evidence": "A proper omnishambles of the highest, most fucking degree."
+          },
+          {
+            "type": "aside_overuse",
+            "evidence": "Sir,"
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "missing_section",
+      "severity": "high",
+      "section": "The Reading Room",
+      "detail": "h3 'The Reading Room' absent but sectors ['intellectual_journals', 'enriched_articles'] have data",
+      "evidence": {
+        "sectors": [
+          "intellectual_journals",
+          "enriched_articles"
+        ]
+      }
+    },
+    {
+      "type": "missing_section",
+      "severity": "high",
+      "section": "The Library Stacks",
+      "detail": "h3 'The Library Stacks' absent but sectors ['literary_pick'] have data",
+      "evidence": {
+        "sectors": [
+          "literary_pick"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
+      "evidence": {
+        "weather_preview": "Here's a plain text string covering the weather conditions for Edmonds, Washington:\n\nCurrent weather"
+      }
+    },
+    {
+      "type": "recurring_opener",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "today's first paragraph recurs vs 2026-06-27 (shared 4-gram 'morning correspondence already laid').",
+      "evidence": {
+        "matches_date": "2026-06-27",
+        "opener_preview": "g ood morning, sir. the world has not improved overnight, though it has at least produced several new opportunities to o",
+        "prior_opener_preview": "g ood morning, mister lang. june persists, and with it, the complexities of our little world. the morning's corresponden",
+        "jaccard_similarity": 0.294,
+        "shared_ngram": "morning correspondence already laid"
+      }
+    }
+  ],
+  "section_count": 6,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 0,
+  "aside_template_count": 0,
+  "narrative_flow_score": 3,
+  "writing_quality_score": 4,
+  "dedup_score": null,
+  "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free",
+  "charlotte_verified_count": 10,
+  "charlotte_flagged_count": 0
+}
