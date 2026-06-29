@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] mmmichaelllang: GitHub notification that the Jeeves Weekly Audit Health Report workflow failed on the mmmichaelllang/jeeves-unchained repository.\n- [escalation] lang.mc@gmail.com: Daily correspondence summary noting an escalation from Andrew Lang requiring attention.\n- [escalation] Sir Richard: Rich Lang forwarded a message from Alison Kling about Erin's show.\n- [reply needed] Greg Gorsuch: Greg Gorsuch continues a theological discussion thread about Vertical-Experiential Theology, sharing his perspective on ideological conflicts.\n- [reply needed] Greg Gorsuch: Greg Gorsuch reports bugs on the CG site including a broken Van Gogh button, navigation issues, and wordy homepage text.\n- [scheduling] Alan Beasley: Alan Beasley shares a Zoom link for a Saturday morning meeting at 10am.\n- [scheduling] Don Cooper: Don Cooper notes they did not schedule their next meeting and proposes another discussion.\n- [scheduling] Alan Beasley: Alan Beasley confirms a Zoom meeting scheduled for Saturday morning at 10am Pacific Daylight Time.\n- [follow up] lang.mc@gmail.com: Daily correspondence summary from Jeeves system highlighting a pending message from Don Cooper requiring attention and scheduling response.",
+  "counts": {
+    "reply_needed": 2,
+    "decision_required": 0,
+    "scheduling": 3,
+    "follow_up": 3,
+    "escalation": 3,
+    "no_action": 39
+  }
+}
