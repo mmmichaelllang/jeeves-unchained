@@ -1,0 +1,39 @@
+{
+  "date": "2026-06-30",
+  "pre_fix_chars": 17559,
+  "post_fix_chars": 17684,
+  "actions": [
+    {
+      "type": "rerender_missing_section",
+      "section": "The Reading Room",
+      "detail": "validator rejected: non-html prefix: 'We need to produce a paragraph (or two if data demands) 60-1'",
+      "status": "failed",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to produce a paragraph (or two if data demands) 60-180 words, voice dry, precise, occasionally barbed; only swea"
+      }
+    },
+    {
+      "type": "inject_missing_section",
+      "section": "The Reading Room",
+      "detail": "injected empty-feed for The Reading Room",
+      "status": "applied",
+      "evidence": {
+        "anchor": "The Wider World"
+      }
+    },
+    {
+      "type": "rerender_greeting",
+      "section": "(greeting)",
+      "detail": "validator rejected: non-html prefix: 'We need to produce a single HTML <p> paragraph, 80-150 words'",
+      "status": "failed",
+      "evidence": {
+        "model": "nvidia/nemotron-3-super-120b-a12b:free",
+        "preview": "We need to produce a single HTML <p> paragraph, 80-150 words, Jeeves voice: dry, precise butler. Must mention weekday, w"
+      }
+    }
+  ],
+  "pre_fix_defect_count": 6,
+  "post_fix_defect_count": null,
+  "audit_model_used": null
+}

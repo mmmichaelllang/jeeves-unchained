@@ -1,0 +1,141 @@
+{
+  "date": "2026-06-30",
+  "briefing_chars": 17559,
+  "session_status": "complete",
+  "detectors_run": [
+    "D8_dedup",
+    "D7_narrative_flow",
+    "D9_writing_quality",
+    "D1_hallucinated_urls",
+    "D2_empty_with_data",
+    "D3_missing_section",
+    "D4_section_order",
+    "D5_aside_repetition",
+    "D6_greeting_incomplete",
+    "D10_recurring_opener",
+    "D_charlotte_url_verify"
+  ],
+  "detectors_skipped": [],
+  "defects": [
+    {
+      "type": "dedup_cross_day_overlap",
+      "severity": "medium",
+      "section": null,
+      "detail": "16 URLs already covered in prior briefings",
+      "evidence": {
+        "overlap_count": 16,
+        "samples": [
+          "https://youtube.com/watch?v=ipHUmkiMmGs",
+          "https://facebook.com/MyEdmondsNews",
+          "https://linkedin.com/jobs/view/history-teacher-0-6-fte-lake-washington-high-school-at-lake-washington-school-district-4432049570",
+          "https://edmondswa.gov",
+          "https://facebook.com/EdmondsPoliceDepartment"
+        ]
+      }
+    },
+    {
+      "type": "narrative_flow_low",
+      "severity": "high",
+      "section": null,
+      "detail": "narrative flow score 4/10",
+      "evidence": {
+        "score": 4,
+        "issues": [
+          {
+            "section": "Header/CSS block",
+            "issue": "Opening CSS code block interrupts narrative flow and is irrelevant to the briefing."
+          },
+          {
+            "section": "Domestic Sphere",
+            "issue": "Rapid succession of unrelated topics (vacancy, app, arrest, charity) without clear transitions creates a disjointed list."
+          },
+          {
+            "section": "Wider World",
+            "issue": "Jumping from World Cup updates to Supreme Court rulings to UFO disclosure lacks logical progression."
+          },
+          {
+            "section": "Commercial Ledger",
+            "issue": "Tone shifts to profanity-laden critique, breaking the cultivated butler register."
+          },
+          {
+            "section": "Talk of the Town",
+            "issue": "Inserting a lengthy New Yorker excerpt as a block quote without integration stalls the briefing's momentum."
+          },
+          {
+            "section": "Overall",
+            "issue": "Frequent parenthetical asides and informal interjections disrupt the formal voice and impede smooth reading."
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "writing_quality_low",
+      "severity": "medium",
+      "section": null,
+      "detail": "writing quality score 6/10",
+      "evidence": {
+        "score": 6,
+        "issues": [
+          {
+            "type": "repetition",
+            "evidence": "The Edmonds School District vacancy persists, unchanged since our last review. The persistence of that vacancy hints at the district's ongoing commitment..."
+          },
+          {
+            "type": "vague",
+            "evidence": "The world has not improved overnight, but it has at least produced several new opportunities to observe it failing."
+          },
+          {
+            "type": "aside_overuse",
+            "evidence": "Your morning correspondence has been laid out in full, but the salient matters are these:"
+          }
+        ],
+        "model": "nvidia/nemotron-3-super-120b-a12b:free"
+      }
+    },
+    {
+      "type": "missing_section",
+      "severity": "high",
+      "section": "The Reading Room",
+      "detail": "h3 'The Reading Room' absent but sectors ['intellectual_journals', 'enriched_articles'] have data",
+      "evidence": {
+        "sectors": [
+          "intellectual_journals",
+          "enriched_articles"
+        ]
+      }
+    },
+    {
+      "type": "greeting_missing_weather",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "weather string present in session but not in greeting",
+      "evidence": {
+        "weather_preview": "Here's a plain text string with the current weather forecast for Edmonds, Washington:\n\nCurrent weath"
+      }
+    },
+    {
+      "type": "recurring_opener",
+      "severity": "medium",
+      "section": "(greeting)",
+      "detail": "today's first paragraph recurs vs 2026-06-29 (Jaccard=79%; shared 4-gram 'ood morning mister lang').",
+      "evidence": {
+        "matches_date": "2026-06-29",
+        "opener_preview": "g ood morning, mister lang. the world has not improved overnight, but it has at least produced several new opportunities",
+        "prior_opener_preview": "g ood morning, mister lang. the world has not improved overnight, but it has at least produced several new opportunities",
+        "jaccard_similarity": 0.792,
+        "shared_ngram": "ood morning mister lang"
+      }
+    }
+  ],
+  "section_count": 4,
+  "hallucinated_url_count": 0,
+  "empty_section_count": 0,
+  "aside_template_count": 0,
+  "narrative_flow_score": 4,
+  "writing_quality_score": 6,
+  "dedup_score": null,
+  "audit_model_used": "nvidia/nemotron-3-super-120b-a12b:free",
+  "charlotte_verified_count": 16,
+  "charlotte_flagged_count": 0
+}
