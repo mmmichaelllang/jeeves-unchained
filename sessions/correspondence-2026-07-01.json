@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] Andy: Family member Andrew Lang shares news about an big upcoming family change.\n- [reply needed] Kaylee Hagen: Kaylee Hagen from Edmonds School District extended a deadline for reasonable assurance document to July 10th.\n- [reply needed] Greg Gorsuch: Greg Gorsuch shared a book review of Disclosure Day and suggests discussing it Thursday evening.\n- [no action] Groq: GroqCloud service notice about decommissioning a model version.\n- [no action] lang.mc+cc@gmail.com: Automated daily brief email with reminders including a school district document.\n- [no action] \"Superhuman – Zain Kahn\": Superhuman newsletter about Anthropic releasing Sonnet 5 and ChatGPT features.\n- [no action] \"info@schooljobs.com\": Automated job interest card notification from Seattle Public Schools.\n- [no action] Google: Automated Google account recovery confirmation notification.\n- [no action] Greg Gorsuch: Greg Gorsuch forwarded an interview about Wall Street, Nazis, and the deep state.\n- [no action] Google: Automated Google Terms of Service update notification effective July 30, 2026.\n- [no action] Tavily: Stripe failed payment notification for Tavily service charge.\n- [no action] Tavily: Tavily pay-as-you-go payment failure notice due to card or funding issue.",
+  "counts": {
+    "reply_needed": 2,
+    "decision_required": 0,
+    "scheduling": 0,
+    "follow_up": 0,
+    "escalation": 1,
+    "no_action": 32
+  }
+}
