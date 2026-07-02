@@ -1,0 +1,13 @@
+{
+  "found": true,
+  "fallback_used": false,
+  "text": "- [escalation] lang.mc@gmail.com: Jeeves pipeline alert about a permanent failure with 429 rate limit error in the Daily Pipeline workflow.\n- [escalation] Andy: Family message from brother Andrew Lang about a significant upcoming family change with reminder about gentleness.\n- [escalation] mmmichaelllang: GitHub notification that the Jeeves Weekly Audit Health Report workflow has failed.\n- [escalation] Andy: Daily correspondence summary highlighting an escalation from Andrew Lang that requires Mister Lang's attention.\n- [decision required] Tavily: Failed payment of $27.10 to Tavily due to credit card issue.\n- [decision required] Tavily: Tavily pay-as-you-go charge failed, possibly due to expired card or insufficient funds.\n- [decision required] ant.wilson@supabase.com: Supabase project 'mmmichaelllang's Project' will be paused due to inactivity over 7 days.\n- [scheduling] Alan Beasley: Alan Beasley sending Zoom link for Saturday morning meeting at 10am.\n- [scheduling] Don Cooper: Don Cooper wants to schedule another meeting to discuss hardware resources and project ideas.\n- [no action] \"Superhuman – Zain Kahn\": Superhuman newsletter about a startup emerging from stealth and Excel data analysis tips.",
+  "counts": {
+    "reply_needed": 0,
+    "decision_required": 3,
+    "scheduling": 2,
+    "follow_up": 0,
+    "escalation": 4,
+    "no_action": 41
+  }
+}
